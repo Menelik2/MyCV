@@ -1,0 +1,5 @@
+{
+  "title": "Experience",
+  "iconClass": "exp-icon",
+  "html": "<h2>Experience</h2>\n      <div class=\"project-card\">\n        <h4>IT Operations · System Administration · Technical Training</h4>\n        <p style=\"margin:2px 0;\"><strong>10+ years</strong></p>\n        <p style=\"margin-top:10px;\">Over 10 years of experience in IT operations, system administration, and technical training. Specialized in computer systems management, network administration, and providing technical support across various platforms.</p>\n      </div>\n      <h3>Focus areas</h3>\n      <ul>\n        <li>IT operations &amp; day-to-day systems management</li>\n        <li>System administration (installation, configuration, maintenance)</li>\n        <li>Network administration</li>\n        <li>Technical support across multiple platforms</li>\n        <li>Technical training and knowledge transfer</li>\n      </ul>"
+}
