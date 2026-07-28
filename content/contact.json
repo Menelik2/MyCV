@@ -1,0 +1,5 @@
+{
+  "title": "Contact",
+  "iconClass": "contact-icon",
+  "html": "<h2>Get in Touch</h2>\n      <p>Feel free to reach out for collaborations, internship opportunities, or just to say hello.</p>\n      <div class=\"project-card\">\n        <h4>Email</h4>\n        <p><a href=\"mailto:linuxos777@gmail.com\">linuxos777@gmail.com</a></p>\n      </div>\n      <div class=\"project-card\">\n        <h4>GitHub</h4>\n        <p><a href=\"https://github.com/menelik3\" target=\"_blank\" rel=\"noopener\">github.com/menelik3</a></p>\n      </div>\n      <div class=\"project-card\">\n        <h4>LinkedIn</h4>\n        <p><a href=\"https://linkedin.com\" target=\"_blank\" rel=\"noopener\">linkedin.com/in/menelikadmasu</a></p>\n      </div>\n      <div class=\"project-card\">\n        <h4>Location</h4>\n        <p>Bahir Dar, Ethiopia</p>\n      </div>\n      <p style=\"margin-top:12px;font-size:12px;color:#666;\">(Replace the placeholder links with your real contact details.)</p>"
+}
