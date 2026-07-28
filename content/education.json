@@ -1,0 +1,5 @@
+{
+  "title": "Education",
+  "iconClass": "edu-icon",
+  "html": "<h2>Education</h2>\n      <div class=\"project-card\">\n        <h4>Bahir Dar University</h4>\n        <p style=\"margin:2px 0;color:#555;\">Bachelor of Science in Computer Science</p>\n        <p style=\"margin:2px 0;\"><strong>2022 – 2026</strong></p>\n        <p style=\"margin-top:8px;\">Currently pursuing a BSc in Computer Science. Coursework covers programming fundamentals, data structures, algorithms, databases, software engineering, computer networks, and web technologies.</p>\n      </div>\n      <h3>Relevant Coursework</h3>\n      <ul>\n        <li>Data Structures & Algorithms</li>\n        <li>Object-Oriented Programming</li>\n        <li>Database Systems</li>\n        <li>Web Development</li>\n        <li>Software Engineering</li>\n        <li>Computer Networks</li>\n        <li>Operating Systems</li>\n      </ul>"
+}
