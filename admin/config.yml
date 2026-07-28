@@ -1,1 +1,82 @@
 
+# Decap CMS config — edit portfolio content as JSON in /content
+# Docs: https://decapcms.org/docs/configuration-options/
+
+backend:
+  name: github
+  repo: Menelik2/xp-portfolio   # change if your repo path differs
+  branch: main
+  # Optional: base_url + auth_endpoint if you self-host OAuth
+  # base_url: https://your-oauth-proxy.example.com
+  # auth_endpoint: /auth
+
+# Uncomment for local-only editing (run: npx decap-server)
+# local_backend: true
+
+media_folder: static/images
+public_folder: /static/images
+
+# Publish immediately on save (no draft workflow)
+publish_mode: simple
+
+collections:
+  - name: portfolio
+    label: Portfolio sections
+    description: Text shown in the XP / iPhone portfolio windows
+    files:
+      - name: about
+        label: About Me
+        file: content/about.json
+        fields: &html_fields
+          - { label: Window title, name: title, widget: string }
+          - { label: Icon class, name: iconClass, widget: string, required: false }
+          - {
+              label: Body HTML,
+              name: html,
+              widget: text,
+              hint: "HTML is rendered inside the portfolio window. Keep structure similar to the original."
+            }
+
+      - name: education
+        label: Education
+        file: content/education.json
+        fields: *html_fields
+
+      - name: experience
+        label: Experience
+        file: content/experience.json
+        fields: *html_fields
+
+      - name: certifications
+        label: Certifications
+        file: content/certifications.json
+        fields: *html_fields
+
+      - name: projects
+        label: Projects
+        file: content/projects.json
+        fields: *html_fields
+
+      - name: skills
+        label: Skills
+        file: content/skills.json
+        fields: *html_fields
+
+      - name: contact
+        label: Contact
+        file: content/contact.json
+        fields: *html_fields
+
+      - name: resume
+        label: Resume
+        file: content/resume.json
+        fields: *html_fields
+
+  - name: sticky
+    label: Desktop sticky note
+    files:
+      - name: note
+        label: Sticky note text
+        file: content/sticky-note.json
+        fields:
+          - { label: Note text, name: text, widget: text }
