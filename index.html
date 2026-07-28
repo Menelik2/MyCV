@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Menelik Admasu — Portfolio</title>
+  <link rel="stylesheet" href="styles.css" />
+  <!-- Optimized profile photo preload (WebP first, JPEG fallback) -->
+  <link rel="preload" href="profile.webp" as="image" type="image/webp" />
+  <link rel="preload" href="profile.jpg" as="image" type="image/jpeg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Tahoma:wght@400;700&family=Segoe+UI:wght@400;600;700&family=Consolas:wght@400;700&display=swap" rel="stylesheet" />
+</head>
+<body class="light">
+  <!-- ========== OS Boot splash ========== -->
+  <div id="boot-screen" class="boot-screen">
+    <div class="boot-inner">
+      <div class="boot-logo" aria-hidden="true"></div>
+      <p class="boot-title">Microsoft Windows XP</p>
+      <p class="boot-sub">Professional</p>
+      <div class="boot-bar"><div class="boot-bar-fill"></div></div>
+      <p class="boot-status" id="boot-status">Starting Windows…</p>
+      <button type="button" class="boot-start-btn" id="boot-start-btn" hidden>
+        Click to enter · Full screen OS
+      </button>
+      <p class="boot-hint">Sound on · Experience the desktop</p>
+    </div>
+  </div>
+
+  <!-- ========== DESKTOP (Windows XP style) ========== -->
+  <div id="desktop" class="desktop boot-hidden">
+    <div class="wallpaper"></div>
+
+    <!-- Desktop Icons -->
+    <div class="desktop-icons">
+      <button class="icon" data-window="about">
+        <div class="icon-img about-icon"></div>
+        <span>About Me</span>
+      </button>
+      <button class="icon" data-window="education">
+        <div class="icon-img edu-icon"></div>
+        <span>Education</span>
+      </button>
+      <button class="icon" data-window="experience">
+        <div class="icon-img exp-icon"></div>
+        <span>Experience</span>
+      </button>
+      <button class="icon" data-window="certifications">
+        <div class="icon-img cert-icon"></div>
+        <span>Certifications</span>
+      </button>
+      <button class="icon" data-window="projects">
+        <div class="icon-img projects-icon"></div>
+        <span>Projects</span>
+      </button>
+      <button class="icon" data-window="skills">
+        <div class="icon-img skills-icon"></div>
+        <span>Skills</span>
+      </button>
+      <button class="icon" data-window="contact">
+        <div class="icon-img contact-icon"></div>
+        <span>Contact</span>
+      </button>
+      <button class="icon" data-window="resume">
+        <div class="icon-img resume-icon"></div>
+        <span>Resume</span>
+      </button>
+      <button class="icon" data-window="notepad">
+        <div class="icon-img notepad-icon"></div>
+        <span>Notepad</span>
+      </button>
+      
+    </div>
+
+    <!-- Desktop sticky notes -->
+    <div class="sticky-notes" aria-hidden="false">
+      <div class="sticky-note sticky-yellow">
+        <div class="sticky-tape"></div>
+        <p>I believe the best technology is not only powerful but also reliable, intuitive, and built with people in mind. Every project is an opportunity to solve real problems, learn something new, and create meaningful digital experiences.</p>
+      </div>
+    </div>
+
+    <div id="windows-container"></div>
+
+    <!-- Taskbar -->
+    <div class="taskbar">
+      <button class="start-btn" id="start-btn">
+        <span class="start-logo"></span>
+        <span>start</span>
+      </button>
+      <div class="taskbar-apps" id="taskbar-apps"></div>
+      <!-- Virtual desktop pager -->
+      <div class="vd-pager" id="vd-pager" title="Virtual desktops">
+        <button class="vd-btn active" data-desktop="0">1</button>
+        <button class="vd-btn" data-desktop="1">2</button>
+        <button class="vd-btn" data-desktop="2">3</button>
+        <button class="vd-btn" data-desktop="3">4</button>
+      </div>
+      <div class="taskbar-tray">
+        <button class="theme-toggle" id="theme-toggle" title="Toggle dark/light">
+          <span class="sun">☀</span>
+          <span class="moon">☾</span>
+        </button>
+        <div class="clock" id="clock">12:00 PM</div>
+      </div>
+    </div>
+    <!-- Desktop indicator toast -->
+    <div class="vd-toast" id="vd-toast" hidden>Desktop 1</div>
+
+    <!-- Start Menu -->
+    <div class="start-menu" id="start-menu">
+      <div class="start-menu-left">
+        <div class="user-block">
+          <div class="user-avatar" id="avatar-desktop"></div>
+          <div class="user-name">Menelik Admasu</div>
+        </div>
+        <div class="start-links">
+          <div class="sm-group-label">Portfolio</div>
+          <button data-window="about"><span class="sm-icon about-icon"></span> About Me</button>
+          <button data-window="education"><span class="sm-icon edu-icon"></span> Education</button>
+          <button data-window="experience"><span class="sm-icon exp-icon"></span> Experience</button>
+          <button data-window="certifications"><span class="sm-icon cert-icon"></span> Certifications</button>
+          <button data-window="projects"><span class="sm-icon projects-icon"></span> Projects</button>
+          <button data-window="skills"><span class="sm-icon skills-icon"></span> Skills</button>
+          <button data-window="contact"><span class="sm-icon contact-icon"></span> Contact</button>
+          <button data-window="resume"><span class="sm-icon resume-icon"></span> Resume</button>
+          <div class="sm-group-label">Programs</div>
+          <button data-window="notepad"><span class="sm-icon notepad-icon"></span> Notepad</button>
+          <button data-window="paint"><span class="sm-icon paint-icon"></span> Paint</button>
+          <button data-window="terminal"><span class="sm-icon terminal-icon"></span> Terminal</button>
+          <button data-window="vscode"><span class="sm-icon vscode-icon"></span> Visual Studio Code</button>
+        </div>
+      </div>
+      <div class="start-menu-right">
+        <div class="sm-section">
+          <div class="sm-label">Documents</div>
+          <button data-window="resume">My Resume</button>
+          <button data-window="projects">Recent Projects</button>
+          <button data-window="notepad">Untitled - Notepad</button>
+        </div>
+        <div class="sm-section">
+          <div class="sm-label">Programs</div>
+          <button data-window="paint">Paint</button>
+          <button data-window="terminal">Linux Terminal</button>
+          <button data-window="vscode">VS Code</button>
+        </div>
+        <div class="sm-section">
+          <div class="sm-label">Places</div>
+          <button data-window="about">My Profile</button>
+          <button data-window="contact">Contact Info</button>
+          <button type="button" id="admin-open-start">Admin Login</button>
+        </div>
+        <div class="sm-bottom">
+          <button id="log-off">Log Off</button>
+          <button id="shut-down">Turn Off Computer</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== MOBILE (iPhone Pro Max style) ========== -->
+  <div id="mobile" class="mobile boot-hidden">
+    <div class="iphone-frame">
+      <div class="iphone-notch">
+        <div class="dynamic-island"></div>
+      </div>
+      <div class="iphone-screen">
+        <div class="status-bar">
+          <span class="time" id="mobile-time">9:41</span>
+          <div class="status-icons">
+            <span class="signal">■■■</span>
+            <span class="wifi">◉</span>
+            <span class="battery">100%</span>
+          </div>
+        </div>
+
+        <div class="mobile-content" id="mobile-content">
+          <div class="home-screen" id="home-screen">
+            <div class="mobile-header">
+              <div class="mobile-avatar" id="avatar-mobile"></div>
+              <h1>Menelik Admasu</h1>
+              <p class="subtitle">BSc Computer Science · Bahir Dar University</p>
+              <p class="years">2022 – 2026</p>
+            </div>
+
+            <div class="app-grid">
+              <button class="app-icon" data-page="about">
+                <div class="app-img about"></div>
+                <span>About</span>
+              </button>
+              <button class="app-icon" data-page="education">
+                <div class="app-img edu"></div>
+                <span>Education</span>
+              </button>
+              <button class="app-icon" data-page="experience">
+                <div class="app-img experience"></div>
+                <span>Experience</span>
+              </button>
+              <button class="app-icon" data-page="certifications">
+                <div class="app-img certifications"></div>
+                <span>Certifications</span>
+              </button>
+              <button class="app-icon" data-page="projects">
+                <div class="app-img projects"></div>
+                <span>Projects</span>
+              </button>
+              <button class="app-icon" data-page="skills">
+                <div class="app-img skills"></div>
+                <span>Skills</span>
+              </button>
+              <button class="app-icon" data-page="contact">
+                <div class="app-img contact"></div>
+                <span>Contact</span>
+              </button>
+              <button class="app-icon" data-page="resume">
+                <div class="app-img resume"></div>
+                <span>Resume</span>
+              </button>
+              <button class="app-icon" data-page="notepad">
+                <div class="app-img notepad"></div>
+                <span>Notepad</span>
+              </button>
+              
+<button class="app-icon" data-page="paint">
+                <div class="app-img paint"></div>
+                <span>Paint</span>
+              </button>
+              <button class="app-icon" data-page="terminal">
+                <div class="app-img terminal"></div>
+                <span>Terminal</span>
+              </button>
+              <button class="app-icon" data-page="vscode">
+                <div class="app-img vscode"></div>
+                <span>VS Code</span>
+              </button>
+
+            </div>
+
+            <div class="dock">
+              <button class="app-icon" data-page="about"><div class="app-img about"></div></button>
+              <button class="app-icon" data-page="projects"><div class="app-img projects"></div></button>
+              <button class="app-icon" data-page="terminal"><div class="app-img terminal"></div></button>
+              <button class="theme-toggle-mobile" id="theme-toggle-mobile">
+                <span class="sun">☀</span>
+                <span class="moon">☾</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="app-page" id="page-about" hidden>
+            <div class="page-header"><button class="back-btn">‹ Back</button><h2>About Me</h2></div>
+            <div class="page-body" id="content-about"></div>
+          </div>
+          <div class="app-page" id="page-education" hidden>
+            <div class="page-header"><button class="back-btn">‹ Back</button><h2>Education</h2></div>
+            <div class="page-body" id="content-education"></div>
+          </div>
+          <div class="app-page" id="page-experience" hidden>
+            <div class="page-header"><button class="back-btn">‹ Back</button><h2>Experience</h2></div>
+            <div class="page-body" id="content-experience"></div>
+          </div>
+          <div class="app-page" id="page-certifications" hidden>
+            <div class="page-header"><button class="back-btn">‹ Back</button><h2>Certifications</h2></div>
+            <div class="page-body" id="content-certifications"></div>
+          </div>
+          <div class="app-page" id="page-projects" hidden>
+            <div class="page-header"><button class="back-btn">‹ Back</button><h2>Projects</h2></div>
+            <div class="page-body" id="content-projects"></div>
+          </div>
+          <div class="app-page" id="page-skills" hidden>
+            <div class="page-header"><button class="back-btn">‹ Back</button><h2>Skills</h2></div>
+            <div class="page-body" id="content-skills"></div>
+          </div>
+          <div class="app-page" id="page-contact" hidden>
+            <div class="page-header"><button class="back-btn">‹ Back</button><h2>Contact</h2></div>
+            <div class="page-body" id="content-contact"></div>
+          </div>
+          <div class="app-page" id="page-resume" hidden>
+            <div class="page-header"><button class="back-btn">‹ Back</button><h2>Resume</h2></div>
+            <div class="page-body" id="content-resume"></div>
+          </div>
+          <div class="app-page" id="page-notepad" hidden>
+            <div class="page-header"><button class="back-btn">‹ Back</button><h2>Notepad</h2></div>
+            <div class="page-body page-body-full" id="content-notepad"></div>
+          </div>
+          <div class="app-page" id="page-paint" hidden>
+            <div class="page-header"><button class="back-btn">‹ Back</button><h2>Paint</h2></div>
+            <div class="page-body page-body-full" id="content-paint"></div>
+          </div>
+          <div class="app-page" id="page-terminal" hidden>
+            <div class="page-header"><button class="back-btn">‹ Back</button><h2>Terminal</h2></div>
+            <div class="page-body page-body-full" id="content-terminal"></div>
+          </div>
+          <div class="app-page" id="page-vscode" hidden>
+            <div class="page-header"><button class="back-btn">‹ Back</button><h2>VS Code</h2></div>
+            <div class="page-body page-body-full" id="content-vscode"></div>
+          </div>
+        </div>
+
+        <div class="home-indicator"></div>
+      </div>
+    </div>
+  </div>
+
+  <template id="window-template">
+    <div class="window" data-id="">
+      <div class="title-bar">
+        <div class="title-bar-text">
+          <span class="win-icon"></span>
+          <span class="win-title">Window</span>
+        </div>
+        <div class="title-bar-controls">
+          <button class="btn-min" aria-label="Minimize">_</button>
+          <button class="btn-max" aria-label="Maximize">□</button>
+          <button class="btn-close" aria-label="Close">×</button>
+        </div>
+      </div>
+      <div class="window-body"></div>
+    </div>
+  </template>
+
+  <!-- ========== Admin CMS (client-side, WordPress-style editor) ========== -->
+  <div id="admin-overlay" class="admin-overlay" hidden>
+    <div class="admin-panel" role="dialog" aria-labelledby="admin-title">
+      <div class="admin-header">
+        <h2 id="admin-title">Portfolio Admin</h2>
+        <button type="button" class="admin-close" id="admin-close" title="Close">×</button>
+      </div>
+
+      <!-- Login -->
+      <div class="admin-login" id="admin-login">
+        <p class="admin-hint">Sign in to edit portfolio content (saved in this browser).</p>
+        <label class="admin-label">Password
+          <input type="password" id="admin-password" autocomplete="current-password" placeholder="Enter admin password" />
+        </label>
+        <p class="admin-error" id="admin-error" hidden>Wrong password. Try again.</p>
+        <button type="button" class="admin-btn primary" id="admin-login-btn">Log in</button>
+        <p class="admin-foot">Default password set · Change it after first login (stored as a hash on this device only)</p>
+      </div>
+
+      <!-- Editor -->
+      <div class="admin-editor" id="admin-editor" hidden>
+        <div class="admin-toolbar">
+          <select id="admin-section" title="Section to edit"></select>
+          <button type="button" class="admin-btn primary" id="admin-save">Save</button>
+          <button type="button" class="admin-btn" id="admin-export">Export JSON</button>
+          <button type="button" class="admin-btn" id="admin-reset">Reset section</button>
+          <button type="button" class="admin-btn danger" id="admin-logout">Log out</button>
+        </div>
+        <p class="admin-status" id="admin-status"></p>
+        <label class="admin-label">Window title
+          <input type="text" id="admin-field-title" />
+        </label>
+        <label class="admin-label">Content (HTML allowed)
+          <textarea id="admin-field-html" rows="16" spellcheck="true"></textarea>
+        </label>
+        <details class="admin-help">
+          <summary>How this works</summary>
+          <ul>
+            <li>Edits are stored in <strong>localStorage</strong> on this device/browser only.</li>
+            <li>Visitors see the original site unless they use the same browser with your saves.</li>
+            <li>Use <strong>Export JSON</strong>, then paste updates into <code>script.js</code> (<code>CONTENT</code>) for a permanent public change.</li>
+            <li>Open admin anytime: <code>#admin</code> in the URL, or Start → Admin.</li>
+          </ul>
+        </details>
+        <div class="admin-password-change">
+          <label class="admin-label">New password (optional)
+            <input type="password" id="admin-new-password" placeholder="Min. 8 characters" minlength="8" autocomplete="new-password" />
+          </label>
+          <button type="button" class="admin-btn" id="admin-change-pass">Update password</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
