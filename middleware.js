@@ -1,30 +1,23 @@
 /**
  * Vercel Edge Middleware — https://menelikcv.vercel.app
- *
- * Sets security headers including Content-Security-Policy-Report-Only.
- * Violations are reported to /api/csp-report (see api/csp-report.js) and
- * still appear in DevTools. Promote to Content-Security-Policy when stable.
- *
- * IMPORTANT: Do NOT redirect /admin ↔ /admin/ here.
- * vercel.json has trailingSlash:false — that redirect causes ERR_TOO_MANY_REDIRECTS.
- * Admin is served via rewrites to /admin/index.html.
+ * Security headers + CSP-Report-Only. No /admin redirects (avoids trailingSlash loop).
  */
-
 export const config = {
-  matcher: [
-    "/",
-    "/admin",
-    "/admin/(.*)",
-    "/content/(.*)",
-    "/api/(.*)",
-  ],
+  matcher: ["/", "/admin", "/admin/(.*)", "/content/(.*)", "/api/(.*)"],
 };
 
-const REPORT_SUFFIX =
-  "; report-uri /api/csp-report; report-to csp-endpoint";
+const REPORT =
+  '; report-uri /api/csp-report; report-to csp-endpoint';
+const REPORT_TO =
+  '{"group":"csp-endpoint","max_age":10886400,"endpoints":[{"url":"/api/csp-report"}],"include_subdomains":false}';
+const REPORTING_ENDPOINTS = 'csp-endpoint="/api/csp-report"';
 
-/** Portfolio shell (index) — Google Fonts, Formspree, VS Code preview (srcdoc + new Function) */
-const CSP_REPORT_ONLY_SITE =
+// Shared CSP base (object-src / base-uri)
+const CSP_BASE =
+  "object-src 'none'; base-uri 'self'" + REPORT;
+
+/** Site shell */
+const CSP_SITE =
   "default-src 'self'; " +
   "script-src 'self' 'unsafe-eval'; " +
   "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; " +
@@ -34,13 +27,11 @@ const CSP_REPORT_ONLY_SITE =
   "form-action 'self' https://formspree.io mailto:; " +
   "frame-src 'self' blob: https://liveweave.com https://*.liveweave.com; " +
   "worker-src 'self' blob:; " +
-  "object-src 'none'; " +
-  "base-uri 'self'; " +
-  "frame-ancestors 'self'" +
-  REPORT_SUFFIX;
+  "frame-ancestors 'self'; " +
+  CSP_BASE;
 
-/** Decap CMS admin — unpkg bundle, inline boot script, GitHub OAuth / API */
-const CSP_REPORT_ONLY_ADMIN =
+/** Decap /admin — unpkg + GitHub OAuth */
+const CSP_ADMIN =
   "default-src 'self'; " +
   "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://unpkg.com; " +
   "style-src 'self' 'unsafe-inline' https://unpkg.com; " +
@@ -48,58 +39,46 @@ const CSP_REPORT_ONLY_ADMIN =
   "font-src 'self' data: https:; " +
   "connect-src 'self' https://api.github.com https://github.com https://*.github.com https://unpkg.com; " +
   "frame-src 'self' https://github.com; " +
-  "object-src 'none'; " +
-  "base-uri 'self'; " +
-  "frame-ancestors 'none'" +
-  REPORT_SUFFIX;
+  "frame-ancestors 'none'; " +
+  CSP_BASE;
 
-/** Reporting API endpoint group (pairs with report-to csp-endpoint) */
-const REPORT_TO =
-  '{"group":"csp-endpoint","max_age":10886400,"endpoints":[{"url":"/api/csp-report"}],"include_subdomains":false}';
+export default function middleware(request) {
+  const path = new URL(request.url).pathname;
+  const isAdmin = path === "/admin" || path.startsWith("/admin/");
 
-/** Modern Reporting-Endpoints header (Chrome prefers this alongside Report-To) */
-const REPORTING_ENDPOINTS = 'csp-endpoint="/api/csp-report"';
-
-export default async function middleware(request) {
-  const url = new URL(request.url);
-
-  // Zero-dependency continue signal (no @vercel/edge install needed)
-  let response = new Response(null, {
+  // Continue request (no redirect — vercel.json trailingSlash:false)
+  const response = new Response(null, {
     headers: { "x-middleware-next": "1" },
   });
 
   response.headers.set("X-Content-Type-Options", "nosniff");
   response.headers.set("Referrer-Policy", "strict-origin-when-cross-origin");
-  response.headers.set("X-Frame-Options", "SAMEORIGIN");
   response.headers.set(
     "Permissions-Policy",
     "camera=(), microphone=(), geolocation=()"
   );
   response.headers.set("X-Edge-Middleware", "menelik-portfolio");
-
-  // Reporting API registration (browsers that support it)
   response.headers.set("Report-To", REPORT_TO);
   response.headers.set("Reporting-Endpoints", REPORTING_ENDPOINTS);
-
-  const isAdmin =
-    url.pathname === "/admin" || url.pathname.startsWith("/admin/");
   response.headers.set(
     "Content-Security-Policy-Report-Only",
-    isAdmin ? CSP_REPORT_ONLY_ADMIN : CSP_REPORT_ONLY_SITE
+    isAdmin ? CSP_ADMIN : CSP_SITE
   );
 
   if (isAdmin) {
     response.headers.set("X-Robots-Tag", "noindex, nofollow");
     response.headers.set("Cache-Control", "private, no-store");
-    // Align with admin CSP frame-ancestors
     response.headers.set("X-Frame-Options", "DENY");
-  } else if (url.pathname.startsWith("/content/")) {
-    response.headers.set(
-      "Cache-Control",
-      "public, max-age=60, must-revalidate"
-    );
-  } else if (url.pathname.startsWith("/api/")) {
-    response.headers.set("Cache-Control", "no-store");
+  } else {
+    response.headers.set("X-Frame-Options", "SAMEORIGIN");
+    if (path.startsWith("/content/")) {
+      response.headers.set(
+        "Cache-Control",
+        "public, max-age=60, must-revalidate"
+      );
+    } else if (path.startsWith("/api/")) {
+      response.headers.set("Cache-Control", "no-store");
+    }
   }
 
   return response;
