@@ -1,0 +1,115 @@
+# Decap CMS — https://menelikcv.vercel.app
+#
+# PRODUCTION (Vercel):
+#   local_backend: false
+#   Set GITHUB_CLIENT_ID + GITHUB_CLIENT_SECRET in Vercel env
+#   GitHub OAuth App callback: https://menelikcv.vercel.app/api/callback
+#
+# LOCAL DEV (optional):
+#   Set local_backend: true
+#   Run: npx decap-server   and   npx serve .
+#
+local_backend: false
+
+backend:
+  name: github
+  repo: Menelik2/MyCV
+  branch: main
+  base_url: https://menelikcv.vercel.app
+  auth_endpoint: /api/auth
+
+site_url: https://menelikcv.vercel.app
+display_url: https://menelikcv.vercel.app
+logo_url: /static/images/profile-128.webp
+
+# ============================================================
+# Media library
+# ============================================================
+# Repo path where Decap stores uploaded files (committed to Git):
+media_folder: static/images
+# Public URL path on https://menelikcv.vercel.app :
+public_folder: /static/images
+# Max upload size ~2.5 MB (bytes)
+media_library:
+  max_file_size: 2500000
+
+publish_mode: simple
+slug:
+  encoding: ascii
+  clean_accents: true
+
+collections:
+  - name: portfolio
+    label: Portfolio sections
+    description: Content shown in XP windows and the mobile app
+    files:
+      - name: about
+        label: About Me
+        file: content/about.json
+        fields:
+          - { label: Window title, name: title, widget: string }
+          - { label: Icon class, name: iconClass, widget: string, required: false }
+          - {
+              label: Profile photo,
+              name: profileImage,
+              widget: image,
+              required: false,
+              media_folder: static/images,
+              public_folder: /static/images,
+              choose_url: false,
+              allow_multiple: false,
+              hint: "Pick profile-320.webp / profile.jpg or upload a new square photo"
+            }
+          - {
+              label: Body HTML,
+              name: html,
+              widget: text,
+              hint: "HTML rendered in the About window"
+            }
+
+      - name: education
+        label: Education
+        file: content/education.json
+        fields: &html_fields
+          - { label: Window title, name: title, widget: string }
+          - { label: Icon class, name: iconClass, widget: string, required: false }
+          - { label: Body HTML, name: html, widget: text }
+
+      - name: experience
+        label: Experience
+        file: content/experience.json
+        fields: *html_fields
+
+      - name: certifications
+        label: Certifications
+        file: content/certifications.json
+        fields: *html_fields
+
+      - name: projects
+        label: Projects
+        file: content/projects.json
+        fields: *html_fields
+
+      - name: skills
+        label: Skills
+        file: content/skills.json
+        fields: *html_fields
+
+      - name: contact
+        label: Contact
+        file: content/contact.json
+        fields: *html_fields
+
+      - name: resume
+        label: Resume
+        file: content/resume.json
+        fields: *html_fields
+
+  - name: sticky
+    label: Desktop sticky note
+    files:
+      - name: note
+        label: Sticky note text
+        file: content/sticky-note.json
+        fields:
+          - { label: Note text, name: text, widget: text }

@@ -1,0 +1,21 @@
+# Keep deploys small and fast
+node_modules
+.git
+.github
+*.zip
+menelik-portfolio*.zip
+.DS_Store
+npm-debug.log*
+yarn.lock
+package-lock.json
+.env
+.env.*
+!.env.example
+.cache
+tmp
+scripts
+README.md
+README-DECAP.md
+DEPLOY.md
+FEATURES.md
+**/*.map

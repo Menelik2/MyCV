@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>Content Manager — Menelik Portfolio</title>
+  <!-- Decap loads config from ./config.yml (same folder) -->
+  <link href="config.yml" type="text/yaml" rel="cms-config-url" />
+  <script src="https://unpkg.com/decap-cms@^3.3.3/dist/decap-cms.js"></script>
+  <style>
+    html, body {
+      margin: 0;
+      min-height: 100%;
+      background: #1e1e24;
+      font-family: Tahoma, "Segoe UI", system-ui, sans-serif;
+      color: #ccc;
+    }
+    .cms-boot {
+      position: fixed;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      pointer-events: none;
+      z-index: 0;
+    }
+    .cms-boot h1 { font-size: 16px; font-weight: 600; color: #e2e8f0; margin: 0; }
+    .cms-boot p { font-size: 12px; color: #94a3b8; margin: 0; max-width: 380px; text-align: center; line-height: 1.45; }
+  </style>
+</head>
+<body>
+  <div class="cms-boot" id="cms-boot">
+    <h1>Portfolio Content Manager</h1>
+    <p>
+      Loading Decap CMS… Log in with <strong>GitHub</strong> when prompted.
+      Requires Vercel env vars <code>GITHUB_CLIENT_ID</code> and <code>GITHUB_CLIENT_SECRET</code>.
+    </p>
+  </div>
+  <script>
+    const boot = document.getElementById("cms-boot");
+    const obs = new MutationObserver(() => {
+      if (document.getElementById("nc-root") || document.querySelector("[class*='App']") || document.querySelector("[class*='Login']")) {
+        if (boot) boot.style.display = "none";
+        obs.disconnect();
+      }
+    });
+    obs.observe(document.body, { childList: true, subtree: true });
+    // Hide splash after a few seconds even if selector changes
+    setTimeout(() => { if (boot) boot.style.opacity = "0.35"; }, 4000);
+  </script>
+</body>
+</html>

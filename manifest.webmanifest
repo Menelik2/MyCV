@@ -1,0 +1,31 @@
+{
+  "name": "Menelik OS — Portfolio",
+  "short_name": "Menelik OS",
+  "description": "Interactive Windows XP style portfolio of Menelik Admasu",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#0b1220",
+  "theme_color": "#245edb",
+  "orientation": "any",
+  "icons": [
+    {
+      "src": "static/images/profile-128.webp",
+      "sizes": "128x128",
+      "type": "image/webp",
+      "purpose": "any"
+    },
+    {
+      "src": "static/images/profile-320.webp",
+      "sizes": "320x320",
+      "type": "image/webp",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "profile.jpg",
+      "sizes": "512x512",
+      "type": "image/jpeg",
+      "purpose": "any"
+    }
+  ]
+}
