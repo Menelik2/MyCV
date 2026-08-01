@@ -1,5 +1,6 @@
 /**
  * Vercel Edge Middleware — https://menelikcv.vercel.app
+<<<<<<< HEAD
  * Security headers + CSP-Report-Only. No /admin redirects (avoids trailingSlash loop).
  */
 export const config = {
@@ -15,6 +16,61 @@ const REPORTING_ENDPOINTS = 'csp-endpoint="/api/csp-report"';
 // Shared CSP base (object-src / base-uri)
 const CSP_BASE =
   "object-src 'none'; base-uri 'self'" + REPORT;
+=======
+ * Security headers + CSP-Report-Only.
+ *
+ * Exclusion rules (never run middleware on these):
+ *   - /api/*          serverless functions (OAuth, CSP reports)
+ *   - static assets   css/js/images/fonts/maps/manifest/sw
+ *   - binary/docs     pdf, zip, webmanifest
+ *
+ * Matcher uses negative lookahead so excluded paths skip Edge entirely.
+ */
+export const config = {
+  matcher: [
+    /*
+     * Match all paths except:
+     * - api (Vercel serverless)
+     * - _next / static internals (if any)
+     * - common static file extensions
+     * - sw.js / manifest (PWA)
+     */
+    {
+      source:
+        "/((?!api/|_next/|static/|.*\\.(?:css|js|mjs|map|jpg|jpeg|png|gif|svg|webp|avif|ico|woff|woff2|ttf|eot|pdf|zip|webmanifest)$).*)",
+    },
+    "/",
+  ],
+};
+
+/** Paths that must never be processed (defense in depth if matcher widens). */
+const EXCLUDE_PREFIXES = ["/api/", "/_next/", "/static/"];
+const EXCLUDE_EXACT = new Set([
+  "/sw.js",
+  "/manifest.webmanifest",
+  "/favicon.ico",
+  "/robots.txt",
+]);
+const EXCLUDE_EXT =
+  /\.(?:css|js|mjs|map|jpg|jpeg|png|gif|svg|webp|avif|ico|woff|woff2|ttf|eot|pdf|zip|webmanifest)$/i;
+
+function shouldBypass(pathname) {
+  if (EXCLUDE_EXACT.has(pathname)) return true;
+  if (EXCLUDE_PREFIXES.some((p) => pathname === p.slice(0, -1) || pathname.startsWith(p))) {
+    return true;
+  }
+  if (EXCLUDE_EXT.test(pathname)) return true;
+  return false;
+}
+
+const REPORT =
+  "; report-uri /api/csp-report; report-to csp-endpoint";
+const REPORT_TO =
+  '{"group":"csp-endpoint","max_age":10886400,"endpoints":[{"url":"/api/csp-report"}],"include_subdomains":false}';
+const REPORTING_ENDPOINTS = 'csp-endpoint="/api/csp-report"';
+
+const CSP_BASE = "object-src 'none'; base-uri 'self'" + REPORT;
+>>>>>>> d67564d (Describe what you updated here)
 
 /** Site shell */
 const CSP_SITE =
@@ -44,9 +100,22 @@ const CSP_ADMIN =
 
 export default function middleware(request) {
   const path = new URL(request.url).pathname;
+<<<<<<< HEAD
   const isAdmin = path === "/admin" || path.startsWith("/admin/");
 
   // Continue request (no redirect — vercel.json trailingSlash:false)
+=======
+
+  // Defense in depth: skip excluded paths even if matcher changes later
+  if (shouldBypass(path)) {
+    return new Response(null, {
+      headers: { "x-middleware-next": "1" },
+    });
+  }
+
+  const isAdmin = path === "/admin" || path.startsWith("/admin/");
+
+>>>>>>> d67564d (Describe what you updated here)
   const response = new Response(null, {
     headers: { "x-middleware-next": "1" },
   });
@@ -76,8 +145,11 @@ export default function middleware(request) {
         "Cache-Control",
         "public, max-age=60, must-revalidate"
       );
+<<<<<<< HEAD
     } else if (path.startsWith("/api/")) {
       response.headers.set("Cache-Control", "no-store");
+=======
+>>>>>>> d67564d (Describe what you updated here)
     }
   }
 

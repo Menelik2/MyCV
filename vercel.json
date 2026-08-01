@@ -179,5 +179,5 @@
       "maxDuration": 5
     }
   },
-  "ignoreCommand": "git diff --quiet HEAD^ HEAD -- . ':(exclude)*.md' ':(exclude)LICENSE' ':(exclude).gitignore' ':(exclude).vercelignore' ':(exclude).env.example'"
+  "ignoreCommand": "bash -c 'if ! git rev-parse -q --verify HEAD^ >/dev/null; then exit 1; fi; if ! git diff --quiet HEAD^ HEAD -- api/ middleware.js vercel.json; then exit 1; fi; git diff --quiet HEAD^ HEAD -- . \":(exclude)*.md\" \":(exclude)LICENSE\" \":(exclude).gitignore\" \":(exclude).vercelignore\" \":(exclude).env.example\"'"
 }

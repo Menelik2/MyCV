@@ -22,7 +22,7 @@
 Environments: **Production** and **Preview**. Then **Redeploy**.
 
 ### 3. Repo access
-- `admin/config.yml` → `repo: Menelik2/xp-portfolio` (branch `main`)
+- `admin/config.yml` → `repo: Menelik2/MyCV` (branch `main`)
 - Your GitHub user must be able to push to that repo (scope `repo`)
 - The repo must exist on GitHub and contain the portfolio files
 

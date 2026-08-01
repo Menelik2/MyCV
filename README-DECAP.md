@@ -56,7 +56,7 @@ local_backend: false   # important on Vercel
 
 backend:
   name: github
-  repo: YOUR_USER/YOUR_REPO   # e.g. Menelik2/xp-portfolio
+  repo: YOUR_USER/YOUR_REPO   # e.g. Menelik2/MyCV
   branch: main
   base_url: https://menelikcv.vercel.app
   auth_endpoint: /api/auth
