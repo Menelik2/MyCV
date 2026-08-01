@@ -776,62 +776,306 @@
   /* ========== Blog / My Computer ========== */
   /* ========== Blog / My Computer ========== */
   function buildBlog() {
-    const wrap = el(`<div class="blog-app">
-      <div class="blog-sidebar">
-        <div class="blog-side-title">📁 My Computer</div>
-        <button type="button" class="blog-nav active" data-view="posts">Documents</button>
-        <button type="button" class="blog-nav" data-view="links">Network Places</button>
-        <button type="button" class="blog-nav" data-view="pack">Shared Downloads</button>
+    const wrap = el(`<div class="blog-app mc-app">
+      <div class="mc-toolbar">
+        <button type="button" class="mc-tb" data-mc-act="back" title="Back">◀</button>
+        <button type="button" class="mc-tb" data-mc-act="up" title="Up">⬆</button>
+        <span class="mc-tb-sep"></span>
+        <button type="button" class="mc-tb" data-mc-act="refresh" title="Refresh">↻</button>
+        <span class="mc-path" id="mc-path">My Computer</span>
+        <input type="search" class="mc-search" id="mc-search" placeholder="Search documents…" aria-label="Search" />
       </div>
-      <div class="blog-main"></div>
-    </div>`);
-    const main = wrap.querySelector(".blog-main");
-
-    function showPosts() {
-      main.innerHTML =
-        `<h3 style="margin-top:0">Documents</h3>` +
-        BLOG_POSTS.map(
-          (p) => `<article class="blog-post" data-id="${p.id}">
-          <h4>${p.title}</h4>
-          <time>${p.date}</time>
-          <p>${p.body}</p>
-        </article>`
-        ).join("");
-    }
-    function showLinks() {
-      main.innerHTML = `<h3 style="margin-top:0">My Network Places</h3>
-        <ul class="blog-links">
-          <li><a href="https://github.com/Menelik2" target="_blank" rel="noopener">github.com/Menelik2</a></li>
-          <li><a href="https://menelikcv.vercel.app" target="_blank" rel="noopener">menelikcv.vercel.app</a></li>
-          <li><a href="https://yeni-movie.vercel.app" target="_blank" rel="noopener">Yeni Movie</a></li>
-          <li><a href="https://yenetyping.vercel.app" target="_blank" rel="noopener">Yeni Typing</a></li>
-          <li><a href="mailto:linuxos777@gmail.com">linuxos777@gmail.com</a></li>
-        </ul>`;
-    }
-    function showPack() {
-      main.innerHTML = `<h3 style="margin-top:0">Download Pack</h3>
-        <p>Grab portfolio assets in one place.</p>
-        <div class="pack-actions">
-          <a class="proj-btn primary" href="resume.pdf" download="Menelik-Admasu-Resume.pdf">Resume PDF</a>
-          <button type="button" class="proj-btn" id="pack-json">Export content JSON</button>
-          <button type="button" class="proj-btn" id="pack-vcard">Contact card (.vcf)</button>
+      <div class="mc-body">
+        <div class="blog-sidebar mc-sidebar">
+          <div class="blog-side-title">📁 My Computer</div>
+          <button type="button" class="blog-nav active" data-view="drives">Drives</button>
+          <button type="button" class="blog-nav" data-view="posts">Documents</button>
+          <button type="button" class="blog-nav" data-view="links">Network Places</button>
+          <button type="button" class="blog-nav" data-view="apps">Programs</button>
+          <button type="button" class="blog-nav" data-view="pack">Shared Downloads</button>
+          <button type="button" class="blog-nav" data-view="sys">System</button>
+          <div class="mc-side-foot">
+            <div class="mc-disk-meter" title="Portfolio storage (fun)">
+              <div class="mc-disk-fill" style="width:62%"></div>
+            </div>
+            <span class="mc-disk-label">C: · 62% used</span>
+          </div>
         </div>
-        <p class="muted" style="margin-top:12px;font-size:12px">JSON export is useful for backups or Decap. VCF opens in phone contacts.</p>`;
+        <div class="blog-main mc-main"></div>
+      </div>
+      <div class="mc-statusbar">
+        <span class="mc-status-left" id="mc-status">Ready</span>
+        <span class="mc-status-right">Menelik OS</span>
+      </div>
+    </div>`);
+
+    const main = wrap.querySelector(".blog-main");
+    const pathEl = wrap.querySelector("#mc-path");
+    const statusEl = wrap.querySelector("#mc-status");
+    const searchEl = wrap.querySelector("#mc-search");
+    let viewHistory = ["drives"];
+    let currentView = "drives";
+
+    function setPath(label) {
+      if (pathEl) pathEl.textContent = label;
+    }
+    function setStatus(msg) {
+      if (statusEl) statusEl.textContent = msg;
+    }
+    function setNav(view) {
+      wrap.querySelectorAll(".blog-nav").forEach((b) => {
+        b.classList.toggle("active", b.dataset.view === view);
+      });
+    }
+
+    function showDrives() {
+      currentView = "drives";
+      setPath("My Computer");
+      setNav("drives");
+      setStatus("5 objects");
+      main.innerHTML = `
+        <p class="mc-lead">Local devices and places on this portfolio “PC”.</p>
+        <div class="mc-drive-grid">
+          <button type="button" class="mc-drive" data-open-view="posts">
+            <span class="mc-drive-icon mc-icon-hdd" aria-hidden="true"></span>
+            <span class="mc-drive-meta">
+              <strong>Local Disk (C:)</strong>
+              <span>Documents · notes &amp; posts</span>
+              <span class="mc-drive-bar"><i style="width:62%"></i></span>
+            </span>
+          </button>
+          <button type="button" class="mc-drive" data-open-view="apps">
+            <span class="mc-drive-icon mc-icon-cd" aria-hidden="true"></span>
+            <span class="mc-drive-meta">
+              <strong>Programs (D:)</strong>
+              <span>Open portfolio apps</span>
+              <span class="mc-drive-bar"><i style="width:40%"></i></span>
+            </span>
+          </button>
+          <button type="button" class="mc-drive" data-open-view="links">
+            <span class="mc-drive-icon mc-icon-net" aria-hidden="true"></span>
+            <span class="mc-drive-meta">
+              <strong>Network Places</strong>
+              <span>GitHub, live demos, email</span>
+              <span class="mc-drive-bar mc-drive-bar-net"><i style="width:100%"></i></span>
+            </span>
+          </button>
+          <button type="button" class="mc-drive" data-open-view="pack">
+            <span class="mc-drive-icon mc-icon-share" aria-hidden="true"></span>
+            <span class="mc-drive-meta">
+              <strong>Shared Downloads</strong>
+              <span>Resume, vCard, content JSON</span>
+              <span class="mc-drive-bar"><i style="width:28%"></i></span>
+            </span>
+          </button>
+          <button type="button" class="mc-drive" data-open-view="sys">
+            <span class="mc-drive-icon mc-icon-sys" aria-hidden="true"></span>
+            <span class="mc-drive-meta">
+              <strong>System</strong>
+              <span>About this PC · skills snapshot</span>
+              <span class="mc-drive-bar"><i style="width:75%"></i></span>
+            </span>
+          </button>
+        </div>`;
+      main.querySelectorAll("[data-open-view]").forEach((btn) => {
+        btn.addEventListener("click", () => go(btn.dataset.openView));
+      });
+    }
+
+    function showPosts(filter) {
+      currentView = "posts";
+      setPath("My Computer \\ Documents");
+      setNav("posts");
+      const q = (filter || "").trim().toLowerCase();
+      const list = BLOG_POSTS.filter(
+        (p) => !q || p.title.toLowerCase().includes(q) || p.body.toLowerCase().includes(q)
+      );
+      setStatus(list.length + " document(s)");
+      main.innerHTML =
+        `<div class="mc-section-head">
+          <h3>Documents</h3>
+          <span class="mc-badge">${list.length}</span>
+        </div>` +
+        (list.length
+          ? list
+              .map(
+                (p) => `<article class="blog-post mc-doc" data-id="${p.id}">
+            <div class="mc-doc-icon" aria-hidden="true">📄</div>
+            <div class="mc-doc-body">
+              <h4>${p.title}</h4>
+              <time datetime="${p.date}">${p.date}</time>
+              <p>${p.body}</p>
+            </div>
+          </article>`
+              )
+              .join("")
+          : `<p class="mc-empty">No documents match “${q.replace(/"/g, "")}”.</p>`);
+    }
+
+    function showLinks() {
+      currentView = "links";
+      setPath("My Computer \\ Network Places");
+      setNav("links");
+      const places = [
+        { href: "https://github.com/Menelik2", title: "GitHub", sub: "@Menelik2", icon: "⌥", tone: "gh" },
+        { href: "https://menelikcv.vercel.app", title: "This portfolio", sub: "menelikcv.vercel.app", icon: "🖥", tone: "site" },
+        { href: "https://yeni-movie.vercel.app", title: "Yeni Movie", sub: "Live demo", icon: "🎬", tone: "movie" },
+        { href: "https://yenetyping.vercel.app", title: "Yeni Typing", sub: "Live demo", icon: "⌨️", tone: "type" },
+        { href: "https://www.linkedin.com/in/menelikadmasu", title: "LinkedIn", sub: "menelikadmasu", icon: "in", tone: "in" },
+        { href: "mailto:linuxos777@gmail.com", title: "Email", sub: "linuxos777@gmail.com", icon: "✉", tone: "mail" },
+      ];
+      setStatus(places.length + " network places");
+      main.innerHTML =
+        `<div class="mc-section-head"><h3>My Network Places</h3></div>
+        <div class="mc-net-grid">` +
+        places
+          .map(
+            (p) => `<a class="mc-net-card mc-tone-${p.tone}" href="${p.href}" target="${p.href.startsWith("mailto:") ? "_self" : "_blank"}" rel="noopener">
+            <span class="mc-net-ico">${p.icon}</span>
+            <span class="mc-net-title">${p.title}</span>
+            <span class="mc-net-sub">${p.sub}</span>
+          </a>`
+          )
+          .join("") +
+        `</div>`;
+    }
+
+    function showApps() {
+      currentView = "apps";
+      setPath("My Computer \\ Programs");
+      setNav("apps");
+      const apps = [
+        { id: "about", label: "About Me", icon: "👤" },
+        { id: "projects", label: "Projects", icon: "💼" },
+        { id: "skills", label: "Skills", icon: "📊" },
+        { id: "resume", label: "Resume", icon: "📋" },
+        { id: "contact", label: "Contact", icon: "✉" },
+        { id: "terminal", label: "Terminal", icon: "⬛" },
+        { id: "paint", label: "Paint", icon: "🎨" },
+        { id: "minesweeper", label: "Minesweeper", icon: "💣" },
+        { id: "help", label: "Help", icon: "❓" },
+      ];
+      setStatus(apps.length + " programs");
+      main.innerHTML =
+        `<div class="mc-section-head"><h3>Programs</h3><span class="mc-muted">Double-click style — single click opens</span></div>
+        <div class="mc-app-grid">` +
+        apps
+          .map(
+            (a) => `<button type="button" class="mc-app-tile" data-open-app="${a.id}">
+            <span class="mc-app-emoji" aria-hidden="true">${a.icon}</span>
+            <span>${a.label}</span>
+          </button>`
+          )
+          .join("") +
+        `</div>`;
+      main.querySelectorAll("[data-open-app]").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          if (typeof openWindow === "function") openWindow(btn.dataset.openApp);
+        });
+      });
+    }
+
+    function showPack() {
+      currentView = "pack";
+      setPath("My Computer \\ Shared Downloads");
+      setNav("pack");
+      setStatus("3 downloads available");
+      main.innerHTML = `
+        <div class="mc-section-head"><h3>Shared Downloads</h3></div>
+        <p class="mc-lead">Grab portfolio assets in one place.</p>
+        <div class="mc-pack-grid">
+          <a class="mc-pack-card" href="resume.pdf" download="Menelik-Admasu-Resume.pdf">
+            <span class="mc-pack-ico">📄</span>
+            <strong>Resume PDF</strong>
+            <span>Menelik-Admasu-Resume.pdf</span>
+          </a>
+          <button type="button" class="mc-pack-card" id="pack-json">
+            <span class="mc-pack-ico">📦</span>
+            <strong>Content JSON</strong>
+            <span>Backup / Decap export</span>
+          </button>
+          <button type="button" class="mc-pack-card" id="pack-vcard">
+            <span class="mc-pack-ico">📇</span>
+            <strong>Contact card</strong>
+            <span>Menelik-Admasu.vcf</span>
+          </button>
+        </div>
+        <p class="muted mc-hint">JSON is useful for backups. VCF opens in phone contacts.</p>`;
       main.querySelector("#pack-json")?.addEventListener("click", exportContentJson);
       main.querySelector("#pack-vcard")?.addEventListener("click", exportVCard);
     }
 
-    wrap.querySelectorAll(".blog-nav").forEach((btn) => {
-      btn.addEventListener("click", () => {
-        wrap.querySelectorAll(".blog-nav").forEach((b) => b.classList.remove("active"));
-        btn.classList.add("active");
-        const v = btn.dataset.view;
-        if (v === "posts") showPosts();
-        else if (v === "links") showLinks();
-        else showPack();
+    function showSys() {
+      currentView = "sys";
+      setPath("My Computer \\ System");
+      setNav("sys");
+      setStatus("System information");
+      const ua = (navigator.userAgent || "").slice(0, 80);
+      main.innerHTML = `
+        <div class="mc-section-head"><h3>System Properties</h3></div>
+        <div class="mc-sys-card">
+          <div class="mc-sys-banner">Menelik OS</div>
+          <dl class="mc-sys-dl">
+            <div><dt>Owner</dt><dd>Menelik Admasu</dd></div>
+            <div><dt>Role</dt><dd>BSc Computer Science · Bahir Dar University</dd></div>
+            <div><dt>Experience</dt><dd>10+ years IT ops · networking · hardware</dd></div>
+            <div><dt>Shell</dt><dd>Windows XP + iPhone layout (browser)</dd></div>
+            <div><dt>Stack</dt><dd>HTML · CSS · JavaScript · Vercel</dd></div>
+            <div><dt>Client</dt><dd title="${ua.replace(/"/g, "")}">${(navigator.platform || "Web") + " · " + (navigator.language || "")}</dd></div>
+          </dl>
+          <div class="mc-sys-actions">
+            <button type="button" class="proj-btn primary" data-open-app="about">Open About Me</button>
+            <button type="button" class="proj-btn" data-open-app="skills">View Skills</button>
+            <button type="button" class="proj-btn" data-open-app="control">Control Panel</button>
+          </div>
+        </div>`;
+      main.querySelectorAll("[data-open-app]").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          if (typeof openWindow === "function") openWindow(btn.dataset.openApp);
+        });
       });
+    }
+
+    function go(view, pushHist) {
+      if (pushHist !== false && view !== currentView) {
+        viewHistory.push(view);
+        if (viewHistory.length > 20) viewHistory.shift();
+      }
+      if (view === "drives") showDrives();
+      else if (view === "posts") showPosts(searchEl && searchEl.value);
+      else if (view === "links") showLinks();
+      else if (view === "apps") showApps();
+      else if (view === "pack") showPack();
+      else if (view === "sys") showSys();
+      else showDrives();
+    }
+
+    wrap.querySelectorAll(".blog-nav").forEach((btn) => {
+      btn.addEventListener("click", () => go(btn.dataset.view));
     });
-    showPosts();
+
+    wrap.querySelector('[data-mc-act="back"]')?.addEventListener("click", () => {
+      if (viewHistory.length > 1) {
+        viewHistory.pop();
+        go(viewHistory[viewHistory.length - 1], false);
+      } else go("drives", false);
+    });
+    wrap.querySelector('[data-mc-act="up"]')?.addEventListener("click", () => go("drives"));
+    wrap.querySelector('[data-mc-act="refresh"]')?.addEventListener("click", () => {
+      go(currentView, false);
+      setStatus("Refreshed");
+    });
+
+    let searchTimer;
+    searchEl?.addEventListener("input", () => {
+      clearTimeout(searchTimer);
+      searchTimer = setTimeout(() => {
+        if (currentView !== "posts") go("posts");
+        else showPosts(searchEl.value);
+      }, 180);
+    });
+
+    showDrives();
     return wrap;
   }
 
@@ -1245,13 +1489,13 @@ END:VCARD`;
     }
     if (CONTENT.contact && CONTENT.contact.html) {
       if (!CONTENT.contact.html.includes("contact-success-hint")) {
-        CONTENT.contact.html += `<p class="contact-success-hint muted" style="font-size:12px">Tip: create a free form at formspree.io and replace <code>YOUR_FORM_ID</code> in the form action for in-browser delivery. Until then, Send opens your email client (mailto).</p>`;
+        CONTENT.contact.html += `<p class="contact-success-hint muted" style="font-size:12px">Contact form is connected to Formspree (<code>xqervlnj</code>). Messages go to linuxos777@gmail.com.</p>`;
       }
       // Prefer configured Formspree id from localStorage if user set one
       try {
         const fid = localStorage.getItem("menelik-formspree-id");
-        if (fid && fid !== "YOUR_FORM_ID") {
-          CONTENT.contact.html = CONTENT.contact.html.replace(/YOUR_FORM_ID/g, fid);
+        if (fid && fid !== "xqervlnj") {
+          CONTENT.contact.html = CONTENT.contact.html.replace(/xqervlnj/g, fid);
         }
       } catch (_) {}
     }
