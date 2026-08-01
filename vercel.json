@@ -2,8 +2,8 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "version": 2,
   "framework": null,
-  "installCommand": "echo \"\u23ed skip install \u2014 static site, no dependencies\"",
-  "buildCommand": "echo \"\u23ed skip build \u2014 static output\"",
+  "installCommand": ":",
+  "buildCommand": ":",
   "outputDirectory": ".",
   "cleanUrls": true,
   "trailingSlash": false,
@@ -211,6 +211,9 @@
       "memory": 128,
       "maxDuration": 3
     }
-  },
-  "ignoreCommand": "bash -c 'if ! git rev-parse -q --verify HEAD^ >/dev/null; then exit 1; fi; if ! git diff --quiet HEAD^ HEAD -- api/ middleware.js vercel.json; then exit 1; fi; git diff --quiet HEAD^ HEAD -- . \":(exclude)*.md\" \":(exclude)LICENSE\" \":(exclude).gitignore\" \":(exclude).vercelignore\" \":(exclude).env.example\"'"
+  }
+}
+ "ignoreCommand": "git rev-parse HEAD^ >/dev/null 2>&1||exit 1;git diff --quiet HEAD^ HEAD -- api middleware.js vercel.json||exit 1;git diff --quiet HEAD^ HEAD -- . \":(exclude)*.md\" \":(exclude)LICENSE\" \":(exclude).gitignore\" \":(exclude).vercelignore\""
+}
+el.json; then exit 1; fi; git diff --quiet HEAD^ HEAD -- . \":(exclude)*.md\" \":(exclude)LICENSE\" \":(exclude).gitignore\" \":(exclude).vercelignore\" \":(exclude).env.example\"'"
 }
