@@ -5430,6 +5430,12 @@ async function finishBoot(fullscreenAlreadyRequested) {
 
   setTimeout(() => {
     boot?.remove();
+    // Open About Me window on desktop only (not mobile home screen)
+    try {
+      if (window.innerWidth >= 900 && typeof openWindow === "function") {
+        openWindow("about");
+      }
+    } catch (_) {}
     // Do not auto-open apps — user starts on a clean desktop after click-to-enter
   }, 650);
 }
