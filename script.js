@@ -474,14 +474,14 @@ const CONTENT = {
       </div>
 
       <h3 class="contact-form-heading">Send a message</h3>
-      <form class="contact-form" id="portfolio-contact-form" action="https://formspree.io/f/YOUR_FORM_ID" method="POST">
+      <form class="contact-form" id="portfolio-contact-form" action="https://formspree.io/f/xqervlnj" method="POST">
         <input type="hidden" name="_subject" value="Portfolio contact — Menelik OS" />
         <input type="text" name="_gotcha" tabindex="-1" autocomplete="off" style="position:absolute;left:-9999px;opacity:0;height:0;width:0" aria-hidden="true" />
         <label>Name<input type="text" name="name" required placeholder="Your name" autocomplete="name" /></label>
         <label>Email<input type="email" name="email" required placeholder="you@example.com" autocomplete="email" /></label>
         <label>Message<textarea name="message" rows="4" required placeholder="How can I help?"></textarea></label>
         <button type="submit" class="proj-btn primary" id="contact-send-btn">Send message</button>
-        <p class="contact-form-note">Messages are delivered to <strong>linuxos777@gmail.com</strong>. Configure Formspree once so Send works in the browser (no email app required).</p>
+        <p class="contact-form-note">Messages are delivered to <strong>linuxos777@gmail.com</strong>. Sent securely via Formspree.</p>
         <p class="contact-form-status" id="contact-form-status" hidden role="status"></p>
       </form>
     `
@@ -4836,7 +4836,8 @@ function getFormspreeId() {
     const ls = localStorage.getItem("menelik-formspree-id");
     if (ls && ls !== "YOUR_FORM_ID" && /^[a-zA-Z0-9]+$/.test(ls.trim())) return ls.trim();
   } catch (_) {}
-  return null;
+  // Default Formspree form (portfolio contact)
+  return "xqervlnj";
 }
 
 function setContactStatus(form, text, kind) {

@@ -262,11 +262,23 @@ This project is optimized for **near-instant Vercel deploys**:
 
 | Setting | Effect |
 |---------|--------|
-| `installCommand` | Skips `npm install` (no runtime dependencies) |
-| `buildCommand` | No compile step — static files only |
-| `ignoreCommand` | Skips redeploy when only Markdown/docs change |
-| `.vercelignore` | Omits docs, scripts, zip files, `.github` from upload |
-| `middleware.js` | Zero-dependency Edge pass-through (no `@vercel/edge`) |
-| API functions | 128 MB memory, short `maxDuration` |
+| `framework: null` | No framework detection / toolchain |
+| `installCommand: ":"` | Shell no-op — skips `npm install` entirely |
+| `buildCommand: ":"` | Shell no-op — no compile step (static files only) |
+| `outputDirectory: "."` | Publish project root as-is |
+| `ignoreCommand` | Skips redeploy when only Markdown/docs change (≤256 chars) |
+| `.vercelignore` | Omits docs, scripts, locks, zips, `.github` from upload |
+| `middleware.js` | Zero-dependency Edge (no `@vercel/edge` package) |
+| API functions | 128 MB memory, short `maxDuration` (3–8s) |
+
+**Dashboard checklist (must match):**
+
+| Field | Value |
+|-------|--------|
+| Framework Preset | **Other** |
+| Root Directory | `.` |
+| Install Command | `:` (or leave blank if overridden by `vercel.json`) |
+| Build Command | `:` |
+| Output Directory | `.` |
 
 Expected deploy time is typically **a few seconds** after the git push is received.
