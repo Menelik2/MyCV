@@ -1,7 +1,5 @@
 # Keep deploys small and fast
 node_modules
-
-
 *.zip
 menelik-portfolio*.zip
 .DS_Store
