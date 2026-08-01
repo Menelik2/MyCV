@@ -5436,7 +5436,6 @@ async function finishBoot(fullscreenAlreadyRequested) {
         openWindow("about");
       }
     } catch (_) {}
-    // Do not auto-open apps — user starts on a clean desktop after click-to-enter
   }, 650);
 }
 
