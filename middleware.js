@@ -4,6 +4,10 @@
  * Sets security headers including Content-Security-Policy-Report-Only.
  * Violations are reported to /api/csp-report (see api/csp-report.js) and
  * still appear in DevTools. Promote to Content-Security-Policy when stable.
+ *
+ * IMPORTANT: Do NOT redirect /admin ↔ /admin/ here.
+ * vercel.json has trailingSlash:false — that redirect causes ERR_TOO_MANY_REDIRECTS.
+ * Admin is served via rewrites to /admin/index.html.
  */
 
 export const config = {
@@ -58,11 +62,6 @@ const REPORTING_ENDPOINTS = 'csp-endpoint="/api/csp-report"';
 
 export default async function middleware(request) {
   const url = new URL(request.url);
-
-  if (url.pathname === "/admin") {
-    url.pathname = "/admin/";
-    return Response.redirect(url, 308);
-  }
 
   // Zero-dependency continue signal (no @vercel/edge install needed)
   let response = new Response(null, {
