@@ -2,8 +2,8 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "version": 2,
   "framework": null,
-  "installCommand": "echo \"⏭ skip install — static site, no dependencies\"",
-  "buildCommand": "echo \"⏭ skip build — static output\"",
+  "installCommand": "echo \"\u23ed skip install \u2014 static site, no dependencies\"",
+  "buildCommand": "echo \"\u23ed skip build \u2014 static output\"",
   "outputDirectory": ".",
   "cleanUrls": true,
   "trailingSlash": false,
@@ -34,6 +34,39 @@
         {
           "key": "Content-Security-Policy-Report-Only",
           "value": "default-src 'self'; script-src 'self' 'unsafe-eval'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: blob: https:; connect-src 'self' https://formspree.io https://jsonplaceholder.typicode.com https://api.github.com https://dog.ceo https://*.dog.ceo https://httpbin.org; form-action 'self' https://formspree.io mailto:; frame-src 'self' blob: https://liveweave.com https://*.liveweave.com; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; frame-ancestors 'self'; report-uri /api/csp-report; report-to csp-endpoint"
+        }
+      ]
+    },
+    {
+      "source": "/api/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-store, no-cache, must-revalidate"
+        },
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, nofollow"
+        },
+        {
+          "key": "Referrer-Policy",
+          "value": "no-referrer"
+        },
+        {
+          "key": "Access-Control-Allow-Origin",
+          "value": "*"
+        },
+        {
+          "key": "Access-Control-Allow-Methods",
+          "value": "GET, POST, OPTIONS"
+        },
+        {
+          "key": "Access-Control-Allow-Headers",
+          "value": "Content-Type, Reporting-Endpoints"
         }
       ]
     },
@@ -168,15 +201,15 @@
   "functions": {
     "api/auth.js": {
       "memory": 128,
-      "maxDuration": 10
+      "maxDuration": 5
     },
     "api/callback.js": {
       "memory": 128,
-      "maxDuration": 10
+      "maxDuration": 8
     },
     "api/csp-report.js": {
       "memory": 128,
-      "maxDuration": 5
+      "maxDuration": 3
     }
   },
   "ignoreCommand": "bash -c 'if ! git rev-parse -q --verify HEAD^ >/dev/null; then exit 1; fi; if ! git diff --quiet HEAD^ HEAD -- api/ middleware.js vercel.json; then exit 1; fi; git diff --quiet HEAD^ HEAD -- . \":(exclude)*.md\" \":(exclude)LICENSE\" \":(exclude).gitignore\" \":(exclude).vercelignore\" \":(exclude).env.example\"'"

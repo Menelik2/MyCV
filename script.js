@@ -2158,35 +2158,27 @@ document.getElementById("xp-dialog-ok")?.addEventListener("click", () => {
 });
 
 let uiSoundsEnabled = localStorage.getItem("portfolio-sounds") !== "off";
+let _uiAudioCtx = null;
 function playUiSound(kind) {
   if (!uiSoundsEnabled) return;
+  // Window open/close tones disabled (silent by design)
+  if (kind === "open" || kind === "close") return;
   try {
     const AC = window.AudioContext || window.webkitAudioContext;
     if (!AC) return;
-    const ctx = new AC();
+    if (!_uiAudioCtx || _uiAudioCtx.state === "closed") {
+      _uiAudioCtx = new AC();
+    }
+    const ctx = _uiAudioCtx;
+    if (ctx.state === "suspended") ctx.resume().catch(() => {});
     const o = ctx.createOscillator();
     const g = ctx.createGain();
     o.connect(g); g.connect(ctx.destination);
     const now = ctx.currentTime;
-    if (kind === "open") {
-      o.frequency.setValueAtTime(520, now);
-      o.frequency.exponentialRampToValueAtTime(780, now + 0.08);
-      g.gain.setValueAtTime(0.06, now);
-      g.gain.exponentialRampToValueAtTime(0.001, now + 0.12);
-      o.start(now); o.stop(now + 0.13);
-    } else if (kind === "close") {
-      o.frequency.setValueAtTime(400, now);
-      o.frequency.exponentialRampToValueAtTime(200, now + 0.1);
-      g.gain.setValueAtTime(0.05, now);
-      g.gain.exponentialRampToValueAtTime(0.001, now + 0.12);
-      o.start(now); o.stop(now + 0.13);
-    } else {
-      o.frequency.setValueAtTime(660, now);
-      g.gain.setValueAtTime(0.05, now);
-      g.gain.exponentialRampToValueAtTime(0.001, now + 0.15);
-      o.start(now); o.stop(now + 0.16);
-    }
-    setTimeout(() => ctx.close(), 300);
+    o.frequency.setValueAtTime(660, now);
+    g.gain.setValueAtTime(0.05, now);
+    g.gain.exponentialRampToValueAtTime(0.001, now + 0.15);
+    o.start(now); o.stop(now + 0.16);
   } catch (_) {}
 }
 
@@ -2303,11 +2295,18 @@ function buildControlPanel() {
       <button type="button" class="cp-open-reg proj-btn" style="margin-top:8px">Advanced: Registry Editor…</button>
     </div>
     <div class="cp-section">
-      <h4>Sound</h4>
-      <label class="cp-row"><span>UI sounds</span>
-        <input type="checkbox" class="cp-sounds" ${uiSoundsEnabled ? "checked" : ""} />
+      <h4>System notifications &amp; sound</h4>
+      <label class="cp-row"><span>Notification sounds</span>
+        <input type="checkbox" class="cp-sounds" ${uiSoundsEnabled ? "checked" : ""} title="Dialogs and Control Panel feedback" />
       </label>
-      <button type="button" class="cp-test-sound proj-btn">Test sound</button>
+      <label class="cp-row"><span>Window open / close</span>
+        <input type="checkbox" class="cp-win-sounds" disabled title="Always off" />
+      </label>
+      <p class="cp-about" style="margin:0 0 8px">Window open and close tones are permanently silent.</p>
+      <label class="cp-row"><span>Startup sound</span>
+        <input type="checkbox" class="cp-startup-sound" ${localStorage.getItem("portfolio-startup-sound") !== "off" ? "checked" : ""} />
+      </label>
+      <button type="button" class="cp-test-sound proj-btn">Test notification</button>
     </div>
     <div class="cp-section">
       <h4>Screensaver</h4>
@@ -2373,7 +2372,10 @@ function buildControlPanel() {
     uiSoundsEnabled = e.target.checked;
     localStorage.setItem("portfolio-sounds", uiSoundsEnabled ? "on" : "off");
   });
-  wrap.querySelector(".cp-test-sound").addEventListener("click", () => playUiSound("open"));
+  wrap.querySelector(".cp-startup-sound")?.addEventListener("change", (e) => {
+    localStorage.setItem("portfolio-startup-sound", e.target.checked ? "on" : "off");
+  });
+  wrap.querySelector(".cp-test-sound").addEventListener("click", () => playUiSound("notify"));
   wrap.querySelector(".cp-ss-idle").addEventListener("change", (e) => {
     localStorage.setItem("portfolio-ss-idle", e.target.value);
     resetScreensaverTimer();
@@ -5157,6 +5159,7 @@ const contentReady = loadExternalContent()
 /* ========== OS boot + startup sound + fullscreen ========== */
 function playXpStartupSound() {
   try {
+    if (localStorage.getItem("portfolio-startup-sound") === "off") return;
     const Ctx = window.AudioContext || window.webkitAudioContext;
     if (!Ctx) return;
     const ctx = new Ctx();
@@ -5430,12 +5433,17 @@ async function finishBoot(fullscreenAlreadyRequested) {
 
   setTimeout(() => {
     boot?.remove();
-    // Open About Me window on desktop only (not mobile home screen)
     try {
-      if (window.innerWidth >= 900 && typeof openWindow === "function") {
-        openWindow("about");
-      }
+      document.dispatchEvent(new CustomEvent("menelik-boot-done"));
     } catch (_) {}
+    // Desktop only: open About after restoreState (features-extra) has a chance to run
+    setTimeout(() => {
+      try {
+        if (window.innerWidth >= 900 && typeof openWindow === "function") {
+          openWindow("about");
+        }
+      } catch (_) {}
+    }, 350);
   }, 650);
 }
 

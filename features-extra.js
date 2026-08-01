@@ -1146,7 +1146,8 @@ END:VCARD`;
       { name: "Java", v: 70 },
       { name: "Git", v: 80 },
       { name: "SQL", v: 65 },
-      { name: "Responsive", v: 88 },
+      { name: "Networking", v: 88 },
+      { name: "Hardware", v: 90 },
     ];
     const n = skills.length;
     const cx = 100,
@@ -1492,8 +1493,16 @@ END:VCARD`;
             } catch (_) {}
           });
         };
-        // Wait for boot screen to clear
-        setTimeout(apply, 1200);
+        // Wait for boot-done (not a fixed delay from page load)
+        const onBoot = () => setTimeout(apply, 80);
+        if (!document.getElementById("boot-screen")) onBoot();
+        else {
+          document.addEventListener("menelik-boot-done", onBoot, { once: true });
+          // Safety if boot event never fires (e.g. no boot UI)
+          setTimeout(() => {
+            if (!document.getElementById("boot-screen")) apply();
+          }, 90 * 1000);
+        }
       }
     } catch (_) {}
   }
