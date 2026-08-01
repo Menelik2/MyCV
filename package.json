@@ -8,6 +8,8 @@
     "optimize:images": "node scripts/optimize-images.mjs",
     "optimize:images:help": "echo \"npm i sharp --save-dev && npm run optimize:images\""
   },
-  "description": "Static XP portfolio — deploy on Vercel with zero install/build",
+  "description": "Static XP portfolio \u2014 Vercel zero install/build",
   "dependencies": {}
+}
+cies": {}
 }
