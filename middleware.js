@@ -126,37 +126,3 @@ export default function middleware(request) {
 
   return response;
 }
-ss-origin");
-  response.headers.set(
-    "Permissions-Policy",
-    "camera=(), microphone=(), geolocation=()"
-  );
-  response.headers.set("X-Edge-Middleware", "menelik-portfolio");
-  response.headers.set("Report-To", REPORT_TO);
-  response.headers.set("Reporting-Endpoints", REPORTING_ENDPOINTS);
-  response.headers.set(
-    "Content-Security-Policy-Report-Only",
-    isAdmin ? CSP_ADMIN : CSP_SITE
-  );
-
-  if (isAdmin) {
-    response.headers.set("X-Robots-Tag", "noindex, nofollow");
-    response.headers.set("Cache-Control", "private, no-store");
-    response.headers.set("X-Frame-Options", "DENY");
-  } else {
-    response.headers.set("X-Frame-Options", "SAMEORIGIN");
-    if (path.startsWith("/content/")) {
-      response.headers.set(
-        "Cache-Control",
-        "public, max-age=60, must-revalidate"
-      );
-<<<<<<< HEAD
-    } else if (path.startsWith("/api/")) {
-      response.headers.set("Cache-Control", "no-store");
-=======
->>>>>>> d67564d (Describe what you updated here)
-    }
-  }
-
-  return response;
-}
