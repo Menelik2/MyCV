@@ -1,60 +1,29 @@
 /**
  * Vercel Edge Middleware — https://menelikcv.vercel.app
- * Security headers + CSP-Report-Only.
  *
- * Exclusion rules (never run middleware on these):
- *   - /api/*          serverless functions (OAuth, CSP reports)
- *   - static assets   css/js/images/fonts/maps/manifest/sw
- *   - binary/docs     pdf, zip, webmanifest
+ * Performance:
+ *  - Invoked only on HTML shells (/, /index.html, /admin*)
+ *  - Static assets, /api/*, /content/*, SW, images never enter Edge
+ *  - No catch-all negative-lookahead matcher (expensive path filter)
+ *  - No per-request bypass scans or header duplication
+ *  - CSP strings built once at module load
  *
- * Matcher uses negative lookahead so excluded paths skip Edge entirely.
+ * CDN headers (vercel.json — zero Edge cost):
+ *  X-Content-Type-Options, Referrer-Policy, X-Frame-Options,
+ *  Permissions-Policy, Cache-Control, X-Robots-Tag
+ *
+ * This middleware only adds path-specific CSP-Report-Only + reporting APIs.
  */
 export const config = {
-  matcher: [
-    /*
-     * Match all paths except:
-     * - api (Vercel serverless)
-     * - _next / static internals (if any)
-     * - common static file extensions
-     * - sw.js / manifest (PWA)
-     */
-    {
-      source:
-        "/((?!api/|_next/|static/|.*\\.(?:css|js|mjs|map|jpg|jpeg|png|gif|svg|webp|avif|ico|woff|woff2|ttf|eot|pdf|zip|webmanifest)$).*)",
-    },
-    "/",
-  ],
+  matcher: ["/", "/index.html", "/admin", "/admin/", "/admin/:path*"],
 };
 
-/** Paths that must never be processed (defense in depth if matcher widens). */
-const EXCLUDE_PREFIXES = ["/api/", "/_next/", "/static/"];
-const EXCLUDE_EXACT = new Set([
-  "/sw.js",
-  "/manifest.webmanifest",
-  "/favicon.ico",
-  "/robots.txt",
-]);
-const EXCLUDE_EXT =
-  /\.(?:css|js|mjs|map|jpg|jpeg|png|gif|svg|webp|avif|ico|woff|woff2|ttf|eot|pdf|zip|webmanifest)$/i;
-
-function shouldBypass(pathname) {
-  if (EXCLUDE_EXACT.has(pathname)) return true;
-  if (EXCLUDE_PREFIXES.some((p) => pathname === p.slice(0, -1) || pathname.startsWith(p))) {
-    return true;
-  }
-  if (EXCLUDE_EXT.test(pathname)) return true;
-  return false;
-}
-
-const REPORT =
-  "; report-uri /api/csp-report; report-to csp-endpoint";
 const REPORT_TO =
   '{"group":"csp-endpoint","max_age":10886400,"endpoints":[{"url":"/api/csp-report"}],"include_subdomains":false}';
 const REPORTING_ENDPOINTS = 'csp-endpoint="/api/csp-report"';
+const CSP_REPORT =
+  "; report-uri /api/csp-report; report-to csp-endpoint";
 
-const CSP_BASE = "object-src 'none'; base-uri 'self'" + REPORT;
-
-/** Site shell */
 const CSP_SITE =
   "default-src 'self'; " +
   "script-src 'self' 'unsafe-eval'; " +
@@ -66,9 +35,9 @@ const CSP_SITE =
   "frame-src 'self' blob: https://liveweave.com https://*.liveweave.com; " +
   "worker-src 'self' blob:; " +
   "frame-ancestors 'self'; " +
-  CSP_BASE;
+  "object-src 'none'; base-uri 'self'" +
+  CSP_REPORT;
 
-/** Decap /admin — unpkg + GitHub OAuth */
 const CSP_ADMIN =
   "default-src 'self'; " +
   "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://unpkg.com; " +
@@ -78,51 +47,22 @@ const CSP_ADMIN =
   "connect-src 'self' https://api.github.com https://github.com https://*.github.com https://unpkg.com; " +
   "frame-src 'self' https://github.com; " +
   "frame-ancestors 'none'; " +
-  CSP_BASE;
+  "object-src 'none'; base-uri 'self'" +
+  CSP_REPORT;
 
 export default function middleware(request) {
-  const path = new URL(request.url).pathname;
-
-  // Defense in depth: skip excluded paths even if matcher changes later
-  if (shouldBypass(path)) {
-    return new Response(null, {
-      headers: { "x-middleware-next": "1" },
-    });
-  }
+  const path = request.nextUrl
+    ? request.nextUrl.pathname
+    : new URL(request.url).pathname;
 
   const isAdmin = path === "/admin" || path.startsWith("/admin/");
 
-  const response = new Response(null, {
-    headers: { "x-middleware-next": "1" },
+  return new Response(null, {
+    headers: {
+      "x-middleware-next": "1",
+      "Report-To": REPORT_TO,
+      "Reporting-Endpoints": REPORTING_ENDPOINTS,
+      "Content-Security-Policy-Report-Only": isAdmin ? CSP_ADMIN : CSP_SITE,
+    },
   });
-
-  response.headers.set("X-Content-Type-Options", "nosniff");
-  response.headers.set("Referrer-Policy", "strict-origin-when-cross-origin");
-  response.headers.set(
-    "Permissions-Policy",
-    "camera=(), microphone=(), geolocation=()"
-  );
-  response.headers.set("X-Edge-Middleware", "menelik-portfolio");
-  response.headers.set("Report-To", REPORT_TO);
-  response.headers.set("Reporting-Endpoints", REPORTING_ENDPOINTS);
-  response.headers.set(
-    "Content-Security-Policy-Report-Only",
-    isAdmin ? CSP_ADMIN : CSP_SITE
-  );
-
-  if (isAdmin) {
-    response.headers.set("X-Robots-Tag", "noindex, nofollow");
-    response.headers.set("Cache-Control", "private, no-store");
-    response.headers.set("X-Frame-Options", "DENY");
-  } else {
-    response.headers.set("X-Frame-Options", "SAMEORIGIN");
-    if (path.startsWith("/content/")) {
-      response.headers.set(
-        "Cache-Control",
-        "public, max-age=60, must-revalidate"
-      );
-    }
-  }
-
-  return response;
 }
