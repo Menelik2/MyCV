@@ -3195,6 +3195,30 @@ body, .desktop, .wallpaper, .window, .taskbar, .start-menu, .mobile {
   margin-bottom: 8px;
 }
 .proj-header h4 { margin: 0; }
+.proj-desc {
+  margin: 8px 0 6px;
+  font-size: 12.5px;
+  line-height: 1.45;
+  color: var(--text, #1a202c);
+}
+.project-card > p {
+  margin: 4px 0;
+  font-size: 12px;
+  line-height: 1.4;
+  color: var(--text, #222);
+}
+.project-card > p strong {
+  color: var(--xp-blue, #245edb);
+}
+body:not(.light) .proj-desc {
+  color: #e2e8f0;
+}
+body:not(.light) .project-card > p {
+  color: #cbd5e1;
+}
+body:not(.light) .project-card > p strong {
+  color: #93c5fd;
+}
 .proj-badge {
   font-size: 10px;
   padding: 2px 8px;

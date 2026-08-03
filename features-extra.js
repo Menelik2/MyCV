@@ -24,7 +24,7 @@
       id: "bdu",
       title: "Studying CS at Bahir Dar University",
       date: "2026-05-20",
-      body: "Coursework spans algorithms, networks, databases, and web tech. Side projects (Yeni Movie, Yeni Typing) keep skills sharp.",
+      body: "Coursework spans algorithms, networks, databases, and web tech. Side projects (Yeni Movie, Yeni Typing, Yeni Exam) keep skills sharp.",
     },
     {
       id: "it-years",
@@ -60,7 +60,13 @@
       problem: "Typing practice tools are often distracting or hard to measure.",
       approach: "Focused tutor with live WPM/accuracy and timed sessions.",
       stack: "HTML, CSS, JavaScript, Vercel",
-      outcome: "Live at yenetyping.vercel.app — clear metrics, minimal UI.",
+      outcome: "Live at yenityping.vercel.app — clear metrics, minimal UI.",
+    },
+    "yeni-exam": {
+      problem: "Exit exam prep needs quick, topic-focused practice exams.",
+      approach: "Topic-driven generator that builds exam-style questions on demand.",
+      stack: "HTML, CSS, JavaScript, Vercel",
+      outcome: "Live at yeniexams.vercel.app — type a topic, get a practice exam.",
     },
     internship: {
       problem: "University internships need tracking from application to evaluation.",
@@ -79,7 +85,8 @@
   const GITHUB_ACTIVITY = [
     { type: "Push", repo: "xp-portfolio", detail: "Windows XP portfolio updates", when: "Recently" },
     { type: "Deploy", repo: "yeni-movie", detail: "Production deploy on Vercel", when: "Recently" },
-    { type: "Deploy", repo: "yenetyping", detail: "Typing tutor live", when: "Recently" },
+    { type: "Deploy", repo: "yenityping", detail: "Typing tutor live", when: "Recently" },
+    { type: "Deploy", repo: "yeniexams", detail: "Exit exam generator live", when: "Recently" },
     { type: "Commit", repo: "xp-portfolio", detail: "Content & CMS config", when: "2026" },
   ];
 
@@ -195,7 +202,8 @@
           <h4>Live projects</h4>
           <ul class="ie-links">
             <li><a href="#" data-nav="https://yeni-movie.vercel.app">Yeni Movie</a></li>
-            <li><a href="#" data-nav="https://yenetyping.vercel.app">Yeni Typing</a></li>
+            <li><a href="#" data-nav="https://yenityping.vercel.app">Yeni Typing</a></li>
+            <li><a href="#" data-nav="https://yeniexams.vercel.app/">Yeni Exam</a></li>
             <li><a href="#" data-nav="https://github.com/Menelik2">GitHub — Menelik2</a></li>
             <li><a href="#" data-nav="https://menelikcv.vercel.app">This portfolio online</a></li>
           </ul>
@@ -920,7 +928,8 @@
         { href: "https://github.com/Menelik2", title: "GitHub", sub: "@Menelik2", icon: "⌥", tone: "gh" },
         { href: "https://menelikcv.vercel.app", title: "This portfolio", sub: "menelikcv.vercel.app", icon: "🖥", tone: "site" },
         { href: "https://yeni-movie.vercel.app", title: "Yeni Movie", sub: "Live demo", icon: "🎬", tone: "movie" },
-        { href: "https://yenetyping.vercel.app", title: "Yeni Typing", sub: "Live demo", icon: "⌨️", tone: "type" },
+        { href: "https://yenityping.vercel.app", title: "Yeni Typing", sub: "Live demo", icon: "⌨️", tone: "type" },
+        { href: "https://yeniexams.vercel.app/", title: "Yeni Exam", sub: "Exit exam generator", icon: "📝", tone: "site" },
         { href: "https://www.linkedin.com/in/menelikadmasu", title: "LinkedIn", sub: "menelikadmasu", icon: "in", tone: "in" },
         { href: "mailto:linuxos777@gmail.com", title: "Email", sub: "linuxos777@gmail.com", icon: "✉", tone: "mail" },
       ];

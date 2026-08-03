@@ -149,8 +149,9 @@ const CONTENT = {
             <text x="180" y="136" text-anchor="middle" fill="#94a3b8" font-size="8" font-family="Segoe UI,sans-serif">Yeni Movie · discovery UI</text>
           </svg>
         </div>
-        <p><strong>What it is:</strong> A full-featured movie discovery web app for browsing films and TV series.</p>
-        <p><strong>Highlights:</strong> Browse by genre and popularity, posters and plot summaries, search, detailed movie info.</p>
+        <p class="proj-desc">Discover films and TV series with a clean search-and-browse experience — posters, plots, and details in one place.</p>
+        <p><strong>What it is:</strong> A full-featured movie &amp; TV discovery web app for browsing by genre and popularity.</p>
+        <p><strong>Highlights:</strong> Search, poster grids, plot summaries, detailed title pages, and a responsive UI deployed on Vercel.</p>
         <details class="proj-snippet">
           <summary>View code snippet · JavaScript</summary>
           <div class="proj-code-wrap">
@@ -211,8 +212,9 @@ const CONTENT = {
             <text x="180" y="132" text-anchor="middle" fill="#86efac" font-size="8" font-family="Segoe UI,sans-serif" opacity="0.8">Yeni Typing · live metrics</text>
           </svg>
         </div>
-        <p><strong>What it is:</strong> An interactive typing tutor for speed and accuracy.</p>
-        <p><strong>Highlights:</strong> Timed tests, live WPM/accuracy, practice lessons, focused UI.</p>
+        <p class="proj-desc">Build speed and accuracy with timed typing tests, live WPM, and focused practice lessons.</p>
+        <p><strong>What it is:</strong> An interactive typing tutor designed for measurable progress, not clutter.</p>
+        <p><strong>Highlights:</strong> Live WPM and accuracy, timed sessions, practice lessons, and a minimal distraction-free layout.</p>
         <details class="proj-snippet">
           <summary>View code snippet · JavaScript</summary>
           <div class="proj-code-wrap">
@@ -231,13 +233,65 @@ const CONTENT = {
           </div>
         </details>
         <div class="proj-actions">
-          <a class="proj-btn primary" href="https://yenetyping.vercel.app" target="_blank" rel="noopener">Open live demo ↗</a>
-          <a class="proj-btn" href="https://yenetyping.vercel.app" target="_blank" rel="noopener">Visit site</a>
+          <a class="proj-btn primary" href="https://yenityping.vercel.app" target="_blank" rel="noopener">Open live demo ↗</a>
+          <a class="proj-btn" href="https://yenityping.vercel.app" target="_blank" rel="noopener">Visit site</a>
         </div>
         <div class="tags">
           <span class="tag">Education</span>
           <span class="tag">Typing Tutor</span>
           <span class="tag">WPM / Accuracy</span>
+          <span class="tag">Vercel</span>
+        </div>
+      </div>
+
+      <div class="project-card" data-project="yeni-exam">
+        <div class="proj-header">
+          <h4>Yeni Exam — Exit Exam Generator</h4>
+          <span class="proj-badge live">Live</span>
+        </div>
+        <div class="proj-demo-frame proj-visual" data-theme="exam">
+          <svg class="proj-svg" viewBox="0 0 360 140" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Yeni Exam preview">
+            <defs>
+              <linearGradient id="eg" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#312e81"/><stop offset="100%" stop-color="#4f46e5"/></linearGradient>
+            </defs>
+            <rect width="360" height="140" rx="8" fill="url(#eg)"/>
+            <rect x="16" y="14" width="220" height="18" rx="4" fill="#1e1b4b" opacity="0.55"/>
+            <text x="26" y="27" fill="#c7d2fe" font-size="10" font-family="Segoe UI,sans-serif">Topic → generate exam</text>
+            <g class="anim-poster anim-d0">
+              <rect x="16" y="42" width="150" height="80" rx="6" fill="#fff" opacity="0.12"/>
+              <text x="28" y="62" fill="#e0e7ff" font-size="11" font-family="Segoe UI,sans-serif" font-weight="700">Q1. Multiple choice</text>
+              <rect x="28" y="72" width="110" height="8" rx="2" fill="#a5b4fc" opacity="0.5"/>
+              <rect x="28" y="86" width="90" height="8" rx="2" fill="#fff" opacity="0.25"/>
+              <rect x="28" y="100" width="100" height="8" rx="2" fill="#fff" opacity="0.2"/>
+            </g>
+            <g class="anim-metric anim-d1">
+              <rect x="180" y="42" width="72" height="36" rx="6" fill="#312e81" stroke="#818cf8" stroke-width="1"/>
+              <text x="216" y="58" text-anchor="middle" fill="#c7d2fe" font-size="9" font-family="Segoe UI,sans-serif">Items</text>
+              <text class="anim-metric-val" x="216" y="72" text-anchor="middle" fill="#fff" font-size="14" font-family="Segoe UI,sans-serif" font-weight="700">40</text>
+            </g>
+            <g class="anim-metric anim-d2">
+              <rect x="262" y="42" width="72" height="36" rx="6" fill="#312e81" stroke="#818cf8" stroke-width="1"/>
+              <text x="298" y="58" text-anchor="middle" fill="#c7d2fe" font-size="9" font-family="Segoe UI,sans-serif">Topics</text>
+              <text class="anim-metric-val" x="298" y="72" text-anchor="middle" fill="#fff" font-size="14" font-family="Segoe UI,sans-serif" font-weight="700">∞</text>
+            </g>
+            <g class="anim-cta">
+              <rect x="180" y="90" width="154" height="28" rx="6" fill="#22c55e" opacity="0.9"/>
+              <text x="257" y="108" text-anchor="middle" fill="#fff" font-size="11" font-family="Segoe UI,sans-serif" font-weight="700">Generate exam</text>
+            </g>
+            <text x="180" y="132" text-anchor="middle" fill="#c7d2fe" font-size="8" font-family="Segoe UI,sans-serif" opacity="0.85">Yeni Exam · exit exam practice</text>
+          </svg>
+        </div>
+        <p class="proj-desc">Type any topic and generate an exit-exam style practice set instantly — built for serious exam prep.</p>
+        <p><strong>What it is:</strong> A topic-driven exit exam generator that turns a subject into exam-style questions on demand.</p>
+        <p><strong>Highlights:</strong> Instant generation from a topic, multiple-choice practice flow, and a clean study UI for exit exam readiness.</p>
+        <div class="proj-actions">
+          <a class="proj-btn primary" href="https://yeniexams.vercel.app/" target="_blank" rel="noopener">Open live demo ↗</a>
+          <a class="proj-btn" href="https://yeniexams.vercel.app/" target="_blank" rel="noopener">Visit site</a>
+        </div>
+        <div class="tags">
+          <span class="tag">Education</span>
+          <span class="tag">Exit Exam</span>
+          <span class="tag">Generator</span>
           <span class="tag">Vercel</span>
         </div>
       </div>
@@ -282,8 +336,9 @@ const CONTENT = {
             </g>
           </svg>
         </div>
-        <p><strong>What it is:</strong> Platform for Bahir Dar University internship programs from application to completion.</p>
-        <p><strong>Highlights:</strong> Applications, placements, supervisor workflows, evaluation tracking.</p>
+        <p class="proj-desc">End-to-end internship workflow for Bahir Dar University — from application through placement and evaluation.</p>
+        <p><strong>What it is:</strong> A university platform covering the full internship lifecycle for students, supervisors, and coordinators.</p>
+        <p><strong>Highlights:</strong> Applications, company placements, supervisor workflows, and evaluation tracking in one system.</p>
         <details class="proj-snippet">
           <summary>View code snippet · SQL / workflow</summary>
           <div class="proj-code-wrap">
@@ -343,8 +398,9 @@ const CONTENT = {
             <text x="180" y="118" text-anchor="middle" fill="#e0f2fe" font-size="8" font-family="Segoe UI,sans-serif" opacity="0.9">Menelik OS · XP + iPhone</text>
           </svg>
         </div>
-        <p><strong>What it is:</strong> Interactive desktop OS portfolio in the browser.</p>
-        <p><strong>Highlights:</strong> XP windows, virtual desktops, Notepad, Paint, Terminal, VS Code, Minesweeper, iPhone layout.</p>
+        <p class="proj-desc">This site — a playful Windows XP desktop (and iPhone shell on mobile) that hosts real apps and your full CV.</p>
+        <p><strong>What it is:</strong> An interactive OS-style portfolio in the browser with windows, games, tools, and CMS-backed content.</p>
+        <p><strong>Highlights:</strong> XP windows &amp; snap, virtual desktops, Notepad, Paint, Terminal, VS Code, Minesweeper, Solitaire, and an iPhone layout under ~900px.</p>
         <details class="proj-snippet">
           <summary>View code snippet · JavaScript</summary>
           <div class="proj-code-wrap">
@@ -579,9 +635,16 @@ const CONTENT = {
           <div class="resume-item">
             <div class="resume-item-head">
               <h3>Yeni Typing Learning</h3>
-              <a class="resume-link" href="https://yenetyping.vercel.app" target="_blank" rel="noopener">Live</a>
+              <a class="resume-link" href="https://yenityping.vercel.app" target="_blank" rel="noopener">Live</a>
             </div>
             <p>Interactive typing tutor with timed tests, WPM and accuracy tracking.</p>
+          </div>
+          <div class="resume-item">
+            <div class="resume-item-head">
+              <h3>Yeni Exam — Exit Exam Generator</h3>
+              <a class="resume-link" href="https://yeniexams.vercel.app/" target="_blank" rel="noopener">Live</a>
+            </div>
+            <p>Topic-driven exit exam generator for real exam-style practice.</p>
           </div>
           <div class="resume-item">
             <div class="resume-item-head">
@@ -1109,7 +1172,7 @@ function buildTerminal() {
     "/home/menelik/skills.txt": "Languages: HTML, CSS, JavaScript, Python, Java\nTools: Git, SQL, VS Code\nOther: Responsive Design, UI/UX",
     "/home/menelik/.bashrc": "# ~/.bashrc\nexport PS1='\\u@\\h:\\w\\$ '\nexport PATH=$PATH:/usr/local/bin\nalias ll='ls -la'\nalias cls='clear'",
     "/home/menelik/resume.pdf": "[Binary PDF — open the Resume app instead]",
-    "/home/menelik/projects/README.md": "# Projects\n\n- yeni-movie — https://yeni-movie.vercel.app\n- yeni-typing — https://yenetyping.vercel.app\n- internship-mgmt — Bahir Dar University Internship Management System\n- portfolio — Windows XP + iPhone portfolio site",
+    "/home/menelik/projects/README.md": "# Projects\n\n- yeni-movie — https://yeni-movie.vercel.app\n- yeni-typing — https://yenityping.vercel.app\n- yeni-exam — https://yeniexams.vercel.app/\n- internship-mgmt — Bahir Dar University Internship Management System\n- portfolio — Windows XP + iPhone portfolio site",
     "/home/menelik/projects/portfolio/index.html": "<!DOCTYPE html>\n<html>\n<head><title>Menelik Admasu</title></head>\n<body><!-- XP Portfolio --></body>\n</html>",
     "/home/menelik/projects/portfolio/styles.css": "/* Windows XP + iPhone styles */\n:root { --xp-blue: #245edb; }",
     "/home/menelik/projects/portfolio/script.js": "// Portfolio logic: windows, terminal, paint, notepad, vscode",
