@@ -4725,28 +4725,27 @@ function mobileContent(key) {
     .replace(/class="tag"/g, 'style="font-size:11px;background:rgba(10,132,255,0.15);color:var(--accent);padding:3px 8px;border-radius:6px;"');
 }
 
-function mountBlockBlasterMobile(body) {
-  const GAME_URL = "https://www.crazygames.com/game/block-puzzle-master";
-  const EMBED_URL = "https://www.crazygames.com/embed/block-puzzle-master";
+function mountMobileGame(body) {
+  const GAME_URL = "https://www.tetrisgratuit.fr/";
+  const EMBED_URL = "https://www.tetrisgratuit.fr/";
   body.classList.add("page-body-full");
   body.innerHTML = "";
   const root = document.createElement("div");
   root.className = "bb-mobile";
   root.innerHTML =
     '<div class="bb-toolbar">' +
-    "<strong>Block Blaster</strong>" +
+    "<strong>Tetris</strong>" +
     '<a class="bb-open" href="' + GAME_URL + '" target="_blank" rel="noopener">Open full site ↗</a>' +
     "</div>" +
     '<div class="bb-frame-wrap">' +
-    '<iframe class="bb-frame" title="Block Blaster" allow="fullscreen; autoplay; gamepad; clipboard-write" allowfullscreen loading="lazy" referrerpolicy="no-referrer-when-downgrade" src="' +
+    '<iframe class="bb-frame" title="Tetris Gratuit" allow="fullscreen; autoplay; gamepad; clipboard-write" allowfullscreen loading="lazy" referrerpolicy="no-referrer-when-downgrade" src="' +
     EMBED_URL +
     '"></iframe>' +
     '<div class="bb-fallback" id="bb-fallback">' +
-    "<p>If the game does not load inside the phone, open it on CrazyGames.</p>" +
-    '<a class="bb-open" href="' + GAME_URL + '" target="_blank" rel="noopener">Play Block Blaster ↗</a>' +
+    "<p>If the game does not load inside the phone, open it in the browser.</p>" +
+    '<a class="bb-open" href="' + GAME_URL + '" target="_blank" rel="noopener">Play Tetris ↗</a>' +
     "</div></div>";
   body.appendChild(root);
-  // If embed is blocked, show fallback after a short wait when iframe stays blank
   const frame = root.querySelector(".bb-frame");
   const fallback = root.querySelector(".bb-fallback");
   let settled = false;
@@ -4756,13 +4755,6 @@ function mountBlockBlasterMobile(body) {
     if (fallback) fallback.classList.add("visible");
   };
   frame?.addEventListener("error", showFallback);
-  setTimeout(() => {
-    try {
-      // Cross-origin: cannot read contentDocument; keep embed visible + fallback button always available in toolbar
-    } catch (_) {
-      showFallback();
-    }
-  }, 4000);
 }
 
 function showPage(pageId) {
@@ -4776,8 +4768,8 @@ function showPage(pageId) {
   if (!body) return;
 
   // Mobile-only external game (iPhone shell)
-  if (pageId === "blockblaster") {
-    mountBlockBlasterMobile(body);
+  if (pageId === "tetris" || pageId === "blockblaster") {
+    mountMobileGame(body);
     body.dataset.loaded = "1";
     return;
   }

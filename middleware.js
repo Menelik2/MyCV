@@ -4,15 +4,11 @@
  * Performance:
  *  - Invoked only on HTML shells (/, /index.html, /admin*)
  *  - Static assets, /api/*, /content/*, SW, images never enter Edge
- *  - No catch-all negative-lookahead matcher (expensive path filter)
- *  - No per-request bypass scans or header duplication
- *  - CSP strings built once at module load
  *
- * CDN headers (vercel.json — zero Edge cost):
- *  X-Content-Type-Options, Referrer-Policy, X-Frame-Options,
- *  Permissions-Policy, Cache-Control, X-Robots-Tag
- *
- * This middleware only adds path-specific CSP-Report-Only + reporting APIs.
+ * Headers:
+ *  - Content-Security-Policy (enforcing) — iframe / framing rules for embeds
+ *  - Content-Security-Policy-Report-Only — full policy for monitoring
+ *  - Report-To / Reporting-Endpoints — CSP violation reports
  */
 export const config = {
   matcher: ["/", "/index.html", "/admin", "/admin/", "/admin/:path*"],
@@ -24,6 +20,30 @@ const REPORTING_ENDPOINTS = 'csp-endpoint="/api/csp-report"';
 const CSP_REPORT =
   "; report-uri /api/csp-report; report-to csp-endpoint";
 
+/**
+ * Enforcing CSP focused on iframes / embedding.
+ * Directives not listed here are unrestricted by this header
+ * (full lockdown stays on Report-Only below).
+ *
+ * frame-src  — what THIS page may embed in <iframe>
+ * frame-ancestors — who may embed THIS page
+ * object-src / base-uri — basic hardening
+ */
+const CSP_FRAME_SITE =
+  "frame-src 'self' blob: " +
+  "https://www.tetrisgratuit.fr https://*.tetrisgratuit.fr " +
+  "https://liveweave.com https://*.liveweave.com; " +
+  "frame-ancestors 'self'; " +
+  "object-src 'none'; " +
+  "base-uri 'self'";
+
+const CSP_FRAME_ADMIN =
+  "frame-src 'self' https://github.com; " +
+  "frame-ancestors 'none'; " +
+  "object-src 'none'; " +
+  "base-uri 'self'";
+
+/** Full policy — report only (will not block; used to tune later) */
 const CSP_SITE =
   "default-src 'self'; " +
   "script-src 'self' 'unsafe-eval'; " +
@@ -32,7 +52,7 @@ const CSP_SITE =
   "img-src 'self' data: blob: https:; " +
   "connect-src 'self' https://formspree.io https://jsonplaceholder.typicode.com https://api.github.com https://dog.ceo https://*.dog.ceo https://httpbin.org; " +
   "form-action 'self' https://formspree.io mailto:; " +
-  "frame-src 'self' blob: https://liveweave.com https://*.liveweave.com https://www.crazygames.com https://*.crazygames.com; " +
+  "frame-src 'self' blob: https://liveweave.com https://*.liveweave.com https://www.tetrisgratuit.fr https://*.tetrisgratuit.fr; " +
   "worker-src 'self' blob:; " +
   "frame-ancestors 'self'; " +
   "object-src 'none'; base-uri 'self'" +
@@ -62,6 +82,9 @@ export default function middleware(request) {
       "x-middleware-next": "1",
       "Report-To": REPORT_TO,
       "Reporting-Endpoints": REPORTING_ENDPOINTS,
+      // Enforcing: controls which iframes are allowed
+      "Content-Security-Policy": isAdmin ? CSP_FRAME_ADMIN : CSP_FRAME_SITE,
+      // Report-only: full policy for monitoring (does not block)
       "Content-Security-Policy-Report-Only": isAdmin ? CSP_ADMIN : CSP_SITE,
     },
   });

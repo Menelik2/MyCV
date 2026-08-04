@@ -1967,11 +1967,12 @@ body:not(.light) .paint-toolbar button.tool-btn {
 .app-img.paint { background-color: #ff375f; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23fff'%3E%3Cpath d='M12 3c-4.97 0-9 4.03-9 9s9 9 9 9 9-4.03 9-9-4.03-9-9-9zm0 12a3 3 0 110-6 3 3 0 010 6z'/%3E%3C/svg%3E"); }
 .app-img.terminal { background-color: #1c1c1e; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%2330d158'%3E%3Cpath d='M4 5h2l5 7-5 7H4l5-7-5-7zm8 12h8v2h-8v-2z'/%3E%3C/svg%3E"); }
 .app-img.vscode { background-color: #007acc; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23fff'%3E%3Cpath d='M17 3L5 10.5v3L17 21l3-1.5V4.5L17 3zM7 12.5v-1l9-5.5v12l-9-5.5z'/%3E%3C/svg%3E"); }
+.app-img.tetris,
 .app-img.blockblaster {
-  background-color: #5b21b6;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23fff'%3E%3Crect x='3' y='3' width='7' height='7' rx='1.5'/%3E%3Crect x='14' y='3' width='7' height='7' rx='1.5'/%3E%3Crect x='3' y='14' width='7' height='7' rx='1.5'/%3E%3Crect x='14' y='14' width='7' height='7' rx='1.5'/%3E%3C/svg%3E");
+  background-color: #0ea5e9;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23fff'%3E%3Crect x='9' y='2' width='6' height='6' rx='0.8'/%3E%3Crect x='3' y='8' width='6' height='6' rx='0.8'/%3E%3Crect x='9' y='8' width='6' height='6' rx='0.8'/%3E%3Crect x='15' y='8' width='6' height='6' rx='0.8'/%3E%3Crect x='9' y='14' width='6' height='6' rx='0.8'/%3E%3C/svg%3E");
 }
-/* Block Blaster — mobile-only embedded game */
+/* Tetris — mobile-only embedded game */
 .bb-mobile {
   display: flex;
   flex-direction: column;
