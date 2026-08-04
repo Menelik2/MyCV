@@ -32,7 +32,7 @@ const CSP_SITE =
   "img-src 'self' data: blob: https:; " +
   "connect-src 'self' https://formspree.io https://jsonplaceholder.typicode.com https://api.github.com https://dog.ceo https://*.dog.ceo https://httpbin.org; " +
   "form-action 'self' https://formspree.io mailto:; " +
-  "frame-src 'self' blob: https://liveweave.com https://*.liveweave.com; " +
+  "frame-src 'self' blob: https://liveweave.com https://*.liveweave.com https://www.crazygames.com https://*.crazygames.com; " +
   "worker-src 'self' blob:; " +
   "frame-ancestors 'self'; " +
   "object-src 'none'; base-uri 'self'" +

@@ -5,8 +5,13 @@
   <meta name="theme-color" content="#3a6ea5" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>Menelik Admasu — Portfolio</title>
-  <link rel="stylesheet" href="styles.css" />
-  <link rel="manifest" href="manifest.webmanifest" />
+  <!--
+    Cache bust: bump window.__MENELIK_V__ + the ?v= values below on every public deploy
+    so browsers and CDNs treat assets as new URLs.
+  -->
+  <script>window.__MENELIK_V__ = "20260803c";</script>
+  <link rel="stylesheet" href="styles.css?v=20260803c" />
+  <link rel="manifest" href="manifest.webmanifest?v=20260803c" />
   <link rel="apple-touch-icon" href="static/images/profile-320.webp" />
   <!-- Optimized profile photo preload (responsive sizes) -->
   <link rel="preload" href="static/images/profile-128.webp" as="image" type="image/webp" />
@@ -311,6 +316,10 @@
                 <div class="app-img vscode"></div>
                 <span>Liveweave</span>
               </button>
+              <button class="app-icon" data-page="blockblaster">
+                <div class="app-img blockblaster"></div>
+                <span>Block Blaster</span>
+              </button>
 
             </div>
 
@@ -372,6 +381,11 @@
           <div class="app-page" id="page-vscode" hidden>
             <div class="page-header"><button class="back-btn">‹ Back</button><h2>Liveweave</h2></div>
             <div class="page-body page-body-full" id="content-vscode"></div>
+          </div>
+          <!-- Mobile-only game (not on XP desktop) -->
+          <div class="app-page" id="page-blockblaster" hidden>
+            <div class="page-header"><button class="back-btn">‹ Back</button><h2>Block Blaster</h2></div>
+            <div class="page-body page-body-full" id="content-blockblaster"></div>
           </div>
         </div>
 
@@ -454,7 +468,7 @@
     </div>
   </div>
 
-  <script src="script.js"></script>
-  <script src="features-extra.js"></script>
+  <script src="script.js?v=20260803c"></script>
+  <script src="features-extra.js?v=20260803c"></script>
 </body>
 </html>

@@ -4725,6 +4725,46 @@ function mobileContent(key) {
     .replace(/class="tag"/g, 'style="font-size:11px;background:rgba(10,132,255,0.15);color:var(--accent);padding:3px 8px;border-radius:6px;"');
 }
 
+function mountBlockBlasterMobile(body) {
+  const GAME_URL = "https://www.crazygames.com/game/block-puzzle-master";
+  const EMBED_URL = "https://www.crazygames.com/embed/block-puzzle-master";
+  body.classList.add("page-body-full");
+  body.innerHTML = "";
+  const root = document.createElement("div");
+  root.className = "bb-mobile";
+  root.innerHTML =
+    '<div class="bb-toolbar">' +
+    "<strong>Block Blaster</strong>" +
+    '<a class="bb-open" href="' + GAME_URL + '" target="_blank" rel="noopener">Open full site ↗</a>' +
+    "</div>" +
+    '<div class="bb-frame-wrap">' +
+    '<iframe class="bb-frame" title="Block Blaster" allow="fullscreen; autoplay; gamepad; clipboard-write" allowfullscreen loading="lazy" referrerpolicy="no-referrer-when-downgrade" src="' +
+    EMBED_URL +
+    '"></iframe>' +
+    '<div class="bb-fallback" id="bb-fallback">' +
+    "<p>If the game does not load inside the phone, open it on CrazyGames.</p>" +
+    '<a class="bb-open" href="' + GAME_URL + '" target="_blank" rel="noopener">Play Block Blaster ↗</a>' +
+    "</div></div>";
+  body.appendChild(root);
+  // If embed is blocked, show fallback after a short wait when iframe stays blank
+  const frame = root.querySelector(".bb-frame");
+  const fallback = root.querySelector(".bb-fallback");
+  let settled = false;
+  const showFallback = () => {
+    if (settled) return;
+    settled = true;
+    if (fallback) fallback.classList.add("visible");
+  };
+  frame?.addEventListener("error", showFallback);
+  setTimeout(() => {
+    try {
+      // Cross-origin: cannot read contentDocument; keep embed visible + fallback button always available in toolbar
+    } catch (_) {
+      showFallback();
+    }
+  }, 4000);
+}
+
 function showPage(pageId) {
   const home = document.getElementById("home-screen");
   if (home) home.hidden = true;
@@ -4734,6 +4774,13 @@ function showPage(pageId) {
   page.hidden = false;
   const body = document.getElementById(`content-${pageId}`);
   if (!body) return;
+
+  // Mobile-only external game (iPhone shell)
+  if (pageId === "blockblaster") {
+    mountBlockBlasterMobile(body);
+    body.dataset.loaded = "1";
+    return;
+  }
 
   // Rebuild interactive apps each time so state is fresh; cache static content
   if (APPS[pageId]) {
@@ -5148,12 +5195,21 @@ tryLoadProfile();
 
 /* ========== Load content/*.json (Decap CMS source of truth) ========== */
 const CONTENT_FILES = ["about", "education", "experience", "certifications", "projects", "skills", "contact", "resume"];
+/** Cache-bust query for content fetches — mirrors window.__MENELIK_V__ from index.html */
+const ASSET_V =
+  (typeof window !== "undefined" && window.__MENELIK_V__) || "20260803c";
+function withV(url) {
+  const join = url.indexOf("?") >= 0 ? "&" : "?";
+  return url + join + "v=" + encodeURIComponent(ASSET_V);
+}
 
 async function loadExternalContent() {
   const results = await Promise.all(
     CONTENT_FILES.map(async (key) => {
       try {
-        const res = await fetch(`content/${key}.json`, { cache: "no-cache" });
+        const res = await fetch(withV(`content/${key}.json`), {
+          cache: "no-cache",
+        });
         if (!res.ok) return null;
         const data = await res.json();
         return { key, data };
@@ -5171,7 +5227,9 @@ async function loadExternalContent() {
 
   // Sticky note text
   try {
-    const res = await fetch("content/sticky-note.json", { cache: "no-cache" });
+    const res = await fetch(withV("content/sticky-note.json"), {
+      cache: "no-cache",
+    });
     if (res.ok) {
       const note = await res.json();
       const el = document.querySelector(".sticky-note p");

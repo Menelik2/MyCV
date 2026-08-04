@@ -241,9 +241,22 @@ npx serve .        # terminal 2
 
 ---
 
+## Cache busting (so visitors see updates)
+
+Asset URLs include a `?v=` query (see `index.html` → `window.__MENELIK_V__`).
+
+**On every public deploy**, change the version string in **all** of these places to the same new value (e.g. `20260803d` or `6`):
+
+1. `index.html` — `window.__MENELIK_V__ = "…"`
+2. `index.html` — `styles.css?v=…`, `manifest…?v=…`, `script.js?v=…`, `features-extra.js?v=…`
+3. Optional: bump `CACHE` in `sw.js` (`menelik-os-vN`) if the service worker itself changed
+
+Content JSON is fetched as `content/*.json?v=<same>` from `script.js`.
+
 ## Checklist
 
 - [ ] Folder has `index.html`, `styles.css`, `script.js`, `features-extra.js`
+- [ ] Bumped `__MENELIK_V__` / `?v=` if you changed CSS, JS, or content
 - [ ] Pushed to GitHub `main`
 - [ ] Vercel project imported (Framework: **Other**)
 - [ ] Deploy status = **Ready**

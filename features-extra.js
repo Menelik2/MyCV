@@ -1894,7 +1894,40 @@ END:VCARD`;
       enhanceContent();
     } catch (_) {}
     if ("serviceWorker" in navigator) {
-      navigator.serviceWorker.register("./sw.js").catch(() => {});
+      // Reload once when a new SW takes control so visitors see the latest deploy
+      let refreshing = false;
+      navigator.serviceWorker.addEventListener("controllerchange", () => {
+        if (refreshing) return;
+        refreshing = true;
+        window.location.reload();
+      });
+      const swUrl =
+        "./sw.js?v=" +
+        encodeURIComponent(
+          (typeof window !== "undefined" && window.__MENELIK_V__) || "20260803c"
+        );
+      navigator.serviceWorker
+        .register(swUrl)
+        .then((reg) => {
+          // Check for updates on every visit
+          try {
+            reg.update();
+          } catch (_) {}
+          // If a new worker is waiting, activate it immediately
+          if (reg.waiting) {
+            reg.waiting.postMessage({ type: "SKIP_WAITING" });
+          }
+          reg.addEventListener("updatefound", () => {
+            const nw = reg.installing;
+            if (!nw) return;
+            nw.addEventListener("statechange", () => {
+              if (nw.state === "installed" && navigator.serviceWorker.controller) {
+                // New version ready — skipWaiting already called in sw install
+              }
+            });
+          });
+        })
+        .catch(() => {});
     }
   });
 })();

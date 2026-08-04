@@ -1,7 +1,13 @@
-/* Menelik OS — offline shell service worker */
-const CACHE = "menelik-os-v3";
+/* Menelik OS — offline shell service worker
+ *
+ * Strategy (so deploys show up without hard-refresh):
+ *  - Network-first for HTML, JSON content, CSS, JS (always prefer live files)
+ *  - Cache-first only for images / fonts / PDF (rarely change)
+ *  - Bump CACHE name on every meaningful release so old shells are dropped
+ */
+const CACHE = "menelik-os-v5";
 
-/** App shell + content needed for a usable offline desktop */
+/** App shell used only as offline fallback */
 const PRECACHE = [
   "./",
   "./index.html",
@@ -11,30 +17,23 @@ const PRECACHE = [
   "./manifest.webmanifest",
   "./profile.jpg",
   "./profile.webp",
-  "./profile-thumb.jpg",
-  "./resume.pdf",
-  "./static/images/profile-32.webp",
-  "./static/images/profile-64.webp",
-  "./static/images/profile-128.webp",
-  "./static/images/profile-320.webp",
-  "./static/images/profile.webp",
   "./content/about.json",
-  "./content/education.json",
-  "./content/experience.json",
-  "./content/certifications.json",
   "./content/projects.json",
+  "./content/resume.json",
   "./content/skills.json",
   "./content/contact.json",
-  "./content/resume.json",
-  "./content/sticky-note.json",
 ];
+
+const NETWORK_FIRST_EXT =
+  /\.(?:html?|json|js|mjs|css|webmanifest)$/i;
+const CACHE_FIRST_EXT =
+  /\.(?:jpg|jpeg|png|gif|svg|webp|avif|ico|woff2?|ttf|eot|pdf)$/i;
 
 self.addEventListener("install", (event) => {
   event.waitUntil(
     caches
       .open(CACHE)
       .then((cache) =>
-        // addAll fails entirely if one URL 404s — add one-by-one
         Promise.all(
           PRECACHE.map((url) =>
             cache.add(url).catch((err) => {
@@ -58,46 +57,71 @@ self.addEventListener("activate", (event) => {
   );
 });
 
+// Allow the page to request immediate activation of a waiting worker
+self.addEventListener("message", (event) => {
+  if (event.data && event.data.type === "SKIP_WAITING") {
+    self.skipWaiting();
+  }
+});
+
+function networkFirst(req) {
+  return fetch(req)
+    .then((res) => {
+      if (res && res.ok) {
+        const copy = res.clone();
+        caches.open(CACHE).then((c) => c.put(req, copy)).catch(() => {});
+      }
+      return res;
+    })
+    .catch(() => caches.match(req).then((c) => c || caches.match("./index.html")));
+}
+
+function cacheFirst(req) {
+  return caches.match(req).then((cached) => {
+    const network = fetch(req)
+      .then((res) => {
+        if (res && res.ok) {
+          const copy = res.clone();
+          caches.open(CACHE).then((c) => c.put(req, copy)).catch(() => {});
+        }
+        return res;
+      })
+      .catch(() => cached);
+    return cached || network;
+  });
+}
+
 self.addEventListener("fetch", (event) => {
   const req = event.request;
   if (req.method !== "GET") return;
 
   const url = new URL(req.url);
-
-  // Only handle same-origin (leave GitHub API, fonts, Formspree to network)
   if (url.origin !== self.location.origin) return;
 
-  // Navigation: prefer network, fall back to cached index (SPA-style shell)
-  if (req.mode === "navigate") {
-    event.respondWith(
-      fetch(req)
-        .then((res) => {
-          const copy = res.clone();
-          caches.open(CACHE).then((c) => c.put("./index.html", copy));
-          return res;
-        })
-        .catch(() =>
-          caches.match("./index.html").then((c) => c || caches.match("./"))
-        )
-    );
+  // Never cache API (OAuth / CSP reports)
+  if (url.pathname.startsWith("/api/")) return;
+
+  // Navigations + HTML always network-first
+  if (req.mode === "navigate" || url.pathname === "/" || url.pathname.endsWith(".html")) {
+    event.respondWith(networkFirst(req));
     return;
   }
 
-  // Cache-first for static assets; network update in background
-  event.respondWith(
-    caches.match(req).then((cached) => {
-      const network = fetch(req)
-        .then((res) => {
-          if (res && res.ok) {
-            const copy = res.clone();
-            caches.open(CACHE).then((c) => c.put(req, copy));
-          }
-          return res;
-        })
-        .catch(() => cached);
+  // Content JSON, CSS, JS — network-first so portfolio updates appear immediately
+  if (
+    url.pathname.startsWith("/content/") ||
+    NETWORK_FIRST_EXT.test(url.pathname)
+  ) {
+    event.respondWith(networkFirst(req));
+    return;
+  }
 
-      // Stale-while-revalidate: return cache immediately when present
-      return cached || network;
-    })
-  );
+  // Images / fonts / PDF — cache-first is fine
+  if (CACHE_FIRST_EXT.test(url.pathname) || url.pathname.startsWith("/static/")) {
+    event.respondWith(cacheFirst(req));
+    return;
+  }
+
+  // Default: network-first
+  event.respondWith(networkFirst(req));
 });
