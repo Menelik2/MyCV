@@ -4726,35 +4726,19 @@ function mobileContent(key) {
 }
 
 function mountMobileGame(body) {
-  const GAME_URL = "https://www.tetrisgratuit.fr/";
   const EMBED_URL = "https://www.tetrisgratuit.fr/";
   body.classList.add("page-body-full");
   body.innerHTML = "";
   const root = document.createElement("div");
-  root.className = "bb-mobile";
+  root.className = "bb-mobile bb-mobile-only";
+  // Game only — no "Open full site" toolbar
   root.innerHTML =
-    '<div class="bb-toolbar">' +
-    "<strong>Tetris</strong>" +
-    '<a class="bb-open" href="' + GAME_URL + '" target="_blank" rel="noopener">Open full site ↗</a>' +
-    "</div>" +
     '<div class="bb-frame-wrap">' +
-    '<iframe class="bb-frame" title="Tetris Gratuit" allow="fullscreen; autoplay; gamepad; clipboard-write" allowfullscreen loading="lazy" referrerpolicy="no-referrer-when-downgrade" src="' +
+    '<iframe class="bb-frame" title="Tetris" allow="fullscreen; autoplay; gamepad; clipboard-write" allowfullscreen loading="lazy" referrerpolicy="no-referrer-when-downgrade" src="' +
     EMBED_URL +
     '"></iframe>' +
-    '<div class="bb-fallback" id="bb-fallback">' +
-    "<p>If the game does not load inside the phone, open it in the browser.</p>" +
-    '<a class="bb-open" href="' + GAME_URL + '" target="_blank" rel="noopener">Play Tetris ↗</a>' +
-    "</div></div>";
+    "</div>";
   body.appendChild(root);
-  const frame = root.querySelector(".bb-frame");
-  const fallback = root.querySelector(".bb-fallback");
-  let settled = false;
-  const showFallback = () => {
-    if (settled) return;
-    settled = true;
-    if (fallback) fallback.classList.add("visible");
-  };
-  frame?.addEventListener("error", showFallback);
 }
 
 function showPage(pageId) {
