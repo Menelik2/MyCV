@@ -4988,13 +4988,6 @@ function initMobileTetris(root) {
     return false;
   }
 
-  function ghostY() {
-    if (!piece) return 0;
-    let gy = 0;
-    while (!collides(piece, 0, gy + 1)) gy++;
-    return piece.y + gy;
-  }
-
   function merge() {
     const s = piece.shape;
     for (let y = 0; y < s.length; y++) {
@@ -5116,22 +5109,7 @@ function initMobileTetris(root) {
       }
     }
     if (piece && started && !over) {
-      // ghost
-      const gy = ghostY();
       const s = piece.shape;
-      for (let y = 0; y < s.length; y++) {
-        for (let x = 0; x < s[y].length; x++) {
-          if (!s[y][x]) continue;
-          drawCell(
-            ctx,
-            (piece.x + x) * cellW,
-            (gy + y) * cellH,
-            cellW,
-            COLORS[piece.type],
-            0.28
-          );
-        }
-      }
       for (let y = 0; y < s.length; y++) {
         for (let x = 0; x < s[y].length; x++) {
           if (!s[y][x]) continue;
