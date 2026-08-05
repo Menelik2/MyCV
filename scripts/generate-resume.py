@@ -51,9 +51,9 @@ RESUME = {
     "links": ["github.com/Menelik2", "menelikcv.vercel.app"],
     "summary": (
         "Full-stack app developer and Computer Science graduate (BSc, Bahir Dar University, 2022–2026). "
-        "I build complete applications — front-end interfaces, back-end logic, APIs, and deployment. "
-        "Also an experienced, multitasking computer administrator with strong skills in technical training, "
-        "hardware &amp; networking, and keeping systems running smoothly. Passionate about clean, reliable "
+        "I build complete applications — from user interfaces to back-end logic, APIs, and deployment. "
+        "I am also an experienced, multitasking computer administrator with strong skills in technical training, "
+        "hardware and networking, cybersecurity, and keeping systems running smoothly. I care about clean, reliable "
         "software and practical digital products."
     ),
     "experience": [
@@ -97,6 +97,7 @@ RESUME = {
     "certs": [
         "Computer Hardware and Networking Technology Level IV",
         "National Qualifications Certificates (COC)",
+        "Certificate in Computer Cybersecurity",
         "Best Worker of the Year (2010) — Dejen TVET College",
     ],
     "skills": [
@@ -108,7 +109,7 @@ RESUME = {
             "<b>IT &amp; training:</b> Computer administration, hardware &amp; networking, "
             "system administration, technical training"
         ),
-        "<b>Other:</b> Web site design, video editing, communication, continuous learning",
+        "<b>Other:</b> Web site design, video editing, Cybersecurity, communication, continuous learning",
     ],
     "projects": [
         ("Yeni Movie", "yeni-movie.vercel.app", "Movie &amp; TV discovery web app"),
