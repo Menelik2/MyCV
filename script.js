@@ -8,10 +8,10 @@ const CONTENT = {
         <div class="profile-pic" id="profile-pic"></div>
         <div>
           <h2 style="margin:0 0 6px;border:none;padding:0;">Menelik Admasu</h2>
-          <p style="margin:0;color:#555;"><strong>BSc Computer Science</strong><br>Bahir Dar University<br>2022 – 2026</p>
+          <p style="margin:0;color:#555;"><strong>Computer Administrator</strong><br>Hardware &amp; Networking · Trainer<br>Addis Ababa, Ethiopia</p>
         </div>
       </div>
-      <p>Hello! I'm Menelik Admasu, a Computer Science student at Bahir Dar University with a passion for building clean, functional software and exploring modern web technologies.</p>
+      <p>If you're looking for a multitasking, detail-oriented computer administrator who can keep things running smoothly, I'm the right person for the job.</p>
 <p> My goal is to continue growing as a developer while building meaningful and useful technology </p>
       <p>I enjoy turning ideas into interactive experiences — from classic desktop UIs to polished mobile layouts. This portfolio itself is a playful tribute to Windows XP and the iPhone Pro Max.</p>
       <h3>Interests</h3>
@@ -35,41 +35,36 @@ const CONTENT = {
     html: `
       <h2>Education</h2>
       <div class="project-card">
-        <h4>Bahir Dar University</h4>
-        <p style="margin:2px 0;color:#555;">Bachelor of Science in Computer Science</p>
-        <p style="margin:2px 0;"><strong>2022 – 2026</strong></p>
-        <p style="margin-top:8px;">Currently pursuing a BSc in Computer Science. Coursework covers programming fundamentals, data structures, algorithms, databases, software engineering, computer networks, and web technologies.</p>
+        <h4>Bahir Dar Poly Technical College</h4>
+        <p style="margin:2px 0;color:#555;">Computer Hardware &amp; Networking Technology</p>
+        <p style="margin:2px 0;"><strong>2002 – 2004</strong> · GPA 3.45</p>
       </div>
-      <h3>Relevant Coursework</h3>
-      <ul>
-        <li>Data Structures & Algorithms</li>
-        <li>Object-Oriented Programming</li>
-        <li>Database Systems</li>
-        <li>Web Development</li>
-        <li>Software Engineering</li>
-        <li>Computer Networks</li>
-        <li>Operating Systems</li>
-      </ul>
+      <div class="project-card">
+        <h4>Debre Markos Poly College</h4>
+        <p style="margin:2px 0;color:#555;">Computer Hardware &amp; Networking Service</p>
+        <p style="margin:2px 0;"><strong>2007</strong></p>
+      </div>
     `
   },
   experience: {
     title: "Experience",
     iconClass: "exp-icon",
     html: `
-      <h2>Experience</h2>
+      <h2>Work Experience</h2>
       <div class="project-card">
-        <h4>IT Operations · System Administration · Technical Training</h4>
-        <p style="margin:2px 0;"><strong>10+ years</strong></p>
-        <p style="margin-top:10px;">Over 10 years of experience in IT operations, system administration, and technical training. Specialized in computer systems management, network administration, and providing technical support across various platforms.</p>
+        <h4>Trainer</h4>
+        <p style="margin:2px 0;color:#555;">Dejen TVET College</p>
+        <p style="margin:2px 0;"><strong>2004 – 2012</strong></p>
       </div>
-      <h3>Focus areas</h3>
-      <ul>
-        <li>IT operations &amp; day-to-day systems management</li>
-        <li>System administration (installation, configuration, maintenance)</li>
-        <li>Network administration</li>
-        <li>Technical support across multiple platforms</li>
-        <li>Technical training and knowledge transfer</li>
-      </ul>
+      <div class="project-card">
+        <h4>Trainer</h4>
+        <p style="margin:2px 0;color:#555;">Debre Elias TVET College</p>
+        <p style="margin:2px 0;"><strong>2012 – 2014</strong></p>
+      </div>
+      <div class="project-card">
+        <h4>Total work experience</h4>
+        <p style="margin:2px 0;"><strong>10 years</strong></p>
+      </div>
     `
   },
   certifications: {
@@ -491,18 +486,18 @@ const CONTENT = {
       <p class="contact-lead">Feel free to reach out for collaborations, opportunities, or just to say hello.</p>
 
       <div class="contact-grid">
-        <a class="contact-tile" href="mailto:linuxos777@gmail.com">
+        <a class="contact-tile" href="mailto:minilover2014@gmail.com">
           <span class="contact-tile-icon" aria-hidden="true">✉</span>
           <span class="contact-tile-body">
             <span class="contact-tile-label">Email</span>
-            <span class="contact-tile-value">linuxos777@gmail.com</span>
+            <span class="contact-tile-value">minilover2014@gmail.com</span>
           </span>
         </a>
-        <a class="contact-tile" href="tel:+251977832379">
+        <a class="contact-tile" href="tel:+251918006053">
           <span class="contact-tile-icon" aria-hidden="true">☎</span>
           <span class="contact-tile-body">
             <span class="contact-tile-label">Phone</span>
-            <span class="contact-tile-value">+251 977 832 379</span>
+            <span class="contact-tile-value">+251 918 006 053</span>
             <span class="contact-tile-sub">+251 918 006 053</span>
           </span>
         </a>
@@ -524,7 +519,7 @@ const CONTENT = {
           <span class="contact-tile-icon" aria-hidden="true">⌖</span>
           <span class="contact-tile-body">
             <span class="contact-tile-label">Location</span>
-            <span class="contact-tile-value">Bahir Dar, Ethiopia</span>
+            <span class="contact-tile-value">Addis Ababa, Ethiopia</span>
           </span>
         </div>
       </div>
@@ -537,7 +532,7 @@ const CONTENT = {
         <label>Email<input type="email" name="email" required placeholder="you@example.com" autocomplete="email" /></label>
         <label>Message<textarea name="message" rows="4" required placeholder="How can I help?"></textarea></label>
         <button type="submit" class="proj-btn primary" id="contact-send-btn">Send message</button>
-        <p class="contact-form-note">Messages are delivered to <strong>linuxos777@gmail.com</strong>. Sent securely via Formspree.</p>
+        <p class="contact-form-note">Messages are delivered to <strong>minilover2014@gmail.com</strong>. Sent securely via Formspree.</p>
         <p class="contact-form-status" id="contact-form-status" hidden role="status"></p>
       </form>
     `
@@ -553,13 +548,13 @@ const CONTENT = {
       <article class="resume-doc" id="resume-printable">
         <header class="resume-header">
           <h1 class="resume-name">Menelik Admasu</h1>
-          <p class="resume-tagline">BSc Computer Science · Bahir Dar University · 2022 – 2026</p>
+          <p class="resume-tagline">Computer Administrator · Hardware &amp; Networking · Technical Trainer</p>
               <p class="resume-contact">
-      <span>Bahir Dar, Ethiopia</span>
+      <span>Addis Ababa, Ethiopia</span>
       <span class="sep">·</span>
-      <a href="mailto:linuxos777@gmail.com">linuxos777@gmail.com</a>
+      <a href="mailto:minilover2014@gmail.com">minilover2014@gmail.com</a>
       <span class="sep">·</span>
-      <a href="tel:+251977832379">+251 977 832 379</a>
+      <a href="tel:+251918006053">+251 918 006 053</a>
       <span class="sep">·</span>
       <a href="tel:+251918006053">+251 918 006 053</a>
       <span class="sep">·</span>
@@ -573,22 +568,26 @@ const CONTENT = {
 
         <section class="resume-section">
           <h2>Professional Summary</h2>
-          <p>Computer Science student and experienced IT professional with 10+ years in operations, system administration, and technical training. Strong foundation in programming, web development, and problem-solving. Passionate about building clean, reliable software and polished user interfaces.</p>
+          <p>Multitasking, detail-oriented computer administrator with strong administrative skills and extensive professional experience. Reliable for keeping systems running smoothly and handling technical responsibilities effectively.</p>
         </section>
 
         <section class="resume-section">
           <h2>Experience</h2>
           <div class="resume-item">
             <div class="resume-item-head">
-              <h3>IT Operations · System Administration · Technical Training</h3>
-              <span class="resume-dates">10+ years</span>
+              <h3>Trainer — Dejen TVET College</h3>
+              <span class="resume-dates">2004 – 2012</span>
             </div>
-            <p class="resume-meta">Multi-platform environments</p>
+            <p class="resume-meta">Technical training &amp; computer staff support</p>
+            <div class="resume-item-head" style="margin-top:10px">
+              <h3>Trainer — Debre Elias TVET College</h3>
+              <span class="resume-dates">2012 – 2014</span>
+            </div>
+            <p class="resume-meta">Technical training · Total experience 10 years</p>
             <ul>
-              <li>Day-to-day IT operations and systems management across workstations and servers</li>
-              <li>System administration: installation, configuration, maintenance, and troubleshooting</li>
-              <li>Network administration and multi-platform technical support</li>
-              <li>Technical training and knowledge transfer for end users and junior staff</li>
+              <li>Computer administration and day-to-day IT support</li>
+              <li>Technical training for TVET learners</li>
+              <li>Hardware &amp; networking support</li>
             </ul>
           </div>
         </section>
@@ -597,11 +596,15 @@ const CONTENT = {
           <h2>Education</h2>
           <div class="resume-item">
             <div class="resume-item-head">
-              <h3>Bachelor of Science in Computer Science</h3>
-              <span class="resume-dates">2022 – 2026</span>
+              <h3>Computer Hardware &amp; Networking Technology</h3>
+              <span class="resume-dates">2002 – 2004</span>
             </div>
-            <p class="resume-meta">Bahir Dar University</p>
-            <p>Coursework: Data Structures &amp; Algorithms, OOP, Database Systems, Web Development, Software Engineering, Computer Networks, Operating Systems</p>
+            <p class="resume-meta">Bahir Dar Poly Technical College · GPA 3.45</p>
+            <div class="resume-item-head" style="margin-top:10px">
+              <h3>Computer Hardware &amp; Networking Service</h3>
+              <span class="resume-dates">2007</span>
+            </div>
+            <p class="resume-meta">Debre Markos Poly College</p>
           </div>
         </section>
 
@@ -1167,8 +1170,8 @@ function buildTerminal() {
   };
 
   const FILES = {
-    "/home/menelik/about.txt": "Menelik Admasu — BSc Computer Science @ Bahir Dar University (2022–2026)\nPassionate about web development and classic UIs.",
-    "/home/menelik/education.txt": "Bahir Dar University\nBachelor of Science in Computer Science\n2022 – 2026\n\nRelevant coursework:\n- Data Structures & Algorithms\n- Web Development\n- Database Systems\n- Operating Systems",
+    "/home/menelik/about.txt": "Menelik Admasu — Computer Administrator\nHardware & Networking · Technical Trainer\nAddis Ababa, Ethiopia\nEmail: minilover2014@gmail.com",
+    "/home/menelik/education.txt": "Bahir Dar Poly Technical College\nComputer Hardware & Networking Technology\n2002 – 2004 · GPA 3.45\n\nDebre Markos Poly College\nComputer Hardware & Networking Service\n2007",
     "/home/menelik/skills.txt": "Languages: HTML, CSS, JavaScript, Python, Java\nTools: Git, SQL, VS Code\nOther: Responsive Design, UI/UX",
     "/home/menelik/.bashrc": "# ~/.bashrc\nexport PS1='\\u@\\h:\\w\\$ '\nexport PATH=$PATH:/usr/local/bin\nalias ll='ls -la'\nalias cls='clear'",
     "/home/menelik/resume.pdf": "[Binary PDF — open the Resume app instead]",
@@ -1515,7 +1518,7 @@ function buildTerminal() {
 
     about: () => {
       print("Menelik Admasu");
-      print("BSc Computer Science — Bahir Dar University (2022–2026)");
+      print("Computer Administrator — Hardware & Networking · Trainer");
       print("Open the About Me window for the full profile.");
     },
 
@@ -5641,7 +5644,7 @@ document.addEventListener("click", (e) => {
 });
 
 /* ========== Contact form -> Gmail via Formspree (or mailto fallback) ========== */
-const PORTFOLIO_CONTACT_EMAIL = "linuxos777@gmail.com";
+const PORTFOLIO_CONTACT_EMAIL = "minilover2014@gmail.com";
 
 function getFormspreeId() {
   try {

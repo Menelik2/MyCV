@@ -22,7 +22,7 @@
     },
     {
       id: "bdu",
-      title: "Studying CS at Bahir Dar University",
+      title: "Computer administrator & technical trainer",
       date: "2026-05-20",
       body: "Coursework spans algorithms, networks, databases, and web tech. Side projects (Yeni Movie, Yeni Typing, Yeni Exam) keep skills sharp.",
     },
@@ -931,7 +931,7 @@
         { href: "https://yenityping.vercel.app", title: "Yeni Typing", sub: "Live demo", icon: "⌨️", tone: "type" },
         { href: "https://yeniexams.vercel.app/", title: "Yeni Exam", sub: "Exit exam generator", icon: "📝", tone: "site" },
         { href: "https://www.linkedin.com/in/menelikadmasu", title: "LinkedIn", sub: "menelikadmasu", icon: "in", tone: "in" },
-        { href: "mailto:linuxos777@gmail.com", title: "Email", sub: "linuxos777@gmail.com", icon: "✉", tone: "mail" },
+        { href: "mailto:minilover2014@gmail.com", title: "Email", sub: "minilover2014@gmail.com", icon: "✉", tone: "mail" },
       ];
       setStatus(places.length + " network places");
       main.innerHTML =
@@ -1026,7 +1026,7 @@
           <div class="mc-sys-banner">Menelik OS</div>
           <dl class="mc-sys-dl">
             <div><dt>Owner</dt><dd>Menelik Admasu</dd></div>
-            <div><dt>Role</dt><dd>BSc Computer Science · Bahir Dar University</dd></div>
+            <div><dt>Role</dt><dd>Computer Administrator · Hardware &amp; Networking</dd></div>
             <div><dt>Experience</dt><dd>10+ years IT ops · networking · hardware</dd></div>
             <div><dt>Shell</dt><dd>Windows XP + iPhone layout (browser)</dd></div>
             <div><dt>Stack</dt><dd>HTML · CSS · JavaScript · Vercel</dd></div>
@@ -1107,11 +1107,11 @@
     const vcf = `BEGIN:VCARD
 VERSION:3.0
 FN:Menelik Admasu
-EMAIL:linuxos777@gmail.com
+EMAIL:minilover2014@gmail.com
 URL:https://menelikcv.vercel.app
 URL:https://github.com/Menelik2
 ADR:;;Bahir Dar;;;Ethiopia
-NOTE:BSc Computer Science · Bahir Dar University
+NOTE:Computer Administrator · Addis Ababa, Ethiopia
 END:VCARD`;
     const blob = new Blob([vcf], { type: "text/vcard" });
     const a = document.createElement("a");
@@ -1498,7 +1498,7 @@ END:VCARD`;
     }
     if (CONTENT.contact && CONTENT.contact.html) {
       if (!CONTENT.contact.html.includes("contact-success-hint")) {
-        CONTENT.contact.html += `<p class="contact-success-hint muted" style="font-size:12px">Contact form is connected to Formspree (<code>xqervlnj</code>). Messages go to linuxos777@gmail.com.</p>`;
+        CONTENT.contact.html += `<p class="contact-success-hint muted" style="font-size:12px">Contact form is connected to Formspree (<code>xqervlnj</code>). Messages go to minilover2014@gmail.com.</p>`;
       }
       // Prefer configured Formspree id from localStorage if user set one
       try {
