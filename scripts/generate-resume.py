@@ -44,11 +44,11 @@ MARGIN = 15 * mm
 RESUME = {
     "name": "Menelik Admasu",
     "tagline": "Full-Stack App Developer · BSc Computer Science · Computer Administrator",
-    "location": "Addis Ababa, Ethiopia",
+    "location": "Bahir Dar, Ethiopia",
     "education_line": "Bahir Dar University (2022 – 2026, completed)",
     "emails": ["linuxos777@gmail.com"],
     "phones": ["+251 918 006 053", "+251 977 832 379"],
-    "links": ["github.com/Menelik2", "menelikcv.vercel.app"],
+    "links": ["menelikcv.vercel.app"],
     "summary": (
         "Full-stack app developer and Computer Science graduate (BSc, Bahir Dar University, 2022–2026). "
         "I build complete applications — from user interfaces to back-end logic, APIs, and deployment. "
@@ -155,12 +155,11 @@ def section_rule():
 
 
 def header_block(styles, data: dict):
-    # Under the name: tagline + contact only (no university line / no minilover email)
-    contact_bits = (
-        " · ".join(data["emails"] + data["phones"])
-        + "<br/>"
-        + " · ".join(data["links"])
-    )
+    # Under the name: tagline + email/phone/location/portfolio (no GitHub)
+    line1 = " · ".join(data["emails"] + data["phones"])
+    line2_parts = [data.get("location", ""), *data.get("links", [])]
+    line2 = " · ".join(p for p in line2_parts if p)
+    contact_bits = line1 + ("<br/>" + line2 if line2 else "")
     return [
         Paragraph(data["name"], styles["RName"]),
         Paragraph(data["tagline"], styles["RTag"]),
