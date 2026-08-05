@@ -22,7 +22,7 @@
     },
     {
       id: "bdu",
-      title: "Computer administrator & technical trainer",
+      title: "BSc CS graduate · computer administrator & trainer",
       date: "2026-05-20",
       body: "Coursework spans algorithms, networks, databases, and web tech. Side projects (Yeni Movie, Yeni Typing, Yeni Exam) keep skills sharp.",
     },

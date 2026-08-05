@@ -1170,7 +1170,7 @@ function buildTerminal() {
   };
 
   const FILES = {
-    "/home/menelik/about.txt": "Menelik Admasu — Computer Administrator · Hardware & Networking · Technical Trainer\nComputer Administrator · Hardware & Networking · Technical Trainer\nEmail: minilover2014@gmail.com / linuxos777@gmail.com",
+    "/home/menelik/about.txt": "Menelik Admasu — BSc Computer Science (completed) · Bahir Dar University\nBSc Computer Science (completed) · Bahir Dar University\nEmail: minilover2014@gmail.com / linuxos777@gmail.com",
     "/home/menelik/education.txt": "Bahir Dar University\nComputer Hardware & Networking (completed)\n2022 – 2026\n\nBahir Dar Poly Technical College\nComputer Hardware & Networking Technology\n2002 – 2004 · GPA 3.45\n\nDebre Markos Poly College\nComputer Hardware & Networking Service\n2007",
     "/home/menelik/skills.txt": "Languages: HTML, CSS, JavaScript, Python, Java\nTools: Git, SQL, VS Code\nOther: Responsive Design, UI/UX",
     "/home/menelik/.bashrc": "# ~/.bashrc\nexport PS1='\\u@\\h:\\w\\$ '\nexport PATH=$PATH:/usr/local/bin\nalias ll='ls -la'\nalias cls='clear'",
@@ -1518,7 +1518,7 @@ function buildTerminal() {
 
     about: () => {
       print("Menelik Admasu");
-      print("Computer Administrator — Hardware & Networking · Technical Trainer");
+      print("BSc Computer Science (completed) — Bahir Dar University");
       print("Open the About Me window for the full profile.");
     },
 
