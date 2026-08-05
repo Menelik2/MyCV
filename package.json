@@ -6,7 +6,8 @@
     "cms": "npx --yes decap-server",
     "dev": "echo \"Terminal 1: npm run cms   |   Terminal 2: npm run serve   |   then open http://localhost:3000/admin/\"",
     "optimize:images": "node scripts/optimize-images.mjs",
-    "optimize:images:help": "echo \"npm i sharp --save-dev && npm run optimize:images\""
+    "optimize:images:help": "echo \"npm i sharp --save-dev && npm run optimize:images\"",
+    "resume": "python3 scripts/generate-resume.py"
   },
   "description": "Static XP portfolio \u2014 Vercel zero install/build",
   "dependencies": {}
