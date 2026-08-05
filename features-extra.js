@@ -22,7 +22,7 @@
     },
     {
       id: "bdu",
-      title: "Computer administrator & technical trainer",
+      title: "CS student · computer administrator & trainer",
       date: "2026-05-20",
       body: "Coursework spans algorithms, networks, databases, and web tech. Side projects (Yeni Movie, Yeni Typing, Yeni Exam) keep skills sharp.",
     },
@@ -1026,7 +1026,7 @@
           <div class="mc-sys-banner">Menelik OS</div>
           <dl class="mc-sys-dl">
             <div><dt>Owner</dt><dd>Menelik Admasu</dd></div>
-            <div><dt>Role</dt><dd>Computer Administrator · Hardware &amp; Networking</dd></div>
+            <div><dt>Role</dt><dd>BSc Computer Science · Bahir Dar University · Computer Administrator</dd></div>
             <div><dt>Experience</dt><dd>10+ years IT ops · networking · hardware</dd></div>
             <div><dt>Shell</dt><dd>Windows XP + iPhone layout (browser)</dd></div>
             <div><dt>Stack</dt><dd>HTML · CSS · JavaScript · Vercel</dd></div>
@@ -1111,7 +1111,7 @@ EMAIL:minilover2014@gmail.com
 URL:https://menelikcv.vercel.app
 URL:https://github.com/Menelik2
 ADR:;;Bahir Dar;;;Ethiopia
-NOTE:Computer Administrator · Addis Ababa, Ethiopia
+NOTE:BSc Computer Science · Bahir Dar University · Computer Administrator
 END:VCARD`;
     const blob = new Blob([vcf], { type: "text/vcard" });
     const a = document.createElement("a");
