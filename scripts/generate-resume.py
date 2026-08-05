@@ -46,7 +46,7 @@ RESUME = {
     "tagline": "Full-Stack App Developer · BSc Computer Science · Computer Administrator",
     "location": "Addis Ababa, Ethiopia",
     "education_line": "Bahir Dar University (2022 – 2026, completed)",
-    "emails": ["minilover2014@gmail.com", "linuxos777@gmail.com"],
+    "emails": ["linuxos777@gmail.com"],
     "phones": ["+251 918 006 053", "+251 977 832 379"],
     "links": ["github.com/Menelik2", "menelikcv.vercel.app"],
     "summary": (
@@ -154,9 +154,9 @@ def section_rule():
 
 
 def header_block(styles, data: dict):
+    # Under the name: tagline + contact only (no university line / no minilover email)
     contact_bits = (
-        f"{data['education_line']} · {data['location']}<br/>"
-        + " · ".join(data["emails"] + data["phones"])
+        " · ".join(data["emails"] + data["phones"])
         + "<br/>"
         + " · ".join(data["links"])
     )
