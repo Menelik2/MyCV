@@ -6091,3 +6091,47 @@ body:not(.light) .contact-tile-label,
 body:not(.light) .contact-tile-sub { color: #94a3b8; }
 body:not(.light) .contact-lead { color: #94a3b8; }
 body:not(.light) .contact-form-heading { color: #7eb8ff; }
+
+/* Resume contact list — match PDF labeled icon rows */
+.resume-contact-list {
+  list-style: none;
+  margin: 10px 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 13px;
+  color: #475569;
+  line-height: 1.45;
+}
+.resume-contact-list li {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 6px;
+}
+.resume-contact-list .rci {
+  color: #1e40af;
+  font-size: 14px;
+  width: 1.15em;
+  text-align: center;
+  flex-shrink: 0;
+}
+.resume-contact-list .rcl {
+  font-weight: 700;
+  color: #0f172a;
+  min-width: 4.6em;
+}
+.resume-contact-list a {
+  color: #1e40af;
+  text-decoration: none;
+}
+.resume-contact-list a:hover {
+  text-decoration: underline;
+}
+@media print {
+  .resume-contact-list a {
+    color: #0f172a;
+    text-decoration: none;
+  }
+}

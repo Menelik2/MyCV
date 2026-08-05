@@ -548,22 +548,14 @@ const CONTENT = {
       <article class="resume-doc" id="resume-printable">
         <header class="resume-header">
           <h1 class="resume-name">Menelik Admasu</h1>
-          <p class="resume-tagline">Computer Administrator · Hardware &amp; Networking · Technical Trainer</p>
-              <p class="resume-contact">
-      <span>Addis Ababa, Ethiopia</span>
-      <span class="sep">·</span>
-      <a href="mailto:minilover2014@gmail.com">minilover2014@gmail.com</a>
-      <span class="sep">·</span>
-      <a href="tel:+251918006053">+251 918 006 053</a>
-      <span class="sep">·</span>
-      <a href="tel:+251918006053">+251 918 006 053</a>
-      <span class="sep">·</span>
-      <a href="https://github.com/Menelik2" target="_blank" rel="noopener">github.com/Menelik2</a>
-      <span class="sep">·</span>
-      <a href="https://www.linkedin.com/in/menelikadmasu" target="_blank" rel="noopener">linkedin.com/in/menelikadmasu</a>
-      <span class="sep">·</span>
-      <a href="https://menelikcv.vercel.app" target="_blank" rel="noopener">menelikcv.vercel.app</a>
-    </p>
+          
+            <p class="resume-tagline">Full-Stack App Developer · BSc Computer Science · Computer Administrator</p>
+            <ul class="resume-contact-list">
+              <li><span class="rci" aria-hidden="true">✉</span> <span class="rcl">E-mail:</span> <a href="mailto:linuxos777@gmail.com">linuxos777@gmail.com</a></li>
+              <li><span class="rci" aria-hidden="true">☎</span> <span class="rcl">Phone:</span> <a href="tel:+251918006053">+251 918 006 053</a> · <a href="tel:+251977832379">+251 977 832 379</a></li>
+              <li><span class="rci" aria-hidden="true">●</span> <span class="rcl">Location:</span> Bahir Dar, Ethiopia</li>
+              <li><span class="rci" aria-hidden="true">◉</span> <span class="rcl">Website:</span> <a href="https://menelikcv.vercel.app" target="_blank" rel="noopener">menelikcv.vercel.app</a></li>
+            </ul>
         </header>
 
         <section class="resume-section">

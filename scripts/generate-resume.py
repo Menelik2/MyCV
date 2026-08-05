@@ -19,6 +19,8 @@ from reportlab.lib.colors import HexColor
 from reportlab.lib.pagesizes import A4
 from reportlab.lib.styles import ParagraphStyle, getSampleStyleSheet
 from reportlab.lib.units import mm
+from reportlab.pdfbase import pdfmetrics
+from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.platypus import (
     HRFlowable,
     KeepTogether,
@@ -125,24 +127,42 @@ RESUME = {
 }
 
 
+def _register_fonts():
+    """Prefer DejaVu for Unicode contact symbols (envelope, phone, etc.)."""
+    candidates = [
+        Path("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf"),
+        Path("/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf"),
+    ]
+    regular = candidates[0] if candidates[0].exists() else None
+    bold = candidates[1] if candidates[1].exists() else regular
+    if regular:
+        pdfmetrics.registerFont(TTFont("DejaVu", str(regular)))
+        if bold:
+            pdfmetrics.registerFont(TTFont("DejaVu-Bold", str(bold)))
+        return "DejaVu", "DejaVu-Bold"
+    return "Helvetica", "Helvetica-Bold"
+
+
 def build_styles():
+    font, font_bold = _register_fonts()
     base = getSampleStyleSheet()
     specs = {
-        "RName": dict(fontName="Helvetica-Bold", fontSize=20, textColor=DARK, spaceAfter=1.5 * mm, leading=24),
-        "RTag": dict(fontName="Helvetica", fontSize=9.5, textColor=ACCENT, spaceAfter=1 * mm, leading=12),
-        "RContact": dict(fontName="Helvetica", fontSize=8.2, textColor=MUTED, spaceAfter=2.5 * mm, leading=11),
+        "RName": dict(fontName=font_bold, fontSize=20, textColor=DARK, spaceAfter=1.5 * mm, leading=24),
+        "RTag": dict(fontName=font, fontSize=9.5, textColor=ACCENT, spaceAfter=1 * mm, leading=12),
+        "RContact": dict(fontName=font, fontSize=9, textColor=MUTED, spaceAfter=2.5 * mm, leading=14),
         "RH2": dict(
-            fontName="Helvetica-Bold",
+            fontName=font_bold,
             fontSize=10.5,
             textColor=ACCENT,
             spaceBefore=3 * mm,
             spaceAfter=1.2 * mm,
             leading=13,
         ),
-        "RBody": dict(fontName="Helvetica", fontSize=9, textColor=DARK, leading=11.5, spaceAfter=1.2 * mm),
-        "RJob": dict(fontName="Helvetica-Bold", fontSize=9.5, textColor=DARK, leading=12, spaceBefore=1.2 * mm),
-        "RMeta": dict(fontName="Helvetica-Oblique", fontSize=8, textColor=MUTED, leading=10, spaceAfter=0.6 * mm),
-        "RBullet": dict(fontName="Helvetica", fontSize=8.5, textColor=DARK, leading=11, leftIndent=8),
+        "RBody": dict(fontName=font, fontSize=9, textColor=DARK, leading=11.5, spaceAfter=1.2 * mm),
+        "RJob": dict(fontName=font_bold, fontSize=9.5, textColor=DARK, leading=12, spaceBefore=1.2 * mm),
+        "RMeta": dict(fontName=font, fontSize=8, textColor=MUTED, leading=10, spaceAfter=0.6 * mm),
+        "RBullet": dict(fontName=font, fontSize=8.5, textColor=DARK, leading=11, leftIndent=8),
+        "RIconRow": dict(fontName=font, fontSize=9, textColor=MUTED, leading=15, spaceAfter=0.3*mm),
     }
     for name, kw in specs.items():
         if name not in base.byName:
@@ -155,11 +175,26 @@ def section_rule():
 
 
 def header_block(styles, data: dict):
-    # Under the name: tagline + email/phone/location/portfolio (no GitHub)
-    line1 = " · ".join(data["emails"] + data["phones"])
-    line2_parts = [data.get("location", ""), *data.get("links", [])]
-    line2 = " · ".join(p for p in line2_parts if p)
-    contact_bits = line1 + ("<br/>" + line2 if line2 else "")
+    # Labeled contact block under the name
+    email = data["emails"][0] if data.get("emails") else ""
+    phones = " · ".join(data.get("phones") or [])
+    location = data.get("location") or ""
+    website = (data.get("links") or [""])[0]
+    # Styled contact icons (accent-colored symbols + bold labels)
+    # Color matches ACCENT (#1e40af)
+    icon = '<font color="#1e40af" size="11">'
+    icone = "</font>"
+    label = '<font color="#0f172a"><b>'
+    labele = "</b></font>"
+    val = '<font color="#475569">'
+    vale = "</font>"
+    rows = [
+        f"{icon}✉{icone}  {label}E-mail:{labele}  {val}{email}{vale}",
+        f"{icon}☎{icone}  {label}Phone:{labele}  {val}{phones}{vale}",
+        f"{icon}●{icone}  {label}Location:{labele}  {val}{location}{vale}",
+        f"{icon}◉{icone}  {label}Website:{labele}  {val}{website}{vale}",
+    ]
+    contact_bits = "<br/>".join(rows)
     return [
         Paragraph(data["name"], styles["RName"]),
         Paragraph(data["tagline"], styles["RTag"]),
