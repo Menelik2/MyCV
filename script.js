@@ -486,11 +486,11 @@ const CONTENT = {
       <p class="contact-lead">Feel free to reach out for collaborations, opportunities, or just to say hello.</p>
 
       <div class="contact-grid">
-        <a class="contact-tile" href="mailto:minilover2014@gmail.com">
+        <a class="contact-tile" href="mailto:linuxos777@gmail.com">
           <span class="contact-tile-icon" aria-hidden="true">✉</span>
           <span class="contact-tile-body">
             <span class="contact-tile-label">Email</span>
-            <span class="contact-tile-value">minilover2014@gmail.com</span>
+            <span class="contact-tile-value">linuxos777@gmail.com</span>
           </span>
         </a>
         <a class="contact-tile" href="tel:+251918006053">
@@ -532,7 +532,7 @@ const CONTENT = {
         <label>Email<input type="email" name="email" required placeholder="you@example.com" autocomplete="email" /></label>
         <label>Message<textarea name="message" rows="4" required placeholder="How can I help?"></textarea></label>
         <button type="submit" class="proj-btn primary" id="contact-send-btn">Send message</button>
-        <p class="contact-form-note">Messages are delivered to <strong>minilover2014@gmail.com</strong>. Sent securely via Formspree.</p>
+        <p class="contact-form-note">Messages are delivered to <strong>linuxos777@gmail.com</strong>. Sent securely via Formspree.</p>
         <p class="contact-form-status" id="contact-form-status" hidden role="status"></p>
       </form>
     `
@@ -1162,7 +1162,7 @@ function buildTerminal() {
   };
 
   const FILES = {
-    "/home/menelik/about.txt": "Menelik Admasu — BSc Computer Science (completed) · Bahir Dar University\nBSc Computer Science (completed) · Bahir Dar University\nEmail: minilover2014@gmail.com / linuxos777@gmail.com",
+    "/home/menelik/about.txt": "Menelik Admasu — BSc Computer Science (completed) · Bahir Dar University\nBSc Computer Science (completed) · Bahir Dar University\nEmail: linuxos777@gmail.com / linuxos777@gmail.com",
     "/home/menelik/education.txt": "Bahir Dar University\nComputer Hardware & Networking (completed)\n2022 – 2026\n\nBahir Dar Poly Technical College\nComputer Hardware & Networking Technology\n2002 – 2004 · GPA 3.45\n\nDebre Markos Poly College\nComputer Hardware & Networking Service\n2007",
     "/home/menelik/skills.txt": "Languages: HTML, CSS, JavaScript, Python, Java\nTools: Git, SQL, VS Code\nOther: Responsive Design, UI/UX",
     "/home/menelik/.bashrc": "# ~/.bashrc\nexport PS1='\\u@\\h:\\w\\$ '\nexport PATH=$PATH:/usr/local/bin\nalias ll='ls -la'\nalias cls='clear'",
@@ -5636,7 +5636,7 @@ document.addEventListener("click", (e) => {
 });
 
 /* ========== Contact form -> Gmail via Formspree (or mailto fallback) ========== */
-const PORTFOLIO_CONTACT_EMAIL = "minilover2014@gmail.com";
+const PORTFOLIO_CONTACT_EMAIL = "linuxos777@gmail.com";
 
 function getFormspreeId() {
   try {
