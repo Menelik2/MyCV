@@ -4,52 +4,479 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="robots" content="noindex, nofollow" />
-  <title>Content Manager — Menelik Portfolio</title>
-  <!-- Decap loads config from ./config.yml (same folder) -->
+  <meta name="theme-color" content="#0f172a" />
+  <title>Admin — Menelik Portfolio CMS</title>
   <link href="config.yml" type="text/yaml" rel="cms-config-url" />
-  <script src="https://unpkg.com/decap-cms@^3.3.3/dist/decap-cms.js"></script>
   <style>
+    :root {
+      --bg: #0b1220;
+      --panel: #111827;
+      --panel2: #1e293b;
+      --border: #334155;
+      --text: #e2e8f0;
+      --muted: #94a3b8;
+      --accent: #3b82f6;
+      --accent2: #2563eb;
+      --ok: #22c55e;
+      --warn: #f59e0b;
+    }
+    * { box-sizing: border-box; }
     html, body {
       margin: 0;
       min-height: 100%;
-      background: #1e1e24;
-      font-family: Tahoma, "Segoe UI", system-ui, sans-serif;
-      color: #ccc;
+      height: 100%;
+      background: var(--bg);
+      color: var(--text);
+      font-family: "Segoe UI", system-ui, -apple-system, Tahoma, sans-serif;
     }
-    .cms-boot {
-      position: fixed;
-      inset: 0;
+    body { display: flex; flex-direction: column; }
+
+    /* Full-page shell until CMS mounts */
+    #admin-shell {
+      min-height: 100vh;
       display: flex;
       flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 12px;
-      pointer-events: none;
-      z-index: 0;
     }
-    .cms-boot h1 { font-size: 16px; font-weight: 600; color: #e2e8f0; margin: 0; }
-    .cms-boot p { font-size: 12px; color: #94a3b8; margin: 0; max-width: 380px; text-align: center; line-height: 1.45; }
+    #admin-shell.is-hidden {
+      display: none !important;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 14px 20px;
+      background: linear-gradient(180deg, #0f172a, #0b1220);
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      z-index: 5;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 0;
+    }
+    .brand-mark {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, var(--accent), #7c3aed);
+      display: grid;
+      place-items: center;
+      font-weight: 800;
+      font-size: 14px;
+      color: #fff;
+      flex-shrink: 0;
+    }
+    .brand h1 {
+      margin: 0;
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: 0.01em;
+    }
+    .brand p {
+      margin: 2px 0 0;
+      font-size: 12px;
+      color: var(--muted);
+    }
+    .top-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .btn {
+      appearance: none;
+      border: 1px solid var(--border);
+      background: var(--panel2);
+      color: var(--text);
+      border-radius: 10px;
+      padding: 9px 14px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: background .15s, border-color .15s, transform .1s;
+    }
+    .btn:hover { background: #243244; border-color: #475569; }
+    .btn:active { transform: translateY(1px); }
+    .btn-primary {
+      background: linear-gradient(180deg, var(--accent), var(--accent2));
+      border-color: transparent;
+      color: #fff;
+    }
+    .btn-primary:hover { filter: brightness(1.06); background: linear-gradient(180deg, var(--accent), var(--accent2)); }
+
+    .layout {
+      flex: 1;
+      display: grid;
+      grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+      gap: 18px;
+      padding: 18px;
+      max-width: 1100px;
+      width: 100%;
+      margin: 0 auto;
+    }
+    @media (max-width: 860px) {
+      .layout { grid-template-columns: 1fr; }
+    }
+
+    .card {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 18px;
+      box-shadow: 0 10px 40px rgba(0,0,0,.25);
+    }
+    .card h2 {
+      margin: 0 0 8px;
+      font-size: 16px;
+    }
+    .card .lead {
+      margin: 0 0 16px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .login-box {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .status {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 12px 14px;
+      border-radius: 12px;
+      background: rgba(59,130,246,.08);
+      border: 1px solid rgba(59,130,246,.25);
+      font-size: 13px;
+      line-height: 1.45;
+      color: #cbd5e1;
+    }
+    .status .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--accent);
+      margin-top: 5px;
+      flex-shrink: 0;
+      box-shadow: 0 0 0 4px rgba(59,130,246,.15);
+    }
+    .status.warn {
+      background: rgba(245,158,11,.08);
+      border-color: rgba(245,158,11,.28);
+    }
+    .status.warn .dot { background: var(--warn); box-shadow: 0 0 0 4px rgba(245,158,11,.12); }
+
+    .steps {
+      margin: 0;
+      padding-left: 18px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.55;
+    }
+    .steps li { margin: 6px 0; }
+    .steps code {
+      background: #0f172a;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 1px 6px;
+      font-size: 12px;
+      color: #e2e8f0;
+    }
+
+    .file-list {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: grid;
+      gap: 8px;
+    }
+    .file-list li {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 10px 12px;
+      border-radius: 12px;
+      background: #0f172a;
+      border: 1px solid var(--border);
+      font-size: 13px;
+    }
+    .file-list .meta {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      min-width: 0;
+    }
+    .file-list strong { color: var(--text); font-weight: 650; }
+    .file-list span.path {
+      color: var(--muted);
+      font-size: 11.5px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .badge {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: .03em;
+      text-transform: uppercase;
+      color: #93c5fd;
+      background: rgba(59,130,246,.12);
+      border: 1px solid rgba(59,130,246,.25);
+      border-radius: 999px;
+      padding: 4px 8px;
+      flex-shrink: 0;
+    }
+
+    .footer-note {
+      text-align: center;
+      color: var(--muted);
+      font-size: 12px;
+      padding: 8px 16px 20px;
+    }
+    .footer-note a { color: #93c5fd; }
+
+    /* While Decap is visible, let it own the viewport */
+    body.cms-ready #admin-shell { display: none !important; }
+    body.cms-ready {
+      /* Decap injects its own UI full page */
+      overflow: auto;
+    }
+
+    /* Soft loading overlay on top of shell */
+    .loading-bar {
+      height: 3px;
+      width: 100%;
+      background: linear-gradient(90deg, transparent, var(--accent), transparent);
+      background-size: 200% 100%;
+      animation: shimmer 1.2s linear infinite;
+    }
+    @keyframes shimmer {
+      0% { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
   </style>
 </head>
 <body>
-  <div class="cms-boot" id="cms-boot">
-    <h1>Portfolio Content Manager</h1>
-    <p>
-      Loading Decap CMS… Log in with <strong>GitHub</strong> when prompted.
-      Requires Vercel env vars <code>GITHUB_CLIENT_ID</code> and <code>GITHUB_CLIENT_SECRET</code>.
+  <div id="admin-shell">
+    <div class="loading-bar" id="loading-bar" aria-hidden="true"></div>
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-mark" aria-hidden="true">M</div>
+        <div>
+          <h1>Portfolio Admin</h1>
+          <p>Content manager · login required · edit files on GitHub</p>
+        </div>
+      </div>
+      <div class="top-actions">
+        <a class="btn" href="/" title="Back to public site">← Site</a>
+        <button type="button" class="btn btn-primary" id="btn-open-cms">
+          Open CMS login
+        </button>
+      </div>
+    </header>
+
+    <main class="layout">
+      <section class="card login-box">
+        <h2>Login &amp; access files</h2>
+        <p class="lead">
+          This admin page opens the full Decap CMS so you can edit portfolio content files
+          (<code>content/*.json</code>) and media. Production login uses <strong>GitHub</strong>.
+        </p>
+
+        <div class="status" id="env-status">
+          <span class="dot" aria-hidden="true"></span>
+          <div>
+            <strong>Ready to sign in</strong><br />
+            Click <strong>Open CMS login</strong> (or wait a moment). Use the GitHub account
+            that can push to the portfolio repository.
+          </div>
+        </div>
+
+        <ol class="steps">
+          <li>Open CMS login (GitHub OAuth on Vercel).</li>
+          <li>Authorize the app when GitHub asks.</li>
+          <li>Browse <strong>Portfolio sections</strong> and open a file (About, Projects, Resume…).</li>
+          <li>Edit → <strong>Save</strong> / <strong>Publish</strong> — changes commit to the repo and deploy.</li>
+        </ol>
+
+        <div class="status warn">
+          <span class="dot" aria-hidden="true"></span>
+          <div>
+            <strong>Requirements</strong><br />
+            Vercel env: <code>GITHUB_CLIENT_ID</code>, <code>GITHUB_CLIENT_SECRET</code>.
+            GitHub OAuth callback: <code>/api/callback</code>.
+            Locally: run <code>npx decap-server</code> with <code>local_backend: true</code>.
+          </div>
+        </div>
+
+        <div class="top-actions" style="margin-top:4px">
+          <button type="button" class="btn btn-primary" id="btn-open-cms-2">Open CMS login</button>
+          <a class="btn" href="/admin/config.yml" target="_blank" rel="noopener">View CMS config</a>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>Editable content files</h2>
+        <p class="lead">
+          After login, open these from the CMS sidebar. Each maps to a JSON file in the repo.
+        </p>
+        <ul class="file-list" id="file-list">
+          <li>
+            <div class="meta">
+              <strong>About Me</strong>
+              <span class="path">content/about.json</span>
+            </div>
+            <span class="badge">JSON</span>
+          </li>
+          <li>
+            <div class="meta">
+              <strong>Education</strong>
+              <span class="path">content/education.json</span>
+            </div>
+            <span class="badge">JSON</span>
+          </li>
+          <li>
+            <div class="meta">
+              <strong>Experience</strong>
+              <span class="path">content/experience.json</span>
+            </div>
+            <span class="badge">JSON</span>
+          </li>
+          <li>
+            <div class="meta">
+              <strong>Certifications</strong>
+              <span class="path">content/certifications.json</span>
+            </div>
+            <span class="badge">JSON</span>
+          </li>
+          <li>
+            <div class="meta">
+              <strong>Projects</strong>
+              <span class="path">content/projects.json</span>
+            </div>
+            <span class="badge">JSON</span>
+          </li>
+          <li>
+            <div class="meta">
+              <strong>Skills</strong>
+              <span class="path">content/skills.json</span>
+            </div>
+            <span class="badge">JSON</span>
+          </li>
+          <li>
+            <div class="meta">
+              <strong>Contact</strong>
+              <span class="path">content/contact.json</span>
+            </div>
+            <span class="badge">JSON</span>
+          </li>
+          <li>
+            <div class="meta">
+              <strong>Resume</strong>
+              <span class="path">content/resume.json</span>
+            </div>
+            <span class="badge">JSON</span>
+          </li>
+          <li>
+            <div class="meta">
+              <strong>Sticky note</strong>
+              <span class="path">content/sticky-note.json</span>
+            </div>
+            <span class="badge">JSON</span>
+          </li>
+          <li>
+            <div class="meta">
+              <strong>Media library</strong>
+              <span class="path">static/images/</span>
+            </div>
+            <span class="badge">Media</span>
+          </li>
+        </ul>
+      </section>
+    </main>
+
+    <p class="footer-note">
+      Admin only · <a href="/">menelikcv.vercel.app</a> ·
+      Protected by GitHub login via Decap CMS
     </p>
   </div>
+
+  <script src="https://unpkg.com/decap-cms@^3.3.3/dist/decap-cms.js"></script>
   <script>
-    const boot = document.getElementById("cms-boot");
-    const obs = new MutationObserver(() => {
-      if (document.getElementById("nc-root") || document.querySelector("[class*='App']") || document.querySelector("[class*='Login']")) {
-        if (boot) boot.style.display = "none";
-        obs.disconnect();
+    (function () {
+      const shell = document.getElementById("admin-shell");
+      const loadingBar = document.getElementById("loading-bar");
+      const status = document.getElementById("env-status");
+
+      function cmsVisible() {
+        return !!(
+          document.getElementById("nc-root") ||
+          document.querySelector("[class*='App-']") ||
+          document.querySelector("[class*='Login']") ||
+          document.querySelector("[class*='css-'][class*='App']")
+        );
       }
-    });
-    obs.observe(document.body, { childList: true, subtree: true });
-    // Hide splash after a few seconds even if selector changes
-    setTimeout(() => { if (boot) boot.style.opacity = "0.35"; }, 4000);
+
+      function enterCmsMode() {
+        document.body.classList.add("cms-ready");
+        if (shell) shell.classList.add("is-hidden");
+        if (loadingBar) loadingBar.style.display = "none";
+      }
+
+      function focusCmsLogin() {
+        // Scroll to CMS UI if already painted; otherwise keep shell until Decap mounts
+        if (cmsVisible()) {
+          enterCmsMode();
+          window.scrollTo({ top: 0, behavior: "smooth" });
+          return;
+        }
+        if (status) {
+          status.innerHTML =
+            '<span class="dot" aria-hidden="true"></span><div><strong>Starting CMS…</strong><br/>If a GitHub login button appears, use it. Stay on this tab until the editor loads.</div>';
+        }
+        // Decap mounts into body; hide shell shortly after script load
+        let tries = 0;
+        const timer = setInterval(function () {
+          tries += 1;
+          if (cmsVisible() || tries > 40) {
+            clearInterval(timer);
+            enterCmsMode();
+          }
+        }, 250);
+      }
+
+      ["btn-open-cms", "btn-open-cms-2"].forEach(function (id) {
+        const el = document.getElementById(id);
+        if (el) el.addEventListener("click", focusCmsLogin);
+      });
+
+      // Auto-detect CMS UI (login screen or editor) and go full page
+      const obs = new MutationObserver(function () {
+        if (cmsVisible()) {
+          enterCmsMode();
+          obs.disconnect();
+        }
+      });
+      obs.observe(document.body, { childList: true, subtree: true });
+
+      // Fallback: after 5s, prefer CMS surface so login is never blocked by the shell
+      setTimeout(function () {
+        if (cmsVisible()) enterCmsMode();
+        else if (loadingBar) loadingBar.style.opacity = "0.4";
+      }, 5000);
+    })();
   </script>
 </body>
 </html>
