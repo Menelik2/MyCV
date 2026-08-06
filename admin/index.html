@@ -6,7 +6,8 @@
   <meta name="robots" content="noindex, nofollow" />
   <meta name="theme-color" content="#0f172a" />
   <title>Admin — Menelik Portfolio CMS</title>
-  <link href="config.yml" type="text/yaml" rel="cms-config-url" />
+  <base href="/admin/" />
+  <link href="/admin/config.yml" type="text/yaml" rel="cms-config-url" />
   <style>
     :root {
       --bg: #0b1220;
@@ -413,9 +414,38 @@
     </p>
   </div>
 
+  <script>
+    // Prevent auto-init until we point at the absolute config path
+    window.CMS_MANUAL_INIT = true;
+  </script>
   <script src="https://unpkg.com/decap-cms@^3.3.3/dist/decap-cms.js"></script>
   <script>
     (function () {
+      function startCms() {
+        if (typeof CMS === "undefined") {
+          console.error("Decap CMS failed to load");
+          return;
+        }
+        try {
+          // Load config from absolute URL so /admin and /admin/ both work
+          CMS.init({
+            config: {
+              load_config_file: true,
+              // Decap reads link[rel=cms-config-url]; also force path via fetch if needed
+            }
+          });
+        } catch (err) {
+          console.error("CMS.init error", err);
+        }
+      }
+
+      // If CMS already auto-registered, init once DOM is ready
+      if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", startCms);
+      } else {
+        startCms();
+      }
+
       const shell = document.getElementById("admin-shell");
       const loadingBar = document.getElementById("loading-bar");
       const status = document.getElementById("env-status");
