@@ -29,12 +29,6 @@ logo_url: /static/images/profile-128.webp
 media_folder: static/images
 # Public URL path on https://menelikcv.vercel.app :
 public_folder: /static/images
-# Max upload size ~2.5 MB (bytes)
-media_library:
-  name: default
-  config:
-    max_file_size: 2500000
-
 publish_mode: simple
 slug:
   encoding: ascii
