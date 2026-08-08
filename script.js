@@ -3322,64 +3322,105 @@ function buildDeviceInspector() {
   const root = document.createElement("div");
   root.className = "device-inspector";
   root.innerHTML = `
-    <div class="di-kicker">
-      <div class="di-kicker-icon" aria-hidden="true">◉</div>
-      <div class="di-kicker-text">Live hardware &amp; system inspection via browser Web APIs</div>
-    </div>
-    <div class="di-card">
+    <div class="di-hero">
+      <div class="di-hero-glow" aria-hidden="true"></div>
+      <p class="di-eyebrow">Your device</p>
       <div class="di-header">
         <div class="di-device-icon" aria-hidden="true">
           <svg viewBox="0 0 24 24"><path d="M17 1H7c-1.1 0-2 .9-2 2v18c0 1.1.9 2 2 2h10c1.1 0 2-.9 2-2V3c0-1.1-.9-2-2-2zm0 18H7V5h10v14z"/></svg>
         </div>
         <div class="di-title-block">
-          <h2 class="di-name" id="di-name">Detecting…</h2>
-          <p class="di-sub" id="di-sub">Reading navigator &amp; screen APIs</p>
+          <h2 class="di-name" id="di-name">Looking up…</h2>
+          <p class="di-sub" id="di-sub">Reading what this browser can share</p>
         </div>
-        <span class="di-verified" id="di-verified" title="Data from this browser only">Verified</span>
+        <span class="di-verified" id="di-verified" title="From this browser only">Live</span>
       </div>
       <div class="di-pills" id="di-pills"></div>
       <div class="di-stats" id="di-stats"></div>
+    </div>
+
+    <div class="di-card" id="di-storage-card">
+      <div class="di-section-head">
+        <div>
+          <div class="di-section-title">Storage</div>
+          <div class="di-section-sub">How much space this site can use on your device</div>
+        </div>
+      </div>
       <div class="di-storage" id="di-storage" hidden>
         <div class="di-storage-head">
-          <span class="di-storage-label">Storage usage</span>
+          <span class="di-storage-label">Used on this site</span>
           <span class="di-storage-meta" id="di-storage-meta"></span>
         </div>
         <div class="di-bar"><span id="di-storage-bar" style="width:0%"></span></div>
+        <details class="di-details">
+          <summary>Show storage details</summary>
+          <ul class="di-rows di-storage-rows" id="di-storage-rows"></ul>
+        </details>
+        <div class="di-persist" id="di-persist">
+          <div class="di-persist-head">
+            <div class="di-persist-title">Keep data longer</div>
+            <span class="di-persist-badge" id="di-persist-badge">Checking…</span>
+          </div>
+          <p class="di-persist-desc" id="di-persist-desc">
+            Ask the browser to avoid clearing this site’s saved data when storage is low.
+          </p>
+          <button type="button" class="di-persist-btn" id="di-persist-btn">Protect my data</button>
+          <p class="di-persist-result" id="di-persist-result" hidden></p>
+        </div>
+      </div>
+      <p class="di-empty-hint" id="di-storage-empty">Storage info will appear when available.</p>
+    </div>
+
+    <div class="di-card">
+      <div class="di-section-head">
+        <div>
+          <div class="di-section-title">About this device</div>
+          <div class="di-section-sub">Screen, chip, and browser details</div>
+        </div>
       </div>
       <ul class="di-rows" id="di-rows"></ul>
     </div>
+
     <div class="di-card di-net-card">
-      <div class="di-speed-head">
-        <div class="di-speed-title">Network connection</div>
-        <div class="di-speed-sub">Live <code>navigator.connection</code> (Network Information API)</div>
+      <div class="di-section-head">
+        <div>
+          <div class="di-section-title">Network</div>
+          <div class="di-section-sub">What your browser reports about the connection</div>
+        </div>
       </div>
       <div class="di-speed-metrics di-net-metrics" id="di-net-metrics">
         <div class="di-speed-metric">
-          <div class="di-speed-metric-label">Type</div>
+          <div class="di-speed-metric-label">Network</div>
           <div class="di-speed-metric-value" id="di-net-type">—</div>
         </div>
         <div class="di-speed-metric">
-          <div class="di-speed-metric-label">Downlink</div>
+          <div class="di-speed-metric-label">Speed est.</div>
           <div class="di-speed-metric-value" id="di-net-downlink">—</div>
         </div>
         <div class="di-speed-metric">
-          <div class="di-speed-metric-label">RTT</div>
+          <div class="di-speed-metric-label">Delay</div>
           <div class="di-speed-metric-value" id="di-net-rtt">—</div>
         </div>
       </div>
-      <ul class="di-rows" id="di-net-rows"></ul>
+      <details class="di-details">
+        <summary>More network details</summary>
+        <ul class="di-rows" id="di-net-rows"></ul>
+      </details>
       <p class="di-net-unsupported" id="di-net-unsupported" hidden>
-        Network Information API not available in this browser. Chrome / Edge / Android support it best.
+        This browser doesn’t share live network details. Try Chrome or Edge on Android for the fullest view.
       </p>
     </div>
+
     <div class="di-card di-speed-card">
-      <div class="di-speed-head">
-        <div class="di-speed-title">Network speed test</div>
-        <div class="di-speed-sub">Latency + download via this origin</div>
+      <div class="di-section-head">
+        <div>
+          <div class="di-section-title">Speed test</div>
+          <div class="di-section-sub">Quick check against this website</div>
+        </div>
       </div>
       <div class="di-speed-metrics" id="di-speed-metrics">
         <div class="di-speed-metric">
-          <div class="di-speed-metric-label">Latency</div>
+          <div class="di-speed-metric-label">Ping</div>
           <div class="di-speed-metric-value" id="di-latency">—</div>
         </div>
         <div class="di-speed-metric">
@@ -3387,7 +3428,7 @@ function buildDeviceInspector() {
           <div class="di-speed-metric-value" id="di-download">—</div>
         </div>
         <div class="di-speed-metric">
-          <div class="di-speed-metric-label">Quality</div>
+          <div class="di-speed-metric-label">Result</div>
           <div class="di-speed-metric-value" id="di-quality">—</div>
         </div>
       </div>
@@ -3395,10 +3436,11 @@ function buildDeviceInspector() {
         <div class="di-bar"><span id="di-speed-bar" style="width:0%"></span></div>
         <div class="di-speed-status" id="di-speed-status">Starting…</div>
       </div>
-      <button type="button" class="di-speed-run" id="di-speed-run">Run speed test</button>
+      <button type="button" class="di-speed-run" id="di-speed-run">Test my speed</button>
     </div>
-    <p class="di-note">Hardware values come from this browser only (Web APIs). Speed test measures round-trip to this site — not a full ISP benchmark. Some fields may be unavailable under strict privacy settings.</p>
-    <button type="button" class="di-refresh" id="di-refresh">Refresh readings</button>
+
+    <p class="di-note">Numbers come from your browser on this device. They can change with privacy settings and aren’t a full internet speed report.</p>
+    <button type="button" class="di-refresh" id="di-refresh">Refresh everything</button>
   `;
 
   const el = (id) => root.querySelector("#" + id);
@@ -3602,6 +3644,135 @@ function buildDeviceInspector() {
       .join("");
   }
 
+
+  function measureWebStorage(storage) {
+    if (!storage) return 0;
+    let total = 0;
+    try {
+      for (let i = 0; i < storage.length; i++) {
+        const key = storage.key(i);
+        if (key == null) continue;
+        const val = storage.getItem(key);
+        // UTF-16 ~ 2 bytes per char (approximate DOMString size)
+        total += (key.length + (val ? val.length : 0)) * 2;
+      }
+    } catch (_) {}
+    return total;
+  }
+
+  async function measureCaches() {
+    const out = { total: 0, names: [], entries: 0 };
+    try {
+      if (!("caches" in window)) return out;
+      const names = await caches.keys();
+      out.names = names.slice();
+      for (const name of names) {
+        try {
+          const cache = await caches.open(name);
+          const reqs = await cache.keys();
+          out.entries += reqs.length;
+          for (const req of reqs) {
+            try {
+              const res = await cache.match(req);
+              if (!res) continue;
+              const cl = res.headers.get("content-length");
+              if (cl && !isNaN(+cl)) {
+                out.total += +cl;
+              } else {
+                // Clone & read size (can be slow; cap work)
+                const buf = await res.clone().arrayBuffer();
+                out.total += buf.byteLength;
+              }
+            } catch (_) {}
+          }
+        } catch (_) {}
+      }
+    } catch (_) {}
+    return out;
+  }
+
+  async function probeStorage() {
+    const result = {
+      supported: !!(navigator.storage && navigator.storage.estimate),
+      used: null,
+      quota: null,
+      usageDetails: null,
+      persisted: null,
+      localStorageBytes: null,
+      sessionStorageBytes: null,
+      cacheBytes: null,
+      cacheNames: [],
+      cacheEntries: 0,
+      error: null,
+    };
+
+    try {
+      result.localStorageBytes = measureWebStorage(window.localStorage);
+    } catch (_) {
+      result.localStorageBytes = null;
+    }
+    try {
+      result.sessionStorageBytes = measureWebStorage(window.sessionStorage);
+    } catch (_) {
+      result.sessionStorageBytes = null;
+    }
+
+    try {
+      if (navigator.storage && typeof navigator.storage.persisted === "function") {
+        result.persisted = await navigator.storage.persisted();
+      }
+    } catch (err) {
+      console.warn("[Storage] persisted() failed", err);
+      result.persisted = null;
+      result.persistCheckError = err && err.message ? err.message : String(err);
+    }
+
+    try {
+      if (navigator.storage && typeof navigator.storage.estimate === "function") {
+        const est = await navigator.storage.estimate();
+        if (est) {
+          if (est.usage != null && isFinite(est.usage)) result.used = est.usage;
+          if (est.quota != null && isFinite(est.quota)) result.quota = est.quota;
+          // Chrome: usageDetails { caches, indexedDB, serviceWorkerRegistrations, ... }
+          if (est.usageDetails && typeof est.usageDetails === "object") {
+            result.usageDetails = { ...est.usageDetails };
+          }
+        }
+      }
+    } catch (err) {
+      result.error = err && err.message ? err.message : String(err);
+    }
+
+    // Best-effort Cache Storage byte total (real fetched responses)
+    try {
+      const c = await measureCaches();
+      result.cacheBytes = c.total;
+      result.cacheNames = c.names;
+      result.cacheEntries = c.entries;
+    } catch (_) {}
+
+    // If estimate usage is null but we measured pieces, sum a lower bound
+    if (result.used == null) {
+      let sum = 0;
+      let any = false;
+      if (result.localStorageBytes != null) {
+        sum += result.localStorageBytes;
+        any = true;
+      }
+      if (result.sessionStorageBytes != null) {
+        sum += result.sessionStorageBytes;
+        any = true;
+      }
+      if (result.cacheBytes != null && result.cacheBytes > 0) {
+        sum += result.cacheBytes;
+        any = true;
+      }
+      if (any) result.used = sum;
+    }
+
+    return result;
+  }
+
   async function collect() {
 
     const ua = navigator.userAgent || "";
@@ -3625,15 +3796,9 @@ function buildDeviceInspector() {
       }
     } catch (_) {}
 
-    let storageUsed = null;
-    let storageQuota = null;
-    try {
-      if (navigator.storage && navigator.storage.estimate) {
-        const est = await navigator.storage.estimate();
-        storageUsed = est.usage != null ? est.usage : null;
-        storageQuota = est.quota != null ? est.quota : null;
-      }
-    } catch (_) {}
+    const storage = await probeStorage();
+    const storageUsed = storage.used;
+    const storageQuota = storage.quota;
 
     // Prefer UA-CH architecture when available
     let archLabel = info.arch;
@@ -3703,6 +3868,7 @@ function buildDeviceInspector() {
       charging,
       storageUsed,
       storageQuota,
+      storage,
       archLabel,
       displayStr,
       phys,
@@ -3767,37 +3933,164 @@ function buildDeviceInspector() {
     const storageText =
       data.storageQuota != null ? fmtBytes(data.storageQuota) : "—";
     stats.innerHTML =
-      '<div class="di-stat"><div class="di-stat-icon">⬚</div><div class="di-stat-label">CPU cores</div><div class="di-stat-value">' +
+      '<div class="di-stat"><div class="di-stat-icon">⬚</div><div class="di-stat-label">Cores</div><div class="di-stat-value">' +
       (data.cores != null ? data.cores : "—") +
       '</div></div>' +
-      '<div class="di-stat"><div class="di-stat-icon">⚡</div><div class="di-stat-label">RAM</div><div class="di-stat-value">' +
+      '<div class="di-stat"><div class="di-stat-icon">⚡</div><div class="di-stat-label">Memory</div><div class="di-stat-value">' +
       ramText +
       '</div></div>' +
-      '<div class="di-stat"><div class="di-stat-icon">▣</div><div class="di-stat-label">Storage</div><div class="di-stat-value">' +
+      '<div class="di-stat"><div class="di-stat-icon">▣</div><div class="di-stat-label">Space</div><div class="di-stat-value">' +
       storageText +
       "</div></div>";
 
-    // Storage bar
+    // Storage bar — real navigator.storage.estimate() + breakdown
     const storageBox = el("di-storage");
-    if (data.storageQuota != null && data.storageUsed != null && data.storageQuota > 0) {
+    const s = data.storage || {};
+    const hasQuota = s.quota != null && s.quota > 0;
+    const hasUsed = s.used != null;
+    const emptyHint = el("di-storage-empty");
+    if (hasQuota || hasUsed || s.localStorageBytes != null || s.cacheBytes != null) {
       storageBox.hidden = false;
-      const pct = Math.min(100, Math.round((data.storageUsed / data.storageQuota) * 100));
-      el("di-storage-meta").textContent =
-        fmtBytes(data.storageUsed) + " / " + fmtBytes(data.storageQuota) + " · " + pct + "%";
-      el("di-storage-bar").style.width = pct + "%";
+      if (emptyHint) emptyHint.hidden = true;
+      if (hasQuota && hasUsed) {
+        const pct = Math.min(100, Math.round((s.used / s.quota) * 1000) / 10);
+        el("di-storage-meta").textContent =
+          fmtBytes(s.used) + " / " + fmtBytes(s.quota) + " · " + pct + "%";
+        el("di-storage-bar").style.width = Math.min(100, pct) + "%";
+      } else if (hasUsed) {
+        el("di-storage-meta").textContent = fmtBytes(s.used) + " used (quota unknown)";
+        el("di-storage-bar").style.width = "0%";
+      } else if (hasQuota) {
+        el("di-storage-meta").textContent = "Quota " + fmtBytes(s.quota);
+        el("di-storage-bar").style.width = "0%";
+      } else {
+        el("di-storage-meta").textContent = "Measuring storage…";
+        el("di-storage-bar").style.width = "0%";
+      }
+
+      const srows = [];
+      if (s.supported) {
+        srows.push({
+          icon: "📊",
+          label: "Estimate API",
+          value: "navigator.storage.estimate()",
+        });
+      }
+      if (hasUsed) {
+        srows.push({ icon: "📦", label: "Used", value: fmtBytes(s.used) + " (origin)" });
+      }
+      if (hasQuota) {
+        srows.push({
+          icon: "🗄️",
+          label: "Quota",
+          value: fmtBytes(s.quota) + " available to this site",
+        });
+      }
+      if (s.persisted != null) {
+        srows.push({
+          icon: "📌",
+          label: "Persisted",
+          value: s.persisted
+            ? "Yes — data less likely to be evicted"
+            : "No — may be cleared under pressure",
+        });
+      }
+      updatePersistUI(s);
+      if (s.usageDetails) {
+        const labels = {
+          caches: "Cache Storage",
+          indexedDB: "IndexedDB",
+          serviceWorkerRegistrations: "Service Worker",
+          fileSystem: "File System",
+        };
+        Object.keys(s.usageDetails).forEach((k) => {
+          const v = s.usageDetails[k];
+          if (v == null || !isFinite(v)) return;
+          srows.push({
+            icon: "•",
+            label: labels[k] || k,
+            value: fmtBytes(v),
+          });
+        });
+      }
+      if (s.localStorageBytes != null) {
+        srows.push({
+          icon: "📝",
+          label: "localStorage",
+          value: fmtBytes(s.localStorageBytes) + " (approx)",
+        });
+      }
+      if (s.sessionStorageBytes != null) {
+        srows.push({
+          icon: "⏳",
+          label: "sessionStorage",
+          value: fmtBytes(s.sessionStorageBytes) + " (approx)",
+        });
+      }
+      if (s.cacheBytes != null && s.cacheBytes > 0) {
+        srows.push({
+          icon: "💾",
+          label: "Caches scanned",
+          value:
+            fmtBytes(s.cacheBytes) +
+            (s.cacheEntries ? " · " + s.cacheEntries + " entries" : ""),
+        });
+      }
+      if (s.cacheNames && s.cacheNames.length) {
+        srows.push({
+          icon: "🏷️",
+          label: "Cache names",
+          value: s.cacheNames.slice(0, 4).join(", ") + (s.cacheNames.length > 4 ? "…" : ""),
+        });
+      }
+      if (s.error) {
+        srows.push({ icon: "⚠", label: "Error", value: s.error });
+      }
+      if (!s.supported && !hasUsed) {
+        srows.push({
+          icon: "ℹ",
+          label: "Note",
+          value: "Storage details not available in this browser",
+        });
+      }
+      el("di-storage-rows").innerHTML = srows
+        .map(
+          (r) =>
+            '<li class="di-row"><span class="di-row-icon" aria-hidden="true">' +
+            r.icon +
+            '</span><span class="di-row-label">' +
+            r.label +
+            '</span><span class="di-row-value">' +
+            String(r.value).replace(/</g, "&lt;") +
+            "</span></li>"
+        )
+        .join("");
     } else {
       storageBox.hidden = true;
+      el("di-storage-rows").innerHTML = "";
+      if (emptyHint) emptyHint.hidden = false;
+      updatePersistUI(s);
     }
 
     // Rows
     const rows = [
-      { icon: "⬚", label: "Processor", value: data.cores != null ? data.cores + " logical cores" : "—" },
-      { icon: "☰", label: "GPU", value: data.gpu },
+      { icon: "⬚", label: "CPU", value: data.cores != null ? data.cores + " cores" : "—" },
+      { icon: "☰", label: "Graphics", value: data.gpu },
       { icon: "◎", label: "Architecture", value: data.archLabel || "—" },
-      { icon: "▣", label: "Display", value: data.displayStr + (data.phys ? " (" + data.phys + ")" : "") },
-      { icon: "◇", label: "Platform", value: data.platform },
+      { icon: "▣", label: "Screen", value: data.displayStr + (data.phys ? " (" + data.phys + ")" : "") },
+      {
+        icon: "🗄️",
+        label: "Site space",
+        value: data.storageQuota != null ? fmtBytes(data.storageQuota) : "—",
+      },
+      {
+        icon: "📦",
+        label: "Used here",
+        value: data.storageUsed != null ? fmtBytes(data.storageUsed) : "—",
+      },
+      { icon: "◇", label: "System", value: data.platform },
       { icon: "◯", label: "Language", value: data.lang },
-      { icon: "✋", label: "Touch points", value: String(data.touch) },
+      { icon: "✋", label: "Touch", value: data.touch ? data.touch + " points" : "None detected" },
     ];
     const ul = el("di-rows");
     ul.innerHTML = rows
@@ -3814,10 +4107,335 @@ function buildDeviceInspector() {
       .join("");
   }
 
+  function persistErrorMessage(err) {
+    if (err == null) return "Unknown error while requesting persistent storage.";
+    const name = err.name || "";
+    const msg = err.message || String(err);
+    if (name === "SecurityError" || /secure context|insecure|https|cross-origin|iframe/i.test(msg)) {
+      return "Blocked by security policy. Persistent storage needs a secure context (HTTPS or localhost), not a restricted iframe.";
+    }
+    if (name === "NotAllowedError" || /not allowed|denied|permission/i.test(msg)) {
+      return "Permission denied. The browser blocked persistent storage for this site.";
+    }
+    if (name === "InvalidStateError") {
+      return "Storage is in an invalid state. Try refreshing the page, then request again.";
+    }
+    if (name === "TypeError") {
+      return "API error (TypeError). This browser may not fully support navigator.storage.persist().";
+    }
+    if (name === "AbortError") {
+      return "Request was aborted. Try again.";
+    }
+    if (name === "TimeoutError" || /timeout/i.test(msg)) {
+      return "Request timed out. Check your connection and try again.";
+    }
+    if (/quota/i.test(msg)) {
+      return "Storage quota error: " + msg;
+    }
+    return (name ? name + ": " : "") + msg;
+  }
+
+  function updatePersistUI(s) {
+    const badge = el("di-persist-badge");
+    const btn = el("di-persist-btn");
+    const desc = el("di-persist-desc");
+    if (!badge || !btn) return;
+
+    try {
+      const canCheck =
+        typeof navigator !== "undefined" &&
+        navigator.storage &&
+        typeof navigator.storage.persisted === "function";
+      const canRequest =
+        typeof navigator !== "undefined" &&
+        navigator.storage &&
+        typeof navigator.storage.persist === "function";
+      const secure =
+        typeof window !== "undefined" &&
+        (window.isSecureContext === true ||
+          location.protocol === "https:" ||
+          location.hostname === "localhost" ||
+          location.hostname === "127.0.0.1");
+
+      if (!canCheck && !canRequest) {
+        badge.textContent = "Unsupported";
+        badge.className = "di-persist-badge di-persist-no";
+        btn.hidden = true;
+        btn.disabled = true;
+        if (desc) {
+          desc.innerHTML =
+            "This browser doesn't support protecting site data this way.";
+        }
+        return;
+      }
+
+      if (!secure) {
+        badge.textContent = "Needs HTTPS";
+        badge.className = "di-persist-badge di-persist-no";
+        btn.hidden = false;
+        btn.disabled = true;
+        btn.textContent = "Open on HTTPS to enable";
+        if (desc) {
+          desc.innerHTML =
+            "This works on the <strong>live HTTPS site</strong> (or localhost). Open the deployed portfolio to enable it.";
+        }
+        return;
+      }
+
+      btn.hidden = false;
+      const persisted = s && s.persisted;
+
+      if (persisted === true) {
+        badge.textContent = "Granted";
+        badge.className = "di-persist-badge di-persist-yes";
+        btn.textContent = "Data is protected";
+        btn.disabled = true;
+        if (desc) {
+          desc.innerHTML =
+            "Your browser agreed to <strong>keep this site’s data</strong> longer when storage is tight.";
+        }
+      } else if (persisted === false) {
+        badge.textContent = "Not persistent";
+        badge.className = "di-persist-badge di-persist-no";
+        btn.textContent = "Protect my data";
+        btn.disabled = !canRequest;
+        if (desc) {
+          desc.innerHTML =
+            "Data can still be cleared if the device runs low on space. You can ask the browser to protect it.";
+        }
+      } else {
+        badge.textContent = "Unknown";
+        badge.className = "di-persist-badge";
+        btn.textContent = "Protect my data";
+        btn.disabled = !canRequest;
+        if (desc) {
+          desc.innerHTML =
+            "Couldn’t read the current status. You can still try protecting your data.";
+        }
+      }
+    } catch (err) {
+      console.warn("[Persist UI]", err);
+      badge.textContent = "Error";
+      badge.className = "di-persist-badge di-persist-no";
+      btn.disabled = true;
+      btn.textContent = "Not available";
+      if (desc) {
+        desc.textContent = persistErrorMessage(err);
+      }
+    }
+  }
+
+  function withTimeout(promise, ms, label) {
+    let timer;
+    const timeout = new Promise((_, reject) => {
+      timer = setTimeout(() => {
+        const e = new Error((label || "Operation") + " timed out after " + ms + "ms");
+        e.name = "TimeoutError";
+        reject(e);
+      }, ms);
+    });
+    return Promise.race([promise, timeout]).finally(() => clearTimeout(timer));
+  }
+
+  let persistBusy = false;
+  async function requestPersistentStorage() {
+    const resultEl = el("di-persist-result");
+    const btn = el("di-persist-btn");
+    const badge = el("di-persist-badge");
+
+    const showResult = (text, ok) => {
+      if (!resultEl) return;
+      resultEl.hidden = false;
+      resultEl.textContent = text;
+      resultEl.className =
+        "di-persist-result " +
+        (ok === true
+          ? "di-persist-result-ok"
+          : ok === false
+            ? "di-persist-result-err"
+            : "");
+    };
+
+    if (persistBusy) {
+      showResult("A request is already in progress…", false);
+      return;
+    }
+
+    try {
+      if (typeof window !== "undefined" && window.isSecureContext === false) {
+        showResult(
+          "Blocked: not a secure context. Use HTTPS or localhost.",
+          false
+        );
+        if (badge) {
+          badge.textContent = "Needs HTTPS";
+          badge.className = "di-persist-badge di-persist-no";
+        }
+        return;
+      }
+    } catch (_) {}
+
+    if (!navigator.storage || typeof navigator.storage.persist !== "function") {
+      showResult(
+        "persist() is not supported in this browser or context.",
+        false
+      );
+      if (badge) {
+        badge.textContent = "Unsupported";
+        badge.className = "di-persist-badge di-persist-no";
+      }
+      if (btn) {
+        btn.disabled = true;
+        btn.textContent = "Not available here";
+      }
+      return;
+    }
+
+    persistBusy = true;
+    if (btn) {
+      btn.disabled = true;
+      btn.textContent = "Requesting…";
+    }
+    showResult("Calling navigator.storage.persist()…", null);
+
+    let granted = false;
+    let still = null;
+
+    try {
+      try {
+        granted = await withTimeout(
+          navigator.storage.persist(),
+          15000,
+          "persist()"
+        );
+      } catch (err) {
+        console.warn("[Persist] persist() failed", err);
+        showResult(persistErrorMessage(err), false);
+        if (badge) {
+          badge.textContent = "Error";
+          badge.className = "di-persist-badge di-persist-no";
+        }
+        if (btn) {
+          btn.disabled = false;
+          btn.textContent = "Try again";
+        }
+        return;
+      }
+
+      // Verify with persisted() — separate try so a check failure doesn't hide a grant
+      try {
+        if (typeof navigator.storage.persisted === "function") {
+          still = await withTimeout(
+            navigator.storage.persisted(),
+            8000,
+            "persisted()"
+          );
+        }
+      } catch (err) {
+        console.warn("[Persist] persisted() check failed", err);
+        still = null;
+        if (granted) {
+          showResult(
+            "persist() returned true, but verifying with persisted() failed: " +
+              persistErrorMessage(err),
+            true
+          );
+        }
+      }
+
+      const ok = !!(granted || still);
+      if (ok) {
+        showResult("Done — this site’s data is better protected.", true);
+        if (badge) {
+          badge.textContent = "Granted";
+          badge.className = "di-persist-badge di-persist-yes";
+        }
+        if (btn) {
+          btn.textContent = "Data is protected";
+          btn.disabled = true;
+        }
+      } else {
+        showResult(
+          "Not granted this time. Browsers often need more visits or an installed app before they allow this.",
+          false
+        );
+        if (badge) {
+          badge.textContent = "Not persistent";
+          badge.className = "di-persist-badge di-persist-no";
+        }
+        if (btn) {
+          btn.disabled = false;
+          btn.textContent = "Try again";
+        }
+      }
+
+      // Refresh storage numbers; don't fail the whole flow if render throws
+      try {
+        await render();
+      } catch (err) {
+        console.warn("[Persist] render after persist failed", err);
+        if (!ok && resultEl && resultEl.textContent) {
+          /* keep denial message */
+        } else if (ok) {
+          showResult(
+            "Granted, but refreshing the storage panel failed. Pull to refresh or reopen Device.",
+            true
+          );
+        }
+      }
+
+      // Re-apply button state after render (render may reset UI)
+      try {
+        if (ok) {
+          if (badge) {
+            badge.textContent = "Granted";
+            badge.className = "di-persist-badge di-persist-yes";
+          }
+          if (btn) {
+            btn.textContent = "Data is protected";
+            btn.disabled = true;
+          }
+        }
+      } catch (_) {}
+    } catch (err) {
+      console.warn("[Persist] unexpected error", err);
+      showResult(persistErrorMessage(err), false);
+      if (badge) {
+        badge.textContent = "Error";
+        badge.className = "di-persist-badge di-persist-no";
+      }
+      if (btn) {
+        btn.disabled = false;
+        btn.textContent = "Try again";
+      }
+    } finally {
+      persistBusy = false;
+    }
+  }
+
+  el("di-persist-btn").addEventListener("click", () => {
+    requestPersistentStorage().catch((err) => {
+      console.warn("[Persist] click handler", err);
+      const resultEl = el("di-persist-result");
+      if (resultEl) {
+        resultEl.hidden = false;
+        resultEl.textContent = persistErrorMessage(err);
+        resultEl.className = "di-persist-result di-persist-result-err";
+      }
+      const btn = el("di-persist-btn");
+      if (btn) {
+        btn.disabled = false;
+        btn.textContent = "Try again";
+      }
+    });
+  });
+
   el("di-refresh").addEventListener("click", () => {
-    el("di-name").textContent = "Refreshing…";
+    el("di-name").textContent = "Updating…";
+    const resultEl = el("di-persist-result");
+    if (resultEl) resultEl.hidden = true;
     render().catch(() => {
-      el("di-name").textContent = "Unable to read device";
+      el("di-name").textContent = "Couldn’t read device";
     });
   });
 
@@ -3841,7 +4459,7 @@ function buildDeviceInspector() {
 
   function withV(path) {
     const v =
-      (typeof window !== "undefined" && window.__MENELIK_V__) || "20260808d";
+      (typeof window !== "undefined" && window.__MENELIK_V__) || "20260808h";
     const sep = path.indexOf("?") >= 0 ? "&" : "?";
     return path + sep + "v=" + encodeURIComponent(v) + "&_=" + Date.now();
   }
@@ -3959,7 +4577,7 @@ function buildDeviceInspector() {
     } finally {
       speedRunning = false;
       btn.disabled = false;
-      btn.textContent = "Run speed test again";
+      btn.textContent = "Test again";
       setTimeout(() => {
         if (!speedRunning) prog.hidden = true;
       }, 2500);
@@ -3972,8 +4590,8 @@ function buildDeviceInspector() {
 
   render().catch((err) => {
     console.warn("[Device]", err);
-    el("di-name").textContent = "Device info limited";
-    el("di-sub").textContent = "Some Web APIs are blocked in this browser";
+    el("di-name").textContent = "Limited info";
+    el("di-sub").textContent = "This browser is sharing only some details";
   });
 
   // Live online + Network Information API updates
@@ -6669,7 +7287,7 @@ tryLoadProfile();
 const CONTENT_FILES = ["about", "education", "experience", "certifications", "projects", "skills", "contact", "resume"];
 /** Cache-bust query for content fetches — mirrors window.__MENELIK_V__ from index.html */
 const ASSET_V =
-  (typeof window !== "undefined" && window.__MENELIK_V__) || "20260808d";
+  (typeof window !== "undefined" && window.__MENELIK_V__) || "20260808h";
 function withV(url) {
   const join = url.indexOf("?") >= 0 ? "&" : "?";
   return url + join + "v=" + encodeURIComponent(ASSET_V);
