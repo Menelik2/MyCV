@@ -3320,127 +3320,103 @@ function buildVectorGraphics() {
 /** Live hardware / system inspection via browser Web APIs (mobile Device app) */
 function buildDeviceInspector() {
   const root = document.createElement("div");
-  root.className = "device-inspector";
+  root.className = "device-inspector di-card-ui";
   root.innerHTML = `
-    <div class="di-hero">
-      <div class="di-hero-glow" aria-hidden="true"></div>
-      <p class="di-eyebrow">Your device</p>
-      <div class="di-header">
-        <div class="di-device-icon" aria-hidden="true">
-          <svg viewBox="0 0 24 24"><path d="M17 1H7c-1.1 0-2 .9-2 2v18c0 1.1.9 2 2 2h10c1.1 0 2-.9 2-2V3c0-1.1-.9-2-2-2zm0 18H7V5h10v14z"/></svg>
+    <div class="di-wrap">
+      <div class="di-kicker">
+        <div class="di-kicker-badge" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="18" height="18"><path fill="currentColor" d="M12 2a10 10 0 100 20 10 10 0 000-20zm1 5v6h5v2h-7V7h2z"/></svg>
         </div>
-        <div class="di-title-block">
-          <h2 class="di-name" id="di-name">Looking up…</h2>
-          <p class="di-sub" id="di-sub">Reading what this browser can share</p>
-        </div>
-        <span class="di-verified" id="di-verified" title="From this browser only">Live</span>
+        <div class="di-kicker-text">Live hardware &amp; system inspection via browser Web APIs</div>
       </div>
-      <div class="di-pills" id="di-pills"></div>
-      <div class="di-stats" id="di-stats"></div>
-    </div>
 
-    <div class="di-card" id="di-storage-card">
-      <div class="di-section-head">
-        <div>
-          <div class="di-section-title">Storage</div>
-          <div class="di-section-sub">How much space this site can use on your device</div>
+      <div class="di-main-card">
+        <div class="di-header">
+          <div class="di-device-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><path d="M17 1H7c-1.1 0-2 .9-2 2v18c0 1.1.9 2 2 2h10c1.1 0 2-.9 2-2V3c0-1.1-.9-2-2-2zm0 18H7V5h10v14z"/></svg>
+          </div>
+          <div class="di-title-block">
+            <h2 class="di-name" id="di-name">Detecting…</h2>
+            <p class="di-sub" id="di-sub">Reading device APIs…</p>
+          </div>
+          <span class="di-verified" id="di-verified">
+            <svg viewBox="0 0 24 24" width="12" height="12" aria-hidden="true"><path fill="currentColor" d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/></svg>
+            Verified
+          </span>
         </div>
+
+        <div class="di-pills" id="di-pills"></div>
+
+        <div class="di-stats" id="di-stats"></div>
+
+        <div class="di-storage" id="di-storage" hidden>
+          <div class="di-storage-head">
+            <span class="di-storage-label">Storage usage</span>
+            <span class="di-storage-meta" id="di-storage-meta"></span>
+          </div>
+          <div class="di-bar"><span id="di-storage-bar" style="width:0%"></span></div>
+        </div>
+
+        <ul class="di-rows" id="di-rows"></ul>
       </div>
-      <div class="di-storage" id="di-storage" hidden>
-        <div class="di-storage-head">
-          <span class="di-storage-label">Used on this site</span>
-          <span class="di-storage-meta" id="di-storage-meta"></span>
+
+      <div class="di-main-card di-tools-card">
+        <div class="di-tools-title">Network &amp; storage tools</div>
+        <div class="di-speed-metrics" id="di-net-metrics">
+          <div class="di-speed-metric">
+            <div class="di-speed-metric-label">Network</div>
+            <div class="di-speed-metric-value" id="di-net-type">—</div>
+          </div>
+          <div class="di-speed-metric">
+            <div class="di-speed-metric-label">Downlink</div>
+            <div class="di-speed-metric-value" id="di-net-downlink">—</div>
+          </div>
+          <div class="di-speed-metric">
+            <div class="di-speed-metric-label">RTT</div>
+            <div class="di-speed-metric-value" id="di-net-rtt">—</div>
+          </div>
         </div>
-        <div class="di-bar"><span id="di-storage-bar" style="width:0%"></span></div>
-        <details class="di-details">
-          <summary>Show storage details</summary>
-          <ul class="di-rows di-storage-rows" id="di-storage-rows"></ul>
-        </details>
+        <ul class="di-rows" id="di-net-rows" hidden></ul>
+        <p class="di-net-unsupported" id="di-net-unsupported" hidden>Network Information API not available in this browser.</p>
+
+        <div class="di-speed-metrics" id="di-speed-metrics">
+          <div class="di-speed-metric">
+            <div class="di-speed-metric-label">Latency</div>
+            <div class="di-speed-metric-value" id="di-latency">—</div>
+          </div>
+          <div class="di-speed-metric">
+            <div class="di-speed-metric-label">Download</div>
+            <div class="di-speed-metric-value" id="di-download">—</div>
+          </div>
+          <div class="di-speed-metric">
+            <div class="di-speed-metric-label">Quality</div>
+            <div class="di-speed-metric-value" id="di-quality">—</div>
+          </div>
+        </div>
+        <div class="di-speed-progress" id="di-speed-progress" hidden>
+          <div class="di-bar"><span id="di-speed-bar" style="width:0%"></span></div>
+          <div class="di-speed-status" id="di-speed-status">Starting…</div>
+        </div>
+        <button type="button" class="di-speed-run" id="di-speed-run">Run speed test</button>
+
         <div class="di-persist" id="di-persist">
           <div class="di-persist-head">
-            <div class="di-persist-title">Keep data longer</div>
-            <span class="di-persist-badge" id="di-persist-badge">Checking…</span>
+            <div class="di-persist-title">Persistent storage</div>
+            <span class="di-persist-badge" id="di-persist-badge">…</span>
           </div>
-          <p class="di-persist-desc" id="di-persist-desc">
-            Ask the browser to avoid clearing this site’s saved data when storage is low.
-          </p>
+          <p class="di-persist-desc" id="di-persist-desc">Protect this site’s saved data from automatic cleanup.</p>
           <button type="button" class="di-persist-btn" id="di-persist-btn">Protect my data</button>
           <p class="di-persist-result" id="di-persist-result" hidden></p>
         </div>
+        <div class="di-storage" id="di-storage-detail" hidden>
+          <ul class="di-rows di-storage-rows" id="di-storage-rows"></ul>
+        </div>
+        <p class="di-empty-hint" id="di-storage-empty" hidden></p>
       </div>
-      <p class="di-empty-hint" id="di-storage-empty">Storage info will appear when available.</p>
-    </div>
 
-    <div class="di-card">
-      <div class="di-section-head">
-        <div>
-          <div class="di-section-title">About this device</div>
-          <div class="di-section-sub">Screen, chip, and browser details</div>
-        </div>
-      </div>
-      <ul class="di-rows" id="di-rows"></ul>
+      <p class="di-note">Values are read live from this browser. Full disk size and manufacture year are not exposed by web standards — those fields show only when the browser provides them.</p>
+      <button type="button" class="di-refresh" id="di-refresh">Refresh readings</button>
     </div>
-
-    <div class="di-card di-net-card">
-      <div class="di-section-head">
-        <div>
-          <div class="di-section-title">Network</div>
-          <div class="di-section-sub">What your browser reports about the connection</div>
-        </div>
-      </div>
-      <div class="di-speed-metrics di-net-metrics" id="di-net-metrics">
-        <div class="di-speed-metric">
-          <div class="di-speed-metric-label">Network</div>
-          <div class="di-speed-metric-value" id="di-net-type">—</div>
-        </div>
-        <div class="di-speed-metric">
-          <div class="di-speed-metric-label">Speed est.</div>
-          <div class="di-speed-metric-value" id="di-net-downlink">—</div>
-        </div>
-        <div class="di-speed-metric">
-          <div class="di-speed-metric-label">Delay</div>
-          <div class="di-speed-metric-value" id="di-net-rtt">—</div>
-        </div>
-      </div>
-      <details class="di-details">
-        <summary>More network details</summary>
-        <ul class="di-rows" id="di-net-rows"></ul>
-      </details>
-      <p class="di-net-unsupported" id="di-net-unsupported" hidden>
-        This browser doesn’t share live network details. Try Chrome or Edge on Android for the fullest view.
-      </p>
-    </div>
-
-    <div class="di-card di-speed-card">
-      <div class="di-section-head">
-        <div>
-          <div class="di-section-title">Speed test</div>
-          <div class="di-section-sub">Quick check against this website</div>
-        </div>
-      </div>
-      <div class="di-speed-metrics" id="di-speed-metrics">
-        <div class="di-speed-metric">
-          <div class="di-speed-metric-label">Ping</div>
-          <div class="di-speed-metric-value" id="di-latency">—</div>
-        </div>
-        <div class="di-speed-metric">
-          <div class="di-speed-metric-label">Download</div>
-          <div class="di-speed-metric-value" id="di-download">—</div>
-        </div>
-        <div class="di-speed-metric">
-          <div class="di-speed-metric-label">Result</div>
-          <div class="di-speed-metric-value" id="di-quality">—</div>
-        </div>
-      </div>
-      <div class="di-speed-progress" id="di-speed-progress" hidden>
-        <div class="di-bar"><span id="di-speed-bar" style="width:0%"></span></div>
-        <div class="di-speed-status" id="di-speed-status">Starting…</div>
-      </div>
-      <button type="button" class="di-speed-run" id="di-speed-run">Test my speed</button>
-    </div>
-
-    <p class="di-note">Numbers come from your browser on this device. They can change with privacy settings and aren’t a full internet speed report.</p>
-    <button type="button" class="di-refresh" id="di-refresh">Refresh everything</button>
   `;
 
   const el = (id) => root.querySelector("#" + id);
@@ -3487,14 +3463,24 @@ function buildDeviceInspector() {
     else if (/Linux/i.test(s)) out.device = "Linux workstation";
     else out.device = "Workstation";
 
-    // Prefer platform hints
+    // Prefer platform hints — format like "Linux armv8 Workstation"
     try {
       const p = navigator.platform || "";
-      if (/Linux aarch64|Linux arm/i.test(p)) {
-        out.device = "Linux arm workstation";
+      if (/Linux aarch64/i.test(p)) {
+        out.device = "Linux aarch64 Workstation";
         out.arch = out.arch || "ARM64";
+      } else if (/Linux armv8/i.test(p)) {
+        out.device = "Linux armv8 Workstation";
+        out.arch = out.arch || "ARMv8";
+      } else if (/Linux arm/i.test(p)) {
+        out.device = "Linux ARM Workstation";
+        out.arch = out.arch || "ARM";
       } else if (/Linux/i.test(p) && !out.isMobile) {
-        out.device = "Linux workstation";
+        out.device = "Linux Workstation";
+      } else if (/MacIntel|Mac/i.test(p) && !out.isMobile) {
+        out.device = out.device === "Mac" ? "Mac Workstation" : out.device;
+      } else if (/Win/i.test(p)) {
+        out.device = "Windows Workstation";
       }
     } catch (_) {}
 
@@ -3773,8 +3759,151 @@ function buildDeviceInspector() {
     return result;
   }
 
-  async function collect() {
 
+  /**
+   * Best-effort device era estimate. Browsers never expose true manufacture year.
+   * Uses OS / platform version heuristics only — marked as approximate in the UI.
+   */
+  function estimateManufactureYear(ua, info, nav) {
+    const out = { year: null, approx: true, note: null };
+    const s = String(ua || "");
+    const nowY = new Date().getFullYear();
+
+    function clampYear(y) {
+      if (y == null || !isFinite(y)) return null;
+      const n = Math.round(y);
+      if (n < 2007 || n > nowY + 1) return null;
+      return n;
+    }
+
+    // Android: major version → typical first ship year of that OS generation
+    // (devices on Android N are often from that era or later; use as lower-bound style estimate)
+    const androidMap = {
+      16: 2025,
+      15: 2024,
+      14: 2023,
+      13: 2022,
+      12: 2021,
+      11: 2020,
+      10: 2019,
+      9: 2018,
+      8: 2017,
+      7: 2016,
+      6: 2015,
+      5: 2014,
+      4: 2011,
+    };
+
+    // iOS major → release year of that OS (device is often same generation or newer)
+    const iosMap = {
+      18: 2024,
+      17: 2023,
+      16: 2022,
+      15: 2021,
+      14: 2020,
+      13: 2019,
+      12: 2018,
+      11: 2017,
+      10: 2016,
+      9: 2015,
+      8: 2014,
+      7: 2013,
+    };
+
+    try {
+      // UA-CH platformVersion when already applied on info.os
+      const osStr = (info && info.os) || "";
+
+      let m = s.match(/Android\s+(\d+)/i) || osStr.match(/Android\s+(\d+)/i);
+      if (m) {
+        const major = parseInt(m[1], 10);
+        if (androidMap[major] != null) {
+          out.year = clampYear(androidMap[major]);
+          out.note = "Estimated from Android " + major;
+          return out;
+        }
+      }
+
+      m =
+        s.match(/(?:iPhone OS|CPU (?:iPhone )?OS|iPadOS)\s+(\d+)/i) ||
+        osStr.match(/iOS\s+(\d+)/i) ||
+        osStr.match(/iPadOS\s+(\d+)/i);
+      if (m) {
+        const major = parseInt(m[1], 10);
+        if (iosMap[major] != null) {
+          out.year = clampYear(iosMap[major]);
+          out.note = "Estimated from iOS " + major;
+          return out;
+        }
+      }
+
+      // Windows 11 era vs 10
+      if (/Windows NT 10\.0/i.test(s)) {
+        // Build numbers 22000+ ≈ Windows 11 (2021+)
+        const build = s.match(/Windows NT 10\.0[;)]\s*(\d+)/) || s.match(/rv:(\d+)/);
+        // Chrome UA often has no build; use 10 as 2015 baseline, 11 if platform says so
+        if (/Windows 11/i.test(osStr) || /Windows 11/i.test(s)) {
+          out.year = 2021;
+          out.note = "Estimated from Windows 11";
+          return out;
+        }
+        out.year = 2015;
+        out.note = "Estimated from Windows 10+";
+        return out;
+      }
+
+      if (/Mac OS X|Macintosh/i.test(s)) {
+        const ver = s.match(/Mac OS X (\d+)[._](\d+)/i);
+        if (ver) {
+          const major = parseInt(ver[1], 10);
+          const minor = parseInt(ver[2], 10);
+          // macOS 10.x mapping (rough)
+          if (major === 10) {
+            const macMap = {
+              15: 2019, // Catalina
+              14: 2018,
+              13: 2017,
+              12: 2016,
+              11: 2015,
+            };
+            if (macMap[minor]) {
+              out.year = macMap[minor];
+              out.note = "Estimated from macOS 10." + minor;
+              return out;
+            }
+          }
+          // macOS 11+ Darwin-style in some UAs shows 11_0 etc as 10_16 historically;
+          // newer UA-CH uses platformVersion "14.x" for Sonoma etc.
+        }
+        const modern = osStr.match(/macOS\s+(\d+)/i) || s.match(/Mac OS X (\d+)[._]/);
+        if (modern) {
+          const maj = parseInt(modern[1], 10);
+          if (maj >= 11 && maj <= 20) {
+            // macOS 11 Big Sur = 2020, then +1 year per major (approx)
+            out.year = clampYear(2019 + (maj - 10));
+            out.note = "Estimated from macOS " + maj;
+            return out;
+          }
+        }
+      }
+
+      // Chrome OS
+      if (/CrOS/i.test(s)) {
+        out.year = null;
+        out.note = "Chrome OS — year not estimated";
+        return out;
+      }
+    } catch (_) {}
+
+    // Last resort: current year as soft ceiling marker only if mobile
+    if (info && info.isMobile) {
+      out.year = null;
+      out.note = "Not available from browser APIs";
+    }
+    return out;
+  }
+
+  async function collect() {
     const ua = navigator.userAgent || "";
     const info = parseUa(ua);
     const cores = navigator.hardwareConcurrency || null;
@@ -3826,14 +3955,30 @@ function buildDeviceInspector() {
       archLabel = (navigator.platform || "").includes("64") ? "64-bit" : (navigator.platform || "—");
     }
 
-    const displayStr =
-      cssW && cssH
-        ? cssW + " × " + cssH + (dpr !== 1 ? " @" + (Math.round(dpr * 100) / 100) + "x" : "")
-        : "—";
+    // Prefer physical pixels for display line (matches screenshot style)
+    let displayStr = "—";
+    if (sw && sh) {
+      displayStr = sw + " × " + sh;
+    } else if (cssW && cssH) {
+      displayStr = cssW + " × " + cssH;
+    }
+    if (dpr && dpr !== 1 && displayStr !== "—") {
+      displayStr += " @" + (Math.round(dpr * 100) / 100) + "x";
+    }
 
-    // Physical-ish resolution when DPR known
+    // Refresh rate when browser exposes it
+    let refreshHz = null;
+    try {
+      if (window.screen && typeof screen.refreshRate === "number" && screen.refreshRate > 0) {
+        refreshHz = Math.round(screen.refreshRate);
+      }
+    } catch (_) {}
+
     const phys =
       dpr > 1 && sw && sh ? sw + " × " + sh + " physical" : null;
+
+    // Manufacture year is not exposed by Web APIs — estimate from OS version when possible
+    const yearInfo = estimateManufactureYear(ua, info, navigator);
 
     // Network Information API (navigator.connection)
     const conn =
@@ -3876,6 +4021,10 @@ function buildDeviceInspector() {
       lang: navigator.language || "—",
       touch: navigator.maxTouchPoints || 0,
       connection,
+      refreshHz,
+      manufactureYear: yearInfo.year,
+      manufactureYearApprox: yearInfo.approx,
+      manufactureYearNote: yearInfo.note,
     };
   }
 
@@ -3885,8 +4034,10 @@ function buildDeviceInspector() {
       data.info.device +
       (data.cores ? " · " + data.cores + " cores" : "");
     el("di-name").textContent = data.info.device;
-    el("di-sub").textContent =
-      (data.platform && data.platform !== "—" ? data.platform + " · " : "") + data.info.os;
+    const subParts = [];
+    if (data.info.os) subParts.push(data.info.os);
+    if (data.platform && data.platform !== "—") subParts.push(data.platform);
+    el("di-sub").textContent = subParts.length ? subParts.join(" · ") : "Browser device";
 
     // Pills
     const pills = el("di-pills");
@@ -3933,15 +4084,20 @@ function buildDeviceInspector() {
     const storageText =
       data.storageQuota != null ? fmtBytes(data.storageQuota) : "—";
     stats.innerHTML =
-      '<div class="di-stat"><div class="di-stat-icon">⬚</div><div class="di-stat-label">Cores</div><div class="di-stat-value">' +
-      (data.cores != null ? data.cores : "—") +
-      '</div></div>' +
-      '<div class="di-stat"><div class="di-stat-icon">⚡</div><div class="di-stat-label">Memory</div><div class="di-stat-value">' +
-      ramText +
-      '</div></div>' +
-      '<div class="di-stat"><div class="di-stat-icon">▣</div><div class="di-stat-label">Space</div><div class="di-stat-value">' +
-      storageText +
-      "</div></div>";
+      '<div class="di-stat">' +
+      '<div class="di-stat-icon di-stat-cpu" aria-hidden="true"><svg viewBox="0 0 24 24"><path fill="currentColor" d="M6 6h12v12H6V6zm2 2v8h8V8H8zM9 1h2v3H9V1zm4 0h2v3h-2V1zM9 20h2v3H9v-3zm4 0h2v3h-2v-3zM1 9h3v2H1V9zm0 4h3v2H1v-2zm19-4h3v2h-3V9zm0 4h3v2h-3v-2z"/></svg></div>' +
+      '<div class="di-stat-label">CPU cores</div>' +
+      '<div class="di-stat-value">' + (data.cores != null ? data.cores : "—") + "</div></div>" +
+      '<div class="di-stat">' +
+      '<div class="di-stat-icon di-stat-ram" aria-hidden="true"><svg viewBox="0 0 24 24"><path fill="currentColor" d="M7 2v2h1v4H5v2h14V8h-3V4h1V2h-2v2h-2V2h-2v2H9V2H7zm3 4V4h2v2h-2zm4 0V4h2v2h-2zM5 12v8h14v-8H5zm2 2h2v4H7v-4zm4 0h2v4h-2v-4zm4 0h2v4h-2v-4z"/></svg></div>' +
+      '<div class="di-stat-label">RAM</div>' +
+      '<div class="di-stat-value">' + ramText + "</div></div>" +
+      '<div class="di-stat">' +
+      '<div class="di-stat-icon di-stat-disk" aria-hidden="true"><svg viewBox="0 0 24 24"><path fill="currentColor" d="M4 6h16a2 2 0 012 2v10a2 2 0 01-2 2H4a2 2 0 01-2-2V8a2 2 0 012-2zm0 2v2h16V8H4zm0 4v6h16v-6H4zm10 2h4v2h-4v-2z"/></svg></div>' +
+      '<div class="di-stat-label">Storage</div>' +
+      '<div class="di-stat-value">' + storageText + "</div></div>";
+
+    // Storage bar
 
     // Storage bar — real navigator.storage.estimate() + breakdown
     const storageBox = el("di-storage");
@@ -4065,39 +4221,57 @@ function buildDeviceInspector() {
             "</span></li>"
         )
         .join("");
+      if (storageDetail) storageDetail.hidden = srows.length === 0;
     } else {
       storageBox.hidden = true;
       el("di-storage-rows").innerHTML = "";
-      if (emptyHint) emptyHint.hidden = false;
+      if (storageDetail) storageDetail.hidden = true;
+      if (emptyHint) emptyHint.hidden = true;
       updatePersistUI(s);
     }
 
-    // Rows
+    // Rows — screenshot-style labels; values from live Web APIs
     const rows = [
-      { icon: "⬚", label: "CPU", value: data.cores != null ? data.cores + " cores" : "—" },
-      { icon: "☰", label: "Graphics", value: data.gpu },
-      { icon: "◎", label: "Architecture", value: data.archLabel || "—" },
-      { icon: "▣", label: "Screen", value: data.displayStr + (data.phys ? " (" + data.phys + ")" : "") },
       {
-        icon: "🗄️",
-        label: "Site space",
-        value: data.storageQuota != null ? fmtBytes(data.storageQuota) : "—",
+        icon: "cpu",
+        label: "Processor",
+        value:
+          data.cores != null
+            ? (data.archLabel && data.archLabel !== "—"
+                ? data.archLabel + " (" + data.cores + " cores)"
+                : data.cores + " logical cores")
+            : "—",
+      },
+      { icon: "gpu", label: "GPU", value: data.gpu && data.gpu !== "—" ? data.gpu : "—" },
+      { icon: "arch", label: "Architecture", value: data.archLabel || "—" },
+      {
+        icon: "display",
+        label: "Display",
+        value: data.displayStr + (data.refreshHz ? " @ " + data.refreshHz + "Hz" : ""),
       },
       {
-        icon: "📦",
-        label: "Used here",
-        value: data.storageUsed != null ? fmtBytes(data.storageUsed) : "—",
+        icon: "year",
+        label: "Manufacture year",
+        value:
+          data.manufactureYear != null
+            ? String(data.manufactureYear) +
+              (data.manufactureYearApprox ? " (est.)" : "")
+            : "—",
       },
-      { icon: "◇", label: "System", value: data.platform },
-      { icon: "◯", label: "Language", value: data.lang },
-      { icon: "✋", label: "Touch", value: data.touch ? data.touch + " points" : "None detected" },
     ];
     const ul = el("di-rows");
+    const rowIcons = {
+      cpu: '<svg viewBox="0 0 24 24"><path fill="currentColor" d="M6 6h12v12H6V6zm2 2v8h8V8H8zM9 1h2v3H9V1zm4 0h2v3h-2V1zM9 20h2v3H9v-3zm4 0h2v3h-2v-3zM1 9h3v2H1V9zm0 4h3v2H1v-2zm19-4h3v2h-3V9zm0 4h3v2h-3v-2z"/></svg>',
+      gpu: '<svg viewBox="0 0 24 24"><path fill="currentColor" d="M4 6h16v2H4V6zm0 4h16v8H4v-8zm2 2v4h4v-4H6zm6 0v4h6v-4h-6z"/></svg>',
+      arch: '<svg viewBox="0 0 24 24"><path fill="currentColor" d="M12 2a10 10 0 100 20 10 10 0 000-20zm1 5v5.2l3.5 2.1-.8 1.3L11 13V7h2z"/></svg>',
+      display: '<svg viewBox="0 0 24 24"><path fill="currentColor" d="M4 5h16a1 1 0 011 1v10a1 1 0 01-1 1h-5v2h2v2H7v-2h2v-2H4a1 1 0 01-1-1V6a1 1 0 011-1zm1 2v8h14V7H5z"/></svg>',
+      year: '<svg viewBox="0 0 24 24"><path fill="currentColor" d="M7 2h2v2h6V2h2v2h3v16H4V4h3V2zm11 6H6v10h12V8z"/></svg>',
+    };
     ul.innerHTML = rows
       .map(
         (r) =>
           '<li class="di-row"><span class="di-row-icon" aria-hidden="true">' +
-          r.icon +
+          (rowIcons[r.icon] || "") +
           '</span><span class="di-row-label">' +
           r.label +
           '</span><span class="di-row-value">' +
@@ -4459,7 +4633,7 @@ function buildDeviceInspector() {
 
   function withV(path) {
     const v =
-      (typeof window !== "undefined" && window.__MENELIK_V__) || "20260808h";
+      (typeof window !== "undefined" && window.__MENELIK_V__) || "20260808k";
     const sep = path.indexOf("?") >= 0 ? "&" : "?";
     return path + sep + "v=" + encodeURIComponent(v) + "&_=" + Date.now();
   }
@@ -7287,7 +7461,7 @@ tryLoadProfile();
 const CONTENT_FILES = ["about", "education", "experience", "certifications", "projects", "skills", "contact", "resume"];
 /** Cache-bust query for content fetches — mirrors window.__MENELIK_V__ from index.html */
 const ASSET_V =
-  (typeof window !== "undefined" && window.__MENELIK_V__) || "20260808h";
+  (typeof window !== "undefined" && window.__MENELIK_V__) || "20260808k";
 function withV(url) {
   const join = url.indexOf("?") >= 0 ? "&" : "?";
   return url + join + "v=" + encodeURIComponent(ASSET_V);
