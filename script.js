@@ -769,7 +769,8 @@ const APPS = {
   testimonials: { title: "Testimonials", iconClass: "testimonial-icon", interactive: true },
   github: { title: "GitHub Activity", iconClass: "github-icon", interactive: true },
   downloadpack: { title: "Download Pack", iconClass: "pack-icon", interactive: true },
-  device: { title: "Device Inspector", iconClass: "device-icon", interactive: true }
+  device: { title: "Device Inspector", iconClass: "device-icon", interactive: true },
+  voice: { title: "Voice Room", iconClass: "voice-icon", interactive: true }
 };
 window.CONTENT = CONTENT;
 window.APPS = APPS;
@@ -3317,6 +3318,330 @@ function buildVectorGraphics() {
 
 
 
+
+/** Shareable multi-person voice/video rooms via Jitsi (no custom server needed) */
+function buildVoiceCall() {
+  const root = document.createElement("div");
+  root.className = "voice-call";
+
+  function randomRoom() {
+    const a = ["aurora", "comet", "delta", "ember", "fjord", "galaxy", "harbor", "ion", "jade", "kite"];
+    const b = ["room", "talk", "hub", "circle", "lounge", "space"];
+    const n = Math.floor(Math.random() * 9000 + 1000);
+    return (
+      a[Math.floor(Math.random() * a.length)] +
+      "-" +
+      b[Math.floor(Math.random() * b.length)] +
+      "-" +
+      n
+    );
+  }
+
+  function sanitizeRoom(name) {
+    return String(name || "")
+      .trim()
+      .toLowerCase()
+      .replace(/[^a-z0-9-_]/g, "-")
+      .replace(/-+/g, "-")
+      .replace(/^-|-$/g, "")
+      .slice(0, 64) || randomRoom();
+  }
+
+  function roomFromUrl() {
+    try {
+      const u = new URL(window.location.href);
+      const q = u.searchParams.get("voice") || u.searchParams.get("room");
+      if (q) return sanitizeRoom(q);
+      const hash = (u.hash || "").replace(/^#/, "");
+      const m = hash.match(/^voice\/([a-z0-9-_]+)/i);
+      if (m) return sanitizeRoom(m[1]);
+    } catch (_) {}
+    return "";
+  }
+
+  function shareUrl(room) {
+    try {
+      const u = new URL(window.location.href);
+      u.searchParams.set("voice", room);
+      // Prefer clean path without hash noise
+      u.hash = "";
+      return u.toString();
+    } catch (_) {
+      return window.location.origin + window.location.pathname + "?voice=" + encodeURIComponent(room);
+    }
+  }
+
+  function jitsiBase() {
+    // Prefer explicit config, then localStorage override, then public meet.jit.si
+    try {
+      if (window.VOICE_JITSI_HOST) return String(window.VOICE_JITSI_HOST).replace(/\/+$/, "");
+      const saved = localStorage.getItem("portfolio-jitsi-host");
+      if (saved && /^https:\/\/[a-z0-9.-]+/i.test(saved)) return saved.replace(/\/+$/, "");
+    } catch (_) {}
+    return "https://meet.jit.si";
+  }
+
+  function jitsiEmbedUrl(room, opts) {
+    // Optimized Jitsi config for embedded portfolio voice rooms
+    // Docs: https://github.com/jitsi/jitsi-meet/blob/master/config.js
+    opts = opts || {};
+    const audioOnly = !!opts.audioOnly;
+    const isMobile =
+      typeof window.matchMedia === "function" &&
+      window.matchMedia("(max-width: 900px), (pointer: coarse)").matches;
+
+    // Lean toolbar — fewer chrome, faster UI, less bandwidth temptation
+    const toolbar = audioOnly
+      ? '["microphone","hangup","chat","settings","raisehand","tileview"]'
+      : '["microphone","camera","desktop","fullscreen","hangup","chat","settings","raisehand","tileview","select-background"]';
+
+    const parts = [
+      // Prejoin: check mic/cam before entering (avoids silent joins)
+      "config.prejoinConfig.enabled=true",
+      "config.prejoinPageEnabled=true",
+
+      // Media defaults — voice-first, save bandwidth
+      "config.startWithAudioMuted=false",
+      "config.startWithVideoMuted=" + (audioOnly || isMobile ? "true" : "true"),
+      "config.startAudioOnly=" + (audioOnly ? "true" : "false"),
+      "config.startSilent=false",
+
+      // Performance / quality
+      "config.resolution=720",
+      "config.constraints.video.height.ideal=480",
+      "config.constraints.video.height.max=720",
+      "config.constraints.video.height.min=180",
+      "config.channelLastN=" + (audioOnly ? "4" : isMobile ? "6" : "12"),
+      "config.enableLayerSuspension=true",
+      "config.videoQuality.maxBitratesVideo.low=200000",
+      "config.videoQuality.maxBitratesVideo.standard=500000",
+      "config.videoQuality.maxBitratesVideo.high=1500000",
+      "config.disableSimulcast=false",
+
+      // Reliability on mobile networks
+      "config.p2p.enabled=" + (audioOnly ? "true" : "true"),
+      "config.p2p.stunServers=[{\"urls\":\"stun:meet-jit-si-turnrelay.jitsi.net:443\"}]",
+
+      // UX for embed (no deep links / app store prompts)
+      "config.disableDeepLinking=true",
+      "config.disableInviteFunctions=false",
+      "config.enableWelcomePage=false",
+      "config.enableClosePage=false",
+      "config.requireDisplayName=false",
+      "config.defaultLocalDisplayName=Guest",
+      "config.defaultRemoteDisplayName=Participant",
+      "config.disableProfile=true",
+
+      // Less noise
+      "config.notifications=[]",
+      "config.disabledSounds=[\"INCOMING_MSG_SOUND\"]",
+      "config.disableJoinLeaveSounds=false",
+
+      // Analytics / third-party off when possible
+      "config.analytics.disabled=true",
+      "config.disableThirdPartyRequests=true",
+
+      // Mobile-friendly chrome
+      "interfaceConfig.MOBILE_APP_PROMO=false",
+      "interfaceConfig.SHOW_JITSI_WATERMARK=false",
+      "interfaceConfig.SHOW_WATERMARK_FOR_GUESTS=false",
+      "interfaceConfig.SHOW_BRAND_WATERMARK=false",
+      "interfaceConfig.SHOW_POWERED_BY=false",
+      "interfaceConfig.DISABLE_JOIN_LEAVE_NOTIFICATIONS=false",
+      "interfaceConfig.DISABLE_PRESENCE_STATUS=false",
+      "interfaceConfig.TOOLBAR_ALWAYS_VISIBLE=false",
+      "interfaceConfig.TOOLBAR_TIMEOUT=4000",
+      "interfaceConfig.INITIAL_TOOLBAR_TIMEOUT=5000",
+      "interfaceConfig.FILM_STRIP_MAX_HEIGHT=" + (isMobile ? "90" : "120"),
+      "interfaceConfig.TOOLBAR_BUTTONS=" + toolbar,
+      "interfaceConfig.SETTINGS_SECTIONS=[\"devices\",\"language\"]",
+      "interfaceConfig.VERTICAL_FILMSTRIP=true",
+      "interfaceConfig.DISABLE_DOMINANT_SPEAKER_INDICATOR=false",
+    ];
+
+    return jitsiBase() + "/" + encodeURIComponent(room) + "#" + parts.join("&");
+  }
+
+  let currentRoom = roomFromUrl() || randomRoom();
+  let joined = false;
+
+  root.innerHTML =
+    '<div class="vc-shell">' +
+    '  <div class="vc-hero">' +
+    '    <div class="vc-icon" aria-hidden="true">🎙️</div>' +
+    "    <div>" +
+    '      <h2 class="vc-title">Voice Room</h2>' +
+    '      <p class="vc-sub">Create a room, share the link — others join the same live voice call in the browser.</p>' +
+    "    </div>" +
+    "  </div>" +
+    '  <div class="vc-card" id="vc-lobby">' +
+    '    <label class="vc-label" for="vc-room">Room name</label>' +
+    '    <div class="vc-row">' +
+    '      <input id="vc-room" class="vc-input" type="text" maxlength="64" autocomplete="off" spellcheck="false" />' +
+    '      <button type="button" class="vc-btn vc-btn-ghost" id="vc-random">New</button>' +
+    "    </div>" +
+    '    <details class="vc-advanced">' +
+    "      <summary>Server (optional)</summary>" +
+    '      <label class="vc-label" for="vc-host">Jitsi host</label>' +
+    '      <div class="vc-row">' +
+    '        <input id="vc-host" class="vc-input" type="url" placeholder="https://meet.jit.si" autocomplete="off" spellcheck="false" />' +
+    '        <button type="button" class="vc-btn vc-btn-ghost" id="vc-host-save">Save</button>' +
+    "      </div>" +
+    '      <p class="vc-hint">Use your own server, e.g. https://meet.yourdomain.com — default is public meet.jit.si</p>' +
+    "    </details>" +
+    '    <p class="vc-hint">Anyone with the link can join this room. Works for 2 or more people.</p>' +
+    '    <label class="vc-check"><input type="checkbox" id="vc-audio-only" checked /> Audio only (faster, less data)</label>' +
+    '    <div class="vc-actions">' +
+    '      <button type="button" class="vc-btn vc-btn-primary" id="vc-join">Join voice room</button>' +
+    '      <button type="button" class="vc-btn vc-btn-secondary" id="vc-share">Copy invite link</button>' +
+    "    </div>" +
+    '    <p class="vc-status" id="vc-status" hidden></p>' +
+    "  </div>" +
+    '  <div class="vc-stage" id="vc-stage" hidden>' +
+    '    <div class="vc-stage-bar">' +
+    '      <span class="vc-room-pill" id="vc-room-pill"></span>' +
+    '      <button type="button" class="vc-btn vc-btn-secondary vc-btn-sm" id="vc-copy-live">Copy link</button>' +
+    '      <button type="button" class="vc-btn vc-btn-ghost vc-btn-sm" id="vc-leave">Leave</button>' +
+    "    </div>" +
+    '    <div class="vc-frame-wrap">' +
+    '      <iframe id="vc-frame" class="vc-frame" allow="camera; microphone; fullscreen; display-capture; autoplay; clipboard-write; speaker-selection; compute-pressure" allowfullscreen referrerpolicy="no-referrer-when-downgrade" title="Voice room"></iframe>' +
+    "    </div>" +
+    "  </div>" +
+    '  <p class="vc-note">Powered by Jitsi (public or self-hosted). Mic permission required. Use HTTPS. No account needed.</p>' +
+    "</div>";
+
+  const roomInput = root.querySelector("#vc-room");
+  const hostInput = root.querySelector("#vc-host");
+  const statusEl = root.querySelector("#vc-status");
+  const lobby = root.querySelector("#vc-lobby");
+  const stage = root.querySelector("#vc-stage");
+  const frame = root.querySelector("#vc-frame");
+  const roomPill = root.querySelector("#vc-room-pill");
+
+  roomInput.value = currentRoom;
+  if (hostInput) hostInput.value = jitsiBase();
+  try {
+    const audioOnlyEl = root.querySelector("#vc-audio-only");
+    if (audioOnlyEl) {
+      const u = new URL(window.location.href);
+      // Default audio-only; ?audio=0 forces AV
+      audioOnlyEl.checked = u.searchParams.get("audio") !== "0";
+    }
+  } catch (_) {}
+
+  const saveHostBtn = root.querySelector("#vc-host-save");
+  if (saveHostBtn && hostInput) {
+    saveHostBtn.addEventListener("click", () => {
+      let v = (hostInput.value || "").trim().replace(/\/+$/, "");
+      if (v && !/^https:\/\//i.test(v)) v = "https://" + v;
+      if (v && !/^https:\/\/[a-z0-9.-]+/i.test(v)) {
+        setStatus("Enter a valid https:// host", false);
+        return;
+      }
+      try {
+        if (v) localStorage.setItem("portfolio-jitsi-host", v);
+        else localStorage.removeItem("portfolio-jitsi-host");
+        hostInput.value = jitsiBase();
+        setStatus("Jitsi host saved: " + jitsiBase(), true);
+      } catch (_) {
+        setStatus("Could not save host", false);
+      }
+    });
+  }
+
+  function setStatus(msg, ok) {
+    if (!msg) {
+      statusEl.hidden = true;
+      statusEl.textContent = "";
+      return;
+    }
+    statusEl.hidden = false;
+    statusEl.textContent = msg;
+    statusEl.classList.toggle("vc-status-ok", !!ok);
+    statusEl.classList.toggle("vc-status-err", ok === false);
+  }
+
+  async function copyLink() {
+    const room = sanitizeRoom(roomInput.value);
+    roomInput.value = room;
+    currentRoom = room;
+    const url = shareUrl(room);
+    try {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        await navigator.clipboard.writeText(url);
+      } else {
+        const ta = document.createElement("textarea");
+        ta.value = url;
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand("copy");
+        ta.remove();
+      }
+      setStatus("Invite link copied — send it to others.", true);
+    } catch (_) {
+      setStatus("Copy failed. Link: " + url, false);
+    }
+  }
+
+  function joinRoom() {
+    const room = sanitizeRoom(roomInput.value);
+    roomInput.value = room;
+    currentRoom = room;
+    joined = true;
+    const audioOnlyEl = root.querySelector("#vc-audio-only");
+    const audioOnly = audioOnlyEl ? !!audioOnlyEl.checked : true;
+    roomPill.textContent =
+      "Room · " + room + (audioOnly ? " · audio" : " · av");
+    // Tear down previous meeting before loading a new one
+    try {
+      frame.src = "about:blank";
+    } catch (_) {}
+    // Small delay helps mobile WebView release the previous peer connection
+    setTimeout(() => {
+      frame.src = jitsiEmbedUrl(room, { audioOnly: audioOnly });
+    }, 40);
+    lobby.hidden = true;
+    stage.hidden = false;
+    setStatus("");
+    try {
+      const u = new URL(window.location.href);
+      u.searchParams.set("voice", room);
+      if (audioOnly) u.searchParams.set("audio", "1");
+      else u.searchParams.delete("audio");
+      window.history.replaceState({}, "", u.toString());
+    } catch (_) {}
+  }
+
+  function leaveRoom() {
+    joined = false;
+    try {
+      frame.src = "about:blank";
+    } catch (_) {}
+    stage.hidden = true;
+    lobby.hidden = false;
+    setStatus("You left the room. Mic/camera released.", true);
+  }
+
+  root.querySelector("#vc-random").addEventListener("click", () => {
+    roomInput.value = randomRoom();
+    setStatus("");
+  });
+  root.querySelector("#vc-join").addEventListener("click", joinRoom);
+  root.querySelector("#vc-share").addEventListener("click", copyLink);
+  root.querySelector("#vc-copy-live").addEventListener("click", copyLink);
+  root.querySelector("#vc-leave").addEventListener("click", leaveRoom);
+  roomInput.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") joinRoom();
+  });
+
+  // Auto-join when opened from an invite link
+  if (roomFromUrl()) {
+    setTimeout(joinRoom, 50);
+  }
+
+  return root;
+}
+
 /** Live hardware / system inspection via browser Web APIs (mobile Device app) */
 function buildDeviceInspector() {
   const root = document.createElement("div");
@@ -3541,33 +3866,37 @@ function buildDeviceInspector() {
   function renderConnection(connection) {
     const unsupported = el("di-net-unsupported");
     const rowsEl = el("di-net-rows");
+    const typeEl = el("di-net-type");
+    const downEl = el("di-net-downlink");
+    const rttEl = el("di-net-rtt");
     if (!connection || !connection.supported) {
-      el("di-net-type").textContent = "—";
-      el("di-net-downlink").textContent = "—";
-      el("di-net-rtt").textContent = "—";
-      rowsEl.innerHTML = "";
-      unsupported.hidden = false;
+      if (typeEl) typeEl.textContent = "—";
+      if (downEl) downEl.textContent = "—";
+      if (rttEl) rttEl.textContent = "—";
+      if (rowsEl) rowsEl.innerHTML = "";
+      if (unsupported) unsupported.hidden = false;
       return;
     }
-    unsupported.hidden = true;
+    if (unsupported) unsupported.hidden = true;
 
     const typeLabel = connection.effectiveType
       ? formatEffectiveType(connection.effectiveType)
       : formatConnType(connection.type);
-    el("di-net-type").textContent = typeLabel;
+    if (typeEl) typeEl.textContent = typeLabel;
 
     if (connection.downlink != null && isFinite(connection.downlink)) {
       const d = connection.downlink;
-      el("di-net-downlink").textContent =
-        (d >= 10 ? d.toFixed(1) : d >= 1 ? d.toFixed(2) : d.toFixed(3)) + " Mb/s";
-    } else {
-      el("di-net-downlink").textContent = "—";
+      if (downEl)
+        downEl.textContent =
+          (d >= 10 ? d.toFixed(1) : d >= 1 ? d.toFixed(2) : d.toFixed(3)) + " Mb/s";
+    } else if (downEl) {
+      downEl.textContent = "—";
     }
 
     if (connection.rtt != null && isFinite(connection.rtt)) {
-      el("di-net-rtt").textContent = Math.round(connection.rtt) + " ms";
-    } else {
-      el("di-net-rtt").textContent = "—";
+      if (rttEl) rttEl.textContent = Math.round(connection.rtt) + " ms";
+    } else if (rttEl) {
+      rttEl.textContent = "—";
     }
 
     const detailRows = [];
@@ -3616,18 +3945,20 @@ function buildDeviceInspector() {
       value: "navigator.connection",
     });
 
-    rowsEl.innerHTML = detailRows
-      .map(
-        (r) =>
-          '<li class="di-row"><span class="di-row-icon" aria-hidden="true">' +
-          r.icon +
-          '</span><span class="di-row-label">' +
-          r.label +
-          '</span><span class="di-row-value">' +
-          String(r.value).replace(/</g, "&lt;") +
-          "</span></li>"
-      )
-      .join("");
+    if (rowsEl) {
+      rowsEl.innerHTML = detailRows
+        .map(
+          (r) =>
+            '<li class="di-row"><span class="di-row-icon" aria-hidden="true">' +
+            r.icon +
+            '</span><span class="di-row-label">' +
+            r.label +
+            '</span><span class="di-row-value">' +
+            String(r.value).replace(/</g, "&lt;") +
+            "</span></li>"
+        )
+        .join("");
+    }
   }
 
 
@@ -3677,6 +4008,39 @@ function buildDeviceInspector() {
     return out;
   }
 
+  async function listIndexedDbNames() {
+    try {
+      if (typeof indexedDB === "undefined") return null;
+      // Modern browsers: databases() lists IDB names for this origin
+      if (typeof indexedDB.databases === "function") {
+        const dbs = await indexedDB.databases();
+        return (dbs || [])
+          .map((d) => (d && d.name ? d.name : null))
+          .filter(Boolean);
+      }
+      return [];
+    } catch (_) {
+      return null;
+    }
+  }
+
+  async function probeOpfs() {
+    const out = { supported: false, canGetDirectory: false, error: null };
+    try {
+      out.supported = !!(
+        navigator.storage && typeof navigator.storage.getDirectory === "function"
+      );
+      if (!out.supported) return out;
+      out.canGetDirectory = true;
+      // Touch root to confirm it works (does not list entire tree)
+      const root = await navigator.storage.getDirectory();
+      out.ok = !!root;
+    } catch (err) {
+      out.error = err && err.message ? err.message : String(err);
+    }
+    return out;
+  }
+
   async function probeStorage() {
     const result = {
       supported: !!(navigator.storage && navigator.storage.estimate),
@@ -3684,21 +4048,40 @@ function buildDeviceInspector() {
       quota: null,
       usageDetails: null,
       persisted: null,
+      canPersist: !!(navigator.storage && typeof navigator.storage.persist === "function"),
       localStorageBytes: null,
       sessionStorageBytes: null,
+      localStorageKeys: null,
+      sessionStorageKeys: null,
       cacheBytes: null,
       cacheNames: [],
       cacheEntries: 0,
+      indexedDbNames: null,
+      opfs: null,
+      apis: {
+        localStorage: typeof localStorage !== "undefined",
+        sessionStorage: typeof sessionStorage !== "undefined",
+        indexedDB: typeof indexedDB !== "undefined",
+        caches: "caches" in window,
+        storageManager: !!(navigator.storage),
+        estimate: !!(navigator.storage && navigator.storage.estimate),
+        persist: !!(navigator.storage && navigator.storage.persist),
+        persisted: !!(navigator.storage && navigator.storage.persisted),
+        opfs: !!(navigator.storage && navigator.storage.getDirectory),
+      },
+      secureContext: typeof window !== "undefined" ? !!window.isSecureContext : null,
       error: null,
     };
 
     try {
       result.localStorageBytes = measureWebStorage(window.localStorage);
+      result.localStorageKeys = window.localStorage ? window.localStorage.length : 0;
     } catch (_) {
       result.localStorageBytes = null;
     }
     try {
       result.sessionStorageBytes = measureWebStorage(window.sessionStorage);
+      result.sessionStorageKeys = window.sessionStorage ? window.sessionStorage.length : 0;
     } catch (_) {
       result.sessionStorageBytes = null;
     }
@@ -3736,6 +4119,18 @@ function buildDeviceInspector() {
       result.cacheNames = c.names;
       result.cacheEntries = c.entries;
     } catch (_) {}
+
+    try {
+      result.indexedDbNames = await listIndexedDbNames();
+    } catch (_) {
+      result.indexedDbNames = null;
+    }
+
+    try {
+      result.opfs = await probeOpfs();
+    } catch (_) {
+      result.opfs = { supported: false };
+    }
 
     // If estimate usage is null but we measured pieces, sum a lower bound
     if (result.used == null) {
@@ -3915,13 +4310,99 @@ function buildDeviceInspector() {
     const cssH = screen.height;
     const gpu = getGpu();
     const online = navigator.onLine;
+
+    // Extra hardware / device signals available to the page
+    let colorDepth = null;
+    let pixelDepth = null;
+    let orientationType = null;
+    let orientationAngle = null;
+    let availW = null;
+    let availH = null;
+    try {
+      colorDepth = screen.colorDepth || null;
+      pixelDepth = screen.pixelDepth || null;
+      availW = screen.availWidth || null;
+      availH = screen.availHeight || null;
+      if (screen.orientation) {
+        orientationType = screen.orientation.type || null;
+        orientationAngle =
+          typeof screen.orientation.angle === "number"
+            ? screen.orientation.angle
+            : null;
+      } else if (typeof window.orientation === "number") {
+        orientationAngle = window.orientation;
+      }
+    } catch (_) {}
+
+    let maxTouch = 0;
+    try {
+      maxTouch = navigator.maxTouchPoints || 0;
+    } catch (_) {}
+
+    let vendor = "";
+    let language = "";
+    let languages = "";
+    let pdfViewer = null;
+    let cookieEnabled = null;
+    let hardwareConcurrency = cores;
+    try {
+      vendor = navigator.vendor || "";
+      language = navigator.language || "";
+      languages = Array.isArray(navigator.languages)
+        ? navigator.languages.slice(0, 3).join(", ")
+        : language;
+      pdfViewer = typeof navigator.pdfViewerEnabled === "boolean"
+        ? navigator.pdfViewerEnabled
+        : null;
+      cookieEnabled =
+        typeof navigator.cookieEnabled === "boolean"
+          ? navigator.cookieEnabled
+          : null;
+    } catch (_) {}
+
+    // Media devices: count only (labels need permission)
+    let mediaCounts = { audioinput: 0, videoinput: 0, audiooutput: 0, total: 0 };
+    try {
+      if (navigator.mediaDevices && navigator.mediaDevices.enumerateDevices) {
+        const devices = await navigator.mediaDevices.enumerateDevices();
+        devices.forEach((d) => {
+          if (d && d.kind && mediaCounts[d.kind] != null) mediaCounts[d.kind] += 1;
+          mediaCounts.total += 1;
+        });
+      }
+    } catch (_) {}
+
+    // WebGL extras
+    let webglInfo = { vendor: null, version: null, maxTexture: null };
+    try {
+      const canvas = document.createElement("canvas");
+      const gl =
+        canvas.getContext("webgl") || canvas.getContext("experimental-webgl");
+      if (gl) {
+        const dbg = gl.getExtension("WEBGL_debug_renderer_info");
+        if (dbg) {
+          webglInfo.vendor = gl.getParameter(dbg.UNMASKED_VENDOR_WEBGL) || null;
+        }
+        webglInfo.version = gl.getParameter(gl.VERSION) || null;
+        webglInfo.maxTexture = gl.getParameter(gl.MAX_TEXTURE_SIZE) || null;
+      }
+    } catch (_) {}
+
     let batteryPct = null;
     let charging = null;
+    let batteryChargingTime = null;
+    let batteryDischargingTime = null;
     try {
       if (navigator.getBattery) {
         const b = await navigator.getBattery();
         batteryPct = Math.round((b.level || 0) * 100);
         charging = !!b.charging;
+        if (typeof b.chargingTime === "number" && isFinite(b.chargingTime) && b.chargingTime !== Infinity) {
+          batteryChargingTime = Math.round(b.chargingTime / 60);
+        }
+        if (typeof b.dischargingTime === "number" && isFinite(b.dischargingTime) && b.dischargingTime !== Infinity) {
+          batteryDischargingTime = Math.round(b.dischargingTime / 60);
+        }
       }
     } catch (_) {}
 
@@ -3978,7 +4459,12 @@ function buildDeviceInspector() {
       dpr > 1 && sw && sh ? sw + " × " + sh + " physical" : null;
 
     // Manufacture year is not exposed by Web APIs — estimate from OS version when possible
-    const yearInfo = estimateManufactureYear(ua, info, navigator);
+    let yearInfo = { year: null, approx: true, note: null };
+    try {
+      yearInfo = estimateManufactureYear(ua, info, navigator) || yearInfo;
+    } catch (err) {
+      console.warn("[Device] estimateManufactureYear", err);
+    }
 
     // Network Information API (navigator.connection)
     const conn =
@@ -4018,13 +4504,32 @@ function buildDeviceInspector() {
       displayStr,
       phys,
       platform: navigator.platform || "—",
-      lang: navigator.language || "—",
-      touch: navigator.maxTouchPoints || 0,
+      lang: language || navigator.language || "—",
+      languages: languages || "—",
+      vendor: vendor || "—",
+      touch: maxTouch,
       connection,
       refreshHz,
       manufactureYear: yearInfo.year,
       manufactureYearApprox: yearInfo.approx,
       manufactureYearNote: yearInfo.note,
+      colorDepth,
+      pixelDepth,
+      orientationType,
+      orientationAngle,
+      availW,
+      availH,
+      cssW,
+      cssH,
+      dpr,
+      sw,
+      sh,
+      mediaCounts,
+      webglInfo,
+      pdfViewer,
+      cookieEnabled,
+      batteryChargingTime,
+      batteryDischargingTime,
     };
   }
 
@@ -4076,7 +4581,11 @@ function buildDeviceInspector() {
       pills.appendChild(sd);
     }
 
-    renderConnection(data.connection);
+    try {
+      renderConnection(data.connection);
+    } catch (err) {
+      console.warn("[Device] renderConnection", err);
+    }
 
     // Stats
     const stats = el("di-stats");
@@ -4097,34 +4606,59 @@ function buildDeviceInspector() {
       '<div class="di-stat-label">Storage</div>' +
       '<div class="di-stat-value">' + storageText + "</div></div>";
 
-    // Storage bar
-
     // Storage bar — real navigator.storage.estimate() + breakdown
     const storageBox = el("di-storage");
+    const storageDetail = el("di-storage-detail");
+    const emptyHint = el("di-storage-empty");
     const s = data.storage || {};
     const hasQuota = s.quota != null && s.quota > 0;
     const hasUsed = s.used != null;
-    const emptyHint = el("di-storage-empty");
     if (hasQuota || hasUsed || s.localStorageBytes != null || s.cacheBytes != null) {
-      storageBox.hidden = false;
+      if (storageBox) storageBox.hidden = false;
       if (emptyHint) emptyHint.hidden = true;
+      const metaEl = el("di-storage-meta");
+      const barEl = el("di-storage-bar");
       if (hasQuota && hasUsed) {
         const pct = Math.min(100, Math.round((s.used / s.quota) * 1000) / 10);
-        el("di-storage-meta").textContent =
-          fmtBytes(s.used) + " / " + fmtBytes(s.quota) + " · " + pct + "%";
-        el("di-storage-bar").style.width = Math.min(100, pct) + "%";
+        if (metaEl)
+          metaEl.textContent =
+            fmtBytes(s.used) + " / " + fmtBytes(s.quota) + " · " + pct + "%";
+        if (barEl) barEl.style.width = Math.min(100, pct) + "%";
       } else if (hasUsed) {
-        el("di-storage-meta").textContent = fmtBytes(s.used) + " used (quota unknown)";
-        el("di-storage-bar").style.width = "0%";
+        if (metaEl) metaEl.textContent = fmtBytes(s.used) + " used (quota unknown)";
+        if (barEl) barEl.style.width = "0%";
       } else if (hasQuota) {
-        el("di-storage-meta").textContent = "Quota " + fmtBytes(s.quota);
-        el("di-storage-bar").style.width = "0%";
+        if (metaEl) metaEl.textContent = "Quota " + fmtBytes(s.quota);
+        if (barEl) barEl.style.width = "0%";
       } else {
-        el("di-storage-meta").textContent = "Measuring storage…";
-        el("di-storage-bar").style.width = "0%";
+        if (metaEl) metaEl.textContent = "Measuring storage…";
+        if (barEl) barEl.style.width = "0%";
       }
 
       const srows = [];
+      if (s.apis) {
+        const on = (k) => (s.apis[k] ? "Yes" : "No");
+        srows.push({
+          icon: "🔌",
+          label: "APIs",
+          value:
+            "localStorage " +
+            on("localStorage") +
+            " · session " +
+            on("sessionStorage") +
+            " · IDB " +
+            on("indexedDB") +
+            " · Cache " +
+            on("caches") +
+            " · OPFS " +
+            on("opfs"),
+        });
+        srows.push({
+          icon: "🔐",
+          label: "Secure ctx",
+          value: s.secureContext === true ? "Yes (HTTPS)" : s.secureContext === false ? "No" : "—",
+        });
+      }
       if (s.supported) {
         srows.push({
           icon: "📊",
@@ -4173,14 +4707,46 @@ function buildDeviceInspector() {
         srows.push({
           icon: "📝",
           label: "localStorage",
-          value: fmtBytes(s.localStorageBytes) + " (approx)",
+          value:
+            fmtBytes(s.localStorageBytes) +
+            " (approx)" +
+            (s.localStorageKeys != null ? " · " + s.localStorageKeys + " keys" : ""),
         });
       }
       if (s.sessionStorageBytes != null) {
         srows.push({
           icon: "⏳",
           label: "sessionStorage",
-          value: fmtBytes(s.sessionStorageBytes) + " (approx)",
+          value:
+            fmtBytes(s.sessionStorageBytes) +
+            " (approx)" +
+            (s.sessionStorageKeys != null ? " · " + s.sessionStorageKeys + " keys" : ""),
+        });
+      }
+      if (s.indexedDbNames && s.indexedDbNames.length) {
+        srows.push({
+          icon: "📚",
+          label: "IndexedDB",
+          value: s.indexedDbNames.slice(0, 5).join(", ") + (s.indexedDbNames.length > 5 ? "…" : ""),
+        });
+      } else if (s.apis && s.apis.indexedDB) {
+        srows.push({
+          icon: "📚",
+          label: "IndexedDB",
+          value: s.indexedDbNames === null ? "Supported (list unavailable)" : "No databases",
+        });
+      }
+      if (s.opfs) {
+        srows.push({
+          icon: "📁",
+          label: "OPFS",
+          value: s.opfs.supported
+            ? s.opfs.ok
+              ? "Supported · root accessible"
+              : s.opfs.error
+                ? "Error: " + s.opfs.error
+                : "Supported"
+            : "Not available",
         });
       }
       if (s.cacheBytes != null && s.cacheBytes > 0) {
@@ -4209,28 +4775,68 @@ function buildDeviceInspector() {
           value: "Storage details not available in this browser",
         });
       }
-      el("di-storage-rows").innerHTML = srows
-        .map(
-          (r) =>
-            '<li class="di-row"><span class="di-row-icon" aria-hidden="true">' +
-            r.icon +
-            '</span><span class="di-row-label">' +
-            r.label +
-            '</span><span class="di-row-value">' +
-            String(r.value).replace(/</g, "&lt;") +
-            "</span></li>"
-        )
-        .join("");
+      const storageRowsEl = el("di-storage-rows");
+      if (storageRowsEl) {
+        storageRowsEl.innerHTML = srows
+          .map(
+            (r) =>
+              '<li class="di-row"><span class="di-row-icon" aria-hidden="true">' +
+              r.icon +
+              '</span><span class="di-row-label">' +
+              r.label +
+              '</span><span class="di-row-value">' +
+              String(r.value).replace(/</g, "&lt;") +
+              "</span></li>"
+          )
+          .join("");
+      }
       if (storageDetail) storageDetail.hidden = srows.length === 0;
+      try {
+        updatePersistUI(s);
+      } catch (err) {
+        console.warn("[Device] updatePersistUI", err);
+      }
     } else {
-      storageBox.hidden = true;
-      el("di-storage-rows").innerHTML = "";
+      if (storageBox) storageBox.hidden = true;
+      const rowsEl = el("di-storage-rows");
+      if (rowsEl) rowsEl.innerHTML = "";
       if (storageDetail) storageDetail.hidden = true;
       if (emptyHint) emptyHint.hidden = true;
-      updatePersistUI(s);
+      try {
+        updatePersistUI(s);
+      } catch (err) {
+        console.warn("[Device] updatePersistUI", err);
+      }
     }
 
-    // Rows — screenshot-style labels; values from live Web APIs
+    // Rows — hardware-focused, live Web APIs only
+    const displayVal =
+      data.displayStr +
+      (data.refreshHz ? " @ " + data.refreshHz + "Hz" : "");
+    const batteryExtra =
+      data.batteryPct != null
+        ? data.batteryPct +
+          "%" +
+          (data.charging ? " charging" : "") +
+          (data.charging && data.batteryChargingTime != null
+            ? " · ~" + data.batteryChargingTime + " min to full"
+            : !data.charging && data.batteryDischargingTime != null
+              ? " · ~" + data.batteryDischargingTime + " min left"
+              : "")
+        : "—";
+    const mediaVal =
+      data.mediaCounts && data.mediaCounts.total
+        ? data.mediaCounts.videoinput +
+          " cam · " +
+          data.mediaCounts.audioinput +
+          " mic · " +
+          data.mediaCounts.audiooutput +
+          " out"
+        : "—";
+    const orientVal =
+      data.orientationType ||
+      (data.orientationAngle != null ? data.orientationAngle + "°" : "—");
+
     const rows = [
       {
         icon: "cpu",
@@ -4242,12 +4848,49 @@ function buildDeviceInspector() {
                 : data.cores + " logical cores")
             : "—",
       },
-      { icon: "gpu", label: "GPU", value: data.gpu && data.gpu !== "—" ? data.gpu : "—" },
-      { icon: "arch", label: "Architecture", value: data.archLabel || "—" },
+      {
+        icon: "gpu",
+        label: "GPU",
+        value: data.gpu && data.gpu !== "—" ? data.gpu : "—",
+      },
+      {
+        icon: "arch",
+        label: "Architecture",
+        value: data.archLabel || "—",
+      },
       {
         icon: "display",
         label: "Display",
-        value: data.displayStr + (data.refreshHz ? " @ " + data.refreshHz + "Hz" : ""),
+        value: displayVal,
+      },
+      {
+        icon: "year",
+        label: "Color depth",
+        value:
+          data.colorDepth != null
+            ? data.colorDepth + " bit" + (data.pixelDepth ? " · pixel " + data.pixelDepth
+              : "")
+            : "—",
+      },
+      {
+        icon: "display",
+        label: "Orientation",
+        value: orientVal,
+      },
+      {
+        icon: "cpu",
+        label: "Touch",
+        value: data.touch ? data.touch + " points" : "No touch",
+      },
+      {
+        icon: "gpu",
+        label: "Camera / mic",
+        value: mediaVal,
+      },
+      {
+        icon: "year",
+        label: "Battery",
+        value: batteryExtra,
       },
       {
         icon: "year",
@@ -4258,8 +4901,26 @@ function buildDeviceInspector() {
               (data.manufactureYearApprox ? " (est.)" : "")
             : "—",
       },
+      {
+        icon: "arch",
+        label: "Platform",
+        value: data.platform || "—",
+      },
+      {
+        icon: "display",
+        label: "Language",
+        value: data.languages || data.lang || "—",
+      },
     ];
+    if (data.webglInfo && data.webglInfo.maxTexture) {
+      rows.splice(2, 0, {
+        icon: "gpu",
+        label: "Max texture",
+        value: data.webglInfo.maxTexture + " px",
+      });
+    }
     const ul = el("di-rows");
+    if (!ul) return;
     const rowIcons = {
       cpu: '<svg viewBox="0 0 24 24"><path fill="currentColor" d="M6 6h12v12H6V6zm2 2v8h8V8H8zM9 1h2v3H9V1zm4 0h2v3h-2V1zM9 20h2v3H9v-3zm4 0h2v3h-2v-3zM1 9h3v2H1V9zm0 4h3v2H1v-2zm19-4h3v2h-3V9zm0 4h3v2h-3v-2z"/></svg>',
       gpu: '<svg viewBox="0 0 24 24"><path fill="currentColor" d="M4 6h16v2H4V6zm0 4h16v8H4v-8zm2 2v4h4v-4H6zm6 0v4h6v-4h-6z"/></svg>',
@@ -4633,7 +5294,7 @@ function buildDeviceInspector() {
 
   function withV(path) {
     const v =
-      (typeof window !== "undefined" && window.__MENELIK_V__) || "20260808k";
+      (typeof window !== "undefined" && window.__MENELIK_V__) || "20260808r";
     const sep = path.indexOf("?") >= 0 ? "&" : "?";
     return path + sep + "v=" + encodeURIComponent(v) + "&_=" + Date.now();
   }
@@ -4807,6 +5468,7 @@ function getAppBody(id) {
   if (id === "recycle") return buildRecycleBin();
   if (id === "registry") return buildRegistry();
   if (id === "device") return buildDeviceInspector();
+  if (id === "voice") return buildVoiceCall();
   // Extra apps from features-extra.js (IE, Media Player, Help, Solitaire, …)
   if (window.extraAppBuilders && typeof window.extraAppBuilders[id] === "function") {
     try {
@@ -7461,7 +8123,7 @@ tryLoadProfile();
 const CONTENT_FILES = ["about", "education", "experience", "certifications", "projects", "skills", "contact", "resume"];
 /** Cache-bust query for content fetches — mirrors window.__MENELIK_V__ from index.html */
 const ASSET_V =
-  (typeof window !== "undefined" && window.__MENELIK_V__) || "20260808k";
+  (typeof window !== "undefined" && window.__MENELIK_V__) || "20260808r";
 function withV(url) {
   const join = url.indexOf("?") >= 0 ? "&" : "?";
   return url + join + "v=" + encodeURIComponent(ASSET_V);
@@ -8452,3 +9114,43 @@ function initAdminUI() {
 
 initAdminUI();
 
+
+
+/* Open Voice Room when invite link is present */
+(function bootVoiceInvite() {
+  try {
+    const u = new URL(window.location.href);
+    const room = u.searchParams.get("voice") || u.searchParams.get("room");
+    if (!room) return;
+    const open = () => {
+      // Mobile shell
+      const icon = document.querySelector('.app-icon[data-page="voice"]');
+      const page = document.getElementById("page-voice");
+      if (icon && page) {
+        document.querySelectorAll(".app-page").forEach((p) => p.hidden = true);
+        page.hidden = false;
+        const body = document.getElementById("content-voice");
+        if (body && !body.dataset.ready) {
+          body.innerHTML = "";
+          body.appendChild(buildVoiceCall());
+          body.dataset.ready = "1";
+        }
+        const home = document.querySelector(".phone-home, .ios-home, #phone-home");
+        // hide home grid if present
+        document.querySelectorAll(".app-grid, .phone-apps").forEach((g) => {
+          /* leave visible structure; page overlay handles it */
+        });
+        return;
+      }
+      // Desktop XP: open window
+      if (typeof openWindow === "function") {
+        openWindow("voice");
+      }
+    };
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", () => setTimeout(open, 200));
+    } else {
+      setTimeout(open, 200);
+    }
+  } catch (_) {}
+})();

@@ -295,3 +295,16 @@ This project is optimized for **near-instant Vercel deploys**:
 | Output Directory | `.` |
 
 Expected deploy time is typically **a few seconds** after the git push is received.
+
+
+## Self-hosted Jitsi (Voice Room)
+
+Voice Room defaults to `https://meet.jit.si`. To use your own server:
+
+1. Install Jitsi on a VPS (Docker recommended): https://jitsi.github.io/handbook/docs/devops-guide/devops-guide-docker
+2. Point DNS (e.g. `meet.yourdomain.com`) and enable HTTPS.
+3. In the portfolio Voice Room → **Server (optional)** → set `https://meet.yourdomain.com` → Save  
+   Or set before load: `window.VOICE_JITSI_HOST = "https://meet.yourdomain.com"`
+4. Update CSP `frame-src` to allow your domain (middleware.js + vercel.json).
+
+Minimum open ports: 80, 443, TCP/UDP 10000 (media), UDP 3478 (TURN optional).

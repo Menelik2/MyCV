@@ -6641,3 +6641,253 @@ body:not(.light) .contact-form-heading { color: #7eb8ff; }
 body.light .device-inspector.di-card-ui {
   background: linear-gradient(180deg, #eef2ff 0%, #f4f6fb 45%, #eef1f8 100%);
 }
+
+
+/* ========== Voice Room (shareable multi-party call) ========== */
+.icon-img.voice-icon {
+  background-color: #0284c7;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23fff'%3E%3Cpath d='M12 14a3 3 0 003-3V5a3 3 0 10-6 0v6a3 3 0 003 3zm5-3a5 5 0 01-10 0H5a7 7 0 0014 0h-2zm-5 7a1 1 0 01-1-1v-1h2v1a1 1 0 01-1 1z'/%3E%3C/svg%3E");
+}
+.app-img.voice {
+  background-color: #0ea5e9;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23fff'%3E%3Cpath d='M12 14a3 3 0 003-3V5a3 3 0 10-6 0v6a3 3 0 003 3zm5-3a5 5 0 01-10 0H5a7 7 0 0014 0h-2zm-5 7a1 1 0 01-1-1v-1h2v1a1 1 0 01-1 1z'/%3E%3C/svg%3E");
+}
+
+.voice-call {
+  height: 100%;
+  min-height: 0;
+  overflow: auto;
+  -webkit-overflow-scrolling: touch;
+  background: linear-gradient(180deg, #ecfeff 0%, #f0f9ff 40%, #f8fafc 100%);
+  padding: 14px;
+  box-sizing: border-box;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+  color: #0f172a;
+}
+
+.voice-call .vc-shell {
+  max-width: 520px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-height: 100%;
+}
+
+.voice-call .vc-hero {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.voice-call .vc-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  background: linear-gradient(145deg, #38bdf8, #0284c7);
+  display: grid;
+  place-items: center;
+  font-size: 22px;
+  flex-shrink: 0;
+  box-shadow: 0 8px 20px rgba(14, 165, 233, 0.35);
+}
+
+.voice-call .vc-title {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.voice-call .vc-sub {
+  margin: 4px 0 0;
+  font-size: 13px;
+  line-height: 1.4;
+  color: #64748b;
+}
+
+.voice-call .vc-card {
+  background: #fff;
+  border-radius: 16px;
+  padding: 16px;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.06);
+  border: 1px solid #e2e8f0;
+}
+
+.voice-call .vc-label {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  color: #64748b;
+  margin-bottom: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.voice-call .vc-row {
+  display: flex;
+  gap: 8px;
+}
+
+.voice-call .vc-input {
+  flex: 1;
+  min-width: 0;
+  padding: 12px 14px;
+  border-radius: 12px;
+  border: 1px solid #cbd5e1;
+  font-size: 15px;
+  font-family: inherit;
+  background: #f8fafc;
+}
+
+.voice-call .vc-input:focus {
+  outline: none;
+  border-color: #0ea5e9;
+  box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.2);
+}
+
+.voice-call .vc-hint {
+  margin: 10px 0 0;
+  font-size: 12px;
+  color: #94a3b8;
+  line-height: 1.4;
+}
+
+.voice-call .vc-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-top: 14px;
+}
+
+.voice-call .vc-btn {
+  border: none;
+  border-radius: 12px;
+  padding: 12px 14px;
+  font-size: 14px;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.voice-call .vc-btn-primary {
+  background: linear-gradient(135deg, #38bdf8, #0284c7);
+  color: #fff;
+}
+
+.voice-call .vc-btn-secondary {
+  background: #e0f2fe;
+  color: #0369a1;
+}
+
+.voice-call .vc-btn-ghost {
+  background: #f1f5f9;
+  color: #475569;
+}
+
+.voice-call .vc-btn-sm {
+  padding: 8px 10px;
+  font-size: 12px;
+  border-radius: 10px;
+}
+
+.voice-call .vc-status {
+  margin: 10px 0 0;
+  font-size: 13px;
+  text-align: center;
+}
+
+.voice-call .vc-status-ok { color: #059669; }
+.voice-call .vc-status-err { color: #dc2626; }
+
+.voice-call .vc-stage {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 360px;
+  background: #0f172a;
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1px solid #1e293b;
+}
+
+.voice-call .vc-stage-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  background: #1e293b;
+}
+
+.voice-call .vc-room-pill {
+  flex: 1;
+  min-width: 0;
+  font-size: 12px;
+  font-weight: 600;
+  color: #e2e8f0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.voice-call .vc-frame-wrap {
+  flex: 1;
+  min-height: 320px;
+  position: relative;
+}
+
+.voice-call .vc-frame {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+  background: #000;
+}
+
+.voice-call .vc-note {
+  margin: 0;
+  font-size: 11px;
+  color: #94a3b8;
+  text-align: center;
+  line-height: 1.4;
+}
+
+/* Desktop window body */
+.window-body .voice-call {
+  height: 100%;
+}
+
+.voice-call .vc-advanced {
+  margin-top: 12px;
+  border-radius: 12px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  padding: 8px 12px 12px;
+}
+.voice-call .vc-advanced > summary {
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+  color: #475569;
+  padding: 4px 0;
+}
+.voice-call .vc-advanced .vc-label { margin-top: 8px; }
+
+.voice-call .vc-check {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 12px;
+  font-size: 13px;
+  color: #475569;
+  font-weight: 500;
+  cursor: pointer;
+  user-select: none;
+}
+.voice-call .vc-check input {
+  width: 16px;
+  height: 16px;
+  accent-color: #0284c7;
+}
