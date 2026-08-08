@@ -6152,3 +6152,450 @@ body:not(.light) .contact-form-heading { color: #7eb8ff; }
   margin-left: auto;
   margin-right: auto;
 }
+
+/* ========== Device Inspector (mobile Web APIs) ========== */
+.app-img.device {
+  background-color: #5b5fc7;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23fff'%3E%3Cpath d='M17 1H7c-1.1 0-2 .9-2 2v18c0 1.1.9 2 2 2h10c1.1 0 2-.9 2-2V3c0-1.1-.9-2-2-2zm0 18H7V5h10v14z'/%3E%3C/svg%3E");
+}
+
+.device-inspector {
+  height: 100%;
+  min-height: 0;
+  overflow: auto;
+  -webkit-overflow-scrolling: touch;
+  background: linear-gradient(180deg, #eef2ff 0%, #f8fafc 40%, #f1f5f9 100%);
+  padding: 14px 14px 28px;
+  box-sizing: border-box;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+  color: #0f172a;
+}
+
+.device-inspector .di-kicker {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-bottom: 14px;
+  padding: 0 2px;
+}
+
+.device-inspector .di-kicker-icon {
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  background: linear-gradient(135deg, #6366f1, #4f46e5);
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  color: #fff;
+  font-size: 14px;
+}
+
+.device-inspector .di-kicker-text {
+  font-size: 13px;
+  line-height: 1.35;
+  color: #64748b;
+  font-weight: 500;
+}
+
+.device-inspector .di-card {
+  background: #fff;
+  border-radius: 20px;
+  box-shadow: 0 4px 24px rgba(15, 23, 42, 0.08), 0 1px 3px rgba(15, 23, 42, 0.04);
+  padding: 18px 16px 8px;
+  border: 1px solid rgba(148, 163, 184, 0.2);
+}
+
+.device-inspector .di-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.device-inspector .di-device-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  background: linear-gradient(145deg, #6366f1, #4f46e5);
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  color: #fff;
+  box-shadow: 0 4px 12px rgba(79, 70, 229, 0.35);
+}
+
+.device-inspector .di-device-icon svg {
+  width: 26px;
+  height: 26px;
+  fill: currentColor;
+}
+
+.device-inspector .di-title-block {
+  flex: 1;
+  min-width: 0;
+}
+
+.device-inspector .di-name {
+  margin: 0;
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.25;
+  color: #0f172a;
+}
+
+.device-inspector .di-sub {
+  margin: 4px 0 0;
+  font-size: 12px;
+  color: #64748b;
+  line-height: 1.35;
+}
+
+.device-inspector .di-verified {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 2px;
+  padding: 3px 8px;
+  border-radius: 999px;
+  background: #ecfdf5;
+  color: #059669;
+  font-size: 11px;
+  font-weight: 600;
+  white-space: nowrap;
+  border: 1px solid #a7f3d0;
+}
+
+.device-inspector .di-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.device-inspector .di-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  border: 1px solid transparent;
+}
+
+.device-inspector .di-pill.online {
+  background: #ecfdf5;
+  color: #059669;
+  border-color: #a7f3d0;
+}
+
+.device-inspector .di-pill.offline {
+  background: #fef2f2;
+  color: #dc2626;
+  border-color: #fecaca;
+}
+
+.device-inspector .di-pill.battery {
+  background: #fffbeb;
+  color: #d97706;
+  border-color: #fde68a;
+}
+
+.device-inspector .di-pill.arch {
+  background: #f1f5f9;
+  color: #475569;
+  border-color: #e2e8f0;
+}
+
+.device-inspector .di-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0;
+  border-top: 1px solid #f1f5f9;
+  border-bottom: 1px solid #f1f5f9;
+  margin: 0 -4px 14px;
+  padding: 12px 0;
+}
+
+.device-inspector .di-stat {
+  text-align: center;
+  padding: 4px 6px;
+}
+
+.device-inspector .di-stat + .di-stat {
+  border-left: 1px solid #f1f5f9;
+}
+
+.device-inspector .di-stat-icon {
+  font-size: 18px;
+  line-height: 1;
+  margin-bottom: 4px;
+  opacity: 0.9;
+}
+
+.device-inspector .di-stat-label {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #94a3b8;
+  margin-bottom: 2px;
+}
+
+.device-inspector .di-stat-value {
+  font-size: 16px;
+  font-weight: 700;
+  color: #0f172a;
+  letter-spacing: -0.02em;
+}
+
+.device-inspector .di-storage {
+  margin-bottom: 8px;
+  padding: 0 2px 12px;
+}
+
+.device-inspector .di-storage-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.device-inspector .di-storage-label {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: #94a3b8;
+}
+
+.device-inspector .di-storage-meta {
+  font-size: 11px;
+  color: #64748b;
+  font-weight: 500;
+}
+
+.device-inspector .di-bar {
+  height: 8px;
+  border-radius: 999px;
+  background: #e2e8f0;
+  overflow: hidden;
+}
+
+.device-inspector .di-bar > span {
+  display: block;
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #34d399, #10b981);
+  transition: width 0.6s ease;
+}
+
+.device-inspector .di-rows {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.device-inspector .di-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 2px;
+  border-top: 1px solid #f1f5f9;
+}
+
+.device-inspector .di-row-icon {
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  background: #eef2ff;
+  color: #4f46e5;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  font-size: 14px;
+}
+
+.device-inspector .di-row-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #94a3b8;
+  min-width: 88px;
+  flex-shrink: 0;
+}
+
+.device-inspector .di-row-value {
+  font-size: 13px;
+  font-weight: 600;
+  color: #0f172a;
+  text-align: right;
+  flex: 1;
+  min-width: 0;
+  word-break: break-word;
+}
+
+.device-inspector .di-note {
+  margin: 14px 2px 0;
+  font-size: 11px;
+  line-height: 1.4;
+  color: #94a3b8;
+  text-align: center;
+}
+
+.device-inspector .di-refresh {
+  display: block;
+  width: 100%;
+  margin-top: 12px;
+  padding: 10px 14px;
+  border: none;
+  border-radius: 12px;
+  background: #4f46e5;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.device-inspector .di-refresh:active {
+  background: #4338ca;
+}
+
+body.light .device-inspector {
+  background: linear-gradient(180deg, #eef2ff 0%, #f8fafc 40%, #f1f5f9 100%);
+}
+
+/* Network speed test (Device Inspector) */
+.device-inspector .di-speed-card {
+  margin-top: 14px;
+  padding-bottom: 14px;
+}
+
+.device-inspector .di-speed-head {
+  margin-bottom: 12px;
+}
+
+.device-inspector .di-speed-title {
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: #0f172a;
+}
+
+.device-inspector .di-speed-sub {
+  margin-top: 2px;
+  font-size: 11px;
+  color: #94a3b8;
+  font-weight: 500;
+}
+
+.device-inspector .di-speed-metrics {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.device-inspector .di-speed-metric {
+  text-align: center;
+  padding: 10px 6px;
+  border-radius: 12px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+}
+
+.device-inspector .di-speed-metric-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: #94a3b8;
+  margin-bottom: 4px;
+}
+
+.device-inspector .di-speed-metric-value {
+  font-size: 15px;
+  font-weight: 700;
+  color: #0f172a;
+  letter-spacing: -0.02em;
+  word-break: break-word;
+}
+
+.device-inspector .di-speed-progress {
+  margin-bottom: 10px;
+}
+
+.device-inspector .di-speed-status {
+  margin-top: 6px;
+  font-size: 11px;
+  color: #64748b;
+  text-align: center;
+}
+
+.device-inspector .di-speed-run {
+  display: block;
+  width: 100%;
+  padding: 10px 14px;
+  border: none;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #0ea5e9, #2563eb);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.device-inspector .di-speed-run:disabled {
+  opacity: 0.65;
+  cursor: wait;
+}
+
+.device-inspector .di-speed-run:not(:disabled):active {
+  filter: brightness(0.95);
+}
+
+/* Network Information API card */
+.device-inspector .di-net-card {
+  margin-top: 14px;
+  padding-bottom: 10px;
+}
+
+.device-inspector .di-net-card .di-speed-sub code {
+  font-size: 10px;
+  background: #f1f5f9;
+  padding: 1px 5px;
+  border-radius: 4px;
+  color: #475569;
+}
+
+.device-inspector .di-net-metrics {
+  margin-bottom: 4px;
+}
+
+.device-inspector .di-pill-net {
+  background: #eff6ff !important;
+  color: #2563eb !important;
+  border-color: #bfdbfe !important;
+}
+
+.device-inspector .di-net-unsupported {
+  margin: 8px 2px 4px;
+  padding: 10px 12px;
+  font-size: 12px;
+  line-height: 1.4;
+  color: #64748b;
+  background: #f8fafc;
+  border-radius: 10px;
+  border: 1px dashed #cbd5e1;
+  text-align: center;
+}
+
+.device-inspector .di-net-card .di-rows {
+  margin-top: 4px;
+}

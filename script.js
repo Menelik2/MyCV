@@ -1,101 +1,140 @@
 /* ========== Content Data ========== */
 const CONTENT = {
   about: {
-    title: "About Me",
-    iconClass: "about-icon",
+    title: `About Me`,
+    iconClass: `about-icon`,
     html: `
-      <div class="profile-row">
+<div class="profile-row">
         <div class="profile-pic" id="profile-pic"></div>
         <div>
           <h2 style="margin:0 0 6px;border:none;padding:0;">Menelik Admasu</h2>
           <p style="margin:0;color:#555;"><strong>BSc Computer Science</strong><br>Bahir Dar University<br>2022 – 2026</p>
+          <p style="margin:6px 0 0;color:#555;font-size:13px;">Full-Stack App Developer · Computer Administrator<br>Hardware &amp; Networking · Technical Trainer<br>Bahir Dar, Ethiopia</p>
         </div>
       </div>
-      <p>If you're looking for a multitasking, detail-oriented computer administrator who can keep things running smoothly, I'm the right person for the job.</p>
-<p> My goal is to continue growing as a developer while building meaningful and useful technology </p>
-      <p>I enjoy turning ideas into interactive experiences — from classic desktop UIs to polished mobile layouts. This portfolio itself is a playful tribute to Windows XP and the iPhone Pro Max.</p>
+      <p>I am a detail-oriented computer administrator who keeps systems running smoothly. With strong IT and administrative experience, I handle day-to-day technical responsibilities effectively and efficiently.</p>
+      <p>I am also a <strong>full-stack app developer</strong>. I build complete applications — from the user interface to back-end logic, APIs, and deployment.</p>
+      <p>I completed a BSc in Computer Science at Bahir Dar University (2022 – 2026), after earlier training in computer hardware and networking. I enjoy building practical tools — including this portfolio.</p>
       <h3>Interests</h3>
       <ul>
-        <li>Full-stack web development (HTML, CSS, JavaScript & beyond)</li>
-        <li>UI/UX design and nostalgic interfaces</li>
-        <li>Computer Networking & Maintenance </li>
-        <li>Problem-solving and algorithms</li>
-        <li>Open-source contributions</li>
+        <li>Full-stack web and app development</li>
+        <li>UI/UX and interactive interfaces</li>
+        <li>Computer networking and maintenance</li>
+        <li>Cybersecurity</li>
+        <li>Learning new technologies, reading, and trying new things</li>
       </ul>
       <h3>Languages</h3>
       <ul>
-        <li>Amharic (native)</li>
-        <li>English (professional)</li>
+        <li>Amharic — professional working proficiency</li>
+        <li>English — professional working proficiency</li>
       </ul>
+      <h3>Volunteer work</h3>
+      <p>I train communities and organizations on how to use technology effectively.</p>
     `
   },
   education: {
-    title: "Education",
-    iconClass: "edu-icon",
+    title: `Education`,
+    iconClass: `edu-icon`,
     html: `
-      <h2>Education</h2>
+<h2>Education</h2>
+      <p style="margin-bottom:12px;color:#555;">All programs below are <strong>completed</strong>.</p>
+      <div class="project-card">
+        <h4>Bahir Dar University</h4>
+        <p style="margin:2px 0;color:#555;">Bachelor of Science in Computer Science</p>
+        <p style="margin:2px 0;"><strong>2022 – 2026</strong> · Completed</p>
+        <p style="margin-top:8px;">Finished BSc Computer Science at Bahir Dar University. Coursework included programming, data structures, algorithms, databases, software engineering, computer networks, web technologies, and operating systems.</p>
+      </div>
       <div class="project-card">
         <h4>Bahir Dar Poly Technical College</h4>
         <p style="margin:2px 0;color:#555;">Computer Hardware &amp; Networking Technology</p>
-        <p style="margin:2px 0;"><strong>2002 – 2004</strong> · GPA 3.45</p>
+        <p style="margin:2px 0;"><strong>2002 – 2004</strong> · GPA 3.45 · Completed</p>
+        <p style="margin-top:8px;">Diploma-level study focused on computer hardware, networking technology, and practical systems skills.</p>
       </div>
       <div class="project-card">
         <h4>Debre Markos Poly College</h4>
         <p style="margin:2px 0;color:#555;">Computer Hardware &amp; Networking Service</p>
-        <p style="margin:2px 0;"><strong>2007</strong></p>
+        <p style="margin:2px 0;"><strong>2007</strong> · Completed</p>
+        <p style="margin-top:8px;">Further training in computer hardware and networking service.</p>
       </div>
+      <h3>BSc coursework highlights</h3>
+      <ul>
+        <li>Data Structures &amp; Algorithms</li>
+        <li>Object-Oriented Programming</li>
+        <li>Database Systems</li>
+        <li>Web Development</li>
+        <li>Software Engineering</li>
+        <li>Computer Networks</li>
+        <li>Operating Systems</li>
+      </ul>
     `
   },
   experience: {
-    title: "Experience",
-    iconClass: "exp-icon",
+    title: `Experience`,
+    iconClass: `exp-icon`,
     html: `
-      <h2>Work Experience</h2>
+<h2>Work Experience</h2>
       <div class="project-card">
         <h4>Trainer</h4>
         <p style="margin:2px 0;color:#555;">Dejen TVET College</p>
         <p style="margin:2px 0;"><strong>2004 – 2012</strong></p>
+        <p style="margin-top:10px;">Trained students in computer skills, supported IT operations, and kept lab systems running as part of the college technical staff.</p>
       </div>
       <div class="project-card">
         <h4>Trainer</h4>
         <p style="margin:2px 0;color:#555;">Debre Elias TVET College</p>
         <p style="margin:2px 0;"><strong>2012 – 2014</strong></p>
+        <p style="margin-top:10px;">Continued technical training and computer administration work, supporting learners and institutional IT needs.</p>
       </div>
       <div class="project-card">
-        <h4>Total work experience</h4>
-        <p style="margin:2px 0;"><strong>10 years</strong></p>
+        <h4>IT Operations · System Administration · Technical Training</h4>
+        <p style="margin:2px 0;"><strong>Total work experience: 10 years</strong></p>
+        <p style="margin-top:10px;">IT operations, system administration, and technical training — systems management, networking, and multi-platform support.</p>
       </div>
+      <h3>Focus areas</h3>
+      <ul>
+        <li>Computer administration &amp; day-to-day systems management</li>
+        <li>System administration (installation, configuration, maintenance)</li>
+        <li>Network administration</li>
+        <li>Technical support across multiple platforms</li>
+        <li>Technical training and knowledge transfer (TVET)</li>
+      </ul>
+      <h3>Organizations</h3>
+      <p>Governmental (TVET colleges)</p>
     `
   },
   certifications: {
-    title: "Certifications",
-    iconClass: "cert-icon",
+    title: `Certifications`,
+    iconClass: `cert-icon`,
     html: `
-      <h2>Certifications</h2>
+<h2>Certifications &amp; Awards</h2>
       <div class="project-card">
         <h4>Industry-recognized credentials</h4>
-        <p style="margin-top:8px;">Holds multiple industry-recognized certifications in system administration, network management, and IT security. Committed to staying current with technological advances through ongoing certification.</p>
-      </div>
-      <h3>Key Highlights</h3>
-      <div class="project-card">
-        <h4>Hardware &amp; Networking Level IV</h4>
-        <p>Professional qualification in hardware and networking.</p>
+        <p style="margin-top:8px;">Holds industry-recognized certifications in system administration, network management, and IT. Committed to staying current with technological advances.</p>
       </div>
       <div class="project-card">
-        <h4>National Qualifications COC</h4>
-        <p>Certificate of Competence (national qualifications).</p>
+        <h4>Computer Hardware and Networking Technology Level IV</h4>
+        <p>Professional qualification in computer hardware and networking technology.</p>
       </div>
       <div class="project-card">
-        <h4>Best Worker Award 2010</h4>
-        <p>Recognition for outstanding performance.</p>
+        <h4>National Qualifications Certificates (COC)</h4>
+        <p>Certificate of Competence — national qualifications.</p>
+      </div>
+      <div class="project-card">
+        <h4>Certificate in Computer Cybersecurity</h4>
+        <p>Professional certificate in computer cybersecurity.</p>
+      </div>
+      <div class="project-card">
+        <h4>Best Worker of the Year (2010)</h4>
+        <p style="margin:2px 0;color:#555;">Dejen TVET College</p>
+        <p style="margin-top:8px;">Honor award for outstanding performance.</p>
       </div>
     `
   },
   projects: {
-    title: "Projects",
-    iconClass: "projects-icon",
+    title: `Projects`,
+    iconClass: `projects-icon`,
     html: `
-      <h2>Featured Projects</h2>
+<h2>Featured Projects</h2>
       <p class="proj-intro">Visual previews below — open a live demo or explore highlights. Links open in a new tab.</p>
 
       <div class="project-card" data-project="yeni-movie">
@@ -239,6 +278,7 @@ const CONTENT = {
         </div>
       </div>
 
+
       <div class="project-card" data-project="yeni-exam">
         <div class="proj-header">
           <h4>Yeni Exam — Exit Exam Generator</h4>
@@ -279,6 +319,22 @@ const CONTENT = {
         <p class="proj-desc">Type any topic and generate an exit-exam style practice set instantly — built for serious exam prep.</p>
         <p><strong>What it is:</strong> A topic-driven exit exam generator that turns a subject into exam-style questions on demand.</p>
         <p><strong>Highlights:</strong> Instant generation from a topic, multiple-choice practice flow, and a clean study UI for exit exam readiness.</p>
+        <details class="proj-snippet">
+          <summary>View code snippet · JavaScript</summary>
+          <div class="proj-code-wrap">
+            <button type="button" class="proj-copy" data-copy-snippet title="Copy">Copy</button>
+            <pre class="proj-code" tabindex="0"><code><span class="c-kw">async function</span> <span class="c-fn">generateExam</span>(topic, count = <span class="c-num">20</span>) {
+  <span class="c-kw">const</span> res = <span class="c-kw">await</span> fetch(<span class="c-str">\`/api/exam?topic=\${encodeURIComponent(topic)}&amp;n=\${count}\`</span>);
+  <span class="c-kw">const</span> { questions } = <span class="c-kw">await</span> res.json();
+  <span class="c-kw">return</span> questions.map((q, i) =&gt; ({
+    id: i + <span class="c-num">1</span>,
+    prompt: q.text,
+    choices: q.options,
+    answer: q.correct
+  }));
+}</code></pre>
+          </div>
+        </details>
         <div class="proj-actions">
           <a class="proj-btn primary" href="https://yeniexams.vercel.app/" target="_blank" rel="noopener">Open live demo ↗</a>
           <a class="proj-btn" href="https://yeniexams.vercel.app/" target="_blank" rel="noopener">Visit site</a>
@@ -428,11 +484,11 @@ const CONTENT = {
     `
   },
   skills: {
-    title: "Skills",
-    iconClass: "skills-icon",
+    title: `Skills`,
+    iconClass: `skills-icon`,
     html: `
 <h2>Skills</h2>
-      <p class="skills-lead">Strengths at a glance — radar above, soft skills below.</p>
+      <p class="skills-lead">Strengths from software learning, IT administration, and continuous practice.</p>
 
       <h3 class="skills-section-title">Soft Skills</h3>
       <div class="soft-skills-grid">
@@ -453,14 +509,14 @@ const CONTENT = {
         <article class="soft-skill-card">
           <div class="soft-skill-icon" aria-hidden="true">💬</div>
           <div class="soft-skill-body">
-            <h4>Technical communication</h4>
-            <p>Explain ideas simply — for users, teammates, and stakeholders.</p>
+            <h4>Communication</h4>
+            <p>Explain ideas simply — for users, teammates, learners, and stakeholders.</p>
           </div>
         </article>
         <article class="soft-skill-card">
           <div class="soft-skill-icon" aria-hidden="true">📚</div>
           <div class="soft-skill-body">
-            <h4>Continuous learning</h4>
+            <h4>Learning &amp; adapting</h4>
             <p>Stay curious, practice often, and grow with new tools and ideas.</p>
           </div>
         </article>
@@ -468,6 +524,7 @@ const CONTENT = {
 
       <h3 class="skills-section-title">Focus areas</h3>
       <div class="tags skills-focus-tags">
+        <span class="tag">Full-Stack Development</span>
         <span class="tag">HTML / CSS</span>
         <span class="tag">JavaScript</span>
         <span class="tag">Python</span>
@@ -475,12 +532,20 @@ const CONTENT = {
         <span class="tag">Git &amp; GitHub</span>
         <span class="tag">SQL</span>
         <span class="tag">Responsive Design</span>
+        <span class="tag">Web Site Design</span>
+        <span class="tag">Video Editing</span>
+        <span class="tag">Computer Networking</span>
+        <span class="tag">Cybersecurity</span>
+        <span class="tag">Hardware Maintenance</span>
+        <span class="tag">System Administration</span>
+        <span class="tag">Technical Training</span>
+        <span class="tag">Computer Coding</span>
       </div>
     `
   },
   contact: {
-    title: "Contact",
-    iconClass: "contact-icon",
+    title: `Contact`,
+    iconClass: `contact-icon`,
     html: `
 <h2>Get in Touch</h2>
       <p class="contact-lead">Feel free to reach out for collaborations, opportunities, or just to say hello.</p>
@@ -498,7 +563,7 @@ const CONTENT = {
           <span class="contact-tile-body">
             <span class="contact-tile-label">Phone</span>
             <span class="contact-tile-value">+251 918 006 053</span>
-            <span class="contact-tile-sub">+251 918 006 053</span>
+            <span class="contact-tile-sub">+251 977 832 379</span>
           </span>
         </a>
         <a class="contact-tile" href="https://github.com/Menelik2" target="_blank" rel="noopener">
@@ -519,7 +584,7 @@ const CONTENT = {
           <span class="contact-tile-icon" aria-hidden="true">⌖</span>
           <span class="contact-tile-body">
             <span class="contact-tile-label">Location</span>
-            <span class="contact-tile-value">Addis Ababa, Ethiopia</span>
+            <span class="contact-tile-value">Bahir Dar, Ethiopia</span>
           </span>
         </div>
       </div>
@@ -532,135 +597,155 @@ const CONTENT = {
         <label>Email<input type="email" name="email" required placeholder="you@example.com" autocomplete="email" /></label>
         <label>Message<textarea name="message" rows="4" required placeholder="How can I help?"></textarea></label>
         <button type="submit" class="proj-btn primary" id="contact-send-btn">Send message</button>
-        <p class="contact-form-note">Messages are delivered to <strong>linuxos777@gmail.com</strong>. Sent securely via Formspree.</p>
+        <p class="contact-form-note">Messages are sent securely via Formspree.</p>
         <p class="contact-form-status" id="contact-form-status" hidden role="status"></p>
       </form>
     `
   },
   resume: {
-    title: "Resume",
-    iconClass: "resume-icon",
+    title: `Resume`,
+    iconClass: `resume-icon`,
     html: `
-      <div class="resume-toolbar no-print">
-        <a class="resume-btn primary" href="resume.pdf" download="Menelik-Admasu-Resume.pdf">Download PDF</a>
-        <button type="button" class="resume-btn" data-resume-print>Print / Save as PDF</button>
+<div class="resume-toolbar no-print">
+  <a class="resume-btn primary" href="resume.pdf" download="Menelik-Admasu-Resume.pdf">Download PDF</a>
+  <button type="button" class="resume-btn" data-resume-print>Print / Save as PDF</button>
+</div>
+<article class="resume-doc" id="resume-printable">
+  <header class="resume-header">
+    <h1 class="resume-name">Menelik Admasu</h1>
+    <p class="resume-tagline">Full-Stack App Developer · BSc Computer Science · Computer Administrator</p>
+    <ul class="resume-contact-list">
+      <li><span class="rci" aria-hidden="true">✉</span> <span class="rcl">E-mail:</span> <a href="mailto:linuxos777@gmail.com">linuxos777@gmail.com</a></li>
+      <li><span class="rci" aria-hidden="true">☎</span> <span class="rcl">Phone:</span> <a href="tel:+251918006053">+251 918 006 053</a> · <a href="tel:+251977832379">+251 977 832 379</a></li>
+      <li><span class="rci" aria-hidden="true">●</span> <span class="rcl">Location:</span> Bahir Dar, Ethiopia</li>
+      <li><span class="rci" aria-hidden="true">◉</span> <span class="rcl">Website:</span> <a href="https://menelikcv.vercel.app" target="_blank" rel="noopener">menelikcv.vercel.app</a></li>
+    </ul>
+  </header>
+
+  <section class="resume-section">
+    <h2>Professional Summary</h2>
+    <p>Full-stack app developer and Computer Science graduate (BSc, Bahir Dar University — completed), also an experienced computer administrator with strong administrative skills and extensive professional experience. Multitasking and detail-oriented; reliable for keeping systems running smoothly. Background in technical training, hardware &amp; networking, web site design, video editing, and computer coding, Cybersecurity.</p>
+  </section>
+
+  <section class="resume-section">
+    <h2>Work Experience</h2>
+    <div class="resume-item">
+      <div class="resume-item-head">
+        <h3>Trainer</h3>
+        <span class="resume-dates">2004 – 2012</span>
       </div>
-      <article class="resume-doc" id="resume-printable">
-        <header class="resume-header">
-          <h1 class="resume-name">Menelik Admasu</h1>
-          
-            <p class="resume-tagline">Full-Stack App Developer · BSc Computer Science · Computer Administrator</p>
-            <ul class="resume-contact-list">
-              <li><span class="rci" aria-hidden="true">✉</span> <span class="rcl">E-mail:</span> <a href="mailto:linuxos777@gmail.com">linuxos777@gmail.com</a></li>
-              <li><span class="rci" aria-hidden="true">☎</span> <span class="rcl">Phone:</span> <a href="tel:+251918006053">+251 918 006 053</a> · <a href="tel:+251977832379">+251 977 832 379</a></li>
-              <li><span class="rci" aria-hidden="true">●</span> <span class="rcl">Location:</span> Bahir Dar, Ethiopia</li>
-              <li><span class="rci" aria-hidden="true">◉</span> <span class="rcl">Website:</span> <a href="https://menelikcv.vercel.app" target="_blank" rel="noopener">menelikcv.vercel.app</a></li>
-            </ul>
-        </header>
+      <p class="resume-meta">Dejen TVET College</p>
+      <ul>
+        <li>Technical training and computer-related instruction for TVET learners</li>
+        <li>Computer staff support — systems, labs, and day-to-day IT needs</li>
+      </ul>
+    </div>
+    <div class="resume-item">
+      <div class="resume-item-head">
+        <h3>Trainer</h3>
+        <span class="resume-dates">2012 – 2014</span>
+      </div>
+      <p class="resume-meta">Debre Elias TVET College</p>
+      <ul>
+        <li>Continued trainer role supporting students and institutional technology use</li>
+      </ul>
+    </div>
+    <p><strong>Total work experience: 10 years</strong></p>
+  </section>
 
-        <section class="resume-section">
-          <h2>Professional Summary</h2>
-          <p>Multitasking, detail-oriented computer administrator with strong administrative skills and extensive professional experience. Reliable for keeping systems running smoothly and handling technical responsibilities effectively.</p>
-        </section>
+  <section class="resume-section">
+    <h2>Education</h2>
+    <p style="margin-bottom:8px;"><em>All completed</em></p>
+    <div class="resume-item">
+      <div class="resume-item-head">
+        <h3>Bachelor of Science in Computer Science</h3>
+        <span class="resume-dates">2022 – 2026</span>
+      </div>
+      <p class="resume-meta">Bahir Dar University</p>
+      <p>Coursework: Data Structures &amp; Algorithms, OOP, Database Systems, Web Development, Software Engineering, Computer Networks, Operating Systems</p>
+    </div>
+    <div class="resume-item">
+      <div class="resume-item-head">
+        <h3>Computer Hardware &amp; Networking Technology</h3>
+        <span class="resume-dates">2002 – 2004</span>
+      </div>
+      <p class="resume-meta">Bahir Dar Poly Technical College · GPA 3.45 · Completed</p>
+    </div>
+    <div class="resume-item">
+      <div class="resume-item-head">
+        <h3>Computer Hardware &amp; Networking Service</h3>
+        <span class="resume-dates">2007</span>
+      </div>
+      <p class="resume-meta">Debre Markos Poly College · Completed</p>
+    </div>
+  </section>
 
-        <section class="resume-section">
-          <h2>Experience</h2>
-          <div class="resume-item">
-            <div class="resume-item-head">
-              <h3>Trainer — Dejen TVET College</h3>
-              <span class="resume-dates">2004 – 2012</span>
-            </div>
-            <p class="resume-meta">Technical training &amp; computer staff support</p>
-            <div class="resume-item-head" style="margin-top:10px">
-              <h3>Trainer — Debre Elias TVET College</h3>
-              <span class="resume-dates">2012 – 2014</span>
-            </div>
-            <p class="resume-meta">Technical training · Total experience 10 years</p>
-            <ul>
-              <li>Computer administration and day-to-day IT support</li>
-              <li>Technical training for TVET learners</li>
-              <li>Hardware &amp; networking support</li>
-            </ul>
-          </div>
-        </section>
+  <section class="resume-section">
+    <h2>Certificates</h2>
+    <ul class="resume-plain">
+      <li><strong>Computer Hardware and Networking Technology Level IV</strong></li>
+      <li><strong>National Qualifications Certificates (COC)</strong></li>
+      <li><strong>Certificate in Computer Cybersecurity</strong></li>
+    </ul>
+  </section>
 
-        <section class="resume-section">
-          <h2>Education</h2>
-          <div class="resume-item">
-            <div class="resume-item-head">
-              <h3>Computer Hardware &amp; Networking Technology</h3>
-              <span class="resume-dates">2002 – 2004</span>
-            </div>
-            <p class="resume-meta">Bahir Dar Poly Technical College · GPA 3.45</p>
-            <div class="resume-item-head" style="margin-top:10px">
-              <h3>Computer Hardware &amp; Networking Service</h3>
-              <span class="resume-dates">2007</span>
-            </div>
-            <p class="resume-meta">Debre Markos Poly College</p>
-          </div>
-        </section>
+  <section class="resume-section">
+    <h2>Honor Awards</h2>
+    <ul class="resume-plain">
+      <li><strong>Best Worker of the Year (2010)</strong> — Dejen TVET College</li>
+    </ul>
+  </section>
 
-        <section class="resume-section">
-          <h2>Certifications &amp; Awards</h2>
-          <ul class="resume-plain">
-            <li><strong>Hardware &amp; Networking Level IV</strong> — professional qualification</li>
-            <li><strong>National Qualifications COC</strong> — Certificate of Competence</li>
-            <li><strong>Best Worker Award 2010</strong> — recognition for outstanding performance</li>
-          </ul>
-        </section>
+  <section class="resume-section">
+    <h2>Skills</h2>
+    <dl class="resume-skills">
+      <div><dt>Professional</dt><dd>Communication, learning &amp; adapting, web site design, video editing, computer administration, hardware &amp; networking, technical training, computer coding, Cybersecurity</dd></div>
+      <div><dt>Technical</dt><dd>HTML, CSS, JavaScript, Python, Java, Git, SQL, networking, system administration</dd></div>
+    </dl>
+  </section>
 
-        <section class="resume-section">
-          <h2>Technical Skills</h2>
-          <dl class="resume-skills">
-            <div><dt>Languages</dt><dd>HTML, CSS, JavaScript, Python, Java</dd></div>
-            <div><dt>Tools</dt><dd>Git, GitHub, SQL / Databases</dd></div>
-            <div><dt>Other</dt><dd>Responsive design, system &amp; network administration, technical training</dd></div>
-          </dl>
-        </section>
+  <section class="resume-section">
+    <h2>Volunteer Experience</h2>
+    <p>How to use technology and training for the community and organizations.</p>
+  </section>
 
-        <section class="resume-section">
-          <h2>Selected Projects</h2>
-          <div class="resume-item">
-            <div class="resume-item-head">
-              <h3>Yeni Movie</h3>
-              <a class="resume-link" href="https://yeni-movie.vercel.app" target="_blank" rel="noopener">Live</a>
-            </div>
-            <p>Full-featured movie &amp; TV discovery web app (browse, search, details).</p>
-          </div>
-          <div class="resume-item">
-            <div class="resume-item-head">
-              <h3>Yeni Typing Learning</h3>
-              <a class="resume-link" href="https://yenityping.vercel.app" target="_blank" rel="noopener">Live</a>
-            </div>
-            <p>Interactive typing tutor with timed tests, WPM and accuracy tracking.</p>
-          </div>
-          <div class="resume-item">
-            <div class="resume-item-head">
-              <h3>Yeni Exam — Exit Exam Generator</h3>
-              <a class="resume-link" href="https://yeniexams.vercel.app/" target="_blank" rel="noopener">Live</a>
-            </div>
-            <p>Topic-driven exit exam generator for real exam-style practice.</p>
-          </div>
-          <div class="resume-item">
-            <div class="resume-item-head">
-              <h3>BDU Internship Management System</h3>
-            </div>
-            <p>University platform for internship applications, placements, and evaluation tracking.</p>
-          </div>
-          <div class="resume-item">
-            <div class="resume-item-head">
-              <h3>Windows XP Portfolio</h3>
-              <a class="resume-link" href="https://menelikcv.vercel.app" target="_blank" rel="noopener">Live</a>
-            </div>
-            <p>Interactive desktop OS portfolio in the browser (this site).</p>
-          </div>
-        </section>
+  <section class="resume-section">
+    <h2>Languages</h2>
+    <p>English — Professional working proficiency · Amharic — Professional working proficiency</p>
+  </section>
 
-        <section class="resume-section">
-          <h2>Languages</h2>
-          <p>Amharic (native) · English (professional)</p>
-        </section>
-      </article>
+  <section class="resume-section">
+    <h2>Selected Projects</h2>
+    <div class="resume-item">
+      <div class="resume-item-head">
+        <h3>Yeni Movie</h3>
+        <a class="resume-link" href="https://yeni-movie.vercel.app" target="_blank" rel="noopener">Live</a>
+      </div>
+      <p>Movie &amp; TV discovery web app.</p>
+    </div>
+    <div class="resume-item">
+      <div class="resume-item-head">
+        <h3>Yeni Typing Learning</h3>
+        <a class="resume-link" href="https://yenityping.vercel.app" target="_blank" rel="noopener">Live</a>
+      </div>
+      <p>Interactive typing tutor with WPM and accuracy tracking.</p>
+    </div>
+    <div class="resume-item">
+      <div class="resume-item-head">
+        <h3>Yeni Exam — Exit Exam Generator</h3>
+        <a class="resume-link" href="https://yeniexams.vercel.app/" target="_blank" rel="noopener">Live</a>
+      </div>
+      <p>Topic-driven exit exam practice generator.</p>
+    </div>
+    <div class="resume-item">
+      <div class="resume-item-head">
+        <h3>Windows XP Portfolio</h3>
+        <a class="resume-link" href="https://menelikcv.vercel.app" target="_blank" rel="noopener">Live</a>
+      </div>
+      <p>Interactive desktop OS portfolio in the browser (this site).</p>
+    </div>
+  </section>
+</article>
     `
   }
 };
@@ -683,7 +768,8 @@ const APPS = {
   help: { title: "Help and Support", iconClass: "help-icon", interactive: true },
   testimonials: { title: "Testimonials", iconClass: "testimonial-icon", interactive: true },
   github: { title: "GitHub Activity", iconClass: "github-icon", interactive: true },
-  downloadpack: { title: "Download Pack", iconClass: "pack-icon", interactive: true }
+  downloadpack: { title: "Download Pack", iconClass: "pack-icon", interactive: true },
+  device: { title: "Device Inspector", iconClass: "device-icon", interactive: true }
 };
 window.CONTENT = CONTENT;
 window.APPS = APPS;
@@ -3230,6 +3316,694 @@ function buildVectorGraphics() {
 }
 
 
+
+/** Live hardware / system inspection via browser Web APIs (mobile Device app) */
+function buildDeviceInspector() {
+  const root = document.createElement("div");
+  root.className = "device-inspector";
+  root.innerHTML = `
+    <div class="di-kicker">
+      <div class="di-kicker-icon" aria-hidden="true">◉</div>
+      <div class="di-kicker-text">Live hardware &amp; system inspection via browser Web APIs</div>
+    </div>
+    <div class="di-card">
+      <div class="di-header">
+        <div class="di-device-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><path d="M17 1H7c-1.1 0-2 .9-2 2v18c0 1.1.9 2 2 2h10c1.1 0 2-.9 2-2V3c0-1.1-.9-2-2-2zm0 18H7V5h10v14z"/></svg>
+        </div>
+        <div class="di-title-block">
+          <h2 class="di-name" id="di-name">Detecting…</h2>
+          <p class="di-sub" id="di-sub">Reading navigator &amp; screen APIs</p>
+        </div>
+        <span class="di-verified" id="di-verified" title="Data from this browser only">Verified</span>
+      </div>
+      <div class="di-pills" id="di-pills"></div>
+      <div class="di-stats" id="di-stats"></div>
+      <div class="di-storage" id="di-storage" hidden>
+        <div class="di-storage-head">
+          <span class="di-storage-label">Storage usage</span>
+          <span class="di-storage-meta" id="di-storage-meta"></span>
+        </div>
+        <div class="di-bar"><span id="di-storage-bar" style="width:0%"></span></div>
+      </div>
+      <ul class="di-rows" id="di-rows"></ul>
+    </div>
+    <div class="di-card di-net-card">
+      <div class="di-speed-head">
+        <div class="di-speed-title">Network connection</div>
+        <div class="di-speed-sub">Live <code>navigator.connection</code> (Network Information API)</div>
+      </div>
+      <div class="di-speed-metrics di-net-metrics" id="di-net-metrics">
+        <div class="di-speed-metric">
+          <div class="di-speed-metric-label">Type</div>
+          <div class="di-speed-metric-value" id="di-net-type">—</div>
+        </div>
+        <div class="di-speed-metric">
+          <div class="di-speed-metric-label">Downlink</div>
+          <div class="di-speed-metric-value" id="di-net-downlink">—</div>
+        </div>
+        <div class="di-speed-metric">
+          <div class="di-speed-metric-label">RTT</div>
+          <div class="di-speed-metric-value" id="di-net-rtt">—</div>
+        </div>
+      </div>
+      <ul class="di-rows" id="di-net-rows"></ul>
+      <p class="di-net-unsupported" id="di-net-unsupported" hidden>
+        Network Information API not available in this browser. Chrome / Edge / Android support it best.
+      </p>
+    </div>
+    <div class="di-card di-speed-card">
+      <div class="di-speed-head">
+        <div class="di-speed-title">Network speed test</div>
+        <div class="di-speed-sub">Latency + download via this origin</div>
+      </div>
+      <div class="di-speed-metrics" id="di-speed-metrics">
+        <div class="di-speed-metric">
+          <div class="di-speed-metric-label">Latency</div>
+          <div class="di-speed-metric-value" id="di-latency">—</div>
+        </div>
+        <div class="di-speed-metric">
+          <div class="di-speed-metric-label">Download</div>
+          <div class="di-speed-metric-value" id="di-download">—</div>
+        </div>
+        <div class="di-speed-metric">
+          <div class="di-speed-metric-label">Quality</div>
+          <div class="di-speed-metric-value" id="di-quality">—</div>
+        </div>
+      </div>
+      <div class="di-speed-progress" id="di-speed-progress" hidden>
+        <div class="di-bar"><span id="di-speed-bar" style="width:0%"></span></div>
+        <div class="di-speed-status" id="di-speed-status">Starting…</div>
+      </div>
+      <button type="button" class="di-speed-run" id="di-speed-run">Run speed test</button>
+    </div>
+    <p class="di-note">Hardware values come from this browser only (Web APIs). Speed test measures round-trip to this site — not a full ISP benchmark. Some fields may be unavailable under strict privacy settings.</p>
+    <button type="button" class="di-refresh" id="di-refresh">Refresh readings</button>
+  `;
+
+  const el = (id) => root.querySelector("#" + id);
+
+  function parseUa(ua) {
+    const out = { os: "Unknown OS", device: "Browser device", arch: "", isMobile: false };
+    const s = ua || "";
+    out.isMobile = /Mobile|Android|iPhone|iPad|iPod/i.test(s);
+    if (/Windows NT 10/i.test(s)) out.os = "Windows 10/11";
+    else if (/Windows NT 6\.3/i.test(s)) out.os = "Windows 8.1";
+    else if (/Windows NT 6\.1/i.test(s)) out.os = "Windows 7";
+    else if (/Mac OS X ([\d_]+)/i.test(s)) {
+      const m = s.match(/Mac OS X ([\d_]+)/i);
+      out.os = "macOS " + (m ? m[1].replace(/_/g, ".") : "");
+    } else if (/Android ([\d.]+)/i.test(s)) {
+      const m = s.match(/Android ([\d.]+)/i);
+      out.os = "Android " + (m ? m[1] : "");
+    } else if (/iPhone OS ([\d_]+)/i.test(s) || /CPU iPhone OS ([\d_]+)/i.test(s)) {
+      const m = s.match(/OS ([\d_]+)/i);
+      out.os = "iOS " + (m ? m[1].replace(/_/g, ".") : "");
+    } else if (/iPad.*OS ([\d_]+)/i.test(s)) {
+      const m = s.match(/OS ([\d_]+)/i);
+      out.os = "iPadOS " + (m ? m[1].replace(/_/g, ".") : "");
+    } else if (/CrOS/i.test(s)) out.os = "Chrome OS";
+    else if (/Linux/i.test(s)) out.os = "Linux";
+
+    if (/armv8|aarch64|ARM64|Apple Silicon/i.test(s)) out.arch = "ARM64";
+    else if (/armv7|armeabi/i.test(s)) out.arch = "ARMv7";
+    else if (/x86_64|Win64|WOW64|Intel/i.test(s)) out.arch = "x86_64";
+    else if (/i686|i386/i.test(s)) out.arch = "x86";
+    else if (navigator.userAgentData && Array.isArray(navigator.userAgentData.brands)) {
+      out.arch = "";
+    }
+
+    // Device label
+    if (/iPhone/i.test(s)) out.device = "iPhone";
+    else if (/iPad/i.test(s)) out.device = "iPad";
+    else if (/Android/i.test(s)) {
+      const m = s.match(/;\s*([^;)]+)\s+Build\//i) || s.match(/Android[^;]*;\s*([^;)]+)/i);
+      out.device = m ? m[1].trim() : "Android device";
+      if (/Linux/i.test(out.device)) out.device = "Android device";
+    } else if (/Macintosh/i.test(s)) out.device = "Mac";
+    else if (/Windows/i.test(s)) out.device = "Windows PC";
+    else if (/Linux/i.test(s)) out.device = "Linux workstation";
+    else out.device = "Workstation";
+
+    // Prefer platform hints
+    try {
+      const p = navigator.platform || "";
+      if (/Linux aarch64|Linux arm/i.test(p)) {
+        out.device = "Linux arm workstation";
+        out.arch = out.arch || "ARM64";
+      } else if (/Linux/i.test(p) && !out.isMobile) {
+        out.device = "Linux workstation";
+      }
+    } catch (_) {}
+
+    return out;
+  }
+
+  function getGpu() {
+    try {
+      const canvas = document.createElement("canvas");
+      const gl = canvas.getContext("webgl") || canvas.getContext("experimental-webgl");
+      if (!gl) return "—";
+      const ext = gl.getExtension("WEBGL_debug_renderer_info");
+      if (ext) {
+        const renderer = gl.getParameter(ext.UNMASKED_RENDERER_WEBGL) || "";
+        return String(renderer).replace(/Angle \((.*)\)/i, "$1").trim() || "—";
+      }
+      return gl.getParameter(gl.RENDERER) || "—";
+    } catch (_) {
+      return "—";
+    }
+  }
+
+  function fmtBytes(n) {
+    if (n == null || !isFinite(n)) return "—";
+    const gb = n / (1024 * 1024 * 1024);
+    if (gb >= 1) return (Math.round(gb * 10) / 10) + " GB";
+    const mb = n / (1024 * 1024);
+    if (mb >= 1) return Math.round(mb) + " MB";
+    return Math.round(n / 1024) + " KB";
+  }
+
+  function formatEffectiveType(et) {
+    if (!et) return "—";
+    const map = {
+      "slow-2g": "Slow 2G",
+      "2g": "2G",
+      "3g": "3G",
+      "4g": "4G",
+    };
+    return map[String(et).toLowerCase()] || String(et).toUpperCase();
+  }
+
+  function formatConnType(t) {
+    if (!t) return "—";
+    const map = {
+      bluetooth: "Bluetooth",
+      cellular: "Cellular",
+      ethernet: "Ethernet",
+      none: "None",
+      wifi: "Wi‑Fi",
+      wimax: "WiMAX",
+      other: "Other",
+      unknown: "Unknown",
+    };
+    return map[String(t).toLowerCase()] || t;
+  }
+
+  function renderConnection(connection) {
+    const unsupported = el("di-net-unsupported");
+    const rowsEl = el("di-net-rows");
+    if (!connection || !connection.supported) {
+      el("di-net-type").textContent = "—";
+      el("di-net-downlink").textContent = "—";
+      el("di-net-rtt").textContent = "—";
+      rowsEl.innerHTML = "";
+      unsupported.hidden = false;
+      return;
+    }
+    unsupported.hidden = true;
+
+    const typeLabel = connection.effectiveType
+      ? formatEffectiveType(connection.effectiveType)
+      : formatConnType(connection.type);
+    el("di-net-type").textContent = typeLabel;
+
+    if (connection.downlink != null && isFinite(connection.downlink)) {
+      const d = connection.downlink;
+      el("di-net-downlink").textContent =
+        (d >= 10 ? d.toFixed(1) : d >= 1 ? d.toFixed(2) : d.toFixed(3)) + " Mb/s";
+    } else {
+      el("di-net-downlink").textContent = "—";
+    }
+
+    if (connection.rtt != null && isFinite(connection.rtt)) {
+      el("di-net-rtt").textContent = Math.round(connection.rtt) + " ms";
+    } else {
+      el("di-net-rtt").textContent = "—";
+    }
+
+    const detailRows = [];
+    if (connection.type) {
+      detailRows.push({ icon: "📡", label: "Interface", value: formatConnType(connection.type) });
+    }
+    if (connection.effectiveType) {
+      detailRows.push({
+        icon: "📶",
+        label: "Effective",
+        value: formatEffectiveType(connection.effectiveType),
+      });
+    }
+    if (connection.downlink != null) {
+      detailRows.push({
+        icon: "↓",
+        label: "Downlink",
+        value: connection.downlink + " megabits/s (browser estimate)",
+      });
+    }
+    if (connection.downlinkMax != null && isFinite(connection.downlinkMax)) {
+      detailRows.push({
+        icon: "⇓",
+        label: "Max downlink",
+        value:
+          connection.downlinkMax === Infinity
+            ? "Unlimited / unknown"
+            : connection.downlinkMax + " Mb/s",
+      });
+    }
+    if (connection.rtt != null) {
+      detailRows.push({
+        icon: "⏱",
+        label: "RTT",
+        value: Math.round(connection.rtt) + " ms (estimated round-trip)",
+      });
+    }
+    detailRows.push({
+      icon: "💾",
+      label: "Data saver",
+      value: connection.saveData ? "On — reduce data when possible" : "Off",
+    });
+    detailRows.push({
+      icon: "✓",
+      label: "API",
+      value: "navigator.connection",
+    });
+
+    rowsEl.innerHTML = detailRows
+      .map(
+        (r) =>
+          '<li class="di-row"><span class="di-row-icon" aria-hidden="true">' +
+          r.icon +
+          '</span><span class="di-row-label">' +
+          r.label +
+          '</span><span class="di-row-value">' +
+          String(r.value).replace(/</g, "&lt;") +
+          "</span></li>"
+      )
+      .join("");
+  }
+
+  async function collect() {
+
+    const ua = navigator.userAgent || "";
+    const info = parseUa(ua);
+    const cores = navigator.hardwareConcurrency || null;
+    const mem = navigator.deviceMemory || null; // GB when supported
+    const dpr = window.devicePixelRatio || 1;
+    const sw = Math.round(screen.width * dpr) || screen.width;
+    const sh = Math.round(screen.height * dpr) || screen.height;
+    const cssW = screen.width;
+    const cssH = screen.height;
+    const gpu = getGpu();
+    const online = navigator.onLine;
+    let batteryPct = null;
+    let charging = null;
+    try {
+      if (navigator.getBattery) {
+        const b = await navigator.getBattery();
+        batteryPct = Math.round((b.level || 0) * 100);
+        charging = !!b.charging;
+      }
+    } catch (_) {}
+
+    let storageUsed = null;
+    let storageQuota = null;
+    try {
+      if (navigator.storage && navigator.storage.estimate) {
+        const est = await navigator.storage.estimate();
+        storageUsed = est.usage != null ? est.usage : null;
+        storageQuota = est.quota != null ? est.quota : null;
+      }
+    } catch (_) {}
+
+    // Prefer UA-CH architecture when available
+    let archLabel = info.arch;
+    try {
+      if (navigator.userAgentData && navigator.userAgentData.getHighEntropyValues) {
+        const he = await navigator.userAgentData.getHighEntropyValues([
+          "architecture",
+          "bitness",
+          "model",
+          "platform",
+          "platformVersion",
+          "uaFullVersion",
+        ]);
+        if (he.architecture) {
+          archLabel = he.architecture + (he.bitness ? " " + he.bitness + "-bit" : "");
+        }
+        if (he.model) info.device = he.model;
+        if (he.platform) {
+          info.os = he.platform + (he.platformVersion ? " " + String(he.platformVersion).split(".")[0] : "");
+        }
+      }
+    } catch (_) {}
+
+    if (!archLabel) {
+      archLabel = (navigator.platform || "").includes("64") ? "64-bit" : (navigator.platform || "—");
+    }
+
+    const displayStr =
+      cssW && cssH
+        ? cssW + " × " + cssH + (dpr !== 1 ? " @" + (Math.round(dpr * 100) / 100) + "x" : "")
+        : "—";
+
+    // Physical-ish resolution when DPR known
+    const phys =
+      dpr > 1 && sw && sh ? sw + " × " + sh + " physical" : null;
+
+    // Network Information API (navigator.connection)
+    const conn =
+      navigator.connection ||
+      navigator.mozConnection ||
+      navigator.webkitConnection ||
+      null;
+    let connection = null;
+    if (conn) {
+      const et = conn.effectiveType || null; // slow-2g | 2g | 3g | 4g
+      const type = conn.type || null; // bluetooth | cellular | ethernet | none | wifi | wimax | other | unknown
+      connection = {
+        supported: true,
+        effectiveType: et,
+        type: type,
+        downlink: typeof conn.downlink === "number" ? conn.downlink : null, // Mb/s
+        downlinkMax: typeof conn.downlinkMax === "number" ? conn.downlinkMax : null,
+        rtt: typeof conn.rtt === "number" ? conn.rtt : null, // ms
+        saveData: !!conn.saveData,
+      };
+    } else {
+      connection = { supported: false };
+    }
+
+    return {
+      info,
+      cores,
+      mem,
+      gpu,
+      online,
+      batteryPct,
+      charging,
+      storageUsed,
+      storageQuota,
+      archLabel,
+      displayStr,
+      phys,
+      platform: navigator.platform || "—",
+      lang: navigator.language || "—",
+      touch: navigator.maxTouchPoints || 0,
+      connection,
+    };
+  }
+
+  async function render() {
+    const data = await collect();
+    const name =
+      data.info.device +
+      (data.cores ? " · " + data.cores + " cores" : "");
+    el("di-name").textContent = data.info.device;
+    el("di-sub").textContent =
+      (data.platform && data.platform !== "—" ? data.platform + " · " : "") + data.info.os;
+
+    // Pills
+    const pills = el("di-pills");
+    pills.innerHTML = "";
+    const onlinePill = document.createElement("span");
+    onlinePill.className = "di-pill " + (data.online ? "online" : "offline");
+    onlinePill.textContent = data.online ? "Online" : "Offline";
+    pills.appendChild(onlinePill);
+
+    if (data.batteryPct != null) {
+      const bat = document.createElement("span");
+      bat.className = "di-pill battery";
+      bat.textContent =
+        data.batteryPct +
+        "% Battery" +
+        (data.charging ? " · Charging" : "");
+      pills.appendChild(bat);
+    }
+
+    const arch = document.createElement("span");
+    arch.className = "di-pill arch";
+    arch.textContent = data.archLabel || "—";
+    pills.appendChild(arch);
+
+    // Connection effective-type pill when available
+    if (data.connection && data.connection.supported && data.connection.effectiveType) {
+      const etPill = document.createElement("span");
+      etPill.className = "di-pill arch di-pill-net";
+      etPill.textContent = String(data.connection.effectiveType).toUpperCase();
+      pills.appendChild(etPill);
+    }
+    if (data.connection && data.connection.supported && data.connection.saveData) {
+      const sd = document.createElement("span");
+      sd.className = "di-pill battery";
+      sd.textContent = "Data saver";
+      pills.appendChild(sd);
+    }
+
+    renderConnection(data.connection);
+
+    // Stats
+    const stats = el("di-stats");
+    const ramText = data.mem != null ? data.mem + " GB" : "—";
+    const storageText =
+      data.storageQuota != null ? fmtBytes(data.storageQuota) : "—";
+    stats.innerHTML =
+      '<div class="di-stat"><div class="di-stat-icon">⬚</div><div class="di-stat-label">CPU cores</div><div class="di-stat-value">' +
+      (data.cores != null ? data.cores : "—") +
+      '</div></div>' +
+      '<div class="di-stat"><div class="di-stat-icon">⚡</div><div class="di-stat-label">RAM</div><div class="di-stat-value">' +
+      ramText +
+      '</div></div>' +
+      '<div class="di-stat"><div class="di-stat-icon">▣</div><div class="di-stat-label">Storage</div><div class="di-stat-value">' +
+      storageText +
+      "</div></div>";
+
+    // Storage bar
+    const storageBox = el("di-storage");
+    if (data.storageQuota != null && data.storageUsed != null && data.storageQuota > 0) {
+      storageBox.hidden = false;
+      const pct = Math.min(100, Math.round((data.storageUsed / data.storageQuota) * 100));
+      el("di-storage-meta").textContent =
+        fmtBytes(data.storageUsed) + " / " + fmtBytes(data.storageQuota) + " · " + pct + "%";
+      el("di-storage-bar").style.width = pct + "%";
+    } else {
+      storageBox.hidden = true;
+    }
+
+    // Rows
+    const rows = [
+      { icon: "⬚", label: "Processor", value: data.cores != null ? data.cores + " logical cores" : "—" },
+      { icon: "☰", label: "GPU", value: data.gpu },
+      { icon: "◎", label: "Architecture", value: data.archLabel || "—" },
+      { icon: "▣", label: "Display", value: data.displayStr + (data.phys ? " (" + data.phys + ")" : "") },
+      { icon: "◇", label: "Platform", value: data.platform },
+      { icon: "◯", label: "Language", value: data.lang },
+      { icon: "✋", label: "Touch points", value: String(data.touch) },
+    ];
+    const ul = el("di-rows");
+    ul.innerHTML = rows
+      .map(
+        (r) =>
+          '<li class="di-row"><span class="di-row-icon" aria-hidden="true">' +
+          r.icon +
+          '</span><span class="di-row-label">' +
+          r.label +
+          '</span><span class="di-row-value">' +
+          String(r.value).replace(/</g, "&lt;") +
+          "</span></li>"
+      )
+      .join("");
+  }
+
+  el("di-refresh").addEventListener("click", () => {
+    el("di-name").textContent = "Refreshing…";
+    render().catch(() => {
+      el("di-name").textContent = "Unable to read device";
+    });
+  });
+
+  function qualityLabel(mbps, latencyMs) {
+    if (mbps == null && latencyMs == null) return "—";
+    if (latencyMs != null && latencyMs > 250) return "Poor";
+    if (mbps != null) {
+      if (mbps >= 50) return "Excellent";
+      if (mbps >= 20) return "Good";
+      if (mbps >= 5) return "Fair";
+      return "Slow";
+    }
+    if (latencyMs != null) {
+      if (latencyMs < 50) return "Excellent";
+      if (latencyMs < 100) return "Good";
+      if (latencyMs < 200) return "Fair";
+      return "Slow";
+    }
+    return "—";
+  }
+
+  function withV(path) {
+    const v =
+      (typeof window !== "undefined" && window.__MENELIK_V__) || "20260808d";
+    const sep = path.indexOf("?") >= 0 ? "&" : "?";
+    return path + sep + "v=" + encodeURIComponent(v) + "&_=" + Date.now();
+  }
+
+  async function measureLatency(rounds) {
+    const times = [];
+    for (let i = 0; i < rounds; i++) {
+      const url = withV("content/sticky-note.json");
+      const t0 = performance.now();
+      const res = await fetch(url, { cache: "no-store", credentials: "same-origin" });
+      await res.arrayBuffer();
+      const t1 = performance.now();
+      if (res.ok) times.push(t1 - t0);
+    }
+    if (!times.length) return null;
+    times.sort((a, b) => a - b);
+    // median
+    const mid = Math.floor(times.length / 2);
+    return times.length % 2 ? times[mid] : (times[mid - 1] + times[mid]) / 2;
+  }
+
+  async function measureDownload(onProgress) {
+    // Prefer larger same-origin assets so throughput is meaningful
+    const candidates = ["script.js", "styles.css", "features-extra.js"];
+    let best = null;
+    for (const file of candidates) {
+      try {
+        if (onProgress) onProgress("Downloading " + file + "…");
+        const url = withV(file);
+        const t0 = performance.now();
+        const res = await fetch(url, { cache: "no-store", credentials: "same-origin" });
+        if (!res.ok) continue;
+        const buf = await res.arrayBuffer();
+        const t1 = performance.now();
+        const seconds = (t1 - t0) / 1000;
+        if (seconds <= 0) continue;
+        const bytes = buf.byteLength || 0;
+        if (bytes < 10 * 1024) continue; // too small
+        const mbps = (bytes * 8) / seconds / 1e6;
+        if (!best || bytes > best.bytes) {
+          best = { mbps, bytes, seconds, file };
+        }
+        // One solid sample is enough for mobile UX
+        if (bytes > 80 * 1024) break;
+      } catch (_) {
+        /* try next */
+      }
+    }
+    return best;
+  }
+
+  let speedRunning = false;
+  async function runSpeedTest() {
+    if (speedRunning) return;
+    if (!navigator.onLine) {
+      el("di-latency").textContent = "Offline";
+      el("di-download").textContent = "—";
+      el("di-quality").textContent = "Offline";
+      return;
+    }
+    speedRunning = true;
+    const btn = el("di-speed-run");
+    const prog = el("di-speed-progress");
+    const bar = el("di-speed-bar");
+    const status = el("di-speed-status");
+    btn.disabled = true;
+    btn.textContent = "Testing…";
+    prog.hidden = false;
+    bar.style.width = "8%";
+    status.textContent = "Measuring latency…";
+    el("di-latency").textContent = "…";
+    el("di-download").textContent = "…";
+    el("di-quality").textContent = "…";
+
+    let latencyMs = null;
+    let mbps = null;
+    try {
+      latencyMs = await measureLatency(4);
+      bar.style.width = "40%";
+      if (latencyMs != null) {
+        el("di-latency").textContent = Math.round(latencyMs) + " ms";
+      } else {
+        el("di-latency").textContent = "—";
+      }
+      status.textContent = "Measuring download…";
+      const dl = await measureDownload((msg) => {
+        status.textContent = msg;
+      });
+      bar.style.width = "90%";
+      if (dl) {
+        mbps = dl.mbps;
+        const shown =
+          mbps >= 10 ? mbps.toFixed(1) : mbps >= 1 ? mbps.toFixed(2) : mbps.toFixed(3);
+        el("di-download").textContent = shown + " Mbps";
+        status.textContent =
+          "Used " +
+          dl.file +
+          " (" +
+          Math.round(dl.bytes / 1024) +
+          " KB in " +
+          dl.seconds.toFixed(2) +
+          "s)";
+      } else {
+        el("di-download").textContent = "—";
+        status.textContent = "Download sample failed";
+      }
+      el("di-quality").textContent = qualityLabel(mbps, latencyMs);
+      bar.style.width = "100%";
+    } catch (err) {
+      console.warn("[Speed test]", err);
+      el("di-latency").textContent = latencyMs != null ? Math.round(latencyMs) + " ms" : "Error";
+      el("di-download").textContent = "Error";
+      el("di-quality").textContent = "—";
+      status.textContent = "Test failed — try again";
+    } finally {
+      speedRunning = false;
+      btn.disabled = false;
+      btn.textContent = "Run speed test again";
+      setTimeout(() => {
+        if (!speedRunning) prog.hidden = true;
+      }, 2500);
+    }
+  }
+
+  el("di-speed-run").addEventListener("click", () => {
+    runSpeedTest();
+  });
+
+  render().catch((err) => {
+    console.warn("[Device]", err);
+    el("di-name").textContent = "Device info limited";
+    el("di-sub").textContent = "Some Web APIs are blocked in this browser";
+  });
+
+  // Live online + Network Information API updates
+  const onNet = () => render().catch(() => {});
+  window.addEventListener("online", onNet);
+  window.addEventListener("offline", onNet);
+  const connLive =
+    navigator.connection ||
+    navigator.mozConnection ||
+    navigator.webkitConnection ||
+    null;
+  if (connLive && typeof connLive.addEventListener === "function") {
+    connLive.addEventListener("change", onNet);
+  }
+  root.addEventListener(
+    "remove",
+    () => {
+      window.removeEventListener("online", onNet);
+      window.removeEventListener("offline", onNet);
+      if (connLive && typeof connLive.removeEventListener === "function") {
+        connLive.removeEventListener("change", onNet);
+      }
+    },
+    { once: true }
+  );
+
+  return root;
+}
+
+
 function getAppBody(id) {
   if (id === "notepad") return buildNotepad();
   if (id === "paint") return buildPaint();
@@ -3240,6 +4014,7 @@ function getAppBody(id) {
   if (id === "control") return buildControlPanel();
   if (id === "recycle") return buildRecycleBin();
   if (id === "registry") return buildRegistry();
+  if (id === "device") return buildDeviceInspector();
   // Extra apps from features-extra.js (IE, Media Player, Help, Solitaire, …)
   if (window.extraAppBuilders && typeof window.extraAppBuilders[id] === "function") {
     try {
@@ -5894,7 +6669,7 @@ tryLoadProfile();
 const CONTENT_FILES = ["about", "education", "experience", "certifications", "projects", "skills", "contact", "resume"];
 /** Cache-bust query for content fetches — mirrors window.__MENELIK_V__ from index.html */
 const ASSET_V =
-  (typeof window !== "undefined" && window.__MENELIK_V__) || "20260803c";
+  (typeof window !== "undefined" && window.__MENELIK_V__) || "20260808d";
 function withV(url) {
   const join = url.indexOf("?") >= 0 ? "&" : "?";
   return url + join + "v=" + encodeURIComponent(ASSET_V);
