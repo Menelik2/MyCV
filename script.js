@@ -3935,7 +3935,7 @@ function buildDeviceInspector() {
         <div class="di-kicker-badge" aria-hidden="true">
           <svg viewBox="0 0 24 24" width="18" height="18"><path fill="currentColor" d="M12 2a10 10 0 100 20 10 10 0 000-20zm1 5v6h5v2h-7V7h2z"/></svg>
         </div>
-        <div class="di-kicker-text">Live hardware &amp; system inspection via browser Web APIs</div>
+        <div class="di-kicker-text">Your device — live info from <strong>this</strong> phone/browser (not the site owner)</div>
       </div>
 
       <div class="di-main-card">
@@ -3947,9 +3947,9 @@ function buildDeviceInspector() {
             <h2 class="di-name" id="di-name">Detecting…</h2>
             <p class="di-sub" id="di-sub">Reading device APIs…</p>
           </div>
-          <span class="di-verified" id="di-verified">
+          <span class="di-verified" id="di-verified" title="Read from the browser on the device you are using now">
             <svg viewBox="0 0 24 24" width="12" height="12" aria-hidden="true"><path fill="currentColor" d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/></svg>
-            Verified
+            Your device
           </span>
         </div>
 
@@ -4022,12 +4022,120 @@ function buildDeviceInspector() {
         <p class="di-empty-hint" id="di-storage-empty" hidden></p>
       </div>
 
-      <p class="di-note">Values are read live from this browser. Full disk size and manufacture year are not exposed by web standards — those fields show only when the browser provides them.</p>
+      <p class="di-note">Every visitor sees their own device: cores, RAM, GPU, battery, and network come from the browser on the phone or PC opening this page. Full phone storage (e.g. 256 GB) and exact factory model year are not available to websites.</p>
       <button type="button" class="di-refresh" id="di-refresh">Refresh readings</button>
     </div>
   `;
 
   const el = (id) => root.querySelector("#" + id);
+
+
+  /**
+   * iPhone / iPad model guess from screen CSS size + devicePixelRatio.
+   * Safari does not expose the marketing name in the UA (all say "iPhone").
+   * Matching is best-effort — some models share the same logical resolution.
+   */
+  function identifyAppleDevice() {
+    const out = {
+      device: null,
+      family: null,
+      ramHint: null,
+      yearHint: null,
+      note: null,
+    };
+    try {
+      const ua = navigator.userAgent || "";
+      const isIphone = /iPhone/i.test(ua);
+      const isIpad =
+        /iPad/i.test(ua) ||
+        (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+      if (!isIphone && !isIpad) return out;
+
+      const dpr = window.devicePixelRatio || 1;
+      // Use screen in portrait orientation for stable matching
+      let w = Math.min(screen.width, screen.height);
+      let h = Math.max(screen.width, screen.height);
+      // Some browsers report layout viewport; prefer screen
+      const key = w + "x" + h + "@" + (Math.round(dpr * 100) / 100);
+
+      // Logical CSS points × DPR tables (portrait). Multiple models may share a size.
+      // Sources: public display specs / common web detection tables.
+      const iphoneMap = {
+        // Older
+        "320x480@1": { name: "iPhone 4 / 4s", year: 2010, ram: "0.5 GB" },
+        "320x480@2": { name: "iPhone 4 / 4s", year: 2010, ram: "0.5 GB" },
+        "320x568@2": { name: "iPhone 5 / 5c / 5s / SE (1st)", year: 2013, ram: "1 GB" },
+        "375x667@2": { name: "iPhone 6 / 6s / 7 / 8 / SE (2nd/3rd)", year: 2016, ram: "2–3 GB" },
+        "414x736@3": { name: "iPhone 6 Plus / 7 Plus / 8 Plus", year: 2016, ram: "3 GB" },
+        "375x812@3": { name: "iPhone X / XS / 11 Pro / 12 mini / 13 mini", year: 2019, ram: "3–4 GB" },
+        "414x896@2": { name: "iPhone XR / 11", year: 2019, ram: "3–4 GB" },
+        "414x896@3": { name: "iPhone XS Max / 11 Pro Max", year: 2019, ram: "4 GB" },
+        "360x780@3": { name: "iPhone 12 mini / 13 mini", year: 2021, ram: "4 GB" },
+        "390x844@3": { name: "iPhone 12 / 13 / 14 / 16e", year: 2022, ram: "4–6 GB" },
+        "428x926@3": { name: "iPhone 12 Pro Max / 13 Pro Max / 14 Plus", year: 2022, ram: "6 GB" },
+        "393x852@3": { name: "iPhone 14 Pro / 15 / 15 Pro / 16", year: 2024, ram: "6–8 GB" },
+        "430x932@3": { name: "iPhone 14 Pro Max / 15 Plus / 15 Pro Max / 16 Plus", year: 2024, ram: "6–8 GB" },
+        "402x874@3": { name: "iPhone 16 Pro", year: 2024, ram: "8 GB" },
+        "440x956@3": { name: "iPhone 16 Pro Max", year: 2024, ram: "8 GB" },
+      };
+
+      const ipadMap = {
+        "768x1024@1": { name: "iPad (legacy)", year: 2012, ram: "1 GB" },
+        "768x1024@2": { name: "iPad / iPad mini (Retina)", year: 2014, ram: "1–2 GB" },
+        "810x1080@2": { name: "iPad (10th gen style)", year: 2022, ram: "4 GB" },
+        "834x1112@2": { name: "iPad Air / Pro 10.5", year: 2018, ram: "3–4 GB" },
+        "834x1194@2": { name: "iPad Pro 11-inch", year: 2020, ram: "6–8 GB" },
+        "1024x1366@2": { name: "iPad Pro 12.9-inch", year: 2020, ram: "6–16 GB" },
+        "820x1180@2": { name: "iPad Air (4/5) / iPad (10th)", year: 2022, ram: "4–8 GB" },
+        "744x1133@2": { name: "iPad mini (6th gen)", year: 2021, ram: "4 GB" },
+      };
+
+      const map = isIphone ? iphoneMap : ipadMap;
+      let hit = map[key];
+
+      // Fuzzy: match w×h only if unique dpr family
+      if (!hit) {
+        const prefix = w + "x" + h + "@";
+        const candidates = Object.keys(map).filter((k) => k.indexOf(prefix) === 0);
+        if (candidates.length === 1) hit = map[candidates[0]];
+        else if (candidates.length > 1) {
+          // Prefer closest dpr
+          let best = null;
+          let bestDiff = 99;
+          candidates.forEach((k) => {
+            const d = parseFloat(k.split("@")[1]) || 0;
+            const diff = Math.abs(d - dpr);
+            if (diff < bestDiff) {
+              bestDiff = diff;
+              best = map[k];
+            }
+          });
+          hit = best;
+        }
+      }
+
+      // Rounded dpr keys (e.g. 2.61 → try 3)
+      if (!hit) {
+        const dprR = Math.round(dpr);
+        hit = map[w + "x" + h + "@" + dprR] || null;
+      }
+
+      out.family = isIphone ? "iPhone" : "iPad";
+      if (hit) {
+        out.device = hit.name;
+        out.ramHint = hit.ram;
+        out.yearHint = hit.year;
+        out.note = "Estimated from screen " + w + "×" + h + " @" + dpr + "x";
+      } else {
+        out.device = isIphone ? "iPhone" : "iPad";
+        out.note = "Screen " + w + "×" + h + " @" + dpr + "x (model not in table)";
+      }
+
+      // iOS always ARM64 for modern devices
+      out.arch = "ARM64";
+    } catch (_) {}
+    return out;
+  }
 
   function parseUa(ua) {
     const out = { os: "Unknown OS", device: "Browser device", arch: "", isMobile: false };
@@ -4063,9 +4171,25 @@ function buildDeviceInspector() {
     if (/iPhone/i.test(s)) out.device = "iPhone";
     else if (/iPad/i.test(s)) out.device = "iPad";
     else if (/Android/i.test(s)) {
-      const m = s.match(/;\s*([^;)]+)\s+Build\//i) || s.match(/Android[^;]*;\s*([^;)]+)/i);
-      out.device = m ? m[1].trim() : "Android device";
-      if (/Linux/i.test(out.device)) out.device = "Android device";
+      // Common UA: "... Android 13; Pixel 7 Build/..." or "...; SM-G991B Build/..."
+      let model = null;
+      const patterns = [
+        /;\s*([^;]*?)\s+Build\//i,
+        /Android[^;]*;\s*([^;)]+?)\s*(?:Build|\)|wv)/i,
+        /\b(Pixel [^;\/)]+|SM-[A-Z0-9]+|ONEPLUS[^;\/\s)]+|Mi [^;\/)]+|Redmi [^;\/)]+|M\d{4}[^;\/\s)]*)/i,
+      ];
+      for (const re of patterns) {
+        const m = s.match(re);
+        if (m && m[1]) {
+          model = m[1].trim().replace(/\s+/g, " ");
+          break;
+        }
+      }
+      if (model && !/^Linux$/i.test(model) && !/^U$/i.test(model) && model.length > 1) {
+        out.device = model;
+      } else {
+        out.device = "Android phone";
+      }
     } else if (/Macintosh/i.test(s)) out.device = "Mac";
     else if (/Windows/i.test(s)) out.device = "Windows PC";
     else if (/Linux/i.test(s)) out.device = "Linux workstation";
@@ -4584,14 +4708,43 @@ function buildDeviceInspector() {
   async function collect() {
     const ua = navigator.userAgent || "";
     const info = parseUa(ua);
+    const apple = identifyAppleDevice();
+    if (apple.device) {
+      info.device = apple.device;
+      info.appleNote = apple.note;
+      if (apple.arch) info.arch = apple.arch;
+    }
+    // Safari iOS: prefer explicit iOS/iPadOS labeling
+    try {
+      if (/iPhone|iPad|iPod/i.test(ua) || apple.family) {
+        const m = ua.match(/OS ([\d_]+)/i);
+        if (m) {
+          const ver = m[1].replace(/_/g, ".");
+          info.os = (apple.family === "iPad" || /iPad/i.test(ua) ? "iPadOS " : "iOS ") + ver;
+        }
+      }
+    } catch (_) {}
+
     const cores = navigator.hardwareConcurrency || null;
-    const mem = navigator.deviceMemory || null; // GB when supported
+    // deviceMemory is not available on iOS Safari — use Apple table hint when present
+    let mem = navigator.deviceMemory || null; // GB when supported
+    if (mem == null && apple.ramHint) {
+      // Keep as display string later; numeric unknown
+      info.ramHint = apple.ramHint;
+    }
+    if (apple.yearHint && !info.manufactureYear) {
+      info.yearHint = apple.yearHint;
+    }
     const dpr = window.devicePixelRatio || 1;
     const sw = Math.round(screen.width * dpr) || screen.width;
     const sh = Math.round(screen.height * dpr) || screen.height;
     const cssW = screen.width;
     const cssH = screen.height;
-    const gpu = getGpu();
+    let gpu = getGpu();
+    // iOS often hides unmasked renderer; show Apple GPU when blank
+    if ((!gpu || gpu === "—") && apple.family) {
+      gpu = apple.family === "iPad" ? "Apple GPU (iPad)" : "Apple GPU (iPhone)";
+    }
     const online = navigator.onLine;
 
     // Extra hardware / device signals available to the page
@@ -4693,30 +4846,63 @@ function buildDeviceInspector() {
     const storageUsed = storage.used;
     const storageQuota = storage.quota;
 
-    // Prefer UA-CH architecture when available
+    // User-Agent Client Hints — real model/OS from THIS visitor's browser (Chrome/Edge/Android)
     let archLabel = info.arch;
+    let uaCh = null;
     try {
       if (navigator.userAgentData && navigator.userAgentData.getHighEntropyValues) {
-        const he = await navigator.userAgentData.getHighEntropyValues([
+        uaCh = await navigator.userAgentData.getHighEntropyValues([
           "architecture",
           "bitness",
           "model",
           "platform",
           "platformVersion",
           "uaFullVersion",
+          "fullVersionList",
+          "wow64",
         ]);
-        if (he.architecture) {
-          archLabel = he.architecture + (he.bitness ? " " + he.bitness + "-bit" : "");
+        if (uaCh.architecture) {
+          archLabel =
+            uaCh.architecture +
+            (uaCh.bitness ? " " + String(uaCh.bitness) + "-bit" : "");
         }
-        if (he.model) info.device = he.model;
-        if (he.platform) {
-          info.os = he.platform + (he.platformVersion ? " " + String(he.platformVersion).split(".")[0] : "");
+        // Real device model when the browser provides it (e.g. "Pixel 8", "SM-S911B")
+        if (uaCh.model && String(uaCh.model).trim()) {
+          info.device = String(uaCh.model).trim();
         }
+        if (uaCh.platform) {
+          const ver = uaCh.platformVersion
+            ? String(uaCh.platformVersion).split(".")[0]
+            : "";
+          info.os = uaCh.platform + (ver ? " " + ver : "");
+        }
+        // Brands list for browser line
+        try {
+          if (navigator.userAgentData.brands && navigator.userAgentData.brands.length) {
+            info.browserBrands = navigator.userAgentData.brands
+              .filter((b) => b && b.brand && !/Not.?A.?Brand/i.test(b.brand))
+              .map((b) => b.brand + (b.version ? " " + b.version : ""))
+              .slice(0, 3)
+              .join(" · ");
+          }
+        } catch (_) {}
+      }
+    } catch (_) {}
+
+    // Low-entropy mobile hint
+    try {
+      if (navigator.userAgentData && typeof navigator.userAgentData.mobile === "boolean") {
+        info.isMobile = navigator.userAgentData.mobile;
       }
     } catch (_) {}
 
     if (!archLabel) {
-      archLabel = (navigator.platform || "").includes("64") ? "64-bit" : (navigator.platform || "—");
+      if (apple.arch) archLabel = apple.arch;
+      else if (/iPhone|iPad|iPod/i.test(ua)) archLabel = "ARM64";
+      else
+        archLabel = (navigator.platform || "").includes("64")
+          ? "64-bit"
+          : navigator.platform || "—";
     }
 
     // Prefer physical pixels for display line (matches screenshot style)
@@ -4747,6 +4933,13 @@ function buildDeviceInspector() {
       yearInfo = estimateManufactureYear(ua, info, navigator) || yearInfo;
     } catch (err) {
       console.warn("[Device] estimateManufactureYear", err);
+    }
+    if (yearInfo.year == null && info.yearHint) {
+      yearInfo = {
+        year: info.yearHint,
+        approx: true,
+        note: info.appleNote || "Estimated from iPhone/iPad display",
+      };
     }
 
     // Network Information API (navigator.connection)
@@ -4821,11 +5014,14 @@ function buildDeviceInspector() {
     const name =
       data.info.device +
       (data.cores ? " · " + data.cores + " cores" : "");
-    el("di-name").textContent = data.info.device;
+    el("di-name").textContent = data.info.device || "Your device";
     const subParts = [];
     if (data.info.os) subParts.push(data.info.os);
-    if (data.platform && data.platform !== "—") subParts.push(data.platform);
-    el("di-sub").textContent = subParts.length ? subParts.join(" · ") : "Browser device";
+    if (data.info.browserBrands) subParts.push(data.info.browserBrands);
+    else if (data.platform && data.platform !== "—") subParts.push(data.platform);
+    el("di-sub").textContent = subParts.length
+      ? subParts.join(" · ")
+      : "Detected from this browser only";
 
     // Pills
     const pills = el("di-pills");
@@ -4872,7 +5068,12 @@ function buildDeviceInspector() {
 
     // Stats
     const stats = el("di-stats");
-    const ramText = data.mem != null ? data.mem + " GB" : "—";
+    const ramText =
+      data.mem != null
+        ? data.mem + " GB"
+        : data.info && data.info.ramHint
+          ? data.info.ramHint + " est."
+          : "—";
     const storageText =
       data.storageQuota != null ? fmtBytes(data.storageQuota) : "—";
     stats.innerHTML =
@@ -5188,6 +5389,16 @@ function buildDeviceInspector() {
         icon: "arch",
         label: "Platform",
         value: data.platform || "—",
+      },
+      {
+        icon: "year",
+        label: "Detection",
+        value:
+          data.info && data.info.appleNote
+            ? data.info.appleNote
+            : data.info && data.info.isMobile
+              ? "Mobile browser APIs"
+              : "Desktop browser APIs",
       },
       {
         icon: "display",
@@ -5577,7 +5788,7 @@ function buildDeviceInspector() {
 
   function withV(path) {
     const v =
-      (typeof window !== "undefined" && window.__MENELIK_V__) || "20260808v";
+      (typeof window !== "undefined" && window.__MENELIK_V__) || "20260808x";
     const sep = path.indexOf("?") >= 0 ? "&" : "?";
     return path + sep + "v=" + encodeURIComponent(v) + "&_=" + Date.now();
   }
@@ -8406,7 +8617,7 @@ tryLoadProfile();
 const CONTENT_FILES = ["about", "education", "experience", "certifications", "projects", "skills", "contact", "resume"];
 /** Cache-bust query for content fetches — mirrors window.__MENELIK_V__ from index.html */
 const ASSET_V =
-  (typeof window !== "undefined" && window.__MENELIK_V__) || "20260808v";
+  (typeof window !== "undefined" && window.__MENELIK_V__) || "20260808x";
 function withV(url) {
   const join = url.indexOf("?") >= 0 ? "&" : "?";
   return url + join + "v=" + encodeURIComponent(ASSET_V);
