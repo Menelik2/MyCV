@@ -85,6 +85,7 @@ export default function middleware(request) {
       "Reporting-Endpoints": REPORTING_ENDPOINTS,
       // Enforcing: controls which iframes are allowed
       "Content-Security-Policy": isAdmin ? CSP_FRAME_ADMIN : CSP_FRAME_SITE,
+      "Permissions-Policy": "camera=(self \"https://meet.jit.si\"), microphone=(self \"https://meet.jit.si\"), display-capture=(self \"https://meet.jit.si\"), autoplay=(self \"https://meet.jit.si\"), geolocation=()",
       // Report-only: full policy for monitoring (does not block)
       "Content-Security-Policy-Report-Only": isAdmin ? CSP_ADMIN : CSP_SITE,
     },

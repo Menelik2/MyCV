@@ -3796,7 +3796,7 @@ function buildVoiceCall() {
     const name = lastErr && lastErr.name ? lastErr.name : "";
     const msg =
       name === "NotAllowedError" || name === "PermissionDeniedError"
-        ? "Permission blocked. Allow mic/camera in the browser address bar, then try again."
+        ? "Permission blocked. Click the lock icon in the address bar → set Microphone (and Camera) to Allow → reload. On mobile: Site settings → Permissions."
         : name === "NotFoundError" || name === "DevicesNotFoundError"
           ? "No microphone or camera found on this device."
           : name === "NotReadableError" || name === "TrackStartError"
@@ -5577,7 +5577,7 @@ function buildDeviceInspector() {
 
   function withV(path) {
     const v =
-      (typeof window !== "undefined" && window.__MENELIK_V__) || "20260808t";
+      (typeof window !== "undefined" && window.__MENELIK_V__) || "20260808v";
     const sep = path.indexOf("?") >= 0 ? "&" : "?";
     return path + sep + "v=" + encodeURIComponent(v) + "&_=" + Date.now();
   }
@@ -8406,7 +8406,7 @@ tryLoadProfile();
 const CONTENT_FILES = ["about", "education", "experience", "certifications", "projects", "skills", "contact", "resume"];
 /** Cache-bust query for content fetches — mirrors window.__MENELIK_V__ from index.html */
 const ASSET_V =
-  (typeof window !== "undefined" && window.__MENELIK_V__) || "20260808t";
+  (typeof window !== "undefined" && window.__MENELIK_V__) || "20260808v";
 function withV(url) {
   const join = url.indexOf("?") >= 0 ? "&" : "?";
   return url + join + "v=" + encodeURIComponent(ASSET_V);
@@ -9406,34 +9406,22 @@ initAdminUI();
     const room = u.searchParams.get("voice") || u.searchParams.get("room");
     if (!room) return;
     const open = () => {
-      // Mobile shell
-      const icon = document.querySelector('.app-icon[data-page="voice"]');
-      const page = document.getElementById("page-voice");
-      if (icon && page) {
-        document.querySelectorAll(".app-page").forEach((p) => p.hidden = true);
-        page.hidden = false;
-        const body = document.getElementById("content-voice");
-        if (body && !body.dataset.ready) {
-          body.innerHTML = "";
-          body.appendChild(buildVoiceCall());
-          body.dataset.ready = "1";
+      try {
+        if (typeof showPage === "function" && document.getElementById("page-voice")) {
+          showPage("voice");
+          return;
         }
-        const home = document.querySelector(".phone-home, .ios-home, #phone-home");
-        // hide home grid if present
-        document.querySelectorAll(".app-grid, .phone-apps").forEach((g) => {
-          /* leave visible structure; page overlay handles it */
-        });
-        return;
-      }
-      // Desktop XP: open window
-      if (typeof openWindow === "function") {
-        openWindow("voice");
-      }
+      } catch (_) {}
+      try {
+        if (typeof openWindow === "function") {
+          openWindow("voice");
+        }
+      } catch (_) {}
     };
     if (document.readyState === "loading") {
-      document.addEventListener("DOMContentLoaded", () => setTimeout(open, 200));
+      document.addEventListener("DOMContentLoaded", () => setTimeout(open, 300));
     } else {
-      setTimeout(open, 200);
+      setTimeout(open, 300);
     }
   } catch (_) {}
 })();
