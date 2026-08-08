@@ -3402,7 +3402,7 @@ function buildVoiceCall() {
 
       // Media defaults — voice-first, save bandwidth
       "config.startWithAudioMuted=false",
-      "config.startWithVideoMuted=" + (audioOnly || isMobile ? "true" : "true"),
+      "config.startWithVideoMuted=" + (audioOnly ? "true" : "false"),
       "config.startAudioOnly=" + (audioOnly ? "true" : "false"),
       "config.startSilent=false",
 
@@ -3491,6 +3491,11 @@ function buildVoiceCall() {
     "    </details>" +
     '    <p class="vc-hint">Anyone with the link can join this room. Works for 2 or more people.</p>' +
     '    <label class="vc-check"><input type="checkbox" id="vc-audio-only" checked /> Audio only (faster, less data)</label>' +
+    '    <div class="vc-perm" id="vc-perm">' +
+    '      <span class="vc-perm-pill" id="vc-perm-mic">Mic · checking…</span>' +
+    '      <span class="vc-perm-pill" id="vc-perm-cam">Camera · checking…</span>' +
+    '      <button type="button" class="vc-btn vc-btn-secondary vc-btn-sm" id="vc-perm-enable">Enable mic &amp; camera</button>' +
+    "    </div>" +
     '    <div class="vc-actions">' +
     '      <button type="button" class="vc-btn vc-btn-primary" id="vc-join">Join voice room</button>' +
     '      <button type="button" class="vc-btn vc-btn-secondary" id="vc-share">Copy invite link</button>' +
@@ -3583,30 +3588,278 @@ function buildVoiceCall() {
     }
   }
 
-  function joinRoom() {
+  function setPermPill(el, label, state) {
+    if (!el) return;
+    el.textContent = label + " · " + state;
+    el.classList.remove("vc-perm-ok", "vc-perm-bad", "vc-perm-wait");
+    if (state === "allowed") el.classList.add("vc-perm-ok");
+    else if (state === "blocked" || state === "denied") el.classList.add("vc-perm-bad");
+    else el.classList.add("vc-perm-wait");
+  }
+
+  async function queryMediaPermission(name) {
+    try {
+      if (!navigator.permissions || !navigator.permissions.query) return "unknown";
+      const r = await navigator.permissions.query({ name: name });
+      return r.state || "unknown"; // granted | denied | prompt
+    } catch (_) {
+      // Safari / some browsers reject camera/microphone query
+      return "unknown";
+    }
+  }
+
+  async function refreshPermissionUI() {
+    const micEl = root.querySelector("#vc-perm-mic");
+    const camEl = root.querySelector("#vc-perm-cam");
+    const mic = await queryMediaPermission("microphone");
+    const cam = await queryMediaPermission("camera");
+    const map = { granted: "allowed", denied: "blocked", prompt: "needed", unknown: "tap Enable" };
+    setPermPill(micEl, "Mic", map[mic] || mic);
+    setPermPill(camEl, "Camera", map[cam] || cam);
+    return { mic: mic, cam: cam };
+  }
+
+  /** Preferred getUserMedia constraints (voice-room tuned) with progressive fallbacks. */
+  function buildMediaConstraints(wantVideo, quality) {
+    // quality: "high" | "medium" | "low"
+    quality = quality || "medium";
+
+    const audioIdeal = {
+      // Core processing for calls
+      echoCancellation: true,
+      noiseSuppression: true,
+      autoGainControl: true,
+      // Prefer voice over music
+      channelCount: { ideal: 1 },
+      sampleRate: { ideal: 48000 },
+      sampleSize: { ideal: 16 },
+      // Latency / chrome-specific where supported
+      latency: { ideal: 0.01 },
+      // Advanced keys ignored by browsers that don't support them
+      voiceIsolation: true,
+      googEchoCancellation: true,
+      googNoiseSuppression: true,
+      googAutoGainControl: true,
+      googHighpassFilter: true,
+      googTypingNoiseDetection: true,
+    };
+
+    const videoProfiles = {
+      high: {
+        facingMode: { ideal: "user" },
+        width: { ideal: 1280, max: 1920 },
+        height: { ideal: 720, max: 1080 },
+        frameRate: { ideal: 30, max: 30 },
+        aspectRatio: { ideal: 16 / 9 },
+      },
+      medium: {
+        facingMode: { ideal: "user" },
+        width: { ideal: 640, max: 1280 },
+        height: { ideal: 360, max: 720 },
+        frameRate: { ideal: 24, max: 30 },
+        aspectRatio: { ideal: 16 / 9 },
+      },
+      low: {
+        facingMode: { ideal: "user" },
+        width: { ideal: 320, max: 640 },
+        height: { ideal: 240, max: 360 },
+        frameRate: { ideal: 15, max: 24 },
+      },
+    };
+
+    return {
+      audio: audioIdeal,
+      video: wantVideo ? videoProfiles[quality] || videoProfiles.medium : false,
+    };
+  }
+
+  function stopStream(stream) {
+    if (!stream) return;
+    try {
+      stream.getTracks().forEach((t) => {
+        try {
+          t.stop();
+        } catch (_) {}
+      });
+    } catch (_) {}
+  }
+
+  function describeTrackSettings(stream) {
+    const out = { audio: null, video: null };
+    try {
+      const a = stream.getAudioTracks()[0];
+      const v = stream.getVideoTracks()[0];
+      if (a && a.getSettings) out.audio = a.getSettings();
+      if (v && v.getSettings) out.video = v.getSettings();
+    } catch (_) {}
+    return out;
+  }
+
+  /**
+   * Request devices on a user gesture.
+   * Tracks are stopped after settings are read so Jitsi can re-acquire devices.
+   */
+  async function requestMediaAccess(wantVideo) {
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+      return { ok: false, error: "Media devices API not available in this browser." };
+    }
+    if (typeof window.isSecureContext === "boolean" && !window.isSecureContext) {
+      return { ok: false, error: "Mic/camera need HTTPS (or localhost)." };
+    }
+
+    const isMobile =
+      typeof window.matchMedia === "function" &&
+      window.matchMedia("(max-width: 900px), (pointer: coarse)").matches;
+    // Mobile: start medium; desktop AV: high; audio-only path still uses audio constraints
+    const quality = !wantVideo ? "medium" : isMobile ? "medium" : "high";
+
+    const attempts = [];
+    // 1) Preferred constraints
+    attempts.push(buildMediaConstraints(wantVideo, quality));
+    // 2) Relaxed video if full AV requested
+    if (wantVideo) {
+      attempts.push(buildMediaConstraints(true, "low"));
+      attempts.push({
+        audio: buildMediaConstraints(false).audio,
+        video: { facingMode: "user" },
+      });
+    }
+    // 3) Audio-only always as last resort
+    attempts.push({
+      audio: {
+        echoCancellation: true,
+        noiseSuppression: true,
+        autoGainControl: true,
+      },
+      video: false,
+    });
+    // 4) Bare minimum
+    attempts.push({ audio: true, video: false });
+
+    let lastErr = null;
+    for (let i = 0; i < attempts.length; i++) {
+      const constraints = attempts[i];
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia(constraints);
+        const settings = describeTrackSettings(stream);
+        const hasAudio = stream.getAudioTracks().length > 0;
+        const hasVideo = stream.getVideoTracks().length > 0;
+        stopStream(stream);
+
+        if (!hasAudio) {
+          return {
+            ok: false,
+            error: "Microphone track missing after permission.",
+            constraints: constraints,
+          };
+        }
+
+        const applied = [];
+        if (settings.audio) {
+          if (settings.audio.echoCancellation != null)
+            applied.push("AEC " + (settings.audio.echoCancellation ? "on" : "off"));
+          if (settings.audio.sampleRate)
+            applied.push(settings.audio.sampleRate + " Hz");
+          if (settings.audio.channelCount)
+            applied.push(settings.audio.channelCount + " ch");
+        }
+        if (settings.video) {
+          const w = settings.video.width;
+          const h = settings.video.height;
+          if (w && h) applied.push(w + "×" + h);
+          if (settings.video.frameRate)
+            applied.push(Math.round(settings.video.frameRate) + " fps");
+        }
+
+        return {
+          ok: true,
+          audio: hasAudio,
+          video: hasVideo,
+          settings: settings,
+          constraints: constraints,
+          warning:
+            wantVideo && !hasVideo
+              ? "Camera unavailable — joining with mic only."
+              : null,
+          info: applied.length ? "Devices: " + applied.join(" · ") : null,
+        };
+      } catch (err) {
+        lastErr = err;
+        // Permission denied — do not keep trying weaker constraints
+        const n = err && err.name ? err.name : "";
+        if (n === "NotAllowedError" || n === "PermissionDeniedError" || n === "SecurityError") {
+          break;
+        }
+      }
+    }
+
+    const name = lastErr && lastErr.name ? lastErr.name : "";
+    const msg =
+      name === "NotAllowedError" || name === "PermissionDeniedError"
+        ? "Permission blocked. Allow mic/camera in the browser address bar, then try again."
+        : name === "NotFoundError" || name === "DevicesNotFoundError"
+          ? "No microphone or camera found on this device."
+          : name === "NotReadableError" || name === "TrackStartError"
+            ? "Device is in use by another app. Close it and retry."
+            : name === "OverconstrainedError"
+              ? "Camera/mic could not match requested quality. Try Audio only."
+              : name === "SecurityError"
+                ? "Mic/camera blocked by browser security settings."
+                : (lastErr && lastErr.message) || "Could not access media devices.";
+    return { ok: false, error: msg, name: name };
+  }
+
+  async function joinRoom() {
     const room = sanitizeRoom(roomInput.value);
     roomInput.value = room;
     currentRoom = room;
-    joined = true;
     const audioOnlyEl = root.querySelector("#vc-audio-only");
     const audioOnly = audioOnlyEl ? !!audioOnlyEl.checked : true;
+    const joinBtn = root.querySelector("#vc-join");
+    if (joinBtn) {
+      joinBtn.disabled = true;
+      joinBtn.textContent = "Allowing devices…";
+    }
+    setStatus("Requesting microphone" + (audioOnly ? "" : " & camera") + "…", true);
+
+    // User-gesture getUserMedia so permission prompt appears before Jitsi loads
+    const access = await requestMediaAccess(!audioOnly);
+    await refreshPermissionUI();
+
+    if (!access.ok) {
+      setStatus(access.error || "Permission required to join.", false);
+      if (joinBtn) {
+        joinBtn.disabled = false;
+        joinBtn.textContent = "Join voice room";
+      }
+      return;
+    }
+    if (access.warning) setStatus(access.warning, true);
+    else if (access.info) setStatus(access.info, true);
+
+    joined = true;
     roomPill.textContent =
-      "Room · " + room + (audioOnly ? " · audio" : " · av");
-    // Tear down previous meeting before loading a new one
+      "Room · " + room + (audioOnly || !access.video ? " · audio" : " · av");
     try {
       frame.src = "about:blank";
     } catch (_) {}
-    // Small delay helps mobile WebView release the previous peer connection
-    setTimeout(() => {
-      frame.src = jitsiEmbedUrl(room, { audioOnly: audioOnly });
-    }, 40);
+    // Brief pause so tracks fully release before Jitsi re-acquires them
+    await new Promise((r) => setTimeout(r, 120));
+    frame.src = jitsiEmbedUrl(room, {
+      audioOnly: audioOnly || !access.video,
+      mediaPrimed: true,
+    });
     lobby.hidden = true;
     stage.hidden = false;
-    setStatus("");
+    if (!access.warning) setStatus("");
+    if (joinBtn) {
+      joinBtn.disabled = false;
+      joinBtn.textContent = "Join voice room";
+    }
     try {
       const u = new URL(window.location.href);
       u.searchParams.set("voice", room);
-      if (audioOnly) u.searchParams.set("audio", "1");
+      if (audioOnly || !access.video) u.searchParams.set("audio", "1");
       else u.searchParams.delete("audio");
       window.history.replaceState({}, "", u.toString());
     } catch (_) {}
@@ -3620,23 +3873,53 @@ function buildVoiceCall() {
     stage.hidden = true;
     lobby.hidden = false;
     setStatus("You left the room. Mic/camera released.", true);
+    refreshPermissionUI();
   }
 
   root.querySelector("#vc-random").addEventListener("click", () => {
     roomInput.value = randomRoom();
     setStatus("");
   });
-  root.querySelector("#vc-join").addEventListener("click", joinRoom);
+  root.querySelector("#vc-join").addEventListener("click", () => {
+    joinRoom();
+  });
   root.querySelector("#vc-share").addEventListener("click", copyLink);
   root.querySelector("#vc-copy-live").addEventListener("click", copyLink);
   root.querySelector("#vc-leave").addEventListener("click", leaveRoom);
+  const enableBtn = root.querySelector("#vc-perm-enable");
+  if (enableBtn) {
+    enableBtn.addEventListener("click", async () => {
+      const audioOnlyEl = root.querySelector("#vc-audio-only");
+      const audioOnly = audioOnlyEl ? !!audioOnlyEl.checked : true;
+      enableBtn.disabled = true;
+      enableBtn.textContent = "Requesting…";
+      const access = await requestMediaAccess(!audioOnly);
+      await refreshPermissionUI();
+      enableBtn.disabled = false;
+      enableBtn.textContent = "Enable mic & camera";
+      if (access.ok) {
+        setStatus(
+          access.warning ||
+            access.info ||
+            "Devices allowed. Tap Join voice room when ready.",
+          true
+        );
+      } else {
+        setStatus(access.error || "Permission denied.", false);
+      }
+    });
+  }
   roomInput.addEventListener("keydown", (e) => {
     if (e.key === "Enter") joinRoom();
   });
 
-  // Auto-join when opened from an invite link
+  refreshPermissionUI();
+
+  // Auto-join from invite link — still goes through permission prompt (user already opened link)
   if (roomFromUrl()) {
-    setTimeout(joinRoom, 50);
+    setTimeout(() => {
+      joinRoom();
+    }, 80);
   }
 
   return root;
@@ -5294,7 +5577,7 @@ function buildDeviceInspector() {
 
   function withV(path) {
     const v =
-      (typeof window !== "undefined" && window.__MENELIK_V__) || "20260808r";
+      (typeof window !== "undefined" && window.__MENELIK_V__) || "20260808t";
     const sep = path.indexOf("?") >= 0 ? "&" : "?";
     return path + sep + "v=" + encodeURIComponent(v) + "&_=" + Date.now();
   }
@@ -8123,7 +8406,7 @@ tryLoadProfile();
 const CONTENT_FILES = ["about", "education", "experience", "certifications", "projects", "skills", "contact", "resume"];
 /** Cache-bust query for content fetches — mirrors window.__MENELIK_V__ from index.html */
 const ASSET_V =
-  (typeof window !== "undefined" && window.__MENELIK_V__) || "20260808r";
+  (typeof window !== "undefined" && window.__MENELIK_V__) || "20260808t";
 function withV(url) {
   const join = url.indexOf("?") >= 0 ? "&" : "?";
   return url + join + "v=" + encodeURIComponent(ASSET_V);
