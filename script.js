@@ -4053,10 +4053,28 @@ function buildDeviceInspector() {
 
       const dpr = window.devicePixelRatio || 1;
       // Use screen in portrait orientation for stable matching
-      let w = Math.min(screen.width, screen.height);
-      let h = Math.max(screen.width, screen.height);
-      // Some browsers report layout viewport; prefer screen
-      const key = w + "x" + h + "@" + (Math.round(dpr * 100) / 100);
+      let w = Math.round(Math.min(screen.width, screen.height));
+      let h = Math.round(Math.max(screen.width, screen.height));
+      // iOS sometimes reports slightly off values; snap common widths
+      const snapW = [320, 360, 375, 390, 393, 402, 414, 428, 430, 440, 744, 768, 810, 820, 834, 1024];
+      const snapH = [480, 568, 667, 736, 780, 812, 844, 852, 874, 896, 926, 932, 956, 1024, 1080, 1112, 1133, 1180, 1194, 1366];
+      function nearest(val, list) {
+        let best = val;
+        let bestD = 8;
+        for (let i = 0; i < list.length; i++) {
+          const d = Math.abs(list[i] - val);
+          if (d < bestD) {
+            bestD = d;
+            best = list[i];
+          }
+        }
+        return best;
+      }
+      w = nearest(w, snapW);
+      h = nearest(h, snapH);
+      const dprKey = Math.round(dpr) >= 3 ? 3 : Math.round(dpr) >= 2 ? 2 : 1;
+      const key = w + "x" + h + "@" + dprKey;
+      const keyExact = w + "x" + h + "@" + (Math.round(dpr * 100) / 100);
 
       // Logical CSS points × DPR tables (portrait). Multiple models may share a size.
       // Sources: public display specs / common web detection tables.
@@ -4065,33 +4083,33 @@ function buildDeviceInspector() {
         "320x480@1": { name: "iPhone 4 / 4s", year: 2010, ram: "0.5 GB" },
         "320x480@2": { name: "iPhone 4 / 4s", year: 2010, ram: "0.5 GB" },
         "320x568@2": { name: "iPhone 5 / 5c / 5s / SE (1st)", year: 2013, ram: "1 GB" },
-        "375x667@2": { name: "iPhone 6 / 6s / 7 / 8 / SE (2nd/3rd)", year: 2016, ram: "2–3 GB" },
+        "375x667@2": { name: "iPhone 6 / 6s / 7 / 8 / SE (2nd/3rd)", year: 2016, ram: "2-3 GB" },
         "414x736@3": { name: "iPhone 6 Plus / 7 Plus / 8 Plus", year: 2016, ram: "3 GB" },
-        "375x812@3": { name: "iPhone X / XS / 11 Pro / 12 mini / 13 mini", year: 2019, ram: "3–4 GB" },
-        "414x896@2": { name: "iPhone XR / 11", year: 2019, ram: "3–4 GB" },
+        "375x812@3": { name: "iPhone X / XS / 11 Pro / 12 mini / 13 mini", year: 2019, ram: "3-4 GB" },
+        "414x896@2": { name: "iPhone XR / 11", year: 2019, ram: "3-4 GB" },
         "414x896@3": { name: "iPhone XS Max / 11 Pro Max", year: 2019, ram: "4 GB" },
         "360x780@3": { name: "iPhone 12 mini / 13 mini", year: 2021, ram: "4 GB" },
-        "390x844@3": { name: "iPhone 12 / 13 / 14 / 16e", year: 2022, ram: "4–6 GB" },
+        "390x844@3": { name: "iPhone 12 / 13 / 14 / 16e", year: 2022, ram: "4-6 GB" },
         "428x926@3": { name: "iPhone 12 Pro Max / 13 Pro Max / 14 Plus", year: 2022, ram: "6 GB" },
-        "393x852@3": { name: "iPhone 14 Pro / 15 / 15 Pro / 16", year: 2024, ram: "6–8 GB" },
-        "430x932@3": { name: "iPhone 14 Pro Max / 15 Plus / 15 Pro Max / 16 Plus", year: 2024, ram: "6–8 GB" },
+        "393x852@3": { name: "iPhone 14 Pro / 15 / 15 Pro / 16", year: 2024, ram: "6-8 GB" },
+        "430x932@3": { name: "iPhone 14 Pro Max / 15 Plus / 15 Pro Max / 16 Plus", year: 2024, ram: "6-8 GB" },
         "402x874@3": { name: "iPhone 16 Pro", year: 2024, ram: "8 GB" },
         "440x956@3": { name: "iPhone 16 Pro Max", year: 2024, ram: "8 GB" },
       };
 
       const ipadMap = {
         "768x1024@1": { name: "iPad (legacy)", year: 2012, ram: "1 GB" },
-        "768x1024@2": { name: "iPad / iPad mini (Retina)", year: 2014, ram: "1–2 GB" },
+        "768x1024@2": { name: "iPad / iPad mini (Retina)", year: 2014, ram: "1-2 GB" },
         "810x1080@2": { name: "iPad (10th gen style)", year: 2022, ram: "4 GB" },
-        "834x1112@2": { name: "iPad Air / Pro 10.5", year: 2018, ram: "3–4 GB" },
-        "834x1194@2": { name: "iPad Pro 11-inch", year: 2020, ram: "6–8 GB" },
-        "1024x1366@2": { name: "iPad Pro 12.9-inch", year: 2020, ram: "6–16 GB" },
-        "820x1180@2": { name: "iPad Air (4/5) / iPad (10th)", year: 2022, ram: "4–8 GB" },
+        "834x1112@2": { name: "iPad Air / Pro 10.5", year: 2018, ram: "3-4 GB" },
+        "834x1194@2": { name: "iPad Pro 11-inch", year: 2020, ram: "6-8 GB" },
+        "1024x1366@2": { name: "iPad Pro 12.9-inch", year: 2020, ram: "6-16 GB" },
+        "820x1180@2": { name: "iPad Air (4/5) / iPad (10th)", year: 2022, ram: "4-8 GB" },
         "744x1133@2": { name: "iPad mini (6th gen)", year: 2021, ram: "4 GB" },
       };
 
       const map = isIphone ? iphoneMap : ipadMap;
-      let hit = map[key];
+      let hit = map[keyExact] || map[key];
 
       // Fuzzy: match w×h only if unique dpr family
       if (!hit) {
@@ -4896,8 +4914,30 @@ function buildDeviceInspector() {
       }
     } catch (_) {}
 
-    if (!archLabel) {
+    // iPhone/iPad: screen-based model is more accurate than UA-CH (often empty on iOS)
+    if (apple && apple.family) {
+      if (apple.device) info.device = apple.device;
+      if (apple.note) info.appleNote = apple.note;
+      if (apple.ramHint) info.ramHint = apple.ramHint;
+      if (apple.yearHint) info.yearHint = apple.yearHint;
       if (apple.arch) archLabel = apple.arch;
+      // Keep detailed iOS version from UA if UA-CH only gave major platform
+      try {
+        const m = ua.match(/OS ([\d_]+)/i);
+        if (m) {
+          const ver = m[1].replace(/_/g, ".");
+          info.os =
+            (apple.family === "iPad" || /iPad/i.test(ua) ? "iPadOS " : "iOS ") +
+            ver;
+        }
+      } catch (_) {}
+      if ((!gpu || gpu === "—")) {
+        gpu = apple.family === "iPad" ? "Apple GPU (iPad)" : "Apple GPU (iPhone)";
+      }
+    }
+
+    if (!archLabel) {
+      if (apple && apple.arch) archLabel = apple.arch;
       else if (/iPhone|iPad|iPod/i.test(ua)) archLabel = "ARM64";
       else
         archLabel = (navigator.platform || "").includes("64")
@@ -5010,10 +5050,23 @@ function buildDeviceInspector() {
   }
 
   async function render() {
-    const data = await collect();
-    const name =
-      data.info.device +
-      (data.cores ? " · " + data.cores + " cores" : "");
+    let data;
+    try {
+      data = await collect();
+    } catch (err) {
+      console.warn("[Device] collect failed", err);
+      try {
+        el("di-name").textContent = "Could not read device";
+        el("di-sub").textContent = "Try Refresh — some APIs are blocked on this browser";
+      } catch (_) {}
+      return;
+    }
+    if (!data || !data.info) {
+      try {
+        el("di-name").textContent = "Limited info";
+      } catch (_) {}
+      return;
+    }
     el("di-name").textContent = data.info.device || "Your device";
     const subParts = [];
     if (data.info.os) subParts.push(data.info.os);
@@ -5788,7 +5841,7 @@ function buildDeviceInspector() {
 
   function withV(path) {
     const v =
-      (typeof window !== "undefined" && window.__MENELIK_V__) || "20260808x";
+      (typeof window !== "undefined" && window.__MENELIK_V__) || "20260808y";
     const sep = path.indexOf("?") >= 0 ? "&" : "?";
     return path + sep + "v=" + encodeURIComponent(v) + "&_=" + Date.now();
   }
@@ -8617,7 +8670,7 @@ tryLoadProfile();
 const CONTENT_FILES = ["about", "education", "experience", "certifications", "projects", "skills", "contact", "resume"];
 /** Cache-bust query for content fetches — mirrors window.__MENELIK_V__ from index.html */
 const ASSET_V =
-  (typeof window !== "undefined" && window.__MENELIK_V__) || "20260808x";
+  (typeof window !== "undefined" && window.__MENELIK_V__) || "20260808y";
 function withV(url) {
   const join = url.indexOf("?") >= 0 ? "&" : "?";
   return url + join + "v=" + encodeURIComponent(ASSET_V);

@@ -1904,7 +1904,7 @@ END:VCARD`;
       const swUrl =
         "./sw.js?v=" +
         encodeURIComponent(
-          (typeof window !== "undefined" && window.__MENELIK_V__) || "20260808x"
+          (typeof window !== "undefined" && window.__MENELIK_V__) || "20260808y"
         );
       navigator.serviceWorker
         .register(swUrl)
