@@ -607,7 +607,7 @@ const CONTENT = {
     iconClass: `resume-icon`,
     html: `
 <div class="resume-toolbar no-print">
-  <a class="resume-btn primary" href="resume.pdf" download="Menelik-Admasu-Resume.pdf">Download PDF</a>
+  <a class="resume-btn primary" href="/resume.pdf" download="Menelik-Admasu-Resume.pdf" data-resume-download>Download PDF</a>
   <button type="button" class="resume-btn" data-resume-print>Print / Save as PDF</button>
 </div>
 <article class="resume-doc" id="resume-printable">
@@ -8392,22 +8392,63 @@ document.addEventListener("click", (e) => {
 });
 
 /* ========== Resume print / PDF helpers ========== */
+const RESUME_PDF_URL = "/resume.pdf";
+const RESUME_PDF_FILENAME = "Menelik-Admasu-Resume.pdf";
+
 function printResume() {
   // Prefer printing the on-screen professional layout (Save as PDF in browser dialog)
   const doc = document.querySelector(".resume-doc");
   if (!doc) {
-    window.open("resume.pdf", "_blank", "noopener");
+    window.open(RESUME_PDF_URL, "_blank", "noopener");
     return;
   }
   // Ensure resume window content is in DOM for @media print rules
   window.print();
 }
 
+/** Reliable PDF download (works when <a download> is ignored or SW serves stale copy) */
+async function downloadResumePdf(ev) {
+  if (ev) {
+    ev.preventDefault();
+    ev.stopPropagation();
+  }
+  const url = RESUME_PDF_URL + "?t=" + Date.now(); // cache-bust
+  try {
+    const res = await fetch(url, { cache: "no-store", credentials: "same-origin" });
+    if (!res.ok) throw new Error("HTTP " + res.status);
+    const blob = await res.blob();
+    const pdfBlob =
+      blob.type === "application/pdf"
+        ? blob
+        : new Blob([blob], { type: "application/pdf" });
+    const objectUrl = URL.createObjectURL(pdfBlob);
+    const a = document.createElement("a");
+    a.href = objectUrl;
+    a.download = RESUME_PDF_FILENAME;
+    a.rel = "noopener";
+    a.style.display = "none";
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(() => {
+      URL.revokeObjectURL(objectUrl);
+      a.remove();
+    }, 1500);
+  } catch (err) {
+    console.warn("[resume] blob download failed, opening PDF", err);
+    window.open(RESUME_PDF_URL, "_blank", "noopener");
+  }
+}
+
 document.addEventListener("click", (e) => {
-  const btn = e.target.closest("[data-resume-print]");
-  if (btn) {
+  const printBtn = e.target.closest("[data-resume-print]");
+  if (printBtn) {
     e.preventDefault();
     printResume();
+    return;
+  }
+  const dl = e.target.closest("[data-resume-download], a[download][href*='resume.pdf']");
+  if (dl) {
+    downloadResumePdf(e);
   }
 });
 

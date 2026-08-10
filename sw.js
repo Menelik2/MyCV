@@ -5,7 +5,7 @@
  *  - Cache-first only for images / fonts / PDF (rarely change)
  *  - Bump CACHE name on every meaningful release so old shells are dropped
  */
-const CACHE = "menelik-os-v5";
+const CACHE = "menelik-os-v6";
 
 /** App shell used only as offline fallback */
 const PRECACHE = [
@@ -116,7 +116,13 @@ self.addEventListener("fetch", (event) => {
     return;
   }
 
-  // Images / fonts / PDF — cache-first is fine
+  // Resume PDF must stay fresh (network-first) so Download always gets the latest file
+  if (url.pathname.endsWith("/resume.pdf") || url.pathname === "/resume.pdf") {
+    event.respondWith(networkFirst(req));
+    return;
+  }
+
+  // Images / fonts / other PDFs — cache-first is fine
   if (CACHE_FIRST_EXT.test(url.pathname) || url.pathname.startsWith("/static/")) {
     event.respondWith(cacheFirst(req));
     return;

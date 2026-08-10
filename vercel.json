@@ -192,11 +192,15 @@
       "headers": [
         {
           "key": "Cache-Control",
-          "value": "public, max-age=86400, must-revalidate"
+          "value": "public, max-age=0, must-revalidate"
+        },
+        {
+          "key": "Content-Type",
+          "value": "application/pdf"
         },
         {
           "key": "Content-Disposition",
-          "value": "inline; filename=\"Menelik-Admasu-Resume.pdf\""
+          "value": "attachment; filename=\"Menelik-Admasu-Resume.pdf\""
         }
       ]
     }
