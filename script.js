@@ -9689,3 +9689,98 @@ initAdminUI();
     }
   } catch (_) {}
 })();
+
+/* Project SVG preview animations: run only while in viewport */
+(function initProjVisualInView() {
+  const SELECTOR = ".proj-visual";
+  const reduceMotion =
+    typeof window.matchMedia === "function" &&
+    window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  function markAllStatic() {
+    document.querySelectorAll(SELECTOR).forEach((el) => {
+      el.classList.remove("in-view");
+    });
+  }
+
+  function setup() {
+    const nodes = Array.from(document.querySelectorAll(SELECTOR));
+    if (!nodes.length) return;
+
+    if (reduceMotion || typeof IntersectionObserver !== "function") {
+      // No continuous animations when reduced motion or no IO support
+      if (!reduceMotion) {
+        nodes.forEach((el) => el.classList.add("in-view"));
+      }
+      return;
+    }
+
+    const io = new IntersectionObserver(
+      (entries) => {
+        for (let i = 0; i < entries.length; i++) {
+          const entry = entries[i];
+          if (entry.isIntersecting) {
+            entry.target.classList.add("in-view");
+          } else {
+            entry.target.classList.remove("in-view");
+          }
+        }
+      },
+      {
+        root: null,
+        // Start a bit before fully visible; stop soon after leaving
+        rootMargin: "40px 0px 40px 0px",
+        threshold: 0.15,
+      }
+    );
+
+    nodes.forEach((el) => io.observe(el));
+
+    // Pause all when tab is hidden (saves CPU/battery)
+    document.addEventListener("visibilitychange", () => {
+      if (document.hidden) {
+        markAllStatic();
+      } else {
+        // Re-evaluate: IO will fire again on observe — force check via unobserve/observe
+        nodes.forEach((el) => {
+          io.unobserve(el);
+          io.observe(el);
+        });
+      }
+    });
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", setup);
+  } else {
+    setup();
+  }
+
+  // Projects content may be injected later into windows — observe new nodes cheaply
+  const mo =
+    typeof MutationObserver === "function"
+      ? new MutationObserver(() => {
+          document.querySelectorAll(SELECTOR + ":not([data-io])").forEach((el) => {
+            el.setAttribute("data-io", "1");
+            if (reduceMotion) return;
+            if (typeof IntersectionObserver !== "function") {
+              el.classList.add("in-view");
+              return;
+            }
+            // Lazy path: one-shot observer for late nodes
+            const io2 = new IntersectionObserver(
+              (entries) => {
+                entries.forEach((entry) => {
+                  entry.target.classList.toggle("in-view", entry.isIntersecting);
+                });
+              },
+              { rootMargin: "40px 0px", threshold: 0.15 }
+            );
+            io2.observe(el);
+          });
+        })
+      : null;
+  if (mo) {
+    mo.observe(document.documentElement, { childList: true, subtree: true });
+  }
+})();

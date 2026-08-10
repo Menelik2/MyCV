@@ -40,7 +40,7 @@ DARK = HexColor("#0f172a")
 RULE = HexColor("#cbd5e1")
 
 PAGE = A4
-MARGIN = 15 * mm
+MARGIN = 11 * mm
 
 # --- Content (single source of truth for the PDF) ---
 RESUME = {
@@ -114,6 +114,7 @@ RESUME = {
         "<b>Other:</b> Web site design, video editing, Cybersecurity, communication, continuous learning",
     ],
     "projects": [
+        ("Yeni Pro CV", "yenicv.vercel.app", "Privacy-first ATS-friendly resume builder"),
         ("Yeni Movie", "yeni-movie.vercel.app", "Movie &amp; TV discovery web app"),
         ("Yeni Typing Learning", "yenityping.vercel.app", "Typing tutor (WPM &amp; accuracy)"),
         ("Yeni Exam", "yeniexams.vercel.app", "Exit exam practice generator"),
@@ -156,23 +157,24 @@ def _register_fonts():
 def build_styles():
     font, font_bold = _register_fonts()
     base = getSampleStyleSheet()
+    # Compact sizes so the full resume fits on a single A4 page
     specs = {
-        "RName": dict(fontName=font_bold, fontSize=20, textColor=DARK, spaceAfter=1.5 * mm, leading=24),
-        "RTag": dict(fontName=font, fontSize=9.5, textColor=ACCENT, spaceAfter=1 * mm, leading=12),
-        "RContact": dict(fontName=font, fontSize=9, textColor=MUTED, spaceAfter=2.5 * mm, leading=14),
+        "RName": dict(fontName=font_bold, fontSize=16, textColor=DARK, spaceAfter=0.8 * mm, leading=19),
+        "RTag": dict(fontName=font, fontSize=8.5, textColor=ACCENT, spaceAfter=0.6 * mm, leading=11),
+        "RContact": dict(fontName=font, fontSize=8, textColor=MUTED, spaceAfter=1.2 * mm, leading=11),
         "RH2": dict(
             fontName=font_bold,
-            fontSize=10.5,
+            fontSize=9.5,
             textColor=ACCENT,
-            spaceBefore=3 * mm,
-            spaceAfter=1.2 * mm,
-            leading=13,
+            spaceBefore=1.8 * mm,
+            spaceAfter=0.6 * mm,
+            leading=11,
         ),
-        "RBody": dict(fontName=font, fontSize=9, textColor=DARK, leading=11.5, spaceAfter=1.2 * mm),
-        "RJob": dict(fontName=font_bold, fontSize=9.5, textColor=DARK, leading=12, spaceBefore=1.2 * mm),
-        "RMeta": dict(fontName=font, fontSize=8, textColor=MUTED, leading=10, spaceAfter=0.6 * mm),
-        "RBullet": dict(fontName=font, fontSize=8.5, textColor=DARK, leading=11, leftIndent=8),
-        "RIconRow": dict(fontName=font, fontSize=9, textColor=MUTED, leading=15, spaceAfter=0.3*mm),
+        "RBody": dict(fontName=font, fontSize=8, textColor=DARK, leading=10, spaceAfter=0.6 * mm),
+        "RJob": dict(fontName=font_bold, fontSize=8.5, textColor=DARK, leading=10.5, spaceBefore=0.6 * mm),
+        "RMeta": dict(fontName=font, fontSize=7.5, textColor=MUTED, leading=9, spaceAfter=0.3 * mm),
+        "RBullet": dict(fontName=font, fontSize=7.5, textColor=DARK, leading=9.5, leftIndent=7, spaceAfter=0.2 * mm),
+        "RIconRow": dict(fontName=font, fontSize=8, textColor=MUTED, leading=11, spaceAfter=0.2 * mm),
     }
     for name, kw in specs.items():
         if name not in base.byName:
@@ -181,7 +183,7 @@ def build_styles():
 
 
 def section_rule():
-    return HRFlowable(width="100%", thickness=0.6, color=RULE, spaceBefore=0.5 * mm, spaceAfter=1 * mm)
+    return HRFlowable(width="100%", thickness=0.5, color=RULE, spaceBefore=0.2 * mm, spaceAfter=0.5 * mm)
 
 
 def header_block(styles, data: dict):
@@ -209,7 +211,7 @@ def header_block(styles, data: dict):
         Paragraph(data["name"], styles["RName"]),
         Paragraph(data["tagline"], styles["RTag"]),
         Paragraph(contact_bits, styles["RContact"]),
-        HRFlowable(width="100%", thickness=1.4, color=ACCENT, spaceAfter=2 * mm),
+        HRFlowable(width="100%", thickness=1.2, color=ACCENT, spaceAfter=1 * mm),
     ]
 
 
@@ -246,7 +248,7 @@ def build_story(styles, data: dict):
     for job in data["experience"]:
         story.append(job_block(styles, job))
     if data.get("experience_note"):
-        story.append(Spacer(1, 1 * mm))
+        story.append(Spacer(1, 0.4 * mm))
         story.append(Paragraph(f"<b>{data['experience_note']}</b>", styles["RBody"]))
 
     story.append(Paragraph("Education", styles["RH2"]))
