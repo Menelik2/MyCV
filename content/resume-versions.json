@@ -1,0 +1,18 @@
+{
+  "current": "1.0.0",
+  "updated": "2026-08-10",
+  "slug": "Menelik-Admasu-Resume",
+  "pdf": "/resume.pdf",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "date": "2026-08-10",
+      "label": "Resume v1.0.0",
+      "changes": [
+        "Generated resume PDF v1.0.0"
+      ],
+      "file": "/static/resume-versions/Menelik-Admasu-Resume-v1.0.0.pdf",
+      "downloadName": "Menelik-Admasu-Resume-v1.0.0.pdf"
+    }
+  ]
+}
