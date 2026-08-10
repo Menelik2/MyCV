@@ -128,19 +128,29 @@ RESUME = {
 
 
 def _register_fonts():
-    """Prefer DejaVu for Unicode contact symbols (envelope, phone, etc.)."""
+    """Prefer monospace (DejaVu Sans Mono) for a clean terminal-style resume."""
     candidates = [
-        Path("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf"),
-        Path("/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf"),
+        (
+            Path("/usr/share/fonts/truetype/dejavu/DejaVuSansMono.ttf"),
+            Path("/usr/share/fonts/truetype/dejavu/DejaVuSansMono-Bold.ttf"),
+        ),
+        (
+            Path("/usr/share/fonts/SlidesCarnival/google/JetBrains Mono/static/JetBrainsMono-Regular.ttf"),
+            Path("/usr/share/fonts/SlidesCarnival/google/JetBrains Mono/static/JetBrainsMono-Bold.ttf"),
+        ),
+        (
+            Path("/usr/share/fonts/SlidesCarnival/google/Roboto Mono/static/RobotoMono-Regular.ttf"),
+            Path("/usr/share/fonts/SlidesCarnival/google/Roboto Mono/static/RobotoMono-Bold.ttf"),
+        ),
     ]
-    regular = candidates[0] if candidates[0].exists() else None
-    bold = candidates[1] if candidates[1].exists() else regular
-    if regular:
-        pdfmetrics.registerFont(TTFont("DejaVu", str(regular)))
-        if bold:
-            pdfmetrics.registerFont(TTFont("DejaVu-Bold", str(bold)))
-        return "DejaVu", "DejaVu-Bold"
-    return "Helvetica", "Helvetica-Bold"
+    for regular, bold in candidates:
+        if regular.exists():
+            pdfmetrics.registerFont(TTFont("ResumeMono", str(regular)))
+            bold_path = bold if bold.exists() else regular
+            pdfmetrics.registerFont(TTFont("ResumeMono-Bold", str(bold_path)))
+            return "ResumeMono", "ResumeMono-Bold"
+    # Built-in Courier is monospace but limited Unicode
+    return "Courier", "Courier-Bold"
 
 
 def build_styles():

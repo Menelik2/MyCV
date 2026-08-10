@@ -3485,6 +3485,34 @@ body:not(.light) .proj-visual {
   border-radius: 10px;
 }
 
+
+/* Real site screenshot previews */
+.proj-screenshot {
+  height: auto;
+  min-height: 0;
+  padding: 0;
+  background: #0f172a;
+}
+.proj-screenshot picture,
+.proj-screenshot .proj-shot {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: 160px;
+  object-fit: cover;
+  object-position: top center;
+  vertical-align: top;
+}
+.proj-screenshot .proj-shot {
+  border-radius: 0;
+}
+.mobile-card .proj-screenshot .proj-shot {
+  max-height: 140px;
+}
+body:not(.light) .proj-screenshot {
+  background: #0f172a;
+}
+
 /* ========== Project SVG preview animations ========== */
 /* Marker: proj-svg-anims */
 
@@ -3870,7 +3898,7 @@ body:not(.light) .resume-btn.primary {
 }
 
 .resume-doc {
-  font-family: "Segoe UI", Tahoma, Georgia, serif;
+  font-family: "DejaVu Sans Mono", "JetBrains Mono", "Roboto Mono", "Cascadia Mono", "Consolas", "Courier New", monospace;
   color: #1a202c;
   line-height: 1.45;
   max-width: 720px;
