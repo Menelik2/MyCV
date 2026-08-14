@@ -7,9 +7,9 @@
     {
       "version": "1.0.0",
       "date": "2026-08-10",
-      "label": "Resume v1.0.0",
+      "label": "Release 1.0.0",
       "changes": [
-        "Generated resume PDF v1.0.0"
+        "Initial one-page mono A4 resume"
       ],
       "file": "/static/resume-versions/Menelik-Admasu-Resume-v1.0.0.pdf",
       "downloadName": "Menelik-Admasu-Resume-v1.0.0.pdf"
