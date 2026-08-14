@@ -2130,7 +2130,6 @@ function buildSudoku() {
   wrap.className = "sudoku-app";
   wrap.tabIndex = 0;
 
-  // Target clue counts by difficulty
   const DIFFS = { easy: 38, medium: 30, hard: 24 };
   let solution = Array(81).fill(0);
   let given = Array(81).fill(0);
@@ -2169,7 +2168,112 @@ function buildSudoku() {
     return true;
   }
 
-  /** Fill board with a random complete valid grid */
+  /**
+   * Sudoku solver — bitmasked backtracking with MRV (minimum remaining values).
+   * Uses row/col/box bitsets for O(1) constraint checks.
+   * Returns true if a solution is written into `b` in-place.
+   */
+  function solveBoard(b) {
+    const rows = new Uint16Array(9);
+    const cols = new Uint16Array(9);
+    const boxes = new Uint16Array(9);
+    const empties = [];
+
+    for (let i = 0; i < 81; i++) {
+      const v = b[i];
+      if (!v) {
+        empties.push(i);
+        continue;
+      }
+      const bit = 1 << v;
+      const [r, c] = rc(i);
+      const box = Math.floor(r / 3) * 3 + Math.floor(c / 3);
+      if (rows[r] & bit || cols[c] & bit || boxes[box] & bit) {
+        return false; // inconsistent input
+      }
+      rows[r] |= bit;
+      cols[c] |= bit;
+      boxes[box] |= bit;
+    }
+
+    function candidates(i) {
+      const [r, c] = rc(i);
+      const box = Math.floor(r / 3) * 3 + Math.floor(c / 3);
+      const used = rows[r] | cols[c] | boxes[box];
+      const out = [];
+      for (let v = 1; v <= 9; v++) {
+        if (!(used & (1 << v))) out.push(v);
+      }
+      return out;
+    }
+
+    function dfs() {
+      if (!empties.length) return true;
+
+      // MRV: pick empty cell with fewest candidates
+      let best = 0;
+      let bestOpts = null;
+      for (let e = 0; e < empties.length; e++) {
+        const opts = candidates(empties[e]);
+        if (!opts.length) return false;
+        if (!bestOpts || opts.length < bestOpts.length) {
+          best = e;
+          bestOpts = opts;
+          if (opts.length === 1) break;
+        }
+      }
+
+      const i = empties[best];
+      empties[best] = empties[empties.length - 1];
+      empties.pop();
+
+      const [r, c] = rc(i);
+      const box = Math.floor(r / 3) * 3 + Math.floor(c / 3);
+
+      for (const v of bestOpts) {
+        const bit = 1 << v;
+        b[i] = v;
+        rows[r] |= bit;
+        cols[c] |= bit;
+        boxes[box] |= bit;
+        if (dfs()) return true;
+        rows[r] &= ~bit;
+        cols[c] &= ~bit;
+        boxes[box] &= ~bit;
+        b[i] = 0;
+      }
+
+      empties.push(i);
+      return false;
+    }
+
+    return dfs();
+  }
+
+  /** Count solutions up to `limit` (for uniqueness while generating). */
+  function countSolutions(b, limit = 2) {
+    let count = 0;
+    const work = b.slice();
+
+    function dfs() {
+      if (count >= limit) return;
+      const i = work.indexOf(0);
+      if (i < 0) {
+        count++;
+        return;
+      }
+      for (let v = 1; v <= 9; v++) {
+        if (!isValid(work, i, v)) continue;
+        work[i] = v;
+        dfs();
+        work[i] = 0;
+        if (count >= limit) return;
+      }
+    }
+    dfs();
+    return count;
+  }
+
   function fillGrid(b) {
     const i = b.indexOf(0);
     if (i < 0) return true;
@@ -2180,28 +2284,6 @@ function buildSudoku() {
       b[i] = 0;
     }
     return false;
-  }
-
-  /** Count solutions up to limit (2 is enough for uniqueness) */
-  function countSolutions(b, limit = 2) {
-    let count = 0;
-    function dfs() {
-      if (count >= limit) return;
-      const i = b.indexOf(0);
-      if (i < 0) {
-        count++;
-        return;
-      }
-      for (let v = 1; v <= 9; v++) {
-        if (!isValid(b, i, v)) continue;
-        b[i] = v;
-        dfs();
-        b[i] = 0;
-        if (count >= limit) return;
-      }
-    }
-    dfs();
-    return count;
   }
 
   function stopTimer() {
@@ -2242,7 +2324,6 @@ function buildSudoku() {
       const bak = puzzle[i];
       puzzle[i] = 0;
       const trial = puzzle.slice();
-      // Keep cell if removing it creates multiple solutions
       if (countSolutions(trial, 2) !== 1) {
         puzzle[i] = bak;
       }
@@ -2283,6 +2364,42 @@ function buildSudoku() {
     return true;
   }
 
+  /** Run solver on a copy of the current board (user digits kept). */
+  function runSolver() {
+    const work = board.slice();
+    // Reject boards that already violate Sudoku rules
+    for (let i = 0; i < 81; i++) {
+      if (!work[i]) continue;
+      const v = work[i];
+      work[i] = 0;
+      if (!isValid(work, i, v)) {
+        work[i] = v;
+        setStatus("Cannot solve — board has conflicts. Fix red cells first.");
+        render();
+        return;
+      }
+      work[i] = v;
+    }
+
+    const t0 = performance.now();
+    const ok = solveBoard(work);
+    const ms = Math.round(performance.now() - t0);
+
+    if (!ok) {
+      setStatus("No solution for this board (" + ms + " ms).");
+      return;
+    }
+
+    for (let i = 0; i < 81; i++) {
+      board[i] = work[i];
+      noteMap[i].clear();
+    }
+    solution = work.slice();
+    stopTimer();
+    render();
+    setStatus("Solved by algorithm in " + ms + " ms.");
+  }
+
   wrap.innerHTML =
     '<div class="sdk-toolbar">' +
     '  <span class="sdk-timer" title="Time">00:00</span>' +
@@ -2294,6 +2411,7 @@ function buildSudoku() {
     '    </select>' +
     '  </label>' +
     '  <button type="button" class="sdk-btn sdk-new" title="New puzzle">New</button>' +
+    '  <button type="button" class="sdk-btn sdk-solve" title="Solve with algorithm">Solve</button>' +
     '  <button type="button" class="sdk-btn sdk-hint" title="Reveal one cell">Hint</button>' +
     '  <button type="button" class="sdk-btn sdk-check" title="Check conflicts">Check</button>' +
     '  <button type="button" class="sdk-btn sdk-notes" title="Pencil notes">Notes</button>' +
@@ -2396,19 +2514,20 @@ function buildSudoku() {
   }
 
   function hint() {
-    // Reveal one empty cell from the solution
     const empties = [];
-    for (let i = 0; i < 81; i++) {
-      if (!board[i]) empties.push(i);
-    }
+    for (let i = 0; i < 81; i++) if (!board[i]) empties.push(i);
     if (!empties.length) {
       setStatus("Board is full.");
       return;
     }
+    // Prefer live solver result over stored solution if user changed cells
+    const work = board.slice();
+    if (solveBoard(work)) {
+      solution = work.slice();
+    }
     const i = empties[Math.floor(Math.random() * empties.length)];
-    board[i] = solution[i];
+    board[i] = solution[i] || work[i];
     noteMap[i].clear();
-    // Treat as user entry (not given) so it can still be erased
     selected = i;
     if (!started) {
       started = true;
@@ -2424,6 +2543,7 @@ function buildSudoku() {
   }
 
   wrap.querySelector(".sdk-new").addEventListener("click", generate);
+  wrap.querySelector(".sdk-solve").addEventListener("click", runSolver);
   wrap.querySelector(".sdk-hint").addEventListener("click", hint);
   wrap.querySelector(".sdk-check").addEventListener("click", () => {
     let bad = 0;
@@ -2470,6 +2590,9 @@ function buildSudoku() {
       e.preventDefault();
     } else if (e.key === "n" || e.key === "N") {
       wrap.querySelector(".sdk-notes").click();
+      e.preventDefault();
+    } else if (e.key === "s" && (e.ctrlKey || e.metaKey)) {
+      runSolver();
       e.preventDefault();
     }
   });
