@@ -2130,7 +2130,17 @@ function buildSudoku() {
   wrap.className = "sudoku-app";
   wrap.tabIndex = 0;
 
-  const DIFFS = { easy: 38, medium: 30, hard: 24 };
+  // Clue targets by level (lower = harder). More levels = more games.
+  const LEVELS = [
+    { id: "beginner", label: "Beginner", clues: 42, games: 10 },
+    { id: "easy", label: "Easy", clues: 38, games: 10 },
+    { id: "medium", label: "Medium", clues: 30, games: 10 },
+    { id: "hard", label: "Hard", clues: 26, games: 10 },
+    { id: "expert", label: "Expert", clues: 22, games: 8 },
+    { id: "extreme", label: "Extreme", clues: 18, games: 6 },
+  ];
+  const STORAGE_KEY = "menelik-sudoku-progress";
+
   let solution = Array(81).fill(0);
   let given = Array(81).fill(0);
   let board = Array(81).fill(0);
@@ -2138,17 +2148,60 @@ function buildSudoku() {
   let notesOn = false;
   let noteMap = Array.from({ length: 81 }, () => new Set());
   let difficulty = "medium";
+  let gameNo = 1;
   let timer = 0;
   let timerId = null;
   let started = false;
+  let seed = 1;
 
   const idx = (r, c) => r * 9 + c;
   const rc = (i) => [Math.floor(i / 9), i % 9];
 
-  function shuffle(a) {
+  function levelMeta(id) {
+    return LEVELS.find((l) => l.id === id) || LEVELS[2];
+  }
+
+  function loadProgress() {
+    try {
+      return JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}") || {};
+    } catch (_) {
+      return {};
+    }
+  }
+
+  function saveProgress(patch) {
+    const cur = loadProgress();
+    Object.assign(cur, patch);
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(cur));
+    } catch (_) {}
+  }
+
+  /** Seeded PRNG (mulberry32) so each level+game is a stable puzzle */
+  function mulberry32(a) {
+    return function () {
+      let t = (a += 0x6d2b79f5);
+      t = Math.imul(t ^ (t >>> 15), t | 1);
+      t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
+  }
+
+  function makeSeed(levelId, g) {
+    let h = 2166136261;
+    const s = levelId + "#" + g;
+    for (let i = 0; i < s.length; i++) {
+      h ^= s.charCodeAt(i);
+      h = Math.imul(h, 16777619);
+    }
+    return h >>> 0;
+  }
+
+  function shuffle(a, rnd) {
     const arr = a.slice();
+    const r = rnd || Math.random;
     for (let i = arr.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
+      const j = Math.floor(r() * (i + 1));
       [arr[i], arr[j]] = [arr[j], arr[i]];
     }
     return arr;
@@ -2168,17 +2221,11 @@ function buildSudoku() {
     return true;
   }
 
-  /**
-   * Sudoku solver — bitmasked backtracking with MRV (minimum remaining values).
-   * Uses row/col/box bitsets for O(1) constraint checks.
-   * Returns true if a solution is written into `b` in-place.
-   */
   function solveBoard(b) {
     const rows = new Uint16Array(9);
     const cols = new Uint16Array(9);
     const boxes = new Uint16Array(9);
     const empties = [];
-
     for (let i = 0; i < 81; i++) {
       const v = b[i];
       if (!v) {
@@ -2188,29 +2235,21 @@ function buildSudoku() {
       const bit = 1 << v;
       const [r, c] = rc(i);
       const box = Math.floor(r / 3) * 3 + Math.floor(c / 3);
-      if (rows[r] & bit || cols[c] & bit || boxes[box] & bit) {
-        return false; // inconsistent input
-      }
+      if (rows[r] & bit || cols[c] & bit || boxes[box] & bit) return false;
       rows[r] |= bit;
       cols[c] |= bit;
       boxes[box] |= bit;
     }
-
     function candidates(i) {
       const [r, c] = rc(i);
       const box = Math.floor(r / 3) * 3 + Math.floor(c / 3);
       const used = rows[r] | cols[c] | boxes[box];
       const out = [];
-      for (let v = 1; v <= 9; v++) {
-        if (!(used & (1 << v))) out.push(v);
-      }
+      for (let v = 1; v <= 9; v++) if (!(used & (1 << v))) out.push(v);
       return out;
     }
-
     function dfs() {
       if (!empties.length) return true;
-
-      // MRV: pick empty cell with fewest candidates
       let best = 0;
       let bestOpts = null;
       for (let e = 0; e < empties.length; e++) {
@@ -2222,14 +2261,11 @@ function buildSudoku() {
           if (opts.length === 1) break;
         }
       }
-
       const i = empties[best];
       empties[best] = empties[empties.length - 1];
       empties.pop();
-
       const [r, c] = rc(i);
       const box = Math.floor(r / 3) * 3 + Math.floor(c / 3);
-
       for (const v of bestOpts) {
         const bit = 1 << v;
         b[i] = v;
@@ -2242,19 +2278,15 @@ function buildSudoku() {
         boxes[box] &= ~bit;
         b[i] = 0;
       }
-
       empties.push(i);
       return false;
     }
-
     return dfs();
   }
 
-  /** Count solutions up to `limit` (for uniqueness while generating). */
   function countSolutions(b, limit = 2) {
     let count = 0;
     const work = b.slice();
-
     function dfs() {
       if (count >= limit) return;
       const i = work.indexOf(0);
@@ -2274,13 +2306,13 @@ function buildSudoku() {
     return count;
   }
 
-  function fillGrid(b) {
+  function fillGrid(b, rnd) {
     const i = b.indexOf(0);
     if (i < 0) return true;
-    for (const v of shuffle([1, 2, 3, 4, 5, 6, 7, 8, 9])) {
+    for (const v of shuffle([1, 2, 3, 4, 5, 6, 7, 8, 9], rnd)) {
       if (!isValid(b, i, v)) continue;
       b[i] = v;
-      if (fillGrid(b)) return true;
+      if (fillGrid(b, rnd)) return true;
       b[i] = 0;
     }
     return false;
@@ -2308,16 +2340,42 @@ function buildSudoku() {
     return String(m).padStart(2, "0") + ":" + String(sec).padStart(2, "0");
   }
 
+  function refreshGameSelect() {
+    const meta = levelMeta(difficulty);
+    const sel = wrap.querySelector(".sdk-game");
+    if (!sel) return;
+    const prev = gameNo;
+    sel.innerHTML = "";
+    for (let g = 1; g <= meta.games; g++) {
+      const opt = document.createElement("option");
+      opt.value = String(g);
+      const prog = loadProgress();
+      const key = difficulty + "-" + g;
+      const best = prog[key];
+      opt.textContent = best
+        ? "Game " + g + " ★ " + formatTime(best)
+        : "Game " + g;
+      sel.appendChild(opt);
+    }
+    gameNo = Math.min(Math.max(1, prev), meta.games);
+    sel.value = String(gameNo);
+  }
+
   function generate() {
     stopTimer();
     timer = 0;
     started = false;
+    const meta = levelMeta(difficulty);
+    gameNo = Math.min(Math.max(1, gameNo), meta.games);
+    seed = makeSeed(difficulty, gameNo);
+    const rnd = mulberry32(seed);
+
     const full = Array(81).fill(0);
-    fillGrid(full);
+    fillGrid(full, rnd);
     solution = full.slice();
     const puzzle = full.slice();
-    const order = shuffle([...Array(81).keys()]);
-    const target = DIFFS[difficulty] || 30;
+    const order = shuffle([...Array(81).keys()], rnd);
+    const target = meta.clues;
 
     for (const i of order) {
       if (puzzle.filter((x) => x > 0).length <= target) break;
@@ -2336,7 +2394,9 @@ function buildSudoku() {
     const tEl = wrap.querySelector(".sdk-timer");
     if (tEl) tEl.textContent = "00:00";
     render();
-    setStatus("New " + difficulty + " puzzle — click a cell, then use 1–9.");
+    setStatus(
+      meta.label + " · Game " + gameNo + "/" + meta.games + " — click a cell, then 1–9."
+    );
   }
 
   function conflicts(i) {
@@ -2364,10 +2424,24 @@ function buildSudoku() {
     return true;
   }
 
-  /** Run solver on a copy of the current board (user digits kept). */
+  function onSolved() {
+    stopTimer();
+    const key = difficulty + "-" + gameNo;
+    const prog = loadProgress();
+    const prev = prog[key];
+    if (!prev || timer < prev) {
+      prog[key] = timer;
+      saveProgress(prog);
+    }
+    refreshGameSelect();
+    const meta = levelMeta(difficulty);
+    setStatus(
+      "Solved " + meta.label + " Game " + gameNo + " in " + formatTime(timer) + "!"
+    );
+  }
+
   function runSolver() {
     const work = board.slice();
-    // Reject boards that already violate Sudoku rules
     for (let i = 0; i < 81; i++) {
       if (!work[i]) continue;
       const v = work[i];
@@ -2380,16 +2454,13 @@ function buildSudoku() {
       }
       work[i] = v;
     }
-
     const t0 = performance.now();
     const ok = solveBoard(work);
     const ms = Math.round(performance.now() - t0);
-
     if (!ok) {
       setStatus("No solution for this board (" + ms + " ms).");
       return;
     }
-
     for (let i = 0; i < 81; i++) {
       board[i] = work[i];
       noteMap[i].clear();
@@ -2400,23 +2471,38 @@ function buildSudoku() {
     setStatus("Solved by algorithm in " + ms + " ms.");
   }
 
+  const levelOpts = LEVELS.map(
+    (l) =>
+      '<option value="' +
+      l.id +
+      '"' +
+      (l.id === "medium" ? " selected" : "") +
+      ">" +
+      l.label +
+      " (" +
+      l.games +
+      ")</option>"
+  ).join("");
+
   wrap.innerHTML =
     '<div class="sdk-toolbar">' +
     '  <span class="sdk-timer" title="Time">00:00</span>' +
     '  <label class="sdk-diff">Level ' +
     '    <select class="sdk-level">' +
-    '      <option value="easy">Easy</option>' +
-    '      <option value="medium" selected>Medium</option>' +
-    '      <option value="hard">Hard</option>' +
-    '    </select>' +
-    '  </label>' +
-    '  <button type="button" class="sdk-btn sdk-new" title="New puzzle">New</button>' +
+    levelOpts +
+    "    </select>" +
+    "  </label>" +
+    '  <label class="sdk-diff">Game ' +
+    '    <select class="sdk-game"></select>' +
+    "  </label>" +
+    '  <button type="button" class="sdk-btn sdk-new" title="Regenerate this game">New</button>' +
+    '  <button type="button" class="sdk-btn sdk-next" title="Next game">Next</button>' +
     '  <button type="button" class="sdk-btn sdk-solve" title="Solve with algorithm">Solve</button>' +
     '  <button type="button" class="sdk-btn sdk-hint" title="Reveal one cell">Hint</button>' +
     '  <button type="button" class="sdk-btn sdk-check" title="Check conflicts">Check</button>' +
     '  <button type="button" class="sdk-btn sdk-notes" title="Pencil notes">Notes</button>' +
     '  <button type="button" class="sdk-btn sdk-erase" title="Clear cell">Erase</button>' +
-    '</div>' +
+    "</div>" +
     '<div class="sdk-board" role="grid" aria-label="Sudoku board"></div>' +
     '<div class="sdk-pad" role="group" aria-label="Number pad"></div>' +
     '<div class="sdk-status"></div>';
@@ -2425,6 +2511,7 @@ function buildSudoku() {
   const padEl = wrap.querySelector(".sdk-pad");
   const statusEl = wrap.querySelector(".sdk-status");
   const levelEl = wrap.querySelector(".sdk-level");
+  const gameEl = wrap.querySelector(".sdk-game");
 
   function setStatus(t) {
     statusEl.textContent = t;
@@ -2500,10 +2587,7 @@ function buildSudoku() {
       noteMap[selected].clear();
     }
     render();
-    if (isComplete()) {
-      stopTimer();
-      setStatus("Solved in " + formatTime(timer) + " — great work!");
-    }
+    if (isComplete()) onSolved();
   }
 
   function erase() {
@@ -2520,11 +2604,8 @@ function buildSudoku() {
       setStatus("Board is full.");
       return;
     }
-    // Prefer live solver result over stored solution if user changed cells
     const work = board.slice();
-    if (solveBoard(work)) {
-      solution = work.slice();
-    }
+    if (solveBoard(work)) solution = work.slice();
     const i = empties[Math.floor(Math.random() * empties.length)];
     board[i] = solution[i] || work[i];
     noteMap[i].clear();
@@ -2534,24 +2615,26 @@ function buildSudoku() {
       startTimer();
     }
     render();
-    if (isComplete()) {
-      stopTimer();
-      setStatus("Solved in " + formatTime(timer) + " — great work!");
-    } else {
-      setStatus("Hint placed.");
-    }
+    if (isComplete()) onSolved();
+    else setStatus("Hint placed.");
+  }
+
+  function nextGame() {
+    const meta = levelMeta(difficulty);
+    gameNo = gameNo >= meta.games ? 1 : gameNo + 1;
+    gameEl.value = String(gameNo);
+    generate();
   }
 
   wrap.querySelector(".sdk-new").addEventListener("click", generate);
+  wrap.querySelector(".sdk-next").addEventListener("click", nextGame);
   wrap.querySelector(".sdk-solve").addEventListener("click", runSolver);
   wrap.querySelector(".sdk-hint").addEventListener("click", hint);
   wrap.querySelector(".sdk-check").addEventListener("click", () => {
     let bad = 0;
     for (let i = 0; i < 81; i++) if (board[i] && conflicts(i)) bad++;
-    if (isComplete()) {
-      stopTimer();
-      setStatus("Solved in " + formatTime(timer) + " — great work!");
-    } else if (bad) setStatus(bad + " conflict(s) marked in red.");
+    if (isComplete()) onSolved();
+    else if (bad) setStatus(bad + " conflict(s) marked in red.");
     else setStatus("No conflicts — keep going.");
     render();
   });
@@ -2561,8 +2644,16 @@ function buildSudoku() {
     setStatus(notesOn ? "Notes on — tap numbers to pencil." : "Notes off.");
   });
   wrap.querySelector(".sdk-erase").addEventListener("click", erase);
+
   levelEl.addEventListener("change", () => {
     difficulty = levelEl.value;
+    gameNo = 1;
+    refreshGameSelect();
+    generate();
+  });
+  gameEl.addEventListener("change", () => {
+    gameNo = parseInt(gameEl.value, 10) || 1;
+    generate();
   });
 
   wrap.addEventListener("keydown", (e) => {
@@ -2598,6 +2689,8 @@ function buildSudoku() {
   });
 
   difficulty = "medium";
+  gameNo = 1;
+  refreshGameSelect();
   generate();
   return wrap;
 }
