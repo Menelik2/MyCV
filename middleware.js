@@ -1,5 +1,5 @@
 /**
- * Vercel Edge Middleware — https://menelikcv.vercel.app
+ * Vercel Edge Middleware — https://menelik.webhop.me
  *
  * Performance:
  *  - Invoked only on HTML shells (/, /index.html, /admin*)

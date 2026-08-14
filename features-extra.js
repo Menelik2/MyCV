@@ -60,7 +60,7 @@
       problem: "Typing practice tools are often distracting or hard to measure.",
       approach: "Focused tutor with live WPM/accuracy and timed sessions.",
       stack: "HTML, CSS, JavaScript, Vercel",
-      outcome: "Live at yenityping.vercel.app — clear metrics, minimal UI.",
+      outcome: "Live at fidel.is-local.dev — clear metrics, minimal UI.",
     },
     "yeni-exam": {
       problem: "Exit exam prep needs quick, topic-focused practice exams.",
@@ -202,10 +202,10 @@
           <h4>Live projects</h4>
           <ul class="ie-links">
             <li><a href="#" data-nav="https://yeni-movie.vercel.app">Yeni Movie</a></li>
-            <li><a href="#" data-nav="https://yenityping.vercel.app">Yeni Typing</a></li>
+            <li><a href="#" data-nav="https://fidel.is-local.dev">Yeni Typing</a></li>
             <li><a href="#" data-nav="https://yeniexams.vercel.app/">Yeni Exam</a></li>
             <li><a href="#" data-nav="https://github.com/Menelik2">GitHub — Menelik2</a></li>
-            <li><a href="#" data-nav="https://menelikcv.vercel.app">This portfolio online</a></li>
+            <li><a href="#" data-nav="https://menelik.webhop.me">This portfolio online</a></li>
           </ul>
           <p class="muted">Tip: you can type <code>menelik://about</code> in the address bar and press Enter.</p>
         </div>`,
@@ -926,9 +926,9 @@
       setNav("links");
       const places = [
         { href: "https://github.com/Menelik2", title: "GitHub", sub: "@Menelik2", icon: "⌥", tone: "gh" },
-        { href: "https://menelikcv.vercel.app", title: "This portfolio", sub: "menelikcv.vercel.app", icon: "🖥", tone: "site" },
+        { href: "https://menelik.webhop.me", title: "This portfolio", sub: "menelik.webhop.me", icon: "🖥", tone: "site" },
         { href: "https://yeni-movie.vercel.app", title: "Yeni Movie", sub: "Live demo", icon: "🎬", tone: "movie" },
-        { href: "https://yenityping.vercel.app", title: "Yeni Typing", sub: "Live demo", icon: "⌨️", tone: "type" },
+        { href: "https://fidel.is-local.dev", title: "Yeni Typing", sub: "Live demo", icon: "⌨️", tone: "type" },
         { href: "https://yeniexams.vercel.app/", title: "Yeni Exam", sub: "Exit exam generator", icon: "📝", tone: "site" },
         { href: "https://www.linkedin.com/in/menelikadmasu", title: "LinkedIn", sub: "menelikadmasu", icon: "in", tone: "in" },
         { href: "mailto:linuxos777@gmail.com", title: "Email", sub: "linuxos777@gmail.com", icon: "✉", tone: "mail" },
@@ -1108,7 +1108,7 @@
 VERSION:3.0
 FN:Menelik Admasu
 EMAIL:linuxos777@gmail.com
-URL:https://menelikcv.vercel.app
+URL:https://menelik.webhop.me
 URL:https://github.com/Menelik2
 ADR:;;Bahir Dar;;;Ethiopia
 NOTE:Computer Administrator · Hardware & Networking · Computer Administrator

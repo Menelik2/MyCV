@@ -1,6 +1,6 @@
 # Deploy to Vercel — Menelik Portfolio
 
-**Reference live site:** https://menelikcv.vercel.app
+**Reference live site:** https://menelik.webhop.me
 
 This is a **static site** (`index.html` + assets). `vercel.json` already sets install/build/output so deploys are fast.
 
@@ -147,10 +147,10 @@ vercel --prod
 
 ### GitHub OAuth App URLs
 
-Use your real production host (example: `menelikcv.vercel.app`):
+Use your real production host (example: `menelik.webhop.me`):
 
-- **Homepage URL:** `https://menelikcv.vercel.app`  
-- **Authorization callback URL:** `https://menelikcv.vercel.app/api/callback`  
+- **Homepage URL:** `https://menelik.webhop.me`  
+- **Authorization callback URL:** `https://menelik.webhop.me/api/callback`  
 
 If the callback URL does not match exactly, `/admin/` login will fail.
 

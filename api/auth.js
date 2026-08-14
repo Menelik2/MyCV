@@ -20,7 +20,7 @@ module.exports = (req, res) => {
     return;
   }
 
-  const host = req.headers["x-forwarded-host"] || req.headers.host || "menelikcv.vercel.app";
+  const host = req.headers["x-forwarded-host"] || req.headers.host || "menelik.webhop.me";
   const proto = (req.headers["x-forwarded-proto"] || "https").split(",")[0].trim();
   const redirectUri =
     process.env.OAUTH_REDIRECT_URI || `${proto}://${host}/api/callback`;

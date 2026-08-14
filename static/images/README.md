@@ -1,6 +1,6 @@
 # Media library
 
-Images managed by Decap CMS for https://menelikcv.vercel.app
+Images managed by Decap CMS for https://menelik.webhop.me
 
 | Path | URL on site |
 |------|-------------|

@@ -59,7 +59,7 @@ RESUME = {
     "education_line": "Bahir Dar University (2022 – 2026, completed)",
     "emails": ["linuxos777@gmail.com"],
     "phones": ["+251 918 006 053", "+251 977 832 379"],
-    "links": ["menelikcv.vercel.app"],
+    "links": ["menelik.webhop.me"],
     "summary": (
         "Full-stack app developer and Computer Science graduate (BSc, Bahir Dar University, 2022–2026). "
         "I build complete applications — from user interfaces to back-end logic, APIs, and deployment. "
@@ -123,11 +123,12 @@ RESUME = {
         "<b>Other:</b> Web site design, video editing, Cybersecurity, communication, continuous learning",
     ],
     "projects": [
-        ("Yeni Pro CV", "yenicv.vercel.app", "Privacy-first ATS-friendly resume builder"),
-        ("Yeni Movie", "yeni-movie.vercel.app", "Movie &amp; TV discovery web app"),
-        ("Yeni Typing Learning", "yenityping.vercel.app", "Typing tutor (WPM &amp; accuracy)"),
+        ("Yeni Pro CV", "procv.is-cool.dev", "Privacy-first ATS-friendly resume builder"),
+        ("Sudoku Game", "menelik.webhop.me", "In-browser 9×9 Sudoku with notes and difficulties"),
+        ("Yeni Movie", "yeni-movie.vercel.app", "Movies &amp; TV discovery with trailers and ratings"),
+        ("Yeni Typing Learning", "fidel.is-local.dev", "Typing tutor (WPM &amp; accuracy)"),
         ("Yeni Exam", "yeniexams.vercel.app", "Exit exam practice generator"),
-        ("Windows XP Portfolio", "menelikcv.vercel.app", "Interactive OS-style portfolio"),
+        ("Windows XP Portfolio", "menelik.webhop.me", "Interactive OS-style portfolio"),
     ],
     "volunteer": "Technology training for the community and organizations.",
     "languages": (

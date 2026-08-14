@@ -2,7 +2,7 @@
 
 Interactive personal portfolio styled as **Windows XP** (desktop) and **iPhone Pro Max** (mobile).
 
-**Live site:** [https://menelikcv.vercel.app](https://menelikcv.vercel.app)
+**Live site:** [https://menelik.webhop.me](https://menelik.webhop.me)
 
 ---
 
@@ -42,7 +42,7 @@ Keep all files in the same folder so images and `content/` load correctly.
 **Full guide:** [DEPLOY.md](DEPLOY.md)
 
 
-Your production URL: **https://menelikcv.vercel.app**
+Your production URL: **https://menelik.webhop.me**
 
 ### 1. Push the code to GitHub
 
@@ -76,7 +76,7 @@ git push -u origin main
 ### 3. Confirm the domain
 
 - Default: `https://your-project.vercel.app`
-- Yours: **https://menelikcv.vercel.app**
+- Yours: **https://menelik.webhop.me**
 - Optional custom domain: Project → **Settings → Domains**
 
 ### 4. Automatic deploys (Git integration)
@@ -112,7 +112,7 @@ Then **Redeploy** once.
 | Mode | URL | Notes |
 |------|-----|--------|
 | **Local** | http://localhost:3000/admin/ | `npx decap-server` + `npx serve .` |
-| **Production** | https://menelikcv.vercel.app/admin/ | GitHub login required |
+| **Production** | https://menelik.webhop.me/admin/ | GitHub login required |
 
 ### Local CMS
 
@@ -129,13 +129,13 @@ Open `/admin/` → edit → Publish (writes `content/*.json` on disk).
 ### Production CMS (Vercel + GitHub)
 
 1. **GitHub OAuth App** → [Developer settings](https://github.com/settings/developers)  
-   - Homepage: `https://menelikcv.vercel.app`  
-   - Callback: `https://menelikcv.vercel.app/api/callback`
+   - Homepage: `https://menelik.webhop.me`  
+   - Callback: `https://menelik.webhop.me/api/callback`
 2. Set `GITHUB_CLIENT_ID` and `GITHUB_CLIENT_SECRET` in Vercel
 3. In `admin/config.yml`:
    - `local_backend: false`
    - `repo: YOUR_USER/YOUR_REPO`
-4. Open **https://menelikcv.vercel.app/admin/** → Login with GitHub → Publish
+4. Open **https://menelik.webhop.me/admin/** → Login with GitHub → Publish
 
 Full guide: [README-DECAP.md](README-DECAP.md)
 
@@ -190,7 +190,7 @@ Outputs size variants (32–320px) as JPEG, WebP, and AVIF under `static/images/
 
 - [ ] Code on GitHub  
 - [ ] Vercel project imported (Framework: Other)  
-- [ ] Site loads at https://menelikcv.vercel.app  
+- [ ] Site loads at https://menelik.webhop.me  
 - [ ] (Optional) OAuth app + env vars for `/admin/`  
 - [ ] Push to `main` to update the live site  
 

@@ -29,8 +29,8 @@ Open **http://localhost:3000/admin/** → edit → Publish.
 1. Open [GitHub Developer Settings → OAuth Apps](https://github.com/settings/developers)
 2. **New OAuth App**
    - **Application name:** Menelik Portfolio CMS
-   - **Homepage URL:** `https://menelikcv.vercel.app`
-   - **Authorization callback URL:** `https://menelikcv.vercel.app/api/callback`
+   - **Homepage URL:** `https://menelik.webhop.me`
+   - **Authorization callback URL:** `https://menelik.webhop.me/api/callback`
 3. Create → copy **Client ID** → generate **Client Secret**
 
 ### B. Vercel project
@@ -58,7 +58,7 @@ backend:
   name: github
   repo: YOUR_USER/YOUR_REPO   # e.g. Menelik2/MyCV
   branch: main
-  base_url: https://menelikcv.vercel.app
+  base_url: https://menelik.webhop.me
   auth_endpoint: /api/auth
 ```
 
@@ -66,7 +66,7 @@ Commit, push, wait for deploy.
 
 ### D. Edit content
 
-1. Open `https://menelikcv.vercel.app/admin/`
+1. Open `https://menelik.webhop.me/admin/`
 2. **Login with GitHub**
 3. Edit section → **Publish** (commits to the repo)
 4. Vercel redeploys → hard-refresh the site

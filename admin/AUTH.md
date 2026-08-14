@@ -1,6 +1,6 @@
 # Configure GitHub OAuth secrets (Decap CMS admin)
 
-Admin login at **https://menelikcv.vercel.app/admin/** uses GitHub OAuth.
+Admin login at **https://menelik.webhop.me/admin/** uses GitHub OAuth.
 
 You need **two secrets** in Vercel:
 
@@ -28,16 +28,16 @@ Optional:
    | Field | Value |
    |-------|--------|
    | **Application name** | Menelik Portfolio CMS |
-   | **Homepage URL** | `https://menelikcv.vercel.app` |
+   | **Homepage URL** | `https://menelik.webhop.me` |
    | **Application description** | (optional) Portfolio content admin |
-   | **Authorization callback URL** | `https://menelikcv.vercel.app/api/callback` |
+   | **Authorization callback URL** | `https://menelik.webhop.me/api/callback` |
 
 5. Click **Register application**.
 6. Copy the **Client ID**.
 7. Click **Generate a new client secret** → copy the **Client secret** once (GitHub will not show it again).
 
 > Callback URL must match exactly:  
-> `https://menelikcv.vercel.app/api/callback`  
+> `https://menelik.webhop.me/api/callback`  
 > (no trailing slash, `https` only)
 
 ---
@@ -61,14 +61,14 @@ Optional:
 
 ## Step 3 — Confirm admin login
 
-1. Open **https://menelikcv.vercel.app/admin/**
+1. Open **https://menelik.webhop.me/admin/**
 2. Click **Open CMS login** (or use the Decap “Login with GitHub” button).
 3. Authorize the OAuth app on GitHub.
 4. You should return to the CMS and see **Portfolio sections** / content files.
 
 ### Quick API checks
 
-- `https://menelikcv.vercel.app/api/auth`  
+- `https://menelik.webhop.me/api/auth`  
   → should **redirect** to GitHub (not an HTML error about missing `GITHUB_CLIENT_ID`).
 - If you see **OAuth not configured**, the Vercel env vars are missing or the site was not redeployed.
 

@@ -1,9 +1,9 @@
-# Decap CMS — https://menelikcv.vercel.app
+# Decap CMS — https://menelik.webhop.me
 #
 # PRODUCTION (Vercel):
 #   local_backend: false
 #   Set GITHUB_CLIENT_ID + GITHUB_CLIENT_SECRET in Vercel env
-#   GitHub OAuth App callback: https://menelikcv.vercel.app/api/callback
+#   GitHub OAuth App callback: https://menelik.webhop.me/api/callback
 #
 # LOCAL DEV (optional):
 #   Set local_backend: true
@@ -15,11 +15,11 @@ backend:
   name: github
   repo: Menelik2/MyCV
   branch: main
-  base_url: https://menelikcv.vercel.app
+  base_url: https://menelik.webhop.me
   auth_endpoint: /api/auth
 
-site_url: https://menelikcv.vercel.app
-display_url: https://menelikcv.vercel.app
+site_url: https://menelik.webhop.me
+display_url: https://menelik.webhop.me
 logo_url: /static/images/profile-128.webp
 
 # ============================================================
@@ -27,7 +27,7 @@ logo_url: /static/images/profile-128.webp
 # ============================================================
 # Repo path where Decap stores uploaded files (committed to Git):
 media_folder: static/images
-# Public URL path on https://menelikcv.vercel.app :
+# Public URL path on https://menelik.webhop.me :
 public_folder: /static/images
 publish_mode: simple
 slug:

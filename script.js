@@ -267,8 +267,8 @@ const CONTENT = {
           </div>
         </details>
         <div class="proj-actions">
-          <a class="proj-btn primary" href="https://yenityping.vercel.app" target="_blank" rel="noopener">Open live demo ↗</a>
-          <a class="proj-btn" href="https://yenityping.vercel.app" target="_blank" rel="noopener">Visit site</a>
+          <a class="proj-btn primary" href="https://fidel.is-local.dev" target="_blank" rel="noopener">Open live demo ↗</a>
+          <a class="proj-btn" href="https://fidel.is-local.dev" target="_blank" rel="noopener">Visit site</a>
         </div>
         <div class="tags">
           <span class="tag">Education</span>
@@ -618,7 +618,7 @@ const CONTENT = {
       <li><span class="rci" aria-hidden="true">✉</span> <span class="rcl">E-mail:</span> <a href="mailto:linuxos777@gmail.com">linuxos777@gmail.com</a></li>
       <li><span class="rci" aria-hidden="true">☎</span> <span class="rcl">Phone:</span> <a href="tel:+251918006053">+251 918 006 053</a> · <a href="tel:+251977832379">+251 977 832 379</a></li>
       <li><span class="rci" aria-hidden="true">●</span> <span class="rcl">Location:</span> Bahir Dar, Ethiopia</li>
-      <li><span class="rci" aria-hidden="true">◉</span> <span class="rcl">Website:</span> <a href="https://menelikcv.vercel.app" target="_blank" rel="noopener">menelikcv.vercel.app</a></li>
+      <li><span class="rci" aria-hidden="true">◉</span> <span class="rcl">Website:</span> <a href="https://menelik.webhop.me" target="_blank" rel="noopener">menelik.webhop.me</a></li>
     </ul>
   </header>
 
@@ -726,7 +726,7 @@ const CONTENT = {
     <div class="resume-item">
       <div class="resume-item-head">
         <h3>Yeni Typing Learning</h3>
-        <a class="resume-link" href="https://yenityping.vercel.app" target="_blank" rel="noopener">Live</a>
+        <a class="resume-link" href="https://fidel.is-local.dev" target="_blank" rel="noopener">Live</a>
       </div>
       <p>Interactive typing tutor with WPM and accuracy tracking.</p>
     </div>
@@ -740,7 +740,7 @@ const CONTENT = {
     <div class="resume-item">
       <div class="resume-item-head">
         <h3>Windows XP Portfolio</h3>
-        <a class="resume-link" href="https://menelikcv.vercel.app" target="_blank" rel="noopener">Live</a>
+        <a class="resume-link" href="https://menelik.webhop.me" target="_blank" rel="noopener">Live</a>
       </div>
       <p>Interactive desktop OS portfolio in the browser (this site).</p>
     </div>
@@ -758,6 +758,7 @@ const APPS = {
   terminal: { title: "Terminal — menelik@bahirdar", iconClass: "terminal-icon", interactive: true },
   vscode: { title: "Liveweave", iconClass: "vscode-icon", interactive: true },
   minesweeper: { title: "Minesweeper", iconClass: "minesweeper-icon", interactive: true },
+  sudoku: { title: "Sudoku", iconClass: "sudoku-icon", interactive: true },
   control: { title: "Control Panel", iconClass: "control-icon", interactive: true },
   recycle: { title: "Recycle Bin", iconClass: "recycle-icon", interactive: true },
   registry: { title: "Registry Editor", iconClass: "registry-icon", interactive: true },
@@ -1254,7 +1255,7 @@ function buildTerminal() {
     "/home/menelik/skills.txt": "Languages: HTML, CSS, JavaScript, Python, Java\nTools: Git, SQL, VS Code\nOther: Responsive Design, UI/UX",
     "/home/menelik/.bashrc": "# ~/.bashrc\nexport PS1='\\u@\\h:\\w\\$ '\nexport PATH=$PATH:/usr/local/bin\nalias ll='ls -la'\nalias cls='clear'",
     "/home/menelik/resume.pdf": "[Binary PDF — open the Resume app instead]",
-    "/home/menelik/projects/README.md": "# Projects\n\n- yeni-movie — https://yeni-movie.vercel.app\n- yeni-typing — https://yenityping.vercel.app\n- yeni-exam — https://yeniexams.vercel.app/\n- internship-mgmt — Bahir Dar University Internship Management System\n- portfolio — Windows XP + iPhone portfolio site",
+    "/home/menelik/projects/README.md": "# Projects\n\n- yeni-movie — https://yeni-movie.vercel.app\n- yeni-typing — https://fidel.is-local.dev\n- yeni-exam — https://yeniexams.vercel.app/\n- internship-mgmt — Bahir Dar University Internship Management System\n- portfolio — Windows XP + iPhone portfolio site",
     "/home/menelik/projects/portfolio/index.html": "<!DOCTYPE html>\n<html>\n<head><title>Menelik Admasu</title></head>\n<body><!-- XP Portfolio --></body>\n</html>",
     "/home/menelik/projects/portfolio/styles.css": "/* Windows XP + iPhone styles */\n:root { --xp-blue: #245edb; }",
     "/home/menelik/projects/portfolio/script.js": "// Portfolio logic: windows, terminal, paint, notepad, vscode",
@@ -2123,6 +2124,244 @@ function buildVSCode() {
 }
 
 
+
+function buildSudoku() {
+  const wrap = document.createElement("div");
+  wrap.className = "sudoku-app";
+  const DIFFS = {
+    easy: 40,
+    medium: 32,
+    hard: 26,
+  };
+  let given = Array(81).fill(0);
+  let board = Array(81).fill(0);
+  let selected = -1;
+  let notes = false;
+  let noteMap = Array.from({ length: 81 }, () => new Set());
+  let difficulty = "easy";
+
+  function idx(r, c) { return r * 9 + c; }
+  function rc(i) { return [Math.floor(i / 9), i % 9]; }
+
+  function shuffle(a) {
+    for (let i = a.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+  }
+
+  function isValid(b, i, val) {
+    const [r, c] = rc(i);
+    for (let k = 0; k < 9; k++) {
+      if (b[idx(r, k)] === val) return false;
+      if (b[idx(k, c)] === val) return false;
+    }
+    const br = Math.floor(r / 3) * 3, bc = Math.floor(c / 3) * 3;
+    for (let dr = 0; dr < 3; dr++)
+      for (let dc = 0; dc < 3; dc++)
+        if (b[idx(br + dr, bc + dc)] === val) return false;
+    return true;
+  }
+
+  function solve(b) {
+    const i = b.indexOf(0);
+    if (i < 0) return true;
+    for (const v of shuffle([1, 2, 3, 4, 5, 6, 7, 8, 9])) {
+      if (!isValid(b, i, v)) continue;
+      b[i] = v;
+      if (solve(b)) return true;
+      b[i] = 0;
+    }
+    return false;
+  }
+
+  function generate() {
+    const full = Array(81).fill(0);
+    solve(full);
+    const puzzle = full.slice();
+    const order = shuffle([...Array(81).keys()]);
+    let keep = DIFFS[difficulty] || 32;
+    for (const i of order) {
+      if (81 - order.indexOf(i) <= keep) break;
+      const bak = puzzle[i];
+      puzzle[i] = 0;
+      // keep unique-ish by not validating uniqueness deeply (fast casual generator)
+      if (puzzle.filter((x) => x > 0).length < keep) {
+        puzzle[i] = bak;
+      }
+    }
+    // ensure target clue count approximately
+    let clues = puzzle.filter((x) => x > 0).length;
+    let p = 0;
+    while (clues > keep && p < order.length) {
+      const i = order[p++];
+      if (puzzle[i]) {
+        puzzle[i] = 0;
+        clues--;
+      }
+    }
+    given = puzzle.slice();
+    board = puzzle.slice();
+    noteMap = Array.from({ length: 81 }, () => new Set());
+    selected = -1;
+    render();
+    setStatus("Fill 1–9 so each row, column, and 3×3 box is unique.");
+  }
+
+  function conflicts(i) {
+    const v = board[i];
+    if (!v) return false;
+    const [r, c] = rc(i);
+    for (let k = 0; k < 9; k++) {
+      if (k !== c && board[idx(r, k)] === v) return true;
+      if (k !== r && board[idx(k, c)] === v) return true;
+    }
+    const br = Math.floor(r / 3) * 3, bc = Math.floor(c / 3) * 3;
+    for (let dr = 0; dr < 3; dr++)
+      for (let dc = 0; dc < 3; dc++) {
+        const j = idx(br + dr, bc + dc);
+        if (j !== i && board[j] === v) return true;
+      }
+    return false;
+  }
+
+  function isComplete() {
+    return board.every((v, i) => v > 0 && !conflicts(i));
+  }
+
+  wrap.innerHTML =
+    '<div class="sdk-toolbar">' +
+    '  <label class="sdk-diff">Difficulty ' +
+    '    <select class="sdk-level">' +
+    '      <option value="easy">Easy</option>' +
+    '      <option value="medium" selected>Medium</option>' +
+    '      <option value="hard">Hard</option>' +
+    '    </select>' +
+    '  </label>' +
+    '  <button type="button" class="sdk-btn sdk-new">New</button>' +
+    '  <button type="button" class="sdk-btn sdk-check">Check</button>' +
+    '  <button type="button" class="sdk-btn sdk-notes" title="Toggle notes">Notes</button>' +
+    '  <button type="button" class="sdk-btn sdk-erase">Erase</button>' +
+    '</div>' +
+    '<div class="sdk-board" role="grid" aria-label="Sudoku board"></div>' +
+    '<div class="sdk-pad" role="group" aria-label="Number pad"></div>' +
+    '<div class="sdk-status"></div>';
+
+  const boardEl = wrap.querySelector(".sdk-board");
+  const padEl = wrap.querySelector(".sdk-pad");
+  const statusEl = wrap.querySelector(".sdk-status");
+  const levelEl = wrap.querySelector(".sdk-level");
+
+  function setStatus(t) {
+    statusEl.textContent = t;
+  }
+
+  function render() {
+    boardEl.innerHTML = "";
+    for (let i = 0; i < 81; i++) {
+      const [r, c] = rc(i);
+      const cell = document.createElement("button");
+      cell.type = "button";
+      cell.className = "sdk-cell";
+      if (c % 3 === 0) cell.classList.add("sdk-left");
+      if (r % 3 === 0) cell.classList.add("sdk-top");
+      if (c === 8) cell.classList.add("sdk-right");
+      if (r === 8) cell.classList.add("sdk-bottom");
+      if (given[i]) cell.classList.add("sdk-given");
+      if (i === selected) cell.classList.add("sdk-selected");
+      if (board[i] && conflicts(i)) cell.classList.add("sdk-error");
+      if (selected >= 0 && board[selected] && board[i] === board[selected]) cell.classList.add("sdk-same");
+      if (board[i]) {
+        cell.textContent = String(board[i]);
+      } else if (noteMap[i].size) {
+        cell.classList.add("sdk-has-notes");
+        const n = document.createElement("span");
+        n.className = "sdk-notes-grid";
+        for (let d = 1; d <= 9; d++) {
+          const s = document.createElement("span");
+          s.textContent = noteMap[i].has(d) ? String(d) : "";
+          n.appendChild(s);
+        }
+        cell.appendChild(n);
+      } else {
+        cell.textContent = "";
+      }
+      cell.addEventListener("click", () => {
+        selected = i;
+        render();
+      });
+      boardEl.appendChild(cell);
+    }
+  }
+
+  padEl.innerHTML = "";
+  for (let d = 1; d <= 9; d++) {
+    const b = document.createElement("button");
+    b.type = "button";
+    b.className = "sdk-key";
+    b.textContent = String(d);
+    b.addEventListener("click", () => place(d));
+    padEl.appendChild(b);
+  }
+
+  function place(d) {
+    if (selected < 0 || given[selected]) return;
+    if (notes) {
+      if (board[selected]) board[selected] = 0;
+      if (noteMap[selected].has(d)) noteMap[selected].delete(d);
+      else noteMap[selected].add(d);
+    } else {
+      board[selected] = d;
+      noteMap[selected].clear();
+    }
+    render();
+    if (isComplete()) setStatus("Solved — great work!");
+  }
+
+  function erase() {
+    if (selected < 0 || given[selected]) return;
+    board[selected] = 0;
+    noteMap[selected].clear();
+    render();
+  }
+
+  wrap.querySelector(".sdk-new").addEventListener("click", generate);
+  wrap.querySelector(".sdk-check").addEventListener("click", () => {
+    let bad = 0;
+    for (let i = 0; i < 81; i++) if (board[i] && conflicts(i)) bad++;
+    if (isComplete()) setStatus("Solved — great work!");
+    else if (bad) setStatus(bad + " conflict(s) highlighted in red.");
+    else setStatus("No conflicts yet — keep going.");
+    render();
+  });
+  wrap.querySelector(".sdk-notes").addEventListener("click", (e) => {
+    notes = !notes;
+    e.currentTarget.classList.toggle("active", notes);
+    setStatus(notes ? "Notes mode on — tap numbers to pencil." : "Notes mode off.");
+  });
+  wrap.querySelector(".sdk-erase").addEventListener("click", erase);
+  levelEl.addEventListener("change", () => {
+    difficulty = levelEl.value;
+  });
+
+  wrap.addEventListener("keydown", (e) => {
+    if (e.key >= "1" && e.key <= "9") {
+      place(Number(e.key));
+      e.preventDefault();
+    } else if (e.key === "Backspace" || e.key === "Delete" || e.key === "0") {
+      erase();
+      e.preventDefault();
+    }
+  });
+  wrap.tabIndex = 0;
+
+  difficulty = "medium";
+  generate();
+  return wrap;
+}
+
+
 function buildMinesweeper() {
   const ROWS = 9, COLS = 9, MINES = 10;
   const wrap = document.createElement("div");
@@ -2466,7 +2705,7 @@ function buildControlPanel() {
     </div>
     <div class="cp-section">
       <h4>About this PC</h4>
-      <p class="cp-about">Menelik OS · XP Portfolio<br/>https://menelikcv.vercel.app</p>
+      <p class="cp-about">Menelik OS · XP Portfolio<br/>https://menelik.webhop.me</p>
     </div>
   `;
   const savedWall = localStorage.getItem("portfolio-wallpaper") || "default";
@@ -6011,6 +6250,7 @@ function getAppBody(id) {
   if (id === "terminal") return buildTerminal();
   if (id === "vscode") return buildVSCode();
   if (id === "minesweeper") return buildMinesweeper();
+  if (id === "sudoku") return buildSudoku();
   if (id === "control") return buildControlPanel();
   if (id === "recycle") return buildRecycleBin();
   if (id === "registry") return buildRegistry();
@@ -6793,6 +7033,7 @@ function openWindow(id) {
     terminal: { w: 500, h: 320 },
     vscode: { w: 900, h: 620 },
     minesweeper: { w: 320, h: 380 },
+    sudoku: { w: 380, h: 480 },
     control: { w: 420, h: 360 },
     recycle: { w: 400, h: 320 },
     registry: { w: 640, h: 460 },
