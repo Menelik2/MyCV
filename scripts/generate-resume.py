@@ -124,7 +124,6 @@ RESUME = {
     ],
     "projects": [
         ("Yeni Pro CV", "procv.is-cool.dev", "Privacy-first ATS-friendly resume builder"),
-        ("Sudoku Game", "menelik.webhop.me", "In-browser 9×9 Sudoku with notes and difficulties"),
         ("Yeni Movie", "yeni-movie.vercel.app", "Movies &amp; TV discovery with trailers and ratings"),
         ("Yeni Typing Learning", "fidel.is-local.dev", "Typing tutor (WPM &amp; accuracy)"),
         ("Yeni Exam", "yeniexams.vercel.app", "Exit exam practice generator"),

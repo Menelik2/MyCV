@@ -7161,3 +7161,12 @@ body:not(.light) .sdk-key { background: #334155; color: #e2e8f0; border-color: #
 .sdk-status { font-size: 11px; text-align: center; min-height: 1.2em; color: #475569; }
 body:not(.light) .sdk-status { color: #94a3b8; }
 .window[data-id="sudoku"] .window-body { overflow: auto; }
+
+.sdk-timer {
+  font-family: Consolas, "Courier New", monospace;
+  font-size: 12px;
+  font-weight: 700;
+  min-width: 3.2em;
+  color: #0f172a;
+}
+body:not(.light) .sdk-timer { color: #e2e8f0; }

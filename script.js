@@ -2128,27 +2128,31 @@ function buildVSCode() {
 function buildSudoku() {
   const wrap = document.createElement("div");
   wrap.className = "sudoku-app";
-  const DIFFS = {
-    easy: 40,
-    medium: 32,
-    hard: 26,
-  };
+  wrap.tabIndex = 0;
+
+  // Target clue counts by difficulty
+  const DIFFS = { easy: 38, medium: 30, hard: 24 };
+  let solution = Array(81).fill(0);
   let given = Array(81).fill(0);
   let board = Array(81).fill(0);
   let selected = -1;
-  let notes = false;
+  let notesOn = false;
   let noteMap = Array.from({ length: 81 }, () => new Set());
-  let difficulty = "easy";
+  let difficulty = "medium";
+  let timer = 0;
+  let timerId = null;
+  let started = false;
 
-  function idx(r, c) { return r * 9 + c; }
-  function rc(i) { return [Math.floor(i / 9), i % 9]; }
+  const idx = (r, c) => r * 9 + c;
+  const rc = (i) => [Math.floor(i / 9), i % 9];
 
   function shuffle(a) {
-    for (let i = a.length - 1; i > 0; i--) {
+    const arr = a.slice();
+    for (let i = arr.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
-      [a[i], a[j]] = [a[j], a[i]];
+      [arr[i], arr[j]] = [arr[j], arr[i]];
     }
-    return a;
+    return arr;
   }
 
   function isValid(b, i, val) {
@@ -2157,56 +2161,101 @@ function buildSudoku() {
       if (b[idx(r, k)] === val) return false;
       if (b[idx(k, c)] === val) return false;
     }
-    const br = Math.floor(r / 3) * 3, bc = Math.floor(c / 3) * 3;
+    const br = Math.floor(r / 3) * 3;
+    const bc = Math.floor(c / 3) * 3;
     for (let dr = 0; dr < 3; dr++)
       for (let dc = 0; dc < 3; dc++)
         if (b[idx(br + dr, bc + dc)] === val) return false;
     return true;
   }
 
-  function solve(b) {
+  /** Fill board with a random complete valid grid */
+  function fillGrid(b) {
     const i = b.indexOf(0);
     if (i < 0) return true;
     for (const v of shuffle([1, 2, 3, 4, 5, 6, 7, 8, 9])) {
       if (!isValid(b, i, v)) continue;
       b[i] = v;
-      if (solve(b)) return true;
+      if (fillGrid(b)) return true;
       b[i] = 0;
     }
     return false;
   }
 
+  /** Count solutions up to limit (2 is enough for uniqueness) */
+  function countSolutions(b, limit = 2) {
+    let count = 0;
+    function dfs() {
+      if (count >= limit) return;
+      const i = b.indexOf(0);
+      if (i < 0) {
+        count++;
+        return;
+      }
+      for (let v = 1; v <= 9; v++) {
+        if (!isValid(b, i, v)) continue;
+        b[i] = v;
+        dfs();
+        b[i] = 0;
+        if (count >= limit) return;
+      }
+    }
+    dfs();
+    return count;
+  }
+
+  function stopTimer() {
+    if (timerId) {
+      clearInterval(timerId);
+      timerId = null;
+    }
+  }
+
+  function startTimer() {
+    if (timerId) return;
+    timerId = setInterval(() => {
+      timer++;
+      const el = wrap.querySelector(".sdk-timer");
+      if (el) el.textContent = formatTime(timer);
+    }, 1000);
+  }
+
+  function formatTime(s) {
+    const m = Math.floor(s / 60);
+    const sec = s % 60;
+    return String(m).padStart(2, "0") + ":" + String(sec).padStart(2, "0");
+  }
+
   function generate() {
+    stopTimer();
+    timer = 0;
+    started = false;
     const full = Array(81).fill(0);
-    solve(full);
+    fillGrid(full);
+    solution = full.slice();
     const puzzle = full.slice();
     const order = shuffle([...Array(81).keys()]);
-    let keep = DIFFS[difficulty] || 32;
+    const target = DIFFS[difficulty] || 30;
+
     for (const i of order) {
-      if (81 - order.indexOf(i) <= keep) break;
+      if (puzzle.filter((x) => x > 0).length <= target) break;
       const bak = puzzle[i];
       puzzle[i] = 0;
-      // keep unique-ish by not validating uniqueness deeply (fast casual generator)
-      if (puzzle.filter((x) => x > 0).length < keep) {
+      const trial = puzzle.slice();
+      // Keep cell if removing it creates multiple solutions
+      if (countSolutions(trial, 2) !== 1) {
         puzzle[i] = bak;
       }
     }
-    // ensure target clue count approximately
-    let clues = puzzle.filter((x) => x > 0).length;
-    let p = 0;
-    while (clues > keep && p < order.length) {
-      const i = order[p++];
-      if (puzzle[i]) {
-        puzzle[i] = 0;
-        clues--;
-      }
-    }
+
     given = puzzle.slice();
     board = puzzle.slice();
     noteMap = Array.from({ length: 81 }, () => new Set());
     selected = -1;
+    const tEl = wrap.querySelector(".sdk-timer");
+    if (tEl) tEl.textContent = "00:00";
     render();
-    setStatus("Fill 1–9 so each row, column, and 3×3 box is unique.");
+    setStatus("New " + difficulty + " puzzle — click a cell, then use 1–9.");
   }
 
   function conflicts(i) {
@@ -2217,7 +2266,8 @@ function buildSudoku() {
       if (k !== c && board[idx(r, k)] === v) return true;
       if (k !== r && board[idx(k, c)] === v) return true;
     }
-    const br = Math.floor(r / 3) * 3, bc = Math.floor(c / 3) * 3;
+    const br = Math.floor(r / 3) * 3;
+    const bc = Math.floor(c / 3) * 3;
     for (let dr = 0; dr < 3; dr++)
       for (let dc = 0; dc < 3; dc++) {
         const j = idx(br + dr, bc + dc);
@@ -2227,22 +2277,27 @@ function buildSudoku() {
   }
 
   function isComplete() {
-    return board.every((v, i) => v > 0 && !conflicts(i));
+    for (let i = 0; i < 81; i++) {
+      if (!board[i] || conflicts(i)) return false;
+    }
+    return true;
   }
 
   wrap.innerHTML =
     '<div class="sdk-toolbar">' +
-    '  <label class="sdk-diff">Difficulty ' +
+    '  <span class="sdk-timer" title="Time">00:00</span>' +
+    '  <label class="sdk-diff">Level ' +
     '    <select class="sdk-level">' +
     '      <option value="easy">Easy</option>' +
     '      <option value="medium" selected>Medium</option>' +
     '      <option value="hard">Hard</option>' +
     '    </select>' +
     '  </label>' +
-    '  <button type="button" class="sdk-btn sdk-new">New</button>' +
-    '  <button type="button" class="sdk-btn sdk-check">Check</button>' +
-    '  <button type="button" class="sdk-btn sdk-notes" title="Toggle notes">Notes</button>' +
-    '  <button type="button" class="sdk-btn sdk-erase">Erase</button>' +
+    '  <button type="button" class="sdk-btn sdk-new" title="New puzzle">New</button>' +
+    '  <button type="button" class="sdk-btn sdk-hint" title="Reveal one cell">Hint</button>' +
+    '  <button type="button" class="sdk-btn sdk-check" title="Check conflicts">Check</button>' +
+    '  <button type="button" class="sdk-btn sdk-notes" title="Pencil notes">Notes</button>' +
+    '  <button type="button" class="sdk-btn sdk-erase" title="Clear cell">Erase</button>' +
     '</div>' +
     '<div class="sdk-board" role="grid" aria-label="Sudoku board"></div>' +
     '<div class="sdk-pad" role="group" aria-label="Number pad"></div>' +
@@ -2264,6 +2319,7 @@ function buildSudoku() {
       const cell = document.createElement("button");
       cell.type = "button";
       cell.className = "sdk-cell";
+      cell.setAttribute("aria-label", "Row " + (r + 1) + " column " + (c + 1));
       if (c % 3 === 0) cell.classList.add("sdk-left");
       if (r % 3 === 0) cell.classList.add("sdk-top");
       if (c === 8) cell.classList.add("sdk-right");
@@ -2271,7 +2327,9 @@ function buildSudoku() {
       if (given[i]) cell.classList.add("sdk-given");
       if (i === selected) cell.classList.add("sdk-selected");
       if (board[i] && conflicts(i)) cell.classList.add("sdk-error");
-      if (selected >= 0 && board[selected] && board[i] === board[selected]) cell.classList.add("sdk-same");
+      if (selected >= 0 && board[selected] && board[i] === board[selected]) {
+        cell.classList.add("sdk-same");
+      }
       if (board[i]) {
         cell.textContent = String(board[i]);
       } else if (noteMap[i].size) {
@@ -2289,6 +2347,10 @@ function buildSudoku() {
       }
       cell.addEventListener("click", () => {
         selected = i;
+        if (!started) {
+          started = true;
+          startTimer();
+        }
         render();
       });
       boardEl.appendChild(cell);
@@ -2307,8 +2369,12 @@ function buildSudoku() {
 
   function place(d) {
     if (selected < 0 || given[selected]) return;
-    if (notes) {
-      if (board[selected]) board[selected] = 0;
+    if (!started) {
+      started = true;
+      startTimer();
+    }
+    if (notesOn) {
+      board[selected] = 0;
       if (noteMap[selected].has(d)) noteMap[selected].delete(d);
       else noteMap[selected].add(d);
     } else {
@@ -2316,7 +2382,10 @@ function buildSudoku() {
       noteMap[selected].clear();
     }
     render();
-    if (isComplete()) setStatus("Solved — great work!");
+    if (isComplete()) {
+      stopTimer();
+      setStatus("Solved in " + formatTime(timer) + " — great work!");
+    }
   }
 
   function erase() {
@@ -2326,19 +2395,50 @@ function buildSudoku() {
     render();
   }
 
+  function hint() {
+    // Reveal one empty cell from the solution
+    const empties = [];
+    for (let i = 0; i < 81; i++) {
+      if (!board[i]) empties.push(i);
+    }
+    if (!empties.length) {
+      setStatus("Board is full.");
+      return;
+    }
+    const i = empties[Math.floor(Math.random() * empties.length)];
+    board[i] = solution[i];
+    noteMap[i].clear();
+    // Treat as user entry (not given) so it can still be erased
+    selected = i;
+    if (!started) {
+      started = true;
+      startTimer();
+    }
+    render();
+    if (isComplete()) {
+      stopTimer();
+      setStatus("Solved in " + formatTime(timer) + " — great work!");
+    } else {
+      setStatus("Hint placed.");
+    }
+  }
+
   wrap.querySelector(".sdk-new").addEventListener("click", generate);
+  wrap.querySelector(".sdk-hint").addEventListener("click", hint);
   wrap.querySelector(".sdk-check").addEventListener("click", () => {
     let bad = 0;
     for (let i = 0; i < 81; i++) if (board[i] && conflicts(i)) bad++;
-    if (isComplete()) setStatus("Solved — great work!");
-    else if (bad) setStatus(bad + " conflict(s) highlighted in red.");
-    else setStatus("No conflicts yet — keep going.");
+    if (isComplete()) {
+      stopTimer();
+      setStatus("Solved in " + formatTime(timer) + " — great work!");
+    } else if (bad) setStatus(bad + " conflict(s) marked in red.");
+    else setStatus("No conflicts — keep going.");
     render();
   });
   wrap.querySelector(".sdk-notes").addEventListener("click", (e) => {
-    notes = !notes;
-    e.currentTarget.classList.toggle("active", notes);
-    setStatus(notes ? "Notes mode on — tap numbers to pencil." : "Notes mode off.");
+    notesOn = !notesOn;
+    e.currentTarget.classList.toggle("active", notesOn);
+    setStatus(notesOn ? "Notes on — tap numbers to pencil." : "Notes off.");
   });
   wrap.querySelector(".sdk-erase").addEventListener("click", erase);
   levelEl.addEventListener("change", () => {
@@ -2352,9 +2452,27 @@ function buildSudoku() {
     } else if (e.key === "Backspace" || e.key === "Delete" || e.key === "0") {
       erase();
       e.preventDefault();
+    } else if (e.key === "ArrowRight" && selected >= 0) {
+      selected = (selected + 1) % 81;
+      render();
+      e.preventDefault();
+    } else if (e.key === "ArrowLeft" && selected >= 0) {
+      selected = (selected + 80) % 81;
+      render();
+      e.preventDefault();
+    } else if (e.key === "ArrowDown" && selected >= 0) {
+      selected = (selected + 9) % 81;
+      render();
+      e.preventDefault();
+    } else if (e.key === "ArrowUp" && selected >= 0) {
+      selected = (selected + 72) % 81;
+      render();
+      e.preventDefault();
+    } else if (e.key === "n" || e.key === "N") {
+      wrap.querySelector(".sdk-notes").click();
+      e.preventDefault();
     }
   });
-  wrap.tabIndex = 0;
 
   difficulty = "medium";
   generate();
