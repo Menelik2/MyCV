@@ -2826,10 +2826,6 @@ function buildSudoku() {
     // Validation: allow entry, then flag rule conflicts
     board[selected] = d;
     noteMap[selected].clear();
-    // Clear the same note digit from peers for convenience
-    for (const p of getConflictPeers(selected)) {
-      /* peers already have same digit — conflict UI will show */
-    }
     render();
 
     if (conflicts(selected)) {
