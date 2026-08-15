@@ -9964,11 +9964,11 @@ function runBootSequence() {
     if (i >= steps.length) {
       readyToEnter = true;
       if (status) {
-        status.textContent = "Ready — tap Enter for full screen";
+        status.textContent = "Click button to Enter";
       }
       if (startBtn) {
         startBtn.hidden = false;
-        startBtn.textContent = "Enter · Full screen";
+        startBtn.textContent = "Click button to Enter";
         startBtn.focus();
       }
       return;
@@ -10025,11 +10025,11 @@ setTimeout(() => {
   const status = document.getElementById("boot-status");
   const fill = boot.querySelector(".boot-bar-fill");
   if (fill) fill.style.width = "100%";
-  if (status) status.textContent = "Ready — tap Enter for full screen";
+  if (status) status.textContent = "Click button to Enter";
   if (startBtn) {
     startBtn.hidden = false;
     startBtn.disabled = false;
-    startBtn.textContent = "Enter · Full screen";
+    startBtn.textContent = "Click button to Enter";
   }
 }, 5000);
 
