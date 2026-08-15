@@ -2669,36 +2669,6 @@ function buildSudoku() {
     );
   }
 
-  function runSolver() {
-    const work = board.slice();
-    for (let i = 0; i < 81; i++) {
-      if (!work[i]) continue;
-      const v = work[i];
-      work[i] = 0;
-      if (!isValid(work, i, v)) {
-        work[i] = v;
-        setStatus("Cannot solve — board has conflicts. Fix red cells first.");
-        render();
-        return;
-      }
-      work[i] = v;
-    }
-    const t0 = performance.now();
-    const ok = solveBoard(work);
-    const ms = Math.round(performance.now() - t0);
-    if (!ok) {
-      setStatus("No solution for this board (" + ms + " ms).");
-      return;
-    }
-    for (let i = 0; i < 81; i++) {
-      board[i] = work[i];
-      noteMap[i].clear();
-    }
-    solution = work.slice();
-    stopTimer();
-    render();
-    setStatus("Solved by algorithm in " + ms + " ms.");
-  }
 
   const levelOpts = LEVELS.map(
     (l) =>
@@ -2726,8 +2696,6 @@ function buildSudoku() {
     "  </label>" +
     '  <button type="button" class="sdk-btn sdk-new" title="Regenerate this game">New</button>' +
     '  <button type="button" class="sdk-btn sdk-next" title="Next game">Next</button>' +
-    '  <button type="button" class="sdk-btn sdk-solve" title="Solve with algorithm">Solve</button>' +
-    '  <button type="button" class="sdk-btn sdk-hint" title="Reveal one cell">Hint</button>' +
     '  <button type="button" class="sdk-btn sdk-check" title="Check conflicts">Check</button>' +
     '  <button type="button" class="sdk-btn sdk-notes" title="Pencil notes">Notes</button>' +
     '  <button type="button" class="sdk-btn sdk-erase" title="Clear cell">Erase</button>' +
@@ -2846,27 +2814,6 @@ function buildSudoku() {
     render();
   }
 
-  function hint() {
-    const empties = [];
-    for (let i = 0; i < 81; i++) if (!board[i]) empties.push(i);
-    if (!empties.length) {
-      setStatus("Board is full.");
-      return;
-    }
-    const work = board.slice();
-    if (solveBoard(work)) solution = work.slice();
-    const i = empties[Math.floor(Math.random() * empties.length)];
-    board[i] = solution[i] || work[i];
-    noteMap[i].clear();
-    selected = i;
-    if (!started) {
-      started = true;
-      startTimer();
-    }
-    render();
-    if (isComplete()) onSolved();
-    else setStatus("Hint placed.");
-  }
 
   function nextGame() {
     const meta = levelMeta(difficulty);
@@ -2877,8 +2824,6 @@ function buildSudoku() {
 
   wrap.querySelector(".sdk-new").addEventListener("click", generate);
   wrap.querySelector(".sdk-next").addEventListener("click", nextGame);
-  wrap.querySelector(".sdk-solve").addEventListener("click", runSolver);
-  wrap.querySelector(".sdk-hint").addEventListener("click", hint);
   wrap.querySelector(".sdk-check").addEventListener("click", () => {
     const report = validateBoard({ againstSolution: true });
     // Mark wrong (non-conflict) cells temporarily via dataset for render
@@ -2939,10 +2884,7 @@ function buildSudoku() {
     } else if (e.key === "n" || e.key === "N") {
       wrap.querySelector(".sdk-notes").click();
       e.preventDefault();
-    } else if (e.key === "s" && (e.ctrlKey || e.metaKey)) {
-      runSolver();
-      e.preventDefault();
-    }
+
   });
 
   difficulty = "medium";
