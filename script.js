@@ -2884,7 +2884,7 @@ function buildSudoku() {
     } else if (e.key === "n" || e.key === "N") {
       wrap.querySelector(".sdk-notes").click();
       e.preventDefault();
-
+    }
   });
 
   difficulty = "medium";
@@ -9927,8 +9927,8 @@ function runBootSequence() {
   const startBtn = document.getElementById("boot-start-btn");
   let entered = false;
   let readyToEnter = false;
-  /** After boot UI is ready, wait this long before optional auto-enter (no native fullscreen). */
-  const AUTO_ENTER_MS = 60 * 1000;
+  /** After boot UI is ready, auto-enter if user never clicks (mobile-friendly). */
+  const AUTO_ENTER_MS = 8 * 1000;
 
   const enterDesktop = (fromUserGesture) => {
     if (entered) return;
@@ -9992,7 +9992,7 @@ function runBootSequence() {
   startBtn?.addEventListener("click", (e) => {
     e.preventDefault();
     e.stopPropagation();
-    if (!readyToEnter) return;
+    readyToEnter = true;
     enterDesktop(true); // user gesture → fullscreen
   });
 
@@ -10013,7 +10013,33 @@ function runBootSequence() {
   });
 }
 
-runBootSequence();
+
+try {
+  runBootSequence();
+} catch (err) {
+  console.error("Boot sequence failed:", err);
+  const boot = document.getElementById("boot-screen");
+  const desktop = document.getElementById("desktop");
+  const mobile = document.getElementById("mobile");
+  if (boot) boot.classList.add("boot-done");
+  desktop?.classList.remove("boot-hidden");
+  mobile?.classList.remove("boot-hidden");
+  setTimeout(() => boot?.remove(), 400);
+}
+// Absolute failsafe — never leave visitors on a black splash forever
+setTimeout(() => {
+  const boot = document.getElementById("boot-screen");
+  if (!boot || boot.classList.contains("boot-done")) return;
+  console.warn("Boot failsafe: forcing desktop");
+  try {
+    finishBoot(false);
+  } catch (_) {
+    boot.classList.add("boot-done");
+    document.getElementById("desktop")?.classList.remove("boot-hidden");
+    document.getElementById("mobile")?.classList.remove("boot-hidden");
+    boot.remove();
+  }
+}, 12000);
 
 
 /* ========== Window focus keyboard shortcuts ========== */
