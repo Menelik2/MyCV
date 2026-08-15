@@ -2399,29 +2399,130 @@ function buildSudoku() {
     );
   }
 
+  /**
+   * Sudoku validation logic
+   * - Rule conflicts: same digit twice in a row, column, or 3×3 box
+   * - Solution check: filled cell differs from unique solution (optional)
+   * - Completeness: all cells filled with no conflicts
+   */
   function conflicts(i) {
+    return getConflictPeers(i).length > 0;
+  }
+
+  function getConflictPeers(i) {
     const v = board[i];
-    if (!v) return false;
+    if (!v) return [];
+    const peers = [];
     const [r, c] = rc(i);
     for (let k = 0; k < 9; k++) {
-      if (k !== c && board[idx(r, k)] === v) return true;
-      if (k !== r && board[idx(k, c)] === v) return true;
+      const rowI = idx(r, k);
+      const colI = idx(k, c);
+      if (k !== c && board[rowI] === v) peers.push(rowI);
+      if (k !== r && board[colI] === v) peers.push(colI);
+    }
+    const br = Math.floor(r / 3) * 3;
+    const bc = Math.floor(c / 3) * 3;
+    for (let dr = 0; dr < 3; dr++) {
+      for (let dc = 0; dc < 3; dc++) {
+        const j = idx(br + dr, bc + dc);
+        if (j !== i && board[j] === v) peers.push(j);
+      }
+    }
+    return peers;
+  }
+
+  /** True if digit `val` may be placed at index `i` under Sudoku rules. */
+  function canPlace(i, val, b) {
+    if (!val || val < 1 || val > 9) return false;
+    const grid = b || board;
+    const [r, c] = rc(i);
+    for (let k = 0; k < 9; k++) {
+      if (grid[idx(r, k)] === val) return false;
+      if (grid[idx(k, c)] === val) return false;
     }
     const br = Math.floor(r / 3) * 3;
     const bc = Math.floor(c / 3) * 3;
     for (let dr = 0; dr < 3; dr++)
-      for (let dc = 0; dc < 3; dc++) {
-        const j = idx(br + dr, bc + dc);
-        if (j !== i && board[j] === v) return true;
+      for (let dc = 0; dc < 3; dc++)
+        if (grid[idx(br + dr, bc + dc)] === val) return false;
+    return true;
+  }
+
+  /**
+   * Full-board validation report.
+   * @returns {{ ok: boolean, complete: boolean, conflictCells: number[], wrongCells: number[], emptyCount: number, message: string }}
+   */
+  function validateBoard(opts) {
+    const againstSolution = !!(opts && opts.againstSolution);
+    const conflictSet = new Set();
+    let emptyCount = 0;
+
+    for (let i = 0; i < 81; i++) {
+      if (!board[i]) {
+        emptyCount++;
+        continue;
       }
-    return false;
+      // Temporary clear to test uniqueness of this digit among peers
+      const v = board[i];
+      board[i] = 0;
+      if (!canPlace(i, v, board)) conflictSet.add(i);
+      board[i] = v;
+    }
+
+    // Also mark peer cells involved in each conflict for UI clarity
+    for (let i = 0; i < 81; i++) {
+      if (!board[i]) continue;
+      for (const p of getConflictPeers(i)) conflictSet.add(p);
+    }
+
+    const wrongCells = [];
+    if (againstSolution && solution && solution.some((x) => x > 0)) {
+      for (let i = 0; i < 81; i++) {
+        if (!board[i] || given[i]) continue;
+        if (conflictSet.has(i)) continue;
+        if (board[i] !== solution[i]) wrongCells.push(i);
+      }
+    }
+
+    const conflictCells = [...conflictSet];
+    const complete = emptyCount === 0 && conflictCells.length === 0;
+    const ok = conflictCells.length === 0 && wrongCells.length === 0;
+
+    let message;
+    if (complete) {
+      message = "Valid complete grid — puzzle solved.";
+    } else if (conflictCells.length && wrongCells.length) {
+      message =
+        conflictCells.length +
+        " rule conflict(s), " +
+        wrongCells.length +
+        " incorrect digit(s), " +
+        emptyCount +
+        " empty.";
+    } else if (conflictCells.length) {
+      message =
+        conflictCells.length +
+        " rule conflict(s) (row, column, or box). " +
+        emptyCount +
+        " empty cell(s).";
+    } else if (wrongCells.length) {
+      message =
+        wrongCells.length +
+        " digit(s) do not match the solution. " +
+        emptyCount +
+        " empty cell(s).";
+    } else if (emptyCount) {
+      message = "No conflicts — " + emptyCount + " cell(s) still empty.";
+    } else {
+      message = "Board is valid.";
+    }
+
+    return { ok, complete, conflictCells, wrongCells, emptyCount, message };
   }
 
   function isComplete() {
-    for (let i = 0; i < 81; i++) {
-      if (!board[i] || conflicts(i)) return false;
-    }
-    return true;
+    const report = validateBoard();
+    return report.complete;
   }
 
   function onSolved() {
@@ -2532,6 +2633,7 @@ function buildSudoku() {
       if (given[i]) cell.classList.add("sdk-given");
       if (i === selected) cell.classList.add("sdk-selected");
       if (board[i] && conflicts(i)) cell.classList.add("sdk-error");
+      if (wrap._wrongCells && wrap._wrongCells.has(i)) cell.classList.add("sdk-wrong");
       if (selected >= 0 && board[selected] && board[i] === board[selected]) {
         cell.classList.add("sdk-same");
       }
@@ -2582,12 +2684,35 @@ function buildSudoku() {
       board[selected] = 0;
       if (noteMap[selected].has(d)) noteMap[selected].delete(d);
       else noteMap[selected].add(d);
-    } else {
-      board[selected] = d;
-      noteMap[selected].clear();
+      render();
+      return;
+    }
+
+    // Validation: allow entry, then flag rule conflicts
+    board[selected] = d;
+    noteMap[selected].clear();
+    // Clear the same note digit from peers for convenience
+    for (const p of getConflictPeers(selected)) {
+      /* peers already have same digit — conflict UI will show */
     }
     render();
+
+    if (conflicts(selected)) {
+      setStatus("Invalid — " + d + " already used in this row, column, or box.");
+      return;
+    }
+    if (solution[selected] && d !== solution[selected]) {
+      // Soft hint only when checking later; keep play free
+    }
     if (isComplete()) onSolved();
+    else {
+      const left = board.filter((x) => !x).length;
+      setStatus(left ? left + " empty cell(s) remaining." : "Checking…");
+      if (!left) {
+        const report = validateBoard();
+        setStatus(report.message);
+      }
+    }
   }
 
   function erase() {
@@ -2631,12 +2756,20 @@ function buildSudoku() {
   wrap.querySelector(".sdk-solve").addEventListener("click", runSolver);
   wrap.querySelector(".sdk-hint").addEventListener("click", hint);
   wrap.querySelector(".sdk-check").addEventListener("click", () => {
-    let bad = 0;
-    for (let i = 0; i < 81; i++) if (board[i] && conflicts(i)) bad++;
-    if (isComplete()) onSolved();
-    else if (bad) setStatus(bad + " conflict(s) marked in red.");
-    else setStatus("No conflicts — keep going.");
+    const report = validateBoard({ againstSolution: true });
+    // Mark wrong (non-conflict) cells temporarily via dataset for render
+    wrap._wrongCells = new Set(report.wrongCells);
     render();
+    if (report.complete) {
+      onSolved();
+    } else {
+      setStatus(report.message);
+    }
+    // Clear wrong highlights after a moment so play stays clean
+    setTimeout(() => {
+      wrap._wrongCells = null;
+      render();
+    }, 2500);
   });
   wrap.querySelector(".sdk-notes").addEventListener("click", (e) => {
     notesOn = !notesOn;

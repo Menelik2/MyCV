@@ -7150,6 +7150,7 @@ body:not(.light) .sdk-cell.sdk-given { background: #1e293b; color: #f8fafc; }
 .sdk-cell.sdk-same { background: #e0f2fe; }
 body:not(.light) .sdk-cell.sdk-same { background: #0c4a6e; }
 .sdk-cell.sdk-error { color: #dc2626 !important; background: #fee2e2 !important; }
+.sdk-cell.sdk-wrong { color: #b45309 !important; background: #fef3c7 !important; box-shadow: inset 0 0 0 2px #f59e0b; }
 .sdk-has-notes { font-weight: 400; }
 .sdk-notes-grid {
   display: grid;
