@@ -129,7 +129,7 @@ RESUME = {
         ("Yeni Exam", "yeniexams.vercel.app", "Exit exam practice generator"),
         ("Windows XP Portfolio", "menelik.webhop.me", "Interactive OS-style portfolio"),
     ],
-    "volunteer": "Technology training for the community and organizations.",
+    "volunteer": "Training communities and organizations in practical technology skills.",
     "languages": (
         "English — Professional working proficiency · "
         "Amharic — Professional working proficiency"
