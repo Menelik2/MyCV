@@ -9927,8 +9927,6 @@ function runBootSequence() {
   const startBtn = document.getElementById("boot-start-btn");
   let entered = false;
   let readyToEnter = false;
-  /** After boot UI is ready, auto-enter if user never clicks (mobile-friendly). */
-  const AUTO_ENTER_MS = 8 * 1000;
 
   const enterDesktop = (fromUserGesture) => {
     if (entered) return;
@@ -9966,20 +9964,13 @@ function runBootSequence() {
     if (i >= steps.length) {
       readyToEnter = true;
       if (status) {
-        status.textContent = "Click the button to enter · Full screen";
+        status.textContent = "Ready — tap Enter for full screen";
       }
       if (startBtn) {
         startBtn.hidden = false;
-        startBtn.textContent = "Click to enter · Full screen";
+        startBtn.textContent = "Enter · Full screen";
         startBtn.focus();
       }
-      // No instant auto-login. Optional: enter after 1 minute if user never clicks.
-      setTimeout(() => {
-        if (!entered) {
-          if (status) status.textContent = "Entering desktop…";
-          enterDesktop(false);
-        }
-      }, AUTO_ENTER_MS);
       return;
     }
     const step = steps[i++];
@@ -10026,20 +10017,21 @@ try {
   mobile?.classList.remove("boot-hidden");
   setTimeout(() => boot?.remove(), 400);
 }
-// Absolute failsafe — never leave visitors on a black splash forever
+// Failsafe: if boot UI stalled, still show the Enter button (no auto-enter)
 setTimeout(() => {
   const boot = document.getElementById("boot-screen");
   if (!boot || boot.classList.contains("boot-done")) return;
-  console.warn("Boot failsafe: forcing desktop");
-  try {
-    finishBoot(false);
-  } catch (_) {
-    boot.classList.add("boot-done");
-    document.getElementById("desktop")?.classList.remove("boot-hidden");
-    document.getElementById("mobile")?.classList.remove("boot-hidden");
-    boot.remove();
+  const startBtn = document.getElementById("boot-start-btn");
+  const status = document.getElementById("boot-status");
+  const fill = boot.querySelector(".boot-bar-fill");
+  if (fill) fill.style.width = "100%";
+  if (status) status.textContent = "Ready — tap Enter for full screen";
+  if (startBtn) {
+    startBtn.hidden = false;
+    startBtn.disabled = false;
+    startBtn.textContent = "Enter · Full screen";
   }
-}, 12000);
+}, 5000);
 
 
 /* ========== Window focus keyboard shortcuts ========== */
