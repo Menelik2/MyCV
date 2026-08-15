@@ -7197,51 +7197,215 @@ body:not(.light) .sdk-status { color: #94a3b8; }
 }
 body:not(.light) .sdk-timer { color: #e2e8f0; }
 
-/* Sudoku on mobile / iPhone */
+/* Sudoku view compatibility — desktop window + iPhone / small screens */
+.sudoku-app {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 8px;
+  height: 100%;
+  min-height: 0;
+  max-height: 100%;
+  box-sizing: border-box;
+  background: #f3f4f6;
+  font-family: Tahoma, "Segoe UI", system-ui, sans-serif;
+  outline: none;
+  overflow: auto;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+  touch-action: manipulation;
+  -webkit-user-select: none;
+  user-select: none;
+}
+body:not(.light) .sudoku-app { background: #1e293b; color: #e2e8f0; }
+
+.sdk-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.sdk-board {
+  display: grid;
+  grid-template-columns: repeat(9, 1fr);
+  width: min(100%, 360px);
+  aspect-ratio: 1 / 1;
+  margin: 0 auto;
+  border: 2px solid #0f172a;
+  box-sizing: border-box;
+  flex-shrink: 0;
+  max-height: min(360px, 52vh);
+  max-width: min(360px, 52vh, 100%);
+}
+
+.sdk-cell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  border: 1px solid #cbd5e1;
+  background: #fff;
+  font-size: clamp(12px, 2.8vw, 18px);
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0;
+  min-width: 0;
+  min-height: 0;
+  aspect-ratio: 1 / 1;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+.sdk-pad {
+  display: grid;
+  grid-template-columns: repeat(9, 1fr);
+  gap: 4px;
+  width: min(100%, 360px);
+  max-width: min(360px, 100%);
+  margin: 0 auto;
+  flex-shrink: 0;
+}
+
+.sdk-key {
+  min-height: 40px;
+  border-radius: 8px;
+  border: 1px solid #94a3b8;
+  background: #fff;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.sdk-status {
+  flex-shrink: 0;
+  font-size: 12px;
+  text-align: center;
+  min-height: 1.2em;
+  color: #475569;
+  padding: 0 8px 4px;
+}
+
+#page-sudoku {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  max-height: 100%;
+  overflow: hidden;
+}
+#page-sudoku .page-header {
+  flex-shrink: 0;
+}
+#page-sudoku .page-body-full {
+  flex: 1;
+  min-height: 0;
+  height: auto;
+  max-height: 100%;
+  overflow: hidden;
+  padding: 0 !important;
+  display: flex;
+  flex-direction: column;
+}
+#page-sudoku .sudoku-app {
+  padding: 6px 8px max(10px, env(safe-area-inset-bottom, 0px));
+  padding-left: max(8px, env(safe-area-inset-left, 0px));
+  padding-right: max(8px, env(safe-area-inset-right, 0px));
+  height: 100%;
+}
+
 @media (max-width: 900px) {
   .sudoku-app {
-    padding: 6px 4px 12px;
     gap: 6px;
-    min-height: 100%;
     background: #f8fafc;
   }
   body:not(.light) .sudoku-app { background: #0f172a; }
   .sdk-toolbar {
     gap: 4px;
-    justify-content: center;
   }
-  .sdk-btn, .sdk-level, .sdk-diff {
+  .sdk-btn, .sdk-level, .sdk-diff, .sdk-game {
     font-size: 10px;
-    padding: 5px 7px;
+    padding: 6px 8px;
+    min-height: 32px;
   }
   .sdk-board {
-    width: min(100%, 340px);
-    max-width: 92vw;
+    width: min(100%, 92vw, 340px);
+    max-width: min(92vw, 340px, 55vh);
+    max-height: min(55vh, 340px);
   }
   .sdk-cell {
-    font-size: 13px;
+    font-size: clamp(11px, 3.6vw, 16px);
   }
   .sdk-pad {
-    width: min(100%, 340px);
-    max-width: 92vw;
+    width: min(100%, 92vw, 340px);
     gap: 5px;
   }
   .sdk-key {
     font-size: 14px;
+    min-height: 40px;
     border-radius: 8px;
-    min-height: 36px;
-  }
-  .sdk-status {
-    font-size: 12px;
-    padding: 0 8px 8px;
-  }
-  #page-sudoku .page-body-full {
-    padding: 0;
-    overflow: auto;
-    -webkit-overflow-scrolling: touch;
   }
 }
 
+/* Very narrow phones */
+@media (max-width: 380px) {
+  .sdk-toolbar .sdk-diff { font-size: 9px; }
+  .sdk-btn { padding: 5px 6px; font-size: 9px; }
+  .sdk-board {
+    max-width: min(96vw, 50vh);
+    max-height: min(50vh, 96vw);
+  }
+  .sdk-key { min-height: 36px; font-size: 13px; }
+}
+
+/* Short / landscape viewports */
+@media (max-height: 560px), (orientation: landscape) and (max-height: 500px) {
+  .sudoku-app { gap: 4px; padding-top: 4px; }
+  .sdk-toolbar { gap: 3px; }
+  .sdk-btn, .sdk-level, .sdk-diff, .sdk-game {
+    font-size: 9px;
+    padding: 4px 6px;
+    min-height: 28px;
+  }
+  .sdk-board {
+    max-height: min(42vh, 280px);
+    max-width: min(42vh, 280px, 90vw);
+  }
+  .sdk-key { min-height: 32px; font-size: 12px; }
+  .sdk-status { font-size: 10px; padding-bottom: 2px; }
+}
+
+/* Landscape wide: board + pad side by side when height is tight */
+@media (orientation: landscape) and (max-height: 480px) and (min-width: 640px) {
+  .sudoku-app {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+  }
+  .sdk-toolbar {
+    width: 100%;
+    order: 0;
+  }
+  .sdk-board {
+    order: 1;
+    max-height: min(70vh, 300px);
+    max-width: min(70vh, 300px);
+  }
+  .sdk-pad {
+    order: 2;
+    width: min(200px, 40vw);
+    grid-template-columns: repeat(3, 1fr);
+    margin-left: 12px;
+  }
+  .sdk-status {
+    width: 100%;
+    order: 3;
+  }
+}
 
 /* Tetris view compatibility — iPhone / small screens / landscape */
 .tt-shell {

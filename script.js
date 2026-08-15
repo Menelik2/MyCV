@@ -7367,7 +7367,7 @@ function openWindow(id) {
     terminal: { w: 500, h: 320 },
     vscode: { w: 900, h: 620 },
     minesweeper: { w: 320, h: 380 },
-    sudoku: { w: 380, h: 480 },
+    sudoku: { w: 400, h: 560 },
     control: { w: 420, h: 360 },
     recycle: { w: 400, h: 320 },
     registry: { w: 640, h: 460 },
