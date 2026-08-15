@@ -3160,146 +3160,237 @@ function applyIconSizes(desktopSize, startSize, spacing) {
 function buildControlPanel() {
   const wrap = document.createElement("div");
   wrap.className = "control-app";
+
   const isLight = document.body.classList.contains("light");
   const dSize = localStorage.getItem("portfolio-icon-desktop") || "medium";
   const sSize = localStorage.getItem("portfolio-icon-start") || "medium";
   const gSize = localStorage.getItem("portfolio-icon-spacing") || "normal";
-  const sizeOpts = (cur) =>
-    ["small", "medium", "large", "xlarge", "custom"].map(v =>
-      `<option value="${v}" ${cur === v ? "selected" : ""}>${v[0].toUpperCase() + v.slice(1)}</option>`
-    ).join("");
-  const spaceOpts = (cur) =>
-    [
-      ["tight", "Tight (0–2px)"],
-      ["normal", "Normal (4–6px)"],
-      ["comfortable", "Comfortable (10–14px)"],
-      ["wide", "Wide (16–20px)"],
-      ["custom", "Custom (Registry)"]
-    ].map(([v, label]) =>
-      `<option value="${v}" ${cur === v ? "selected" : ""}>${label}</option>`
-    ).join("");
-  wrap.innerHTML = `
-    <h3 class="cp-title">Control Panel</h3>
-    <div class="cp-section">
-      <h4>Display</h4>
-      <label class="cp-row"><span>Theme</span>
-        <select class="cp-theme">
-          <option value="dark" ${!isLight ? "selected" : ""}>Dark</option>
-          <option value="light" ${isLight ? "selected" : ""}>Light</option>
-        </select>
-      </label>
-      <label class="cp-row"><span>Wallpaper accent</span>
-        <select class="cp-wall">
-          <option value="default">Default blue</option>
-          <option value="green">Green field</option>
-          <option value="sunset">Sunset</option>
-          <option value="night">Deep night</option>
-        </select>
-      </label>
-    </div>
-    <div class="cp-section">
-      <h4>Icons</h4>
-      <label class="cp-row"><span>Desktop size</span>
-        <select class="cp-icon-desktop">${sizeOpts(dSize)}</select>
-      </label>
-      <label class="cp-row"><span>Start menu size</span>
-        <select class="cp-icon-start">${sizeOpts(sSize)}</select>
-      </label>
-      <label class="cp-row"><span>Desktop spacing</span>
-        <select class="cp-icon-spacing">${spaceOpts(gSize)}</select>
-      </label>
-      <p class="cp-about" style="margin-top:6px">Size and spacing apply immediately and are saved for next visit.</p>
-      <button type="button" class="cp-open-reg proj-btn" style="margin-top:8px">Advanced: Registry Editor…</button>
-    </div>
-    <div class="cp-section">
-      <h4>System notifications &amp; sound</h4>
-      <label class="cp-row"><span>Notification sounds</span>
-        <input type="checkbox" class="cp-sounds" ${uiSoundsEnabled ? "checked" : ""} title="Dialogs and Control Panel feedback" />
-      </label>
-      <label class="cp-row"><span>Window open / close</span>
-        <input type="checkbox" class="cp-win-sounds" disabled title="Always off" />
-      </label>
-      <p class="cp-about" style="margin:0 0 8px">Window open and close tones are permanently silent.</p>
-      <label class="cp-row"><span>Startup sound</span>
-        <input type="checkbox" class="cp-startup-sound" ${localStorage.getItem("portfolio-startup-sound") !== "off" ? "checked" : ""} />
-      </label>
-      <button type="button" class="cp-test-sound proj-btn">Test notification</button>
-    </div>
-    <div class="cp-section">
-      <h4>Screensaver</h4>
-      <label class="cp-row"><span>Idle minutes</span>
-        <select class="cp-ss-idle">
-          <option value="0">Off</option>
-          <option value="1">1</option>
-          <option value="2" selected>2</option>
-          <option value="5">5</option>
-        </select>
-      </label>
-    </div>
-    <div class="cp-section">
-      <h4>About this PC</h4>
-      <p class="cp-about">Menelik OS · XP Portfolio<br/>https://menelik.webhop.me</p>
-    </div>
-  `;
   const savedWall = localStorage.getItem("portfolio-wallpaper") || "default";
   const savedIdle = localStorage.getItem("portfolio-ss-idle") || "2";
-  wrap.querySelector(".cp-wall").value = savedWall;
-  wrap.querySelector(".cp-ss-idle").value = savedIdle;
+  const soundsOn = typeof uiSoundsEnabled === "boolean"
+    ? uiSoundsEnabled
+    : localStorage.getItem("portfolio-sounds") !== "off";
+  const startupOn = localStorage.getItem("portfolio-startup-sound") !== "off";
+  const isMobileShell = !!(wrap.closest && false); // set after mount; detect by viewport
+  const mobileView = typeof window !== "undefined" && window.innerWidth < 900;
 
-  wrap.querySelector(".cp-theme").addEventListener("change", (e) => {
-    applyTheme(e.target.value);
-    playUiSound("notify");
-  });
-  wrap.querySelector(".cp-wall").addEventListener("change", (e) => {
-    document.body.dataset.wallpaper = e.target.value;
-    localStorage.setItem("portfolio-wallpaper", e.target.value);
-  });
-  wrap.querySelector(".cp-icon-desktop").addEventListener("change", (e) => {
-    const size = e.target.value;
-    if (size !== "custom") {
-      localStorage.removeItem("portfolio-icon-img-px");
-      document.documentElement.style.removeProperty("--icon-img-size");
-      // optional: clear cell size overrides so preset widths apply
-      localStorage.removeItem("portfolio-icon-width");
-      localStorage.removeItem("portfolio-icon-height");
-      document.documentElement.style.removeProperty("--icon-cell-w");
-      document.documentElement.style.removeProperty("--icon-cell-h");
+  const sizeOpts = (cur) =>
+    ["small", "medium", "large", "xlarge", "custom"]
+      .map(
+        (v) =>
+          `<option value="${v}" ${cur === v ? "selected" : ""}>${
+            v[0].toUpperCase() + v.slice(1)
+          }</option>`
+      )
+      .join("");
+  const spaceOpts = (cur) =>
+    [
+      ["tight", "Tight"],
+      ["normal", "Normal"],
+      ["comfortable", "Comfortable"],
+      ["wide", "Wide"],
+      ["custom", "Custom"],
+    ]
+      .map(
+        ([v, label]) =>
+          `<option value="${v}" ${cur === v ? "selected" : ""}>${label}</option>`
+      )
+      .join("");
+
+  const wallOpts = [
+    ["default", "Default blue"],
+    ["green", "Green field"],
+    ["sunset", "Sunset"],
+    ["night", "Deep night"],
+  ]
+    .map(
+      ([v, label]) =>
+        `<option value="${v}" ${savedWall === v ? "selected" : ""}>${label}</option>`
+    )
+    .join("");
+
+  const idleOpts = ["0", "1", "2", "5"]
+    .map((v) => {
+      const label = v === "0" ? "Off" : v;
+      return `<option value="${v}" ${savedIdle === v ? "selected" : ""}>${label}</option>`;
+    })
+    .join("");
+
+  wrap.innerHTML =
+    '<h3 class="cp-title">Control Panel</h3>' +
+    '<div class="cp-section">' +
+    "  <h4>Display</h4>" +
+    '  <label class="cp-row"><span>Theme</span>' +
+    '    <select class="cp-theme" aria-label="Theme">' +
+    '      <option value="dark"' +
+    (!isLight ? " selected" : "") +
+    ">Dark</option>" +
+    '      <option value="light"' +
+    (isLight ? " selected" : "") +
+    ">Light</option>" +
+    "    </select>" +
+    "  </label>" +
+    '  <label class="cp-row"><span>Wallpaper</span>' +
+    '    <select class="cp-wall" aria-label="Wallpaper">' +
+    wallOpts +
+    "    </select>" +
+    "  </label>" +
+    "</div>" +
+    (mobileView
+      ? ""
+      : '<div class="cp-section cp-desktop-only">' +
+        "  <h4>Icons</h4>" +
+        '  <label class="cp-row"><span>Desktop size</span>' +
+        '    <select class="cp-icon-desktop" aria-label="Desktop icon size">' +
+        sizeOpts(dSize) +
+        "</select></label>" +
+        '  <label class="cp-row"><span>Start menu size</span>' +
+        '    <select class="cp-icon-start" aria-label="Start menu icon size">' +
+        sizeOpts(sSize) +
+        "</select></label>" +
+        '  <label class="cp-row"><span>Desktop spacing</span>' +
+        '    <select class="cp-icon-spacing" aria-label="Desktop icon spacing">' +
+        spaceOpts(gSize) +
+        "</select></label>" +
+        '  <p class="cp-about">Size and spacing apply immediately and are saved.</p>' +
+        '  <button type="button" class="cp-open-reg proj-btn">Advanced: Registry Editor…</button>' +
+        "</div>") +
+    '<div class="cp-section">' +
+    "  <h4>Sound</h4>" +
+    '  <label class="cp-row"><span>Notification sounds</span>' +
+    '    <input type="checkbox" class="cp-sounds" ' +
+    (soundsOn ? "checked " : "") +
+    'aria-label="Notification sounds" />' +
+    "  </label>" +
+    '  <label class="cp-row"><span>Startup sound</span>' +
+    '    <input type="checkbox" class="cp-startup-sound" ' +
+    (startupOn ? "checked " : "") +
+    'aria-label="Startup sound" />' +
+    "  </label>" +
+    '  <button type="button" class="cp-test-sound proj-btn">Test notification</button>' +
+    "</div>" +
+    '<div class="cp-section">' +
+    "  <h4>Screensaver</h4>" +
+    '  <label class="cp-row"><span>Idle minutes</span>' +
+    '    <select class="cp-ss-idle" aria-label="Screensaver idle">' +
+    idleOpts +
+    "    </select>" +
+    "  </label>" +
+    '  <p class="cp-about">Desktop only. Set to Off to disable.</p>' +
+    "</div>" +
+    '<div class="cp-section">' +
+    "  <h4>About</h4>" +
+    '  <p class="cp-about">Menelik OS · XP Portfolio<br/>https://menelik.webhop.me</p>' +
+    "</div>";
+
+  const on = (sel, ev, fn) => {
+    const el = wrap.querySelector(sel);
+    if (el) el.addEventListener(ev, fn);
+  };
+
+  on(".cp-theme", "change", (e) => {
+    try {
+      if (typeof applyTheme === "function") applyTheme(e.target.value);
+      else {
+        document.body.classList.toggle("light", e.target.value === "light");
+        localStorage.setItem("portfolio-theme", e.target.value);
+      }
+      if (typeof playUiSound === "function") playUiSound("notify");
+    } catch (err) {
+      console.warn("Theme change failed", err);
     }
-    applyIconSizes(size, null, null);
-    playUiSound("notify");
   });
-  wrap.querySelector(".cp-icon-start").addEventListener("change", (e) => {
-    applyIconSizes(null, e.target.value, null);
-    playUiSound("notify");
+
+  on(".cp-wall", "change", (e) => {
+    try {
+      document.body.dataset.wallpaper = e.target.value;
+      localStorage.setItem("portfolio-wallpaper", e.target.value);
+    } catch (err) {
+      console.warn("Wallpaper change failed", err);
+    }
   });
-  wrap.querySelector(".cp-icon-spacing").addEventListener("change", (e) => {
-    const space = e.target.value;
-    localStorage.removeItem("portfolio-icon-gap-px");
-    localStorage.removeItem("portfolio-icon-gap-y");
-    localStorage.removeItem("portfolio-icon-gap-y-locked");
-    document.documentElement.style.removeProperty("--icon-gap-y");
-    document.documentElement.style.removeProperty("--icon-gap-x");
-    applyIconSizes(null, null, space);
-    playUiSound("notify");
+
+  on(".cp-icon-desktop", "change", (e) => {
+    try {
+      const size = e.target.value;
+      if (size !== "custom") {
+        localStorage.removeItem("portfolio-icon-img-px");
+        localStorage.removeItem("portfolio-icon-width");
+        localStorage.removeItem("portfolio-icon-height");
+        document.documentElement.style.removeProperty("--icon-img-size");
+        document.documentElement.style.removeProperty("--icon-cell-w");
+        document.documentElement.style.removeProperty("--icon-cell-h");
+      }
+      if (typeof applyIconSizes === "function") applyIconSizes(size, null, null);
+      if (typeof playUiSound === "function") playUiSound("notify");
+    } catch (err) {
+      console.warn("Icon desktop size failed", err);
+    }
   });
-  wrap.querySelector(".cp-open-reg")?.addEventListener("click", () => {
-    openWindow("registry");
+
+  on(".cp-icon-start", "change", (e) => {
+    try {
+      if (typeof applyIconSizes === "function") applyIconSizes(null, e.target.value, null);
+      if (typeof playUiSound === "function") playUiSound("notify");
+    } catch (err) {
+      console.warn("Icon start size failed", err);
+    }
   });
-  wrap.querySelector(".cp-sounds").addEventListener("change", (e) => {
-    uiSoundsEnabled = e.target.checked;
-    localStorage.setItem("portfolio-sounds", uiSoundsEnabled ? "on" : "off");
+
+  on(".cp-icon-spacing", "change", (e) => {
+    try {
+      const space = e.target.value;
+      localStorage.removeItem("portfolio-icon-gap-px");
+      localStorage.removeItem("portfolio-icon-gap-y");
+      localStorage.removeItem("portfolio-icon-gap-y-locked");
+      document.documentElement.style.removeProperty("--icon-gap-y");
+      document.documentElement.style.removeProperty("--icon-gap-x");
+      if (typeof applyIconSizes === "function") applyIconSizes(null, null, space);
+      if (typeof playUiSound === "function") playUiSound("notify");
+    } catch (err) {
+      console.warn("Icon spacing failed", err);
+    }
   });
-  wrap.querySelector(".cp-startup-sound")?.addEventListener("change", (e) => {
+
+  on(".cp-open-reg", "click", () => {
+    try {
+      if (typeof openWindow === "function") openWindow("registry");
+    } catch (err) {
+      console.warn("Open registry failed", err);
+    }
+  });
+
+  on(".cp-sounds", "change", (e) => {
+    try {
+      if (typeof uiSoundsEnabled !== "undefined") uiSoundsEnabled = e.target.checked;
+      localStorage.setItem("portfolio-sounds", e.target.checked ? "on" : "off");
+    } catch (_) {}
+  });
+
+  on(".cp-startup-sound", "change", (e) => {
     localStorage.setItem("portfolio-startup-sound", e.target.checked ? "on" : "off");
   });
-  wrap.querySelector(".cp-test-sound").addEventListener("click", () => playUiSound("notify"));
-  wrap.querySelector(".cp-ss-idle").addEventListener("change", (e) => {
-    localStorage.setItem("portfolio-ss-idle", e.target.value);
-    resetScreensaverTimer();
+
+  on(".cp-test-sound", "click", () => {
+    try {
+      if (typeof playUiSound === "function") playUiSound("notify");
+    } catch (_) {}
   });
-  document.body.dataset.wallpaper = savedWall;
+
+  on(".cp-ss-idle", "change", (e) => {
+    localStorage.setItem("portfolio-ss-idle", e.target.value);
+    try {
+      if (typeof resetScreensaverTimer === "function") resetScreensaverTimer();
+    } catch (_) {}
+  });
+
+  try {
+    document.body.dataset.wallpaper = savedWall;
+  } catch (_) {}
+
   return wrap;
 }
+
 
 
 
@@ -7567,7 +7658,7 @@ function openWindow(id) {
     vscode: { w: 900, h: 620 },
     minesweeper: { w: 320, h: 380 },
     sudoku: { w: 400, h: 560 },
-    control: { w: 420, h: 360 },
+    control: { w: 440, h: 520 },
     recycle: { w: 400, h: 320 },
     registry: { w: 640, h: 460 },
     ie: { w: 660, h: 480 },
