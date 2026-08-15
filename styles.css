@@ -7241,3 +7241,191 @@ body:not(.light) .sdk-timer { color: #e2e8f0; }
     -webkit-overflow-scrolling: touch;
   }
 }
+
+
+/* Tetris view compatibility — iPhone / small screens / landscape */
+.tt-shell {
+  height: 100%;
+  min-height: 0;
+  max-height: 100%;
+  display: flex;
+  flex-direction: column;
+  background: #1a1a1a;
+  overflow: hidden;
+  overscroll-behavior: none;
+  touch-action: manipulation;
+  -webkit-user-select: none;
+  user-select: none;
+}
+.tt-device {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  background: linear-gradient(165deg, #ffe566 0%, #f5c518 45%, #e6b800 100%);
+  border-radius: 0;
+  padding: 8px 10px max(12px, env(safe-area-inset-bottom, 0px));
+  padding-left: max(10px, env(safe-area-inset-left, 0px));
+  padding-right: max(10px, env(safe-area-inset-right, 0px));
+  box-sizing: border-box;
+  overflow: hidden;
+}
+.tt-brand {
+  flex-shrink: 0;
+  text-align: center;
+  font-family: "Segoe UI", system-ui, sans-serif;
+  font-weight: 800;
+  letter-spacing: 0.35em;
+  font-size: 12px;
+  color: #5c4a00;
+  margin-bottom: 6px;
+  text-shadow: 0 1px 0 rgba(255,255,255,0.4);
+}
+.tt-screen-wrap {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: #3d4a2e;
+  border: 4px solid #2a3320;
+  border-radius: 8px;
+  padding: 6px;
+  position: relative;
+  box-shadow: inset 0 2px 8px rgba(0,0,0,0.35);
+  overflow: hidden;
+}
+.tt-board {
+  display: block;
+  background: #9ca88a;
+  border-radius: 2px;
+  max-width: 100%;
+  max-height: 100%;
+  width: auto;
+  height: auto;
+  touch-action: none;
+  flex-shrink: 0;
+  margin: 0 auto;
+}
+.tt-side {
+  width: 64px;
+  max-width: 28%;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-family: "Segoe UI", system-ui, sans-serif;
+  overflow: auto;
+  max-height: 100%;
+  -webkit-overflow-scrolling: touch;
+}
+.tt-controls {
+  margin-top: 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+  padding-bottom: 2px;
+}
+.tt-dpad {
+  display: grid;
+  grid-template-columns: minmax(44px, 52px) minmax(44px, 52px) minmax(44px, 52px);
+  grid-template-rows: minmax(40px, 48px) minmax(40px, 48px) minmax(36px, 44px);
+  gap: 6px;
+  justify-content: center;
+  width: 100%;
+  max-width: 220px;
+}
+.tt-pad {
+  width: 100%;
+  height: 100%;
+  min-width: 44px;
+  min-height: 40px;
+  border-radius: 50%;
+  border: none;
+  background: linear-gradient(180deg, #7dd3fc, #2563eb);
+  color: #fff;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 4px 0 #1e40af, 0 5px 10px rgba(0,0,0,0.25);
+  touch-action: manipulation;
+  font-family: inherit;
+  -webkit-tap-highlight-color: transparent;
+}
+.tt-drop {
+  grid-column: 1 / 4;
+  grid-row: 3;
+  width: auto;
+  height: auto;
+  min-height: 36px;
+  border-radius: 20px;
+  margin-top: 0;
+}
+#page-tetris,
+#page-blockblaster {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  max-height: 100%;
+  overflow: hidden;
+}
+#page-tetris .page-header,
+#page-blockblaster .page-header {
+  flex-shrink: 0;
+}
+#page-tetris .page-body-full,
+#page-blockblaster .page-body-full {
+  flex: 1;
+  min-height: 0;
+  height: auto;
+  max-height: 100%;
+  overflow: hidden;
+}
+
+/* Very narrow phones */
+@media (max-width: 380px) {
+  .tt-side { width: 56px; gap: 4px; }
+  .tt-stat { padding: 3px 4px; }
+  .tt-stat strong { font-size: 12px; }
+  .tt-next, .tt-hold { width: 48px; height: 48px; }
+  .tt-brand { font-size: 11px; letter-spacing: 0.25em; }
+}
+
+/* Short viewports / landscape iPhone */
+@media (max-height: 520px), (orientation: landscape) and (max-height: 500px) {
+  .tt-brand { display: none; }
+  .tt-device { padding: 4px 6px max(6px, env(safe-area-inset-bottom, 0px)); }
+  .tt-screen-wrap { border-width: 3px; padding: 4px; gap: 6px; }
+  .tt-controls { margin-top: 4px; gap: 4px; }
+  .tt-row { gap: 6px; }
+  .tt-btn { height: 32px; min-width: 40px; font-size: 12px; }
+  .tt-dpad {
+    grid-template-columns: 40px 40px 40px;
+    grid-template-rows: 36px 36px 32px;
+    gap: 4px;
+    max-width: 160px;
+  }
+  .tt-pad { min-width: 36px; min-height: 32px; font-size: 13px; }
+  .tt-side { width: 52px; }
+}
+
+/* Landscape: side-by-side playfield + controls when wide enough */
+@media (orientation: landscape) and (max-height: 480px) and (min-width: 600px) {
+  .tt-device {
+    flex-direction: row;
+    align-items: stretch;
+    gap: 8px;
+  }
+  .tt-screen-wrap {
+    flex: 1;
+  }
+  .tt-controls {
+    margin-top: 0;
+    justify-content: center;
+    max-width: 200px;
+  }
+}

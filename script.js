@@ -8422,17 +8422,51 @@ function initMobileTetris(root) {
   function resizeBoard() {
     const wrap = root.querySelector(".tt-screen-wrap");
     const side = root.querySelector(".tt-side");
-    const maxW = Math.max(140, (wrap?.clientWidth || 280) - (side?.offsetWidth || 72) - 16);
-    const maxH = Math.max(220, (wrap?.clientHeight || 320) - 8);
-    cellW = Math.max(10, Math.floor(Math.min(maxW / COLS, maxH / ROWS)));
-    cellH = cellW;
-    boardEl.width = cellW * COLS;
-    boardEl.height = cellH * ROWS;
+    if (!wrap) return;
+
+    const style = getComputedStyle(wrap);
+    const padX =
+      (parseFloat(style.paddingLeft) || 0) + (parseFloat(style.paddingRight) || 0);
+    const padY =
+      (parseFloat(style.paddingTop) || 0) + (parseFloat(style.paddingBottom) || 0);
+    const gap = parseFloat(style.gap) || 8;
+    const sideW = side && getComputedStyle(side).display !== "none"
+      ? side.offsetWidth + gap
+      : 0;
+
+    // Available box for the board (CSS pixels)
+    let availW = Math.max(100, wrap.clientWidth - padX - sideW);
+    let availH = Math.max(120, wrap.clientHeight - padY);
+
+    // Landscape phones: prefer height-limited square cells
+    const vw = window.visualViewport?.width || window.innerWidth;
+    const vh = window.visualViewport?.height || window.innerHeight;
+    if (vw > vh && availH < 180) {
+      availH = Math.max(100, availH);
+    }
+
+    const cssCell = Math.max(
+      8,
+      Math.floor(Math.min(availW / COLS, availH / ROWS))
+    );
+    cellW = cssCell;
+    cellH = cssCell;
+
+    const cssW = cellW * COLS;
+    const cssH = cellH * ROWS;
+
+    // Sharp canvas on retina
+    const dpr = Math.min(window.devicePixelRatio || 1, 2.5);
+    boardEl.style.width = cssW + "px";
+    boardEl.style.height = cssH + "px";
+    boardEl.width = Math.round(cssW * dpr);
+    boardEl.height = Math.round(cssH * dpr);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
   }
 
   function draw() {
-    const w = boardEl.width;
-    const h = boardEl.height;
+    const w = cellW * COLS;
+    const h = cellH * ROWS;
     ctx.fillStyle = "#9ca88a";
     ctx.fillRect(0, 0, w, h);
     ctx.strokeStyle = "rgba(0,0,0,0.08)";
@@ -8518,7 +8552,7 @@ function initMobileTetris(root) {
     beep(110, 0.25);
     for (let i = 0; i < 28; i++) {
       spawnParticles(
-        Math.random() * boardEl.width,
+        Math.random() * (cellW * COLS),
         Math.random() * boardEl.height,
         "#f87171",
         2,
@@ -8799,15 +8833,44 @@ function initMobileTetris(root) {
   } catch (_) {
     best = 0;
   }
+  function scheduleResize() {
+    requestAnimationFrame(() => {
+      resizeBoard();
+      draw();
+    });
+  }
+
   const ro =
     typeof ResizeObserver !== "undefined"
-      ? new ResizeObserver(() => {
-          resizeBoard();
-          draw();
-        })
+      ? new ResizeObserver(() => scheduleResize())
       : null;
   ro?.observe(root);
+  const wrapEl = root.querySelector(".tt-screen-wrap");
+  if (wrapEl) ro?.observe(wrapEl);
+
+  window.addEventListener("orientationchange", scheduleResize);
+  window.addEventListener("resize", scheduleResize);
+  if (window.visualViewport) {
+    window.visualViewport.addEventListener("resize", scheduleResize);
+  }
+
+  // Cleanup when shell is removed (leaving the page)
+  const mo = new MutationObserver(() => {
+    if (!root.isConnected) {
+      mo.disconnect();
+      ro?.disconnect();
+      window.removeEventListener("orientationchange", scheduleResize);
+      window.removeEventListener("resize", scheduleResize);
+      if (window.visualViewport) {
+        window.visualViewport.removeEventListener("resize", scheduleResize);
+      }
+      if (rafId) cancelAnimationFrame(rafId);
+    }
+  });
+  mo.observe(document.body, { childList: true, subtree: true });
+
   resetToTitle();
+  scheduleResize();
   lastTs = performance.now();
   rafId = requestAnimationFrame(gameTick);
 }
