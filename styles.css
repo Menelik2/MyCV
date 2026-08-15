@@ -7684,3 +7684,68 @@ body:not(.light) .sudoku-app { background: #1e293b; color: #e2e8f0; }
     font-variant-numeric: tabular-nums;
   }
 }
+
+
+/* Sudoku number pad — always show digits 1–9 fully (no horizontal clip) */
+.sdk-pad {
+  display: grid !important;
+  grid-template-columns: repeat(9, minmax(0, 1fr)) !important;
+  gap: 4px !important;
+  width: 100% !important;
+  max-width: min(360px, 100%) !important;
+  margin: 0 auto !important;
+  box-sizing: border-box !important;
+  padding: 0 2px !important;
+  flex-shrink: 0 !important;
+  overflow: visible !important;
+}
+.sdk-key {
+  min-width: 0 !important;
+  width: 100% !important;
+  max-width: none !important;
+  box-sizing: border-box !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  min-height: 40px !important;
+  border-radius: 8px !important;
+  font-size: clamp(12px, 3.8vw, 16px) !important;
+  font-weight: 700 !important;
+  font-variant-numeric: tabular-nums !important;
+  line-height: 1 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+.sdk-status {
+  max-width: 100%;
+  padding: 0 10px 6px !important;
+  box-sizing: border-box;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  white-space: normal !important;
+  line-height: 1.35;
+}
+@media (max-width: 900px) {
+  .sdk-pad {
+    width: 100% !important;
+    max-width: 100% !important;
+    gap: 3px !important;
+    padding: 0 4px !important;
+  }
+  .sdk-key {
+    min-height: 42px !important;
+    font-size: clamp(13px, 4.2vw, 17px) !important;
+  }
+  .sdk-board {
+    width: min(100%, calc(100vw - 24px)) !important;
+    max-width: min(100%, calc(100vw - 24px), 55vh) !important;
+  }
+}
+@media (max-width: 380px) {
+  .sdk-pad { gap: 2px !important; }
+  .sdk-key {
+    min-height: 38px !important;
+    border-radius: 6px !important;
+    font-size: 13px !important;
+  }
+}

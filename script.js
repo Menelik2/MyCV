@@ -2431,14 +2431,7 @@ function buildSudoku() {
     if (tEl) tEl.textContent = "00:00";
     render();
     setStatus(
-      meta.label +
-        " · Game " +
-        gameNo +
-        "/" +
-        meta.games +
-        " · " +
-        clues +
-        " clues — click a cell, then 1–9."
+      meta.label + " · Game " + gameNo + "/" + meta.games + " · " + clues + " clues"
     );
   }
 
