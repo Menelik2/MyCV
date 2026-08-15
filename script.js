@@ -9226,6 +9226,16 @@ document.querySelectorAll(".app-icon[data-page]").forEach(btn => {
 document.querySelectorAll(".back-btn").forEach(btn => {
   btn.addEventListener("click", showHome);
 });
+// Android navigation bar (phone shell only)
+document.querySelector(".android-nav-home")?.addEventListener("click", (e) => {
+  e.preventDefault();
+  showHome();
+});
+document.querySelector(".android-nav-back")?.addEventListener("click", (e) => {
+  e.preventDefault();
+  const openPage = document.querySelector(".app-page:not([hidden])");
+  if (openPage) showHome();
+});
 
 /* ========== Init ========== */
 initTheme();

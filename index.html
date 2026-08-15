@@ -9,9 +9,9 @@
     Cache bust: bump window.__MENELIK_V__ + the ?v= values below on every public deploy
     so browsers and CDNs treat assets as new URLs.
   -->
-  <script>window.__MENELIK_V__ = "20260815d";</script>
-  <link rel="stylesheet" href="styles.css?v=20260815d" />
-  <link rel="manifest" href="manifest.webmanifest?v=20260815d" />
+  <script>window.__MENELIK_V__ = "20260815e";</script>
+  <link rel="stylesheet" href="styles.css?v=20260815e" />
+  <link rel="manifest" href="manifest.webmanifest?v=20260815e" />
   <link rel="apple-touch-icon" href="static/images/profile-320.webp" />
   <!-- Optimized profile photo preload (responsive sizes) -->
   <link rel="preload" href="static/images/profile-128.webp" as="image" type="image/webp" />
@@ -254,17 +254,14 @@
 
   <!-- ========== MOBILE (iPhone Pro Max style) ========== -->
   <div id="mobile" class="mobile boot-hidden">
-    <div class="iphone-frame">
-      <div class="iphone-notch">
-        <div class="dynamic-island"></div>
-      </div>
-      <div class="iphone-screen">
-        <div class="status-bar">
+    <div class="android-frame">
+      <div class="android-screen">
+        <div class="status-bar android-status-bar">
           <span class="time" id="mobile-time">9:41</span>
           <div class="status-icons">
-            <span class="signal">■■■</span>
-            <span class="wifi">◉</span>
-            <span class="battery">100%</span>
+            <span class="signal" aria-hidden="true">▮▮▮</span>
+            <span class="wifi" aria-hidden="true">WLAN</span>
+            <span class="battery" aria-hidden="true">100%</span>
           </div>
         </div>
 
@@ -424,7 +421,11 @@
           </div>
         </div>
 
-        <div class="home-indicator"></div>
+        <div class="android-nav" aria-hidden="true">
+          <span class="android-nav-btn android-nav-back">◁</span>
+          <span class="android-nav-btn android-nav-home">○</span>
+          <span class="android-nav-btn android-nav-recents">▢</span>
+        </div>
       </div>
     </div>
   </div>
@@ -503,7 +504,7 @@
     </div>
   </div>
 
-  <script src="script.js?v=20260815d"></script>
-  <script src="features-extra.js?v=20260815d"></script>
+  <script src="script.js?v=20260815e"></script>
+  <script src="features-extra.js?v=20260815e"></script>
 </body>
 </html>
