@@ -930,7 +930,7 @@
         { href: "https://yeni-movie.vercel.app", title: "Yeni Movie", sub: "Live demo", icon: "🎬", tone: "movie" },
         { href: "https://fidel.is-local.dev", title: "Yeni Typing", sub: "Live demo", icon: "⌨️", tone: "type" },
         { href: "https://yeniexams.vercel.app/", title: "Yeni Exam", sub: "Exit exam generator", icon: "📝", tone: "site" },
-        { href: "https://www.linkedin.com/in/menelikadmasu", title: "LinkedIn", sub: "menelikadmasu", icon: "in", tone: "in" },
+        { href: "https://www.linkedin.com/in/menelik7", title: "LinkedIn", sub: "menelik7", icon: "in", tone: "in" },
         { href: "mailto:linuxos777@gmail.com", title: "Email", sub: "linuxos777@gmail.com", icon: "✉", tone: "mail" },
       ];
       setStatus(places.length + " network places");

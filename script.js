@@ -573,11 +573,11 @@ const CONTENT = {
             <span class="contact-tile-value">@Menelik2</span>
           </span>
         </a>
-        <a class="contact-tile" href="https://www.linkedin.com/in/menelikadmasu" target="_blank" rel="noopener">
+        <a class="contact-tile" href="https://www.linkedin.com/in/menelik7" target="_blank" rel="noopener">
           <span class="contact-tile-icon" aria-hidden="true">in</span>
           <span class="contact-tile-body">
             <span class="contact-tile-label">LinkedIn</span>
-            <span class="contact-tile-value">menelikadmasu</span>
+            <span class="contact-tile-value">menelik7</span>
           </span>
         </a>
         <div class="contact-tile contact-tile-static">
