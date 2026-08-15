@@ -8143,3 +8143,40 @@ body:not(.light) .cp-section {
 @media (min-width: 900px) {
   .android-nav { display: none !important; }
 }
+
+/* Android navigation gesture feedback (phone only) */
+@media (max-width: 899px) {
+  .android-gesture-hint {
+    position: fixed;
+    pointer-events: none;
+    z-index: 9999;
+    border-radius: 999px;
+    background: rgba(138, 180, 248, 0.35);
+    box-shadow: 0 0 0 1px rgba(138, 180, 248, 0.5);
+    transition: opacity 0.12s ease;
+  }
+  .android-gesture-hint[data-kind="back"] {
+    top: 30%;
+    left: 0;
+    width: calc(4px + 18px * var(--g-progress, 0));
+    height: 96px;
+    border-radius: 0 12px 12px 0;
+  }
+  .android-gesture-hint[data-kind="home"] {
+    left: 50%;
+    bottom: calc(12px + env(safe-area-inset-bottom, 0px));
+    width: calc(48px + 80px * var(--g-progress, 0));
+    height: 4px;
+    transform: translateX(-50%);
+    border-radius: 4px;
+    background: rgba(232, 234, 237, 0.85);
+  }
+  .android-recents-pulse {
+    animation: androidRecentsPulse 0.55s ease;
+  }
+  @keyframes androidRecentsPulse {
+    0% { transform: scale(1); }
+    40% { transform: scale(1.04); box-shadow: 0 0 0 3px rgba(138, 180, 248, 0.45); }
+    100% { transform: scale(1); }
+  }
+}

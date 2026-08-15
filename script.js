@@ -9233,9 +9233,192 @@ document.querySelector(".android-nav-home")?.addEventListener("click", (e) => {
 });
 document.querySelector(".android-nav-back")?.addEventListener("click", (e) => {
   e.preventDefault();
-  const openPage = document.querySelector(".app-page:not([hidden])");
-  if (openPage) showHome();
+  androidGoBack();
 });
+document.querySelector(".android-nav-recents")?.addEventListener("click", (e) => {
+  e.preventDefault();
+  androidShowRecents();
+});
+
+/** Android navigation helpers (phone shell) */
+function androidIsPhone() {
+  return window.innerWidth < 900 && !!document.getElementById("mobile");
+}
+
+function androidGoBack() {
+  if (!androidIsPhone()) return;
+  const openPage = document.querySelector("#mobile .app-page:not([hidden])");
+  if (openPage) {
+    showHome();
+    return true;
+  }
+  return false;
+}
+
+function androidGoHome() {
+  if (!androidIsPhone()) return;
+  showHome();
+}
+
+function androidShowRecents() {
+  if (!androidIsPhone()) return;
+  // Lightweight "recents": return home and briefly flash dock
+  showHome();
+  const dock = document.querySelector("#mobile .dock");
+  if (dock) {
+    dock.classList.add("android-recents-pulse");
+    setTimeout(() => dock.classList.remove("android-recents-pulse"), 600);
+  }
+}
+
+/**
+ * Android navigation gestures (phone views only):
+ * - Swipe from left/right edge → Back
+ * - Swipe up from bottom → Home
+ * - Quick swipe up + pause near bottom → Recents (treated as home + pulse)
+ */
+function initAndroidNavGestures() {
+  const root = document.getElementById("mobile");
+  if (!root || root.dataset.gesturesBound === "1") return;
+  root.dataset.gesturesBound = "1";
+
+  const EDGE = 28; // px from left/right
+  const BOTTOM = 56; // px from bottom for home gesture
+  const MIN_BACK = 72;
+  const MIN_HOME = 64;
+
+  let startX = 0;
+  let startY = 0;
+  let startT = 0;
+  let mode = null; // "back-left" | "back-right" | "home" | null
+  let tracking = false;
+  let indicator = null;
+
+  function ensureIndicator() {
+    if (indicator) return indicator;
+    indicator = document.createElement("div");
+    indicator.className = "android-gesture-hint";
+    indicator.hidden = true;
+    root.appendChild(indicator);
+    return indicator;
+  }
+
+  function showHint(kind, progress) {
+    const el = ensureIndicator();
+    el.hidden = false;
+    el.dataset.kind = kind;
+    el.style.setProperty("--g-progress", String(Math.min(1, Math.max(0, progress))));
+  }
+
+  function hideHint() {
+    if (indicator) indicator.hidden = true;
+  }
+
+  function onStart(x, y, target) {
+    if (!androidIsPhone()) return;
+    // Don't steal gestures from form fields / games with own swipe
+    if (target && target.closest("input, textarea, select, .sdk-board, .tt-board, .tt-pad, .sdk-pad")) {
+      mode = null;
+      tracking = false;
+      return;
+    }
+    const rect = root.getBoundingClientRect();
+    const relX = x - rect.left;
+    const relY = y - rect.top;
+    const w = rect.width;
+    const h = rect.height;
+    startX = x;
+    startY = y;
+    startT = Date.now();
+    mode = null;
+    if (relX <= EDGE) mode = "back-left";
+    else if (relX >= w - EDGE) mode = "back-right";
+    else if (relY >= h - BOTTOM) mode = "home";
+    tracking = !!mode;
+  }
+
+  function onMove(x, y) {
+    if (!tracking || !mode) return;
+    const dx = x - startX;
+    const dy = y - startY;
+    if (mode === "back-left") {
+      showHint("back", dx / MIN_BACK);
+    } else if (mode === "back-right") {
+      showHint("back", -dx / MIN_BACK);
+    } else if (mode === "home") {
+      showHint("home", -dy / MIN_HOME);
+    }
+  }
+
+  function onEnd(x, y) {
+    if (!tracking || !mode) {
+      hideHint();
+      tracking = false;
+      mode = null;
+      return;
+    }
+    const dx = x - startX;
+    const dy = y - startY;
+    const dt = Date.now() - startT;
+    hideHint();
+
+    if (mode === "back-left" && dx >= MIN_BACK && Math.abs(dy) < 100) {
+      androidGoBack();
+    } else if (mode === "back-right" && dx <= -MIN_BACK && Math.abs(dy) < 100) {
+      androidGoBack();
+    } else if (mode === "home" && -dy >= MIN_HOME && Math.abs(dx) < 120) {
+      // Long hold-ish upward → recents pulse; fast → home
+      if (dt > 450 && -dy >= MIN_HOME + 20) androidShowRecents();
+      else androidGoHome();
+    }
+
+    tracking = false;
+    mode = null;
+  }
+
+  root.addEventListener(
+    "touchstart",
+    (e) => {
+      if (e.touches.length !== 1) return;
+      const t = e.touches[0];
+      onStart(t.clientX, t.clientY, e.target);
+    },
+    { passive: true }
+  );
+  root.addEventListener(
+    "touchmove",
+    (e) => {
+      if (!tracking || e.touches.length !== 1) return;
+      const t = e.touches[0];
+      onMove(t.clientX, t.clientY);
+    },
+    { passive: true }
+  );
+  root.addEventListener(
+    "touchend",
+    (e) => {
+      const t = e.changedTouches[0];
+      if (t) onEnd(t.clientX, t.clientY);
+      else {
+        tracking = false;
+        mode = null;
+        hideHint();
+      }
+    },
+    { passive: true }
+  );
+  root.addEventListener(
+    "touchcancel",
+    () => {
+      tracking = false;
+      mode = null;
+      hideHint();
+    },
+    { passive: true }
+  );
+}
+
+initAndroidNavGestures();
 
 /* ========== Init ========== */
 initTheme();
