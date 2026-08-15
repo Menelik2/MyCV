@@ -2361,6 +2361,16 @@ function buildSudoku() {
     sel.value = String(gameNo);
   }
 
+  /**
+   * Sudoku generation algorithm
+   * --------------------------------
+   * 1. Seeded RNG (mulberry32) so Level+Game → stable puzzle
+   * 2. Fill a complete valid grid via randomized backtracking
+   * 3. Optionally apply band/stack shuffles (validity-preserving)
+   * 4. Dig cells in random order; keep a removal only if the
+   *    puzzle still has exactly one solution (uniqueness test)
+   * 5. Stop near the target clue count for the selected difficulty
+   */
   function generate() {
     stopTimer();
     timer = 0;
@@ -2370,20 +2380,45 @@ function buildSudoku() {
     seed = makeSeed(difficulty, gameNo);
     const rnd = mulberry32(seed);
 
+    // --- Step 1–2: complete grid ---
     const full = Array(81).fill(0);
-    fillGrid(full, rnd);
+    if (!fillCompleteGrid(full, rnd)) {
+      // Extremely unlikely; fall back to unseeded attempt
+      fillCompleteGrid(full, Math.random);
+    }
+    shuffleBands(full, rnd);
     solution = full.slice();
+
+    // --- Step 3–4: dig with uniqueness ---
     const puzzle = full.slice();
     const order = shuffle([...Array(81).keys()], rnd);
     const target = meta.clues;
+    let clues = 81;
 
-    for (const i of order) {
-      if (puzzle.filter((x) => x > 0).length <= target) break;
+    for (let n = 0; n < order.length && clues > target; n++) {
+      const i = order[n];
+      if (!puzzle[i]) continue;
       const bak = puzzle[i];
       puzzle[i] = 0;
-      const trial = puzzle.slice();
-      if (countSolutions(trial, 2) !== 1) {
+
+      // Uniqueness: exactly one solution after removal
+      if (countSolutions(puzzle, 2) !== 1) {
         puzzle[i] = bak;
+        continue;
+      }
+      clues--;
+    }
+
+    // If still too many clues (hard uniqueness), force a few more
+    // removals only when the board remains solvable uniquely.
+    if (clues > target + 4) {
+      for (let n = 0; n < order.length && clues > target; n++) {
+        const i = order[n];
+        if (!puzzle[i]) continue;
+        const bak = puzzle[i];
+        puzzle[i] = 0;
+        if (countSolutions(puzzle, 2) === 1) clues--;
+        else puzzle[i] = bak;
       }
     }
 
@@ -2391,20 +2426,120 @@ function buildSudoku() {
     board = puzzle.slice();
     noteMap = Array.from({ length: 81 }, () => new Set());
     selected = -1;
+    wrap._wrongCells = null;
     const tEl = wrap.querySelector(".sdk-timer");
     if (tEl) tEl.textContent = "00:00";
     render();
     setStatus(
-      meta.label + " · Game " + gameNo + "/" + meta.games + " — click a cell, then 1–9."
+      meta.label +
+        " · Game " +
+        gameNo +
+        "/" +
+        meta.games +
+        " · " +
+        clues +
+        " clues — click a cell, then 1–9."
     );
   }
 
+  /** Randomized backtracking fill → complete valid Sudoku. */
+  function fillCompleteGrid(b, rnd) {
+    for (let i = 0; i < 81; i++) b[i] = 0;
+    return fillGrid(b, rnd);
+  }
+
   /**
-   * Sudoku validation logic
-   * - Rule conflicts: same digit twice in a row, column, or 3×3 box
-   * - Solution check: filled cell differs from unique solution (optional)
-   * - Completeness: all cells filled with no conflicts
+   * Validity-preserving transforms for variety:
+   * shuffle rows within bands, columns within stacks,
+   * and the order of bands/stacks themselves.
    */
+  function shuffleBands(b, rnd) {
+    const r = rnd || Math.random;
+
+    function swapRows(r1, r2) {
+      if (r1 === r2) return;
+      for (let c = 0; c < 9; c++) {
+        const i1 = r1 * 9 + c;
+        const i2 = r2 * 9 + c;
+        const t = b[i1];
+        b[i1] = b[i2];
+        b[i2] = t;
+      }
+    }
+
+    function swapCols(c1, c2) {
+      if (c1 === c2) return;
+      for (let row = 0; row < 9; row++) {
+        const i1 = row * 9 + c1;
+        const i2 = row * 9 + c2;
+        const t = b[i1];
+        b[i1] = b[i2];
+        b[i2] = t;
+      }
+    }
+
+    function permuteGroups(getSwap, groups) {
+      for (const group of groups) {
+        const order = shuffle(group.slice(), r);
+        // Apply permutation: map position k <- order[k] via cycle following
+        const src = group.slice();
+        const data = src.map((id) => id); // current occupant at each slot
+        // We want slot i to receive what was at order[i] relative to group
+        // Build from snapshot
+        const snapVals = [];
+        // For rows/cols we need full line data - handled by successive swaps
+        for (let i = 0; i < 3; i++) {
+          const want = order[i];
+          const at = src.indexOf(want);
+          if (at !== i) {
+            getSwap(src[i], src[at]);
+            const tmp = src[i];
+            src[i] = src[at];
+            src[at] = tmp;
+          }
+        }
+      }
+    }
+
+    // Rows within each band
+    permuteGroups(swapRows, [
+      [0, 1, 2],
+      [3, 4, 5],
+      [6, 7, 8],
+    ]);
+    // Columns within each stack
+    permuteGroups(swapCols, [
+      [0, 1, 2],
+      [3, 4, 5],
+      [6, 7, 8],
+    ]);
+    // Band order (groups of 3 rows)
+    const bandOrder = shuffle([0, 1, 2], r);
+    {
+      const snap = b.slice();
+      for (let bi = 0; bi < 3; bi++) {
+        for (let rr = 0; rr < 3; rr++) {
+          for (let c = 0; c < 9; c++) {
+            b[(bi * 3 + rr) * 9 + c] = snap[(bandOrder[bi] * 3 + rr) * 9 + c];
+          }
+        }
+      }
+    }
+    // Stack order (groups of 3 cols)
+    const stackOrder = shuffle([0, 1, 2], r);
+    {
+      const snap = b.slice();
+      for (let si = 0; si < 3; si++) {
+        for (let cc = 0; cc < 3; cc++) {
+          for (let row = 0; row < 9; row++) {
+            b[row * 9 + (si * 3 + cc)] = snap[row * 9 + (stackOrder[si] * 3 + cc)];
+          }
+        }
+      }
+    }
+  }
+
+
   function conflicts(i) {
     return getConflictPeers(i).length > 0;
   }
