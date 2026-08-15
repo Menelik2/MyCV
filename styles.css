@@ -753,8 +753,25 @@ body:not(.light) .sticky-note:hover {
 
 .window-body p { margin-bottom: 8px; }
 
+.window-body ul,
+.window-body ol {
+  margin: 6px 0 10px 0;
+  padding-left: 1.4em;
+  list-style-position: outside;
+}
+.window-body ol {
+  list-style-type: decimal;
+}
 .window-body ul {
-  margin: 6px 0 10px 18px;
+  list-style-type: disc;
+}
+.window-body li {
+  margin: 0.2em 0;
+  padding-left: 0.15em;
+}
+.window-body li::marker {
+  color: inherit;
+  font-variant-numeric: tabular-nums;
 }
 
 .window-body .profile-row {
@@ -1449,7 +1466,28 @@ body.light .theme-toggle-mobile .moon { display: inline; }
 }
 
 .page-body p { margin-bottom: 10px; color: var(--mobile-text); }
-.page-body ul { margin: 0 0 12px 18px; color: var(--mobile-muted); }
+.page-body ul,
+.page-body ol {
+  margin: 0 0 12px 0;
+  padding-left: 1.5em;
+  color: var(--mobile-muted);
+  list-style-position: outside;
+}
+.page-body ol {
+  list-style-type: decimal;
+}
+.page-body ul {
+  list-style-type: disc;
+}
+.page-body li {
+  margin: 0.25em 0;
+  line-height: 1.45;
+}
+.page-body li::marker {
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+  color: var(--mobile-text, #111);
+}
 
 .mobile-card {
   background: var(--mobile-card);
@@ -7592,5 +7630,57 @@ body:not(.light) .sudoku-app { background: #1e293b; color: #e2e8f0; }
     margin-top: 0;
     justify-content: center;
     max-width: 200px;
+  }
+}
+
+
+/* List numbers — mobile typing / content views */
+@media (max-width: 900px) {
+  .page-body ul,
+  .page-body ol,
+  .window-body ul,
+  .window-body ol,
+  .mobile-card ul,
+  .mobile-card ol {
+    margin-left: 0;
+    padding-left: 1.6em;
+    padding-right: 0.5em;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+  }
+  .page-body ol,
+  .window-body ol,
+  .mobile-card ol {
+    list-style-type: decimal;
+    list-style-position: outside;
+  }
+  .page-body li::marker,
+  .window-body li::marker,
+  .mobile-card li::marker {
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: "tnum" 1;
+  }
+  /* Avoid numbers clipping inside cards / overflow:hidden parents */
+  .mobile-card,
+  .page-body,
+  .app-page .page-body {
+    overflow-x: visible;
+  }
+  .mobile-card ol,
+  .mobile-card ul {
+    color: var(--mobile-muted, #666);
+  }
+}
+
+/* Sudoku number pad — clearer digits on mobile typing */
+@media (max-width: 900px) {
+  .sdk-key {
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: "tnum" 1;
+    font-size: 16px; /* reduces iOS input zoom */
+    min-height: 44px;
+  }
+  .sdk-cell {
+    font-variant-numeric: tabular-nums;
   }
 }
