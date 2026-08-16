@@ -5246,8 +5246,8 @@ body.high-contrast .testimonial-card {
 }
 
 /* ========== New app icons ========== */
-.edge-icon { background: linear-gradient(135deg, #0ea5e9, #2563eb 45%, #1d4ed8); }
-.edge-icon::after {
+.edge-icon, .ie-icon { background: linear-gradient(135deg, #0ea5e9, #2563eb 45%, #1d4ed8); }
+.edge-icon::after, .ie-icon::after {
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Ccircle cx='24' cy='24' r='14' fill='none' stroke='%23fff' stroke-width='3'/%3E%3Cpath stroke='%23fff' stroke-width='2' d='M10 24h28M24 10c-6 6-6 22 0 28M24 10c6 6 6 22 0 28' fill='none'/%3E%3C/svg%3E");
 }
 .wmp-icon { background: linear-gradient(135deg, #fbbf24, #b45309); }
