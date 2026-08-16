@@ -153,6 +153,82 @@
   }
 
 
+  /* ========== Open URLs inside Internet Explorer ========== */
+  window.openInIE = function openInIE(url) {
+    try {
+      url = String(url || "").trim();
+      if (!url) return;
+      if (!/^https?:\/\//i.test(url) && !/^menelik:\/\//i.test(url)) {
+        if (/^[\w.-]+\.[a-z]{2,}/i.test(url)) url = "https://" + url;
+        else if (!url.startsWith("menelik://")) url = "https://" + url;
+      }
+      window.__iePendingUrl = url;
+      document.dispatchEvent(
+        new CustomEvent("menelik-ie-navigate", { detail: { url: url } })
+      );
+      if (typeof openWindow === "function") {
+        openWindow("ie");
+      } else if (typeof window.openWindow === "function") {
+        window.openWindow("ie");
+      }
+    } catch (err) {
+      console.warn("[IE] openInIE", err);
+      try {
+        window.open(url, "_blank", "noopener,noreferrer");
+      } catch (_) {}
+    }
+  };
+  // Project / external links → Internet Explorer (desktop OS)
+  if (!window.__ieLinkIntercept) {
+    window.__ieLinkIntercept = true;
+    document.addEventListener(
+      "click",
+      (e) => {
+        try {
+          // Only on desktop shell, not pure mobile-only chrome if desktop hidden
+          const desktop = document.getElementById("desktop");
+          if (desktop && desktop.classList.contains("boot-hidden")) return;
+          if (window.innerWidth < 900 && document.getElementById("mobile") &&
+              window.getComputedStyle(document.getElementById("mobile")).display !== "none" &&
+              (!desktop || desktop.style.display === "none" || getComputedStyle(desktop).display === "none")) {
+            // Mobile view: leave normal browser navigation
+            return;
+          }
+          const a = e.target.closest("a[href]");
+          if (!a) return;
+          // Already handled inside IE
+          if (a.closest(".ie-app")) return;
+          // Explicit system browser
+          if (a.classList.contains("ie-open-ext")) return;
+          if (a.dataset && a.dataset.ie === "external") return;
+
+          let href = a.getAttribute("href") || "";
+          if (!href || href === "#" || href.startsWith("javascript:")) return;
+          if (href.startsWith("mailto:") || href.startsWith("tel:")) return;
+
+          const isHttp = /^https?:\/\//i.test(href);
+          const isProj =
+            a.classList.contains("proj-btn") ||
+            a.classList.contains("resume-link") ||
+            a.closest(".project-card") ||
+            a.closest("#content-projects") ||
+            a.closest("[data-window-body]") ||
+            a.closest(".window-body");
+
+          if (isHttp && isProj) {
+            e.preventDefault();
+            e.stopPropagation();
+            if (typeof window.openInIE === "function") window.openInIE(href);
+            else window.open(href, "_blank", "noopener");
+          }
+        } catch (_) {}
+      },
+      true
+    );
+  }
+
+
+
   /* ========== Internet Explorer ========== */
   function buildIE() {
     const wrap = el(`<div class="ie-app">
@@ -252,38 +328,42 @@
 
       if (/^https?:\/\//i.test(url)) {
         body.innerHTML =
-          `<div class="ie-external">
-            <p><strong>External website</strong></p>
-            <p class="ie-ext-url"><code></code></p>
-            <p>For safety this browser opens outside sites in a new tab.</p>
-            <p>
-              <a class="proj-btn primary ie-open-ext" href="#" rel="noopener">Open in new tab ↗</a>
-              <a class="proj-btn" href="#" data-nav="menelik://home">Back to home</a>
-            </p>
-            <iframe class="ie-frame" title="Preview" sandbox="allow-scripts allow-same-origin allow-forms allow-popups" hidden></iframe>
+          `<div class="ie-external ie-browse">
+            <div class="ie-ext-bar">
+              <span class="ie-ext-label">Web page</span>
+              <code class="ie-ext-code"></code>
+              <a class="proj-btn ie-open-ext" href="#" rel="noopener">Open in system browser ↗</a>
+              <a class="proj-btn" href="#" data-nav="menelik://home">Home</a>
+            </div>
+            <iframe class="ie-frame" title="Internet Explorer" referrerpolicy="no-referrer-when-downgrade" allow="fullscreen"></iframe>
+            <div class="ie-frame-note muted">If this page stays blank, the site blocks embedding — use “Open in system browser”.</div>
           </div>`;
-        body.querySelector("code").textContent = url;
+        const codeEl = body.querySelector(".ie-ext-code");
+        if (codeEl) codeEl.textContent = url;
         const openBtn = body.querySelector(".ie-open-ext");
-        openBtn.setAttribute("href", url);
-        openBtn.addEventListener("click", (e) => {
-          e.preventDefault();
-          window.open(url, "_blank", "noopener,noreferrer");
-          status.textContent = "Opened in new tab";
-        });
-        // Try a lightweight preview iframe (may be blocked by X-Frame-Options)
-        const frame = body.querySelector(".ie-frame");
-        try {
-          frame.hidden = false;
-          frame.src = url;
-          frame.addEventListener("load", () => {
-            status.textContent = "Done";
+        if (openBtn) {
+          openBtn.setAttribute("href", url);
+          openBtn.addEventListener("click", (e) => {
+            e.preventDefault();
+            window.open(url, "_blank", "noopener,noreferrer");
+            status.textContent = "Opened in system browser";
           });
-          setTimeout(() => {
-            if (status.textContent.indexOf("Opening") === 0) status.textContent = "Done — use Open in new tab if preview is blank";
-          }, 2000);
-        } catch (_) {
-          frame.hidden = true;
-          status.textContent = "Done";
+        }
+        const frame = body.querySelector(".ie-frame");
+        if (frame) {
+          try {
+            frame.src = url;
+            frame.addEventListener("load", () => {
+              status.textContent = "Done";
+            });
+            setTimeout(() => {
+              if (status.textContent.indexOf("Opening") === 0) {
+                status.textContent = "Done — if blank, site blocks iframe preview";
+              }
+            }, 2500);
+          } catch (_) {
+            status.textContent = "Done";
+          }
         }
         bindPageLinks();
       } else {
@@ -345,7 +425,26 @@
         navigate(addr.value.trim() || "menelik://home", true);
       }
     });
-    navigate("menelik://home", true);
+    // Navigate to pending project URL if any
+    const pending = window.__iePendingUrl;
+    if (pending) {
+      window.__iePendingUrl = null;
+      navigate(pending, true);
+    } else {
+      navigate("menelik://home", true);
+    }
+
+    wrap.__ieNavigate = navigate;
+    const onIeNav = (ev) => {
+      if (!wrap.isConnected) {
+        document.removeEventListener("menelik-ie-navigate", onIeNav);
+        return;
+      }
+      const u = ev && ev.detail && ev.detail.url;
+      if (u) navigate(u, true);
+    };
+    document.addEventListener("menelik-ie-navigate", onIeNav);
+
     return wrap;
   }
 
