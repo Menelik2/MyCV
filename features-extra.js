@@ -132,7 +132,7 @@
             if (typeof openWindow === "function") {
               // close empty shell if any, reopen
               const id = name.toLowerCase().includes("explorer")
-                ? "ie"
+                ? "edge"
                 : name.toLowerCase().includes("media")
                   ? "mediaplayer"
                   : name.toLowerCase().includes("help")
@@ -153,8 +153,8 @@
   }
 
 
-  /* ========== Open URLs inside Internet Explorer ========== */
-  window.openInIE = function openInIE(url) {
+  /* ========== Open URLs inside Microsoft Edge ========== */
+  window.openInEdge = function openInEdge(url) {
     try {
       url = String(url || "").trim();
       if (!url) return;
@@ -162,25 +162,25 @@
         if (/^[\w.-]+\.[a-z]{2,}/i.test(url)) url = "https://" + url;
         else if (!url.startsWith("menelik://")) url = "https://" + url;
       }
-      window.__iePendingUrl = url;
+      window.__edgePendingUrl = url;
       document.dispatchEvent(
-        new CustomEvent("menelik-ie-navigate", { detail: { url: url } })
+        new CustomEvent("menelik-edge-navigate", { detail: { url: url } })
       );
       if (typeof openWindow === "function") {
-        openWindow("ie");
+        openWindow("edge");
       } else if (typeof window.openWindow === "function") {
-        window.openWindow("ie");
+        window.openWindow("edge");
       }
     } catch (err) {
-      console.warn("[IE] openInIE", err);
+      console.warn("[Edge] openInEdge", err);
       try {
         window.open(url, "_blank", "noopener,noreferrer");
       } catch (_) {}
     }
   };
-  // Project / external links → Internet Explorer (desktop OS)
-  if (!window.__ieLinkIntercept) {
-    window.__ieLinkIntercept = true;
+  // Project / external links → Microsoft Edge (desktop OS)
+  if (!window.__edgeLinkIntercept) {
+    window.__edgeLinkIntercept = true;
     document.addEventListener(
       "click",
       (e) => {
@@ -197,10 +197,10 @@
           const a = e.target.closest("a[href]");
           if (!a) return;
           // Already handled inside IE
-          if (a.closest(".ie-app")) return;
+          if (a.closest(".edge-app")) return;
           // Explicit system browser
-          if (a.classList.contains("ie-open-ext")) return;
-          if (a.dataset && a.dataset.ie === "external") return;
+          if (a.classList.contains("edge-open-ext")) return;
+          if (a.dataset && a.dataset.edge === "external") return;
 
           let href = a.getAttribute("href") || "";
           if (!href || href === "#" || href.startsWith("javascript:")) return;
@@ -218,7 +218,7 @@
           if (isHttp && isProj) {
             e.preventDefault();
             e.stopPropagation();
-            if (typeof window.openInIE === "function") window.openInIE(href);
+            if (typeof window.openInEdge === "function") window.openInEdge(href);
             else window.open(href, "_blank", "noopener");
           }
         } catch (_) {}
@@ -229,24 +229,24 @@
 
 
 
-  /* ========== Internet Explorer ========== */
-  function buildIE() {
-    const wrap = el(`<div class="ie-app">
-      <div class="ie-toolbar">
-        <button type="button" class="ie-nav" data-act="back" title="Back">◀</button>
-        <button type="button" class="ie-nav" data-act="fwd" title="Forward">▶</button>
-        <button type="button" class="ie-nav" data-act="stop" title="Stop">■</button>
-        <button type="button" class="ie-nav" data-act="home" title="Home">🏠</button>
-        <button type="button" class="ie-nav" data-act="refresh" title="Refresh">↻</button>
-        <input class="ie-address" type="text" value="menelik://home" spellcheck="false" aria-label="Address" />
-        <button type="button" class="ie-nav ie-go" data-act="go" title="Go">Go</button>
+  /* ========== Microsoft Edge ========== */
+  function buildEdge() {
+    const wrap = el(`<div class="edge-app">
+      <div class="edge-toolbar">
+        <button type="button" class="edge-nav" data-act="back" title="Back">◀</button>
+        <button type="button" class="edge-nav" data-act="fwd" title="Forward">▶</button>
+        <button type="button" class="edge-nav" data-act="stop" title="Stop">■</button>
+        <button type="button" class="edge-nav" data-act="home" title="Home">🏠</button>
+        <button type="button" class="edge-nav" data-act="refresh" title="Refresh">↻</button>
+        <input class="edge-address" type="text" value="menelik://home" spellcheck="false" aria-label="Address" />
+        <button type="button" class="edge-nav edge-go" data-act="go" title="Go">Go</button>
       </div>
-      <div class="ie-body" tabindex="0" role="document"></div>
-      <div class="ie-status">Done</div>
+      <div class="edge-body" tabindex="0" role="document"></div>
+      <div class="edge-status">Done</div>
     </div>`);
-    const body = wrap.querySelector(".ie-body");
-    const addr = wrap.querySelector(".ie-address");
-    const status = wrap.querySelector(".ie-status");
+    const body = wrap.querySelector(".edge-body");
+    const addr = wrap.querySelector(".edge-address");
+    const status = wrap.querySelector(".edge-status");
     const history = [];
     let histIdx = -1;
     let currentUrl = "menelik://home";
@@ -260,11 +260,11 @@
 
     const pages = {
       "menelik://home": () => `
-        <div class="ie-home">
-          <h2 style="margin-top:0">Welcome to Internet Explorer</h2>
+        <div class="edge-home">
+          <h2 style="margin-top:0">Welcome to Microsoft Edge</h2>
           <p>Browse this portfolio like a website. Type an address or use the links below.</p>
           <h4>Favorites</h4>
-          <ul class="ie-links">
+          <ul class="edge-links">
             <li><a href="#" data-nav="menelik://about">About Me</a></li>
             <li><a href="#" data-nav="menelik://education">Education</a></li>
             <li><a href="#" data-nav="menelik://experience">Experience</a></li>
@@ -276,7 +276,7 @@
             <li><a href="#" data-nav="menelik://help">Help and Support</a></li>
           </ul>
           <h4>Live projects</h4>
-          <ul class="ie-links">
+          <ul class="edge-links">
             <li><a href="#" data-nav="https://yeni-movie.vercel.app">Yeni Movie</a></li>
             <li><a href="#" data-nav="https://fidel.is-local.dev">Yeni Typing</a></li>
             <li><a href="#" data-nav="https://yeniexams.vercel.app/">Yeni Exam</a></li>
@@ -328,19 +328,19 @@
 
       if (/^https?:\/\//i.test(url)) {
         body.innerHTML =
-          `<div class="ie-external ie-browse">
-            <div class="ie-ext-bar">
-              <span class="ie-ext-label">Web page</span>
-              <code class="ie-ext-code"></code>
-              <a class="proj-btn ie-open-ext" href="#" rel="noopener">Open in system browser ↗</a>
+          `<div class="edge-external edge-browse">
+            <div class="edge-ext-bar">
+              <span class="edge-ext-label">Web page</span>
+              <code class="edge-ext-code"></code>
+              <a class="proj-btn edge-open-ext" href="#" rel="noopener">Open in system browser ↗</a>
               <a class="proj-btn" href="#" data-nav="menelik://home">Home</a>
             </div>
-            <iframe class="ie-frame" title="Internet Explorer" referrerpolicy="no-referrer-when-downgrade" allow="fullscreen"></iframe>
-            <div class="ie-frame-note muted">If this page stays blank, the site blocks embedding — use “Open in system browser”.</div>
+            <iframe class="edge-frame" title="Microsoft Edge" referrerpolicy="no-referrer-when-downgrade" allow="fullscreen"></iframe>
+            <div class="edge-frame-note muted">If this page stays blank, the site blocks embedding — use “Open in system browser”.</div>
           </div>`;
-        const codeEl = body.querySelector(".ie-ext-code");
+        const codeEl = body.querySelector(".edge-ext-code");
         if (codeEl) codeEl.textContent = url;
-        const openBtn = body.querySelector(".ie-open-ext");
+        const openBtn = body.querySelector(".edge-open-ext");
         if (openBtn) {
           openBtn.setAttribute("href", url);
           openBtn.addEventListener("click", (e) => {
@@ -349,7 +349,7 @@
             status.textContent = "Opened in system browser";
           });
         }
-        const frame = body.querySelector(".ie-frame");
+        const frame = body.querySelector(".edge-frame");
         if (frame) {
           try {
             frame.src = url;
@@ -372,7 +372,7 @@
           `<p>The page <code>${url.replace(/</g, "&lt;")}</code> cannot be found.</p>
            <p><a href="#" data-nav="menelik://home">Back to home</a></p>`);
         try {
-          body.innerHTML = `<div class="ie-page">${render()}</div>`;
+          body.innerHTML = `<div class="edge-page">${render()}</div>`;
         } catch (err) {
           body.innerHTML = `<p>Could not show this page.</p><pre>${String(err)}</pre>`;
         }
@@ -386,7 +386,7 @@
         histIdx = history.length - 1;
       }
       } catch (err) {
-        console.error("[IE] navigate", err);
+        console.error("[Edge] navigate", err);
         try {
           body.innerHTML =
             '<div class="app-error-panel" role="alert"><h3 style="margin:0 0 8px">Page error</h3><p>' +
@@ -400,7 +400,7 @@
       }
     }
 
-    wrap.querySelectorAll(".ie-nav").forEach((btn) => {
+    wrap.querySelectorAll(".edge-nav").forEach((btn) => {
       btn.addEventListener("click", () => {
         const act = btn.dataset.act;
         if (act === "back" && histIdx > 0) {
@@ -413,7 +413,7 @@
         else if (act === "go") navigate(addr.value.trim() || "menelik://home", true);
         else if (act === "refresh") navigate(currentUrl, false);
         else if (act === "stop") {
-          const frame = body.querySelector(".ie-frame");
+          const frame = body.querySelector(".edge-frame");
           if (frame) frame.src = "about:blank";
           status.textContent = "Stopped";
         }
@@ -426,24 +426,24 @@
       }
     });
     // Navigate to pending project URL if any
-    const pending = window.__iePendingUrl;
+    const pending = window.__edgePendingUrl;
     if (pending) {
-      window.__iePendingUrl = null;
+      window.__edgePendingUrl = null;
       navigate(pending, true);
     } else {
       navigate("menelik://home", true);
     }
 
-    wrap.__ieNavigate = navigate;
-    const onIeNav = (ev) => {
+    wrap.__edgeNavigate = navigate;
+    const onEdgeNav = (ev) => {
       if (!wrap.isConnected) {
-        document.removeEventListener("menelik-ie-navigate", onIeNav);
+        document.removeEventListener("menelik-edge-navigate", onEdgeNav);
         return;
       }
       const u = ev && ev.detail && ev.detail.url;
       if (u) navigate(u, true);
     };
-    document.addEventListener("menelik-ie-navigate", onIeNav);
+    document.addEventListener("menelik-edge-navigate", onEdgeNav);
 
     return wrap;
   }
@@ -1252,7 +1252,7 @@ END:VCARD`;
       </div>
       <div class="help-panel" data-panel="apps" hidden>
         <ul>
-          <li><strong>Internet Explorer</strong> — browse About, Projects, Resume, and links.</li>
+          <li><strong>Microsoft Edge</strong> — browse About, Projects, Resume, and links.</li>
           <li><strong>Windows Media Player</strong> — play short built-in themes (Play / Stop).</li>
           <li><strong>Notepad, Paint, Terminal, VS Code</strong> — small tools inside the OS.</li>
           <li><strong>Minesweeper / Solitaire</strong> — classic games.</li>
@@ -1260,7 +1260,7 @@ END:VCARD`;
           <li><strong>Recycle Bin</strong> — restore a window you closed.</li>
         </ul>
         <p>
-          <button type="button" class="proj-btn primary" data-open="ie">Open Internet Explorer</button>
+          <button type="button" class="proj-btn primary" data-open="edge">Open Microsoft Edge</button>
           <button type="button" class="proj-btn" data-open="mediaplayer">Open Media Player</button>
         </p>
       </div>
@@ -1894,8 +1894,10 @@ END:VCARD`;
   let registered = false;
   function register() {
     // Always (re)bind builders so openWindow works even if register ran early
+    window.openInIE = window.openInEdge; // alias
     window.extraAppBuilders = Object.assign(window.extraAppBuilders || {}, {
-      ie: withAppErrorBoundary("Internet Explorer", buildIE),
+      edge: withAppErrorBoundary("Microsoft Edge", buildEdge),
+      ie: withAppErrorBoundary("Microsoft Edge", buildEdge),
       mediaplayer: withAppErrorBoundary("Windows Media Player", buildMediaPlayer),
       solitaire: withAppErrorBoundary("Solitaire", buildSolitaire),
       blog: withAppErrorBoundary("My Computer", buildBlog),
@@ -1917,7 +1919,7 @@ END:VCARD`;
     registered = true;
     window.APPS = appsRef;
     Object.assign(appsRef, {
-      ie: { title: "Internet Explorer", iconClass: "ie-icon", interactive: true },
+      ie: { title: "Microsoft Edge", iconClass: "ie-icon", interactive: true },
       mediaplayer: { title: "Windows Media Player", iconClass: "wmp-icon", interactive: true },
       solitaire: { title: "Solitaire", iconClass: "solitaire-icon", interactive: true },
       blog: { title: "My Computer", iconClass: "blog-icon", interactive: true },
