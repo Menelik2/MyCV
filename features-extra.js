@@ -162,6 +162,12 @@
         if (/^[\w.-]+\.[a-z]{2,}/i.test(url)) url = "https://" + url;
         else if (!url.startsWith("menelik://")) url = "https://" + url;
       }
+      // External sites: always open in the real browser so the page actually loads
+      if (/^https?:\/\//i.test(url)) {
+        try {
+          window.open(url, "_blank", "noopener,noreferrer");
+        } catch (_) {}
+      }
       window.__edgePendingUrl = url;
       document.dispatchEvent(
         new CustomEvent("menelik-edge-navigate", { detail: { url: url } })
@@ -327,16 +333,25 @@
       addr.value = url;
 
       if (/^https?:\/\//i.test(url)) {
+        // Always open the real site in a new tab (iframes are often blocked)
+        let opened = false;
+        try {
+          const w = window.open(url, "_blank", "noopener,noreferrer");
+          opened = !!w;
+        } catch (_) {}
         body.innerHTML =
-          `<div class="edge-external edge-browse">
-            <div class="edge-ext-bar">
-              <span class="edge-ext-label">Web page</span>
-              <code class="edge-ext-code"></code>
-              <a class="proj-btn edge-open-ext" href="#" rel="noopener">Open in system browser ↗</a>
-              <a class="proj-btn" href="#" data-nav="menelik://home">Home</a>
+          `<div class="edge-external edge-opened">
+            <div class="edge-opened-card">
+              <h2 style="margin:0 0 8px">Opening website</h2>
+              <p class="edge-ext-url"><code class="edge-ext-code"></code></p>
+              <p>${opened
+                ? "The page was opened in a <strong>new browser tab</strong>."
+                : "Pop-up may be blocked — click the button below to open the site."}</p>
+              <p style="margin-top:14px">
+                <a class="proj-btn primary edge-open-ext" href="#" rel="noopener">Open site ↗</a>
+                <a class="proj-btn" href="#" data-nav="menelik://home">Back to Edge home</a>
+              </p>
             </div>
-            <iframe class="edge-frame" title="Microsoft Edge" referrerpolicy="no-referrer-when-downgrade" allow="fullscreen"></iframe>
-            <div class="edge-frame-note muted">Loading preview… If you see “content is blocked”, use <strong>Open in system browser</strong> (some sites refuse iframes).</div>
           </div>`;
         const codeEl = body.querySelector(".edge-ext-code");
         if (codeEl) codeEl.textContent = url;
@@ -349,38 +364,7 @@
             status.textContent = "Opened in system browser";
           });
         }
-        const frame = body.querySelector(".edge-frame");
-        const note = body.querySelector(".edge-frame-note");
-        if (frame) {
-          try {
-            frame.src = url;
-            let loaded = false;
-            frame.addEventListener("load", () => {
-              loaded = true;
-              status.textContent = "Done";
-              if (note) note.textContent = "Preview loaded in Microsoft Edge.";
-            });
-            setTimeout(() => {
-              if (!loaded && note) {
-                note.innerHTML =
-                  "Preview may be blocked by this site’s security settings. " +
-                  "<a class="edge-open-ext-fallback" href="#">Open in system browser ↗</a>";
-                const fb = note.querySelector(".edge-open-ext-fallback");
-                if (fb) {
-                  fb.addEventListener("click", (e) => {
-                    e.preventDefault();
-                    window.open(url, "_blank", "noopener,noreferrer");
-                  });
-                }
-                status.textContent = "Blocked or slow — try system browser";
-              } else if (status.textContent.indexOf("Opening") === 0) {
-                status.textContent = "Done";
-              }
-            }, 2800);
-          } catch (_) {
-            status.textContent = "Done";
-          }
-        }
+        status.textContent = opened ? "Opened in new tab" : "Click Open site to continue";
         bindPageLinks();
       } else {
         const key = url.toLowerCase();
