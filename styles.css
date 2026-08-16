@@ -1626,61 +1626,238 @@ body.light .theme-toggle-mobile .moon { display: inline; }
   height: 100%;
   min-height: 0;
   flex: 1;
+  background: #f3f3f3;
+  color: #1a1a1a;
+  font-family: "Segoe UI Variable", "Segoe UI", system-ui, sans-serif;
 }
 
-.notepad-toolbar {
+/* Windows 11–style Notepad */
+.notepad-win11 {
+  background: #f9f9f9;
+}
+.np11-menubar {
   display: flex;
-  gap: 4px;
-  padding: 4px 6px;
-  background: #ece9d8;
-  border-bottom: 1px solid #aca899;
-  flex-wrap: wrap;
+  gap: 2px;
+  padding: 4px 8px 0;
+  background: #f9f9f9;
+  user-select: none;
 }
-
-.notepad-toolbar button {
-  padding: 3px 10px;
-  font-size: 11px;
-  font-family: Tahoma, sans-serif;
-  border: 1px solid #aca899;
-  background: linear-gradient(to bottom, #fff, #ece9d8);
-  border-radius: 2px;
+.np11-menu {
+  position: relative;
+}
+.np11-menu-btn {
+  border: none;
+  background: transparent;
+  padding: 4px 10px;
+  font-size: 12.5px;
+  font-family: inherit;
+  border-radius: 4px;
   cursor: pointer;
+  color: #1a1a1a;
 }
-
-.notepad-toolbar button:hover {
-  background: linear-gradient(to bottom, #fff, #d6e7ff);
-  border-color: #316ac5;
+.np11-menu-btn:hover {
+  background: rgba(0, 0, 0, 0.04);
 }
-
-.notepad-textarea {
+.np11-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  z-index: 40;
+  min-width: 220px;
+  padding: 4px;
+  background: #f7f7f7;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 8px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.14);
+}
+.np11-dropdown button {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  width: 100%;
+  border: none;
+  background: transparent;
+  padding: 8px 10px;
+  font-size: 12.5px;
+  font-family: inherit;
+  border-radius: 4px;
+  cursor: pointer;
+  color: #1a1a1a;
+  text-align: left;
+}
+.np11-dropdown button:hover {
+  background: rgba(0, 0, 0, 0.05);
+}
+.np11-dropdown kbd {
+  font-family: inherit;
+  font-size: 11px;
+  opacity: 0.55;
+  font-weight: 400;
+}
+.np11-dropdown hr {
+  border: none;
+  border-top: 1px solid rgba(0, 0, 0, 0.08);
+  margin: 4px 6px;
+}
+.np11-check {
+  display: inline-block;
+  width: 14px;
+  margin-right: 4px;
+  color: #0067c0;
+  font-weight: 600;
+}
+.np11-commandbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 10px 8px;
+  background: #f9f9f9;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+}
+.np11-cmd {
+  border: none;
+  background: transparent;
+  padding: 6px 12px;
+  font-size: 12.5px;
+  font-family: inherit;
+  border-radius: 6px;
+  cursor: pointer;
+  color: #1a1a1a;
+}
+.np11-cmd:hover {
+  background: rgba(0, 0, 0, 0.05);
+}
+.np11-cmd:active {
+  background: rgba(0, 0, 0, 0.08);
+}
+.np11-sep {
+  width: 1px;
+  height: 16px;
+  background: rgba(0, 0, 0, 0.1);
+  margin: 0 4px;
+}
+.np11-findbar {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  background: #f3f3f3;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+}
+.np11-find-input {
+  flex: 1;
+  min-width: 0;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  border-radius: 6px;
+  padding: 6px 10px;
+  font-size: 13px;
+  font-family: inherit;
+  outline: none;
+  background: #fff;
+}
+.np11-find-input:focus {
+  border-color: #0067c0;
+  box-shadow: 0 0 0 1px #0067c0;
+}
+.notepad-textarea,
+.np11-editor {
   flex: 1;
   width: 100%;
   border: none;
   outline: none;
   resize: none;
-  padding: 8px 10px;
-  font-family: "Consolas", "Courier New", monospace;
-  font-size: 13px;
-  line-height: 1.5;
-  background: #fff;
-  color: #000;
-  min-height: 280px;
+  padding: 12px 16px;
+  font-family: "Cascadia Mono", "Consolas", "Courier New", monospace;
+  font-size: 14px;
+  line-height: 1.55;
+  background: #ffffff;
+  color: #1a1a1a;
+  min-height: 200px;
+  white-space: pre-wrap;
+}
+.np11-statusbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 20px;
+  padding: 4px 12px;
+  font-size: 11.5px;
+  color: #5c5c5c;
+  background: #f9f9f9;
+  border-top: 1px solid rgba(0, 0, 0, 0.06);
+  font-family: "Segoe UI Variable", "Segoe UI", system-ui, sans-serif;
+}
+.np11-statusbar span {
+  white-space: nowrap;
 }
 
-body:not(.light) .notepad-textarea {
+/* Win11 dark */
+body:not(.light) .notepad-app,
+body:not(.light) .notepad-win11 {
+  background: #202020;
+  color: #ffffff;
+}
+body:not(.light) .np11-menubar,
+body:not(.light) .np11-commandbar,
+body:not(.light) .np11-statusbar {
+  background: #202020;
+  border-color: rgba(255, 255, 255, 0.08);
+  color: #e6e6e6;
+}
+body:not(.light) .np11-menu-btn,
+body:not(.light) .np11-cmd {
+  color: #e6e6e6;
+}
+body:not(.light) .np11-menu-btn:hover,
+body:not(.light) .np11-cmd:hover {
+  background: rgba(255, 255, 255, 0.06);
+}
+body:not(.light) .np11-dropdown {
+  background: #2c2c2c;
+  border-color: rgba(255, 255, 255, 0.1);
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.45);
+}
+body:not(.light) .np11-dropdown button {
+  color: #e6e6e6;
+}
+body:not(.light) .np11-dropdown button:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+body:not(.light) .np11-dropdown hr {
+  border-color: rgba(255, 255, 255, 0.1);
+}
+body:not(.light) .np11-findbar {
+  background: #1b1b1b;
+  border-color: rgba(255, 255, 255, 0.08);
+}
+body:not(.light) .np11-find-input {
+  background: #2c2c2c;
+  border-color: rgba(255, 255, 255, 0.12);
+  color: #fff;
+}
+body:not(.light) .np11-find-input:focus {
+  border-color: #60cdff;
+  box-shadow: 0 0 0 1px #60cdff;
+}
+body:not(.light) .notepad-textarea,
+body:not(.light) .np11-editor {
   background: #1e1e1e;
-  color: #d4d4d4;
+  color: #e6e6e6;
+}
+body:not(.light) .np11-statusbar {
+  color: #b3b3b3;
+}
+body:not(.light) .np11-check {
+  color: #60cdff;
+}
+body:not(.light) .np11-sep {
+  background: rgba(255, 255, 255, 0.12);
 }
 
-body:not(.light) .notepad-toolbar {
-  background: #2d2d30;
-  border-color: #3e3e42;
-}
-
-body:not(.light) .notepad-toolbar button {
-  background: #3e3e42;
-  border-color: #555;
-  color: #ccc;
+/* legacy toolbar (if any) */
+.notepad-toolbar {
+  display: none;
 }
 
 /* ---- Paint ---- */
