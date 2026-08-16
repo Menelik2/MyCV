@@ -3690,6 +3690,7 @@ function buildControlPanel() {
   const mobileView =
     (typeof window !== "undefined" && window.innerWidth < 900) ||
     !!(document.getElementById("mobile") && window.getComputedStyle(document.getElementById("mobile")).display !== "none" && window.innerWidth < 900);
+  if (mobileView) wrap.classList.add("control-app-android");
 
   const dSize = localStorage.getItem("portfolio-icon-desktop") || "medium";
   const sSize = localStorage.getItem("portfolio-icon-start") || "medium";
@@ -3743,25 +3744,24 @@ function buildControlPanel() {
       )
       .join("");
 
-  const wallList = [
+  const wallOpts = [
     ["default", "Default blue"],
     ["green", "Green field"],
     ["sunset", "Sunset"],
     ["night", "Deep night"],
-    ["sonoma", "Sonoma"],
-    ["sequoia", "Sequoia"],
-    ["ventura", "Ventura"],
-    ["monterey", "Monterey"],
-    ["bigsur", "Big Sur"],
-    ["aurora", "Aurora"],
-    ["horizon", "Horizon"],
-    ["nebula", "Nebula"],
-    ["midnight", "Midnight"],
-    ["mint", "Mint"],
-    ["peach", "Peach"],
-    ["slate", "Slate"],
-  ];
-  const wallOpts = wallList
+    ["sonoma", "Sonoma (Apple)"],
+    ["sequoia", "Sequoia (Apple)"],
+    ["ventura", "Ventura (Apple)"],
+    ["monterey", "Monterey waves"],
+    ["bigsur", "Big Sur hills"],
+    ["aurora", "Aurora Borealis"],
+    ["horizon", "Soft horizon"],
+    ["nebula", "Deep nebula"],
+    ["midnight", "Midnight glow"],
+    ["mint", "Mint glass"],
+    ["peach", "Peach bloom"],
+    ["slate", "Modern slate"],
+  ]
     .map(
       ([v, label]) =>
         '<option value="' +
@@ -3771,27 +3771,6 @@ function buildControlPanel() {
         ">" +
         label +
         "</option>"
-    )
-    .join("");
-  const wallPickerHtml = wallList
-    .map(
-      ([v, label]) =>
-        '<button type="button" class="wall-thumb' +
-        (savedWall === v ? " is-active" : "") +
-        '" data-wall="' +
-        v +
-        '" title="' +
-        label +
-        '" aria-label="' +
-        label +
-        '">' +
-        '<span class="wall-thumb-swatch" data-wall-preview="' +
-        v +
-        '"></span>' +
-        '<span class="wall-thumb-label">' +
-        label +
-        "</span>" +
-        "</button>"
     )
     .join("");
 
@@ -3836,15 +3815,11 @@ function buildControlPanel() {
     ">አማርኛ</option>" +
     "    </select>" +
     "  </label>" +
-    '  <div class="cp-wall-block">' +
-    '    <div class="cp-row cp-wall-label-row"><span data-i18n="wallpaper">Wallpaper</span></div>' +
-    '    <div class="wall-picker" role="listbox" aria-label="Wallpaper">' +
-    wallPickerHtml +
-    "    </div>" +
-    '    <select class="cp-wall cp-wall-select-fallback" aria-label="Wallpaper">' +
+    '  <label class="cp-row"><span data-i18n="wallpaper">Wallpaper</span>' +
+    '    <select class="cp-wall" aria-label="Wallpaper">' +
     wallOpts +
     "    </select>" +
-    "  </div>" +
+    "  </label>" +
     (mobileView
       ? '  <label class="cp-row"><span>Home layout</span>' +
         '    <select class="cp-home-layout" aria-label="Home layout">' +
@@ -3912,12 +3887,12 @@ function buildControlPanel() {
         "</div>") +
     '<div class="cp-section">' +
     "  <h4>Sound &amp; feedback</h4>" +
-    '  <label class="cp-row"><span>Notification sounds</span>' +
+    '  <label class="cp-row cp-toggle-row"><span>Notification sounds</span>' +
     '    <input type="checkbox" class="cp-sounds" ' +
     (soundsOn ? "checked " : "") +
     'aria-label="Notification sounds" />' +
     "  </label>" +
-    '  <label class="cp-row"><span>Startup sound</span>' +
+    '  <label class="cp-row cp-toggle-row"><span>Startup sound</span>' +
     '    <input type="checkbox" class="cp-startup-sound" ' +
     (startupOn ? "checked " : "") +
     'aria-label="Startup sound" />' +
@@ -3934,12 +3909,12 @@ function buildControlPanel() {
     "</div>" +
     '<div class="cp-section">' +
     "  <h4>Motion</h4>" +
-    '  <label class="cp-row"><span>UI animations</span>' +
+    '  <label class="cp-row cp-toggle-row"><span>UI animations</span>' +
     '    <input type="checkbox" class="cp-ui-anim" ' +
     (animUi ? "checked " : "") +
     'aria-label="UI animations" />' +
     "  </label>" +
-    '  <label class="cp-row"><span>Reduce motion</span>' +
+    '  <label class="cp-row cp-toggle-row"><span>Reduce motion</span>' +
     '    <input type="checkbox" class="cp-reduce-motion" ' +
     (reduceMotion ? "checked " : "") +
     'aria-label="Reduce motion" />' +
@@ -3957,18 +3932,21 @@ function buildControlPanel() {
     '  <button type="button" class="cp-clear-chat proj-btn">Clear chat history</button>' +
     '  <button type="button" class="cp-clear-scores proj-btn">Reset game high scores</button>' +
     '  <button type="button" class="cp-reset-all proj-btn cp-danger">Reset all settings</button>' +
-    '  <p class="cp-about">Chat and scores are stored only on this device.</p>' +
+    (mobileView ? "" : '  <p class="cp-about">Chat and scores are stored only on this device.</p>') +
     "</div>" +
-    '<div class="cp-section">' +
-    "  <h4>About</h4>" +
-    '  <p class="cp-about">Menelik OS portfolio · Settings save automatically on this device.</p>' +
-    '  <p class="cp-about">Version 2.1 · Snake Nokia · Mobile Settings</p>' +
-    '  <p class="cp-about">Contact: linuxos777@gmail.com</p>' +
     (mobileView
-      ? '  <button type="button" class="cp-share proj-btn">Share portfolio</button>' +
-        '  <button type="button" class="cp-open-site proj-btn">Open live site</button>'
-      : "") +
-    "</div>";
+      ? '<div class="cp-section cp-section-about">' +
+        "  <h4>About</h4>" +
+        '  <button type="button" class="cp-share proj-btn">Share portfolio</button>' +
+        '  <button type="button" class="cp-open-site proj-btn">Open live site</button>' +
+        '  <p class="cp-about cp-contact">Contact: linuxos777@gmail.com</p>' +
+        "</div>"
+      : '<div class="cp-section">' +
+        "  <h4>About</h4>" +
+        '  <p class="cp-about">Menelik OS portfolio · Settings save automatically on this device.</p>' +
+        '  <p class="cp-about">Contact: linuxos777@gmail.com</p>' +
+        "</div>") +
+    "";
 
   const on = (sel, ev, fn) => {
     const el = wrap.querySelector(sel);
@@ -4043,36 +4021,20 @@ function buildControlPanel() {
     }
   });
 
-  function applyWallpaperChoice(v) {
-    if (!v) return;
+  on(".cp-wall", "change", (e) => {
     try {
+      const v = e.target.value;
       localStorage.setItem("portfolio-wallpaper", v);
       document.body.dataset.wallpaper = v;
       const desk = document.getElementById("desktop");
       if (desk) desk.dataset.wallpaper = v;
       const mobile = document.getElementById("mobile");
       if (mobile) mobile.dataset.wallpaper = v;
-      wrap.querySelectorAll(".wall-thumb").forEach((btn) => {
-        btn.classList.toggle("is-active", btn.getAttribute("data-wall") === v);
-      });
-      const sel = wrap.querySelector(".cp-wall");
-      if (sel && sel.value !== v) sel.value = v;
       if (typeof playUiSound === "function") playUiSound("notify");
       haptic();
     } catch (err) {
       console.warn("Wallpaper failed", err);
     }
-  }
-
-  on(".cp-wall", "change", (e) => {
-    applyWallpaperChoice(e.target.value);
-  });
-
-  wrap.querySelectorAll(".wall-thumb").forEach((btn) => {
-    btn.addEventListener("click", (e) => {
-      e.preventDefault();
-      applyWallpaperChoice(btn.getAttribute("data-wall"));
-    });
   });
 
   on(".cp-home-layout", "change", (e) => {
