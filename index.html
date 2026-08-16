@@ -9,9 +9,9 @@
     Cache bust: bump window.__MENELIK_V__ + the ?v= values below on every public deploy
     so browsers and CDNs treat assets as new URLs.
   -->
-  <script>window.__MENELIK_V__ = "20260816e";</script>
-  <link rel="stylesheet" href="styles.css?v=20260816e" />
-  <link rel="manifest" href="manifest.webmanifest?v=20260816e" />
+  <script>window.__MENELIK_V__ = "20260816f";</script>
+  <link rel="stylesheet" href="styles.css?v=20260816f" />
+  <link rel="manifest" href="manifest.webmanifest?v=20260816f" />
   <link rel="apple-touch-icon" href="static/images/profile-320.webp" />
   <!-- Optimized profile photo preload (responsive sizes) -->
   <link rel="preload" href="static/images/profile-128.webp" as="image" type="image/webp" />
@@ -312,18 +312,9 @@
                 <div class="app-img resume"></div>
                 <span>Resume</span>
               </button>
-              <button class="app-icon" data-page="notepad">
-                <div class="app-img notepad"></div>
-                <span>Notepad</span>
-              </button>
-              
-<button class="app-icon" data-page="paint">
-                <div class="app-img paint"></div>
-                <span>Paint</span>
-              </button>
-              <button class="app-icon" data-page="terminal">
-                <div class="app-img terminal"></div>
-                <span>Terminal</span>
+              <button class="app-icon" data-page="apps">
+                <div class="app-img apps-folder"></div>
+                <span>Apps</span>
               </button>
               <button class="app-icon" data-page="tetris">
                 <div class="app-img tetris"></div>
@@ -345,17 +336,14 @@
                 <div class="app-img device"></div>
                 <span>Device</span>
               </button>
-              <button class="app-icon" data-page="voice">
-                <div class="app-img voice"></div>
-                <span>Voice</span>
-              </button>
+
 
             </div>
 
             <div class="dock">
               <button class="app-icon" data-page="about"><div class="app-img about"></div></button>
               <button class="app-icon" data-page="projects"><div class="app-img projects"></div></button>
-              <button class="app-icon" data-page="terminal"><div class="app-img terminal"></div></button>
+              <button class="app-icon" data-page="apps"><div class="app-img apps-folder"></div></button>
               <button class="theme-toggle-mobile" id="theme-toggle-mobile">
                 <span class="sun">☀</span>
                 <span class="moon">☾</span>
@@ -394,6 +382,31 @@
           <div class="app-page" id="page-resume" hidden>
             <div class="page-header"><button class="back-btn">‹ Back</button><h2>Resume</h2></div>
             <div class="page-body" id="content-resume"></div>
+          </div>
+          
+          <div class="app-page" id="page-apps" hidden>
+            <div class="page-header"><button class="back-btn">‹ Back</button><h2>Apps</h2></div>
+            <div class="page-body page-body-apps">
+              <p class="apps-folder-lead">Tools &amp; utilities</p>
+              <div class="apps-folder-grid">
+                <button class="app-icon" data-page="notepad">
+                  <div class="app-img notepad"></div>
+                  <span>Notepad</span>
+                </button>
+                <button class="app-icon" data-page="paint">
+                  <div class="app-img paint"></div>
+                  <span>Paint</span>
+                </button>
+                <button class="app-icon" data-page="terminal">
+                  <div class="app-img terminal"></div>
+                  <span>Terminal</span>
+                </button>
+                <button class="app-icon" data-page="voice">
+                  <div class="app-img voice"></div>
+                  <span>Voice Room</span>
+                </button>
+              </div>
+            </div>
           </div>
           <div class="app-page" id="page-notepad" hidden>
             <div class="page-header"><button class="back-btn">‹ Back</button><h2>Notepad</h2></div>
@@ -517,8 +530,8 @@
     </div>
   </div>
 
-  <script src="script.js?v=20260816e"></script>
-  <script src="features-extra.js?v=20260816e"></script>
-  <script src="chat-widget.js?v=20260816e"></script>
+  <script src="script.js?v=20260816f"></script>
+  <script src="features-extra.js?v=20260816f"></script>
+  <script src="chat-widget.js?v=20260816f"></script>
 </body>
 </html>

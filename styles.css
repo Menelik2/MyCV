@@ -8652,3 +8652,62 @@ body.light .chats-export {
   border-color: rgba(0,0,0,0.1);
   background: #fff;
 }
+
+
+/* Mobile Apps folder */
+.app-img.apps-folder {
+  background: linear-gradient(145deg, #3b82f6, #1d4ed8);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23fff'%3E%3Cpath d='M4 8h4v4H4V8zm6 0h4v4h-4V8zm6 0h4v4h-4V8zM4 14h4v4H4v-4zm6 0h4v4h-4v-4zm6 0h4v4h-4v-4z'/%3E%3C/svg%3E"), linear-gradient(145deg, #3b82f6, #1d4ed8);
+  background-size: 55%, cover;
+  background-position: center, center;
+  background-repeat: no-repeat, no-repeat;
+  border-radius: 16px;
+}
+.page-body-apps {
+  padding: 16px 14px 24px;
+}
+.apps-folder-lead {
+  margin: 0 0 14px;
+  font-size: 13px;
+  opacity: 0.7;
+  color: inherit;
+}
+.apps-folder-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px 8px;
+  justify-items: center;
+}
+.apps-folder-grid .app-icon {
+  width: 100%;
+  max-width: 80px;
+  background: transparent;
+  border: none;
+  color: inherit;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 0;
+  cursor: pointer;
+}
+.apps-folder-grid .app-img {
+  width: 56px;
+  height: 56px;
+  border-radius: 14px;
+  background-size: 55%, cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.18);
+}
+.apps-folder-grid .app-icon span {
+  font-size: 11px;
+  text-align: center;
+  line-height: 1.2;
+}
+@media (max-width: 360px) {
+  .apps-folder-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 18px 12px;
+  }
+}

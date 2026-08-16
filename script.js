@@ -793,6 +793,10 @@ const I18N = {
     control: "Control Panel",
     settings: "Settings",
     chat: "Chats",
+    apps: "Apps",
+    notepad: "Notepad",
+    paint: "Paint",
+    voice: "Voice Room",
     sudoku: "Sudoku",
     notepad: "Notepad",
     paint: "Paint",
@@ -827,6 +831,10 @@ const I18N = {
     control: "የቁጥጥር ፓነል",
     settings: "ቅንብሮች",
     chat: "ቻት",
+    apps: "መተግበሪያዎች",
+    notepad: "ማስታወሻ",
+    paint: "ቀለም",
+    voice: "የድምጽ ክፍል",
     sudoku: "ሱዶኩ",
     notepad: "ማስታወሻ",
     paint: "ቀለም",
@@ -9374,14 +9382,45 @@ function initMobileTetris(root) {
 }
 
 
-function showPage(pageId) {
+/** Mobile navigation stack (Apps folder → Notepad, etc.) */
+window.__mobilePageStack = window.__mobilePageStack || [];
+
+const APPS_FOLDER_CHILDREN = new Set(["notepad", "paint", "terminal", "voice"]);
+
+function showPage(pageId, opts) {
+  opts = opts || {};
   const home = document.getElementById("home-screen");
   if (home) home.hidden = true;
-  document.querySelectorAll(".app-page").forEach(p => { p.hidden = true; });
-  const page = document.getElementById(`page-${pageId}`);
+  document.querySelectorAll(".app-page").forEach((p) => {
+    p.hidden = true;
+  });
+  const page = document.getElementById("page-" + pageId);
   if (!page) return;
   page.hidden = false;
-  const body = document.getElementById(`content-${pageId}`);
+
+  // Track stack for Back behavior
+  if (!opts.replace && !opts.fromBack) {
+    const stack = window.__mobilePageStack;
+    const top = stack[stack.length - 1];
+    if (top !== pageId) {
+      if (pageId === "apps") {
+        window.__mobilePageStack = ["apps"];
+      } else if (APPS_FOLDER_CHILDREN.has(pageId)) {
+        // ensure apps is under child
+        if (top !== "apps") window.__mobilePageStack = ["apps", pageId];
+        else stack.push(pageId);
+      } else {
+        window.__mobilePageStack = [pageId];
+      }
+    }
+  }
+
+  // Folder page has no content-* body — static HTML is enough
+  if (pageId === "apps") {
+    return;
+  }
+
+  const body = document.getElementById("content-" + pageId);
   if (!body) return;
 
   // Mobile-only external game (iPhone shell)
@@ -9400,11 +9439,10 @@ function showPage(pageId) {
   } else if (!body.dataset.loaded) {
     body.dataset.loaded = "1";
     body.innerHTML = mobileContent(pageId);
-    // Apply profile photo on mobile About (or fall back to initials)
     const pic = body.querySelector("[style*='border-radius:50%'], .profile-pic");
     if (pic) {
       if (profilePhotoReady) {
-        pic.style.backgroundImage = `url(${profilePhotoUrl})`;
+        pic.style.backgroundImage = "url(" + profilePhotoUrl + ")";
         pic.style.backgroundSize = "cover";
         pic.style.backgroundPosition = "center";
         pic.classList.add("has-photo");
@@ -9424,15 +9462,51 @@ function showPage(pageId) {
 }
 
 function showHome() {
-  document.querySelectorAll(".app-page").forEach(p => p.hidden = true);
-  document.getElementById("home-screen").hidden = false;
+  window.__mobilePageStack = [];
+  document.querySelectorAll(".app-page").forEach((p) => (p.hidden = true));
+  const home = document.getElementById("home-screen");
+  if (home) home.hidden = false;
 }
 
-document.querySelectorAll(".app-icon[data-page]").forEach(btn => {
-  btn.addEventListener("click", () => showPage(btn.dataset.page));
+function mobileGoBack() {
+  const stack = window.__mobilePageStack || [];
+  if (stack.length > 1) {
+    stack.pop();
+    const prev = stack[stack.length - 1];
+    showPage(prev, { fromBack: true });
+    return;
+  }
+  if (stack.length === 1 && stack[0] === "apps") {
+    showHome();
+    return;
+  }
+  // If currently in an apps child but stack empty, prefer apps folder
+  const open = document.querySelector("#mobile .app-page:not([hidden])");
+  if (open && open.id) {
+    const id = open.id.replace(/^page-/, "");
+    if (APPS_FOLDER_CHILDREN.has(id)) {
+      window.__mobilePageStack = ["apps"];
+      showPage("apps", { fromBack: true });
+      return;
+    }
+  }
+  showHome();
+}
+
+// Use event delegation so folder icons always work
+document.getElementById("mobile")?.addEventListener("click", (e) => {
+  const btn = e.target.closest(".app-icon[data-page]");
+  if (!btn || !btn.dataset.page) return;
+  // avoid double-handling if something else needs the click
+  e.preventDefault();
+  showPage(btn.dataset.page);
 });
-document.querySelectorAll(".back-btn").forEach(btn => {
-  btn.addEventListener("click", showHome);
+
+document.querySelectorAll(".back-btn").forEach((btn) => {
+  btn.addEventListener("click", (e) => {
+    e.preventDefault();
+    mobileGoBack();
+  });
 });
 // Android navigation bar (phone shell only)
 document.querySelector(".android-nav-home")?.addEventListener("click", (e) => {
@@ -9457,7 +9531,8 @@ function androidGoBack() {
   if (!androidIsPhone()) return;
   const openPage = document.querySelector("#mobile .app-page:not([hidden])");
   if (openPage) {
-    showHome();
+    if (typeof mobileGoBack === "function") mobileGoBack();
+    else showHome();
     return true;
   }
   return false;
