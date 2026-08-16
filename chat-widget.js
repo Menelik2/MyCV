@@ -210,7 +210,7 @@
       if (!history.length) {
         addBubble(
           "assistant",
-          "Hi — I'm the Menelik OS assistant (like Ryo in ryOS).\nAsk about Menelik, open apps (“open projects”), or get contact info.\n\nጤና ይስጥልኝ! ስለ ምኒልክ ወይም ፕሮጀክቶቹ ይጠይቁኝ።"
+          "Hi — I'm the Menelik OS assistant.\n\nጤና ይስጥልኝ! ስለ ምኒልክ ወይም ፕሮጀክቶቹ ይጠይቁኝ።"
         );
         return;
       }
