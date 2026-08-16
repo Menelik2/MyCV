@@ -9479,9 +9479,11 @@ function initMobileTetris(root) {
   const overlayMsg = root.querySelector(".tt-overlay-msg");
   const overlaySub = root.querySelector(".tt-overlay-sub");
   const restartBtn = root.querySelector(".tt-restart");
-  const ctx = boardEl.getContext("2d");
-  const nctx = nextEl.getContext("2d");
-  const hctx = holdEl.getContext("2d");
+  const ctx = boardEl && boardEl.getContext("2d");
+  if (!ctx) {
+    console.warn("[Tetris] canvas context missing");
+    return;
+  }
 
   let grid, piece, nextQueue, holdType, holdUsed;
   let score, lines, level, best, paused, over, started, soundOn;
@@ -9704,10 +9706,12 @@ function initMobileTetris(root) {
   }
 
   function drawMini(canvas, type) {
+    if (!canvas) return;
     const c = canvas.getContext("2d");
+    if (!c) return;
     c.fillStyle = "#9ca88a";
     c.fillRect(0, 0, canvas.width, canvas.height);
-    if (!type) return;
+    if (!type || !SHAPES[type]) return;
     const s = SHAPES[type];
     const size = type === "I" ? 12 : 14;
     const ox = (canvas.width - s[0].length * size) / 2;
@@ -9848,12 +9852,19 @@ function initMobileTetris(root) {
 
   function nextPiece() {
     const type = nextQueue.shift();
+    if (!type) {
+      fillBag();
+      nextQueue.push(takeFromBag());
+      return nextPiece();
+    }
     nextQueue.push(takeFromBag());
     piece = spawnPiece(type);
     holdUsed = false;
     if (collides(piece, 0, 0)) {
-      // try one row up for I
+      // try one row higher (spawn buffer)
+      piece.y -= 1;
       if (collides(piece, 0, 0)) {
+        piece.y += 1;
         endGame();
       }
     }
@@ -9915,13 +9926,31 @@ function initMobileTetris(root) {
     beep(300, 0.04);
   }
 
+  function move(dx) {
+    if (!started || over || paused || !piece) return;
+    if (!collides(piece, dx, 0)) {
+      piece.x += dx;
+    }
+  }
+
   function tryRotate() {
     if (!started || over || paused || !piece || piece.type === "O") return;
     const rotated = rotateCW(piece.shape);
-    const kicks = [0, -1, 1, -2, 2];
-    for (const kick of kicks) {
-      if (!collides(piece, kick, 0, rotated)) {
-        piece.x += kick;
+    // Wall kicks: horizontal + slight vertical (floor/ceiling)
+    const kicks = [
+      [0, 0],
+      [-1, 0],
+      [1, 0],
+      [-2, 0],
+      [2, 0],
+      [0, -1],
+      [-1, -1],
+      [1, -1],
+    ];
+    for (const [kx, ky] of kicks) {
+      if (!collides(piece, kx, ky, rotated)) {
+        piece.x += kx;
+        piece.y += ky;
         piece.shape = rotated;
         beep(380, 0.03);
         return;
@@ -10069,6 +10098,7 @@ function initMobileTetris(root) {
 
   restartBtn.addEventListener("click", (e) => {
     e.preventDefault();
+    e.stopPropagation();
     if (paused && started && !over) {
       paused = false;
       hideOverlay();
@@ -10099,10 +10129,10 @@ function initMobileTetris(root) {
     if (k === "ArrowLeft" || k === "a" || k === "A") onAct("left");
     else if (k === "ArrowRight" || k === "d" || k === "D") onAct("right");
     else if (k === "ArrowDown" || k === "s" || k === "S") onAct("down");
-    else if (k === "ArrowUp" || k === "w" || k === "W" || k === "x" || k === "X") onAct("rotate");
+    else if (k === "ArrowUp" || k === "w" || k === "W" || k === "x" || k === "X" || k === "z" || k === "Z") onAct("rotate");
     else if (k === " ") onAct("drop");
     else if (k === "c" || k === "C" || k === "Shift") onAct("hold");
-    else if (k === "p" || k === "P") onAct("pause");
+    else if (k === "p" || k === "P" || k === "Escape") onAct("pause");
     else if (k === "r" || k === "R") onAct("reset");
   };
   window.addEventListener("keydown", keyHandler);
