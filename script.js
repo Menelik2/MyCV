@@ -759,6 +759,7 @@ const APPS = {
   vscode: { title: "Liveweave", iconClass: "vscode-icon", interactive: true },
   minesweeper: { title: "Minesweeper", iconClass: "minesweeper-icon", interactive: true },
   sudoku: { title: "Sudoku", iconClass: "sudoku-icon", interactive: true },
+  snake: { title: "Snake", iconClass: "snake-icon", interactive: true },
   chat: { title: "Chats — Menelik OS", iconClass: "chat-icon", interactive: true },
   control: { title: "Control Panel", iconClass: "control-icon", interactive: true },
   recycle: { title: "Recycle Bin", iconClass: "recycle-icon", interactive: true },
@@ -795,6 +796,7 @@ const I18N = {
     chat: "Chats",
     apps: "Apps",
     games: "Games",
+    snake: "Snake",
     notepad: "Notepad",
     paint: "Paint",
     voice: "Voice Room",
@@ -834,6 +836,7 @@ const I18N = {
     chat: "ቻት",
     apps: "መተግበሪያዎች",
     games: "ጨዋታዎች",
+    snake: "እባብ",
     notepad: "ማስታወሻ",
     paint: "ቀለም",
     voice: "የድምጽ ክፍል",
@@ -2292,6 +2295,310 @@ function buildVSCode() {
   return wrap;
 }
 
+
+
+
+function buildSnake() {
+  const root = document.createElement("div");
+  root.className = "snake-app";
+  root.innerHTML =
+    '<div class="snake-hud">' +
+    '  <span class="snake-score">Score: <b data-sn-score>0</b></span>' +
+    '  <span class="snake-best">Best: <b data-sn-best>0</b></span>' +
+    '  <span class="snake-len">Len: <b data-sn-len>1</b></span>' +
+    "</div>" +
+    '<div class="snake-stage">' +
+    '  <canvas class="snake-canvas" width="300" height="300" aria-label="Snake game"></canvas>' +
+    '  <div class="snake-overlay" data-sn-overlay>' +
+    '    <div class="snake-overlay-title">Snake</div>' +
+    '    <div class="snake-overlay-sub">Arrow keys / swipe / D-pad</div>' +
+    '    <button type="button" class="snake-btn" data-sn-start>Play</button>' +
+    "  </div>" +
+    "</div>" +
+    '<div class="snake-pad" aria-label="Controls">' +
+    '  <button type="button" class="snake-dir" data-dir="up" aria-label="Up">▲</button>' +
+    '  <div class="snake-pad-mid">' +
+    '    <button type="button" class="snake-dir" data-dir="left" aria-label="Left">◀</button>' +
+    '    <button type="button" class="snake-dir" data-dir="down" aria-label="Down">▼</button>' +
+    '    <button type="button" class="snake-dir" data-dir="right" aria-label="Right">▶</button>' +
+    "  </div>" +
+    "</div>";
+
+  const canvas = root.querySelector(".snake-canvas");
+  const ctx = canvas.getContext("2d");
+  const scoreEl = root.querySelector("[data-sn-score]");
+  const bestEl = root.querySelector("[data-sn-best]");
+  const lenEl = root.querySelector("[data-sn-len]");
+  const overlay = root.querySelector("[data-sn-overlay]");
+  const startBtn = root.querySelector("[data-sn-start]");
+
+  const COLS = 15;
+  const ROWS = 15;
+  let cell = 20;
+  let snake, dir, nextDir, food, score, best, tick, running, dead, raf, acc, lastTs;
+  const SPEED0 = 140; // ms per step
+
+  try {
+    best = parseInt(localStorage.getItem("menelik-snake-best") || "0", 10) || 0;
+  } catch (_) {
+    best = 0;
+  }
+  bestEl.textContent = String(best);
+
+  function resize() {
+    const stage = root.querySelector(".snake-stage");
+    const w = Math.min(360, (stage && stage.clientWidth) || 300);
+    const size = Math.floor(w);
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    canvas.style.width = size + "px";
+    canvas.style.height = size + "px";
+    canvas.width = Math.floor(size * dpr);
+    canvas.height = Math.floor(size * dpr);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    cell = size / COLS;
+    draw();
+  }
+
+  function reset() {
+    const cx = Math.floor(COLS / 2);
+    const cy = Math.floor(ROWS / 2);
+    snake = [
+      { x: cx, y: cy },
+      { x: cx - 1, y: cy },
+      { x: cx - 2, y: cy },
+    ];
+    dir = { x: 1, y: 0 };
+    nextDir = { x: 1, y: 0 };
+    score = 0;
+    dead = false;
+    running = false;
+    placeFood();
+    updateHud();
+    draw();
+  }
+
+  function placeFood() {
+    let tries = 0;
+    while (tries++ < 200) {
+      const x = Math.floor(Math.random() * COLS);
+      const y = Math.floor(Math.random() * ROWS);
+      if (!snake.some((s) => s.x === x && s.y === y)) {
+        food = { x, y };
+        return;
+      }
+    }
+    food = { x: 0, y: 0 };
+  }
+
+  function updateHud() {
+    scoreEl.textContent = String(score);
+    lenEl.textContent = String(snake.length);
+    bestEl.textContent = String(best);
+  }
+
+  function draw() {
+    const w = COLS * cell;
+    const h = ROWS * cell;
+    // board
+    ctx.fillStyle = "#0f172a";
+    ctx.fillRect(0, 0, w, h);
+    // grid
+    ctx.strokeStyle = "rgba(148,163,184,0.12)";
+    ctx.lineWidth = 1;
+    for (let i = 0; i <= COLS; i++) {
+      ctx.beginPath();
+      ctx.moveTo(i * cell, 0);
+      ctx.lineTo(i * cell, h);
+      ctx.stroke();
+    }
+    for (let j = 0; j <= ROWS; j++) {
+      ctx.beginPath();
+      ctx.moveTo(0, j * cell);
+      ctx.lineTo(w, j * cell);
+      ctx.stroke();
+    }
+    // food
+    if (food) {
+      const pad = cell * 0.18;
+      ctx.fillStyle = "#f43f5e";
+      roundRect(food.x * cell + pad, food.y * cell + pad, cell - pad * 2, cell - pad * 2, 4);
+      ctx.fill();
+    }
+    // snake
+    snake.forEach((s, i) => {
+      const pad = cell * 0.12;
+      ctx.fillStyle = i === 0 ? "#4ade80" : "#22c55e";
+      roundRect(s.x * cell + pad, s.y * cell + pad, cell - pad * 2, cell - pad * 2, 5);
+      ctx.fill();
+    });
+  }
+
+  function roundRect(x, y, w, h, r) {
+    ctx.beginPath();
+    ctx.moveTo(x + r, y);
+    ctx.arcTo(x + w, y, x + w, y + h, r);
+    ctx.arcTo(x + w, y + h, x, y + h, r);
+    ctx.arcTo(x, y + h, x, y, r);
+    ctx.arcTo(x, y, x + w, y, r);
+    ctx.closePath();
+  }
+
+  function step() {
+    if (!running || dead) return;
+    dir = nextDir;
+    const head = { x: snake[0].x + dir.x, y: snake[0].y + dir.y };
+    if (head.x < 0 || head.y < 0 || head.x >= COLS || head.y >= ROWS) {
+      return gameOver();
+    }
+    if (snake.some((s) => s.x === head.x && s.y === head.y)) {
+      return gameOver();
+    }
+    snake.unshift(head);
+    if (food && head.x === food.x && head.y === food.y) {
+      score += 10;
+      if (score > best) {
+        best = score;
+        try {
+          localStorage.setItem("menelik-snake-best", String(best));
+        } catch (_) {}
+      }
+      placeFood();
+    } else {
+      snake.pop();
+    }
+    updateHud();
+    draw();
+  }
+
+  function gameOver() {
+    dead = true;
+    running = false;
+    overlay.hidden = false;
+    overlay.querySelector(".snake-overlay-title").textContent = "Game Over";
+    overlay.querySelector(".snake-overlay-sub").textContent = "Score " + score;
+    startBtn.textContent = "Play again";
+  }
+
+  function loop(ts) {
+    raf = requestAnimationFrame(loop);
+    if (!running || dead) return;
+    if (!lastTs) lastTs = ts;
+    acc += ts - lastTs;
+    lastTs = ts;
+    const speed = Math.max(70, SPEED0 - Math.floor(score / 50) * 8);
+    while (acc >= speed) {
+      acc -= speed;
+      step();
+    }
+  }
+
+  function startGame() {
+    reset();
+    running = true;
+    dead = false;
+    acc = 0;
+    lastTs = 0;
+    overlay.hidden = true;
+    if (raf) cancelAnimationFrame(raf);
+    raf = requestAnimationFrame(loop);
+  }
+
+  function setDir(nx, ny) {
+    // no reverse
+    if (dir.x + nx === 0 && dir.y + ny === 0) return;
+    nextDir = { x: nx, y: ny };
+    if (!running && !dead) {
+      // first move starts
+    }
+  }
+
+  function onKey(e) {
+    if (!root.isConnected) return;
+    const k = e.key;
+    if (k === "ArrowUp" || k === "w" || k === "W") {
+      e.preventDefault();
+      setDir(0, -1);
+    } else if (k === "ArrowDown" || k === "s" || k === "S") {
+      e.preventDefault();
+      setDir(0, 1);
+    } else if (k === "ArrowLeft" || k === "a" || k === "A") {
+      e.preventDefault();
+      setDir(-1, 0);
+    } else if (k === "ArrowRight" || k === "d" || k === "D") {
+      e.preventDefault();
+      setDir(1, 0);
+    } else if (k === " " || k === "Enter") {
+      if (!running) startGame();
+    }
+  }
+
+  startBtn.addEventListener("click", startGame);
+  root.querySelectorAll(".snake-dir").forEach((btn) => {
+    const d = btn.getAttribute("data-dir");
+    const map = {
+      up: [0, -1],
+      down: [0, 1],
+      left: [-1, 0],
+      right: [1, 0],
+    };
+    btn.addEventListener("click", (e) => {
+      e.preventDefault();
+      const v = map[d];
+      if (v) {
+        if (!running) startGame();
+        setDir(v[0], v[1]);
+      }
+    });
+  });
+
+  // Swipe
+  let sx = 0,
+    sy = 0;
+  canvas.addEventListener(
+    "touchstart",
+    (e) => {
+      if (!e.touches[0]) return;
+      sx = e.touches[0].clientX;
+      sy = e.touches[0].clientY;
+    },
+    { passive: true }
+  );
+  canvas.addEventListener(
+    "touchend",
+    (e) => {
+      const tch = e.changedTouches[0];
+      if (!tch) return;
+      const dx = tch.clientX - sx;
+      const dy = tch.clientY - sy;
+      if (Math.abs(dx) < 20 && Math.abs(dy) < 20) return;
+      if (!running) startGame();
+      if (Math.abs(dx) > Math.abs(dy)) setDir(dx > 0 ? 1 : -1, 0);
+      else setDir(0, dy > 0 ? 1 : -1);
+    },
+    { passive: true }
+  );
+
+  window.addEventListener("keydown", onKey);
+  const ro =
+    typeof ResizeObserver !== "undefined"
+      ? new ResizeObserver(() => resize())
+      : null;
+  ro && ro.observe(root);
+
+  const mo = new MutationObserver(() => {
+    if (!root.isConnected) {
+      mo.disconnect();
+      ro && ro.disconnect();
+      window.removeEventListener("keydown", onKey);
+      if (raf) cancelAnimationFrame(raf);
+    }
+  });
+  mo.observe(document.body, { childList: true, subtree: true });
+
+  reset();
+  setTimeout(resize, 30);
+  return root;
+}
 
 
 function buildSudoku() {
@@ -7091,6 +7398,7 @@ function getAppBody(id) {
   if (id === "vscode") return buildVSCode();
   if (id === "minesweeper") return buildMinesweeper();
   if (id === "sudoku") return buildSudoku();
+  if (id === "snake") return buildSnake();
   if (id === "chat") return buildChatApp();
   if (id === "control") return buildControlPanel();
   if (id === "recycle") return buildRecycleBin();
@@ -7875,6 +8183,7 @@ function openWindow(id) {
     vscode: { w: 900, h: 620 },
     minesweeper: { w: 320, h: 380 },
     sudoku: { w: 400, h: 560 },
+    snake: { w: 380, h: 480 },
     chat: { w: 380, h: 520 },
     control: { w: 440, h: 520 },
     recycle: { w: 400, h: 320 },
@@ -9388,7 +9697,7 @@ function initMobileTetris(root) {
 window.__mobilePageStack = window.__mobilePageStack || [];
 
 const APPS_FOLDER_CHILDREN = new Set(["notepad", "paint", "terminal", "voice"]);
-const GAMES_FOLDER_CHILDREN = new Set(["sudoku", "tetris", "blockblaster"]);
+const GAMES_FOLDER_CHILDREN = new Set(["sudoku", "tetris", "snake", "blockblaster"]);
 
 function showPage(pageId, opts) {
   opts = opts || {};

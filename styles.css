@@ -8723,8 +8723,123 @@ body.light .chats-export {
   border-radius: 16px;
 }
 .games-folder-grid {
-  grid-template-columns: repeat(2, 1fr);
-  max-width: 220px;
+  grid-template-columns: repeat(3, 1fr);
+  max-width: 280px;
   margin: 0 auto;
-  gap: 20px 16px;
+  gap: 18px 12px;
+}
+
+
+/* Snake game */
+.snake-icon, .sm-icon.snake-icon {
+  background: linear-gradient(145deg, #22c55e, #15803d);
+}
+.snake-icon::after, .sm-icon.snake-icon::after {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23fff'%3E%3Cpath d='M17 6c-1.1 0-2 .9-2 2 0 .4.1.7.3 1L12 12.3 8.7 9c.2-.3.3-.6.3-1 0-1.1-.9-2-2-2s-2 .9-2 2 .9 2 2 2c.4 0 .7-.1 1-.3L12 14l4-4.3c.3.2.6.3 1 .3 1.1 0 2-.9 2-2s-.9-2-2-2zM7 14c-1.7 0-3 1.3-3 3s1.3 3 3 3 3-1.3 3-3-1.3-3-3-3zm10 0c-1.7 0-3 1.3-3 3s1.3 3 3 3 3-1.3 3-3-1.3-3-3-3z'/%3E%3C/svg%3E");
+}
+.app-img.snake {
+  background: linear-gradient(145deg, #22c55e, #15803d);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23fff'%3E%3Cpath d='M17 6c-1.1 0-2 .9-2 2 0 .4.1.7.3 1L12 12.3 8.7 9c.2-.3.3-.6.3-1 0-1.1-.9-2-2-2s-2 .9-2 2 .9 2 2 2c.4 0 .7-.1 1-.3L12 14l4-4.3c.3.2.6.3 1 .3 1.1 0 2-.9 2-2s-.9-2-2-2zM7 14c-1.7 0-3 1.3-3 3s1.3 3 3 3 3-1.3 3-3-1.3-3-3-3zm10 0c-1.7 0-3 1.3-3 3s1.3 3 3 3 3-1.3 3-3-1.3-3-3-3z'/%3E%3C/svg%3E"), linear-gradient(145deg, #22c55e, #15803d);
+  background-size: 55%, cover;
+  background-position: center, center;
+  background-repeat: no-repeat, no-repeat;
+  border-radius: 16px;
+}
+.snake-app {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+  background: #020617;
+  color: #e2e8f0;
+  font-family: Tahoma, "Segoe UI", system-ui, sans-serif;
+  padding: 8px;
+  gap: 8px;
+  box-sizing: border-box;
+}
+.snake-hud {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: 12px;
+  flex-shrink: 0;
+}
+.snake-hud b { color: #4ade80; }
+.snake-stage {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.snake-canvas {
+  display: block;
+  max-width: 100%;
+  border-radius: 10px;
+  box-shadow: 0 0 0 1px rgba(148,163,184,0.2);
+  touch-action: none;
+}
+.snake-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: rgba(2, 6, 23, 0.72);
+  border-radius: 10px;
+  text-align: center;
+  padding: 16px;
+}
+.snake-overlay[hidden] { display: none !important; }
+.snake-overlay-title { font-size: 20px; font-weight: 700; }
+.snake-overlay-sub { font-size: 12px; opacity: 0.75; }
+.snake-btn {
+  margin-top: 6px;
+  border: none;
+  border-radius: 999px;
+  padding: 10px 22px;
+  background: linear-gradient(135deg, #22c55e, #16a34a);
+  color: #fff;
+  font-weight: 700;
+  cursor: pointer;
+  font-size: 14px;
+}
+.snake-pad {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding-bottom: max(4px, env(safe-area-inset-bottom, 0px));
+}
+.snake-pad-mid {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+.snake-dir {
+  width: 52px;
+  height: 44px;
+  border-radius: 10px;
+  border: 1px solid rgba(148,163,184,0.25);
+  background: rgba(30, 41, 59, 0.9);
+  color: #e2e8f0;
+  font-size: 16px;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.snake-dir:active { background: #334155; }
+#page-snake .page-body-full {
+  padding: 0 !important;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  height: 100%;
+}
+#page-snake .snake-app { height: 100%; }
+@media (min-width: 900px) {
+  .snake-pad { display: none; }
 }
