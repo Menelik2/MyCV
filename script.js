@@ -3656,25 +3656,37 @@ function buildControlPanel() {
   wrap.className = "control-app";
 
   const isLight = document.body.classList.contains("light");
+  const mobileView =
+    (typeof window !== "undefined" && window.innerWidth < 900) ||
+    !!(document.getElementById("mobile") && window.getComputedStyle(document.getElementById("mobile")).display !== "none" && window.innerWidth < 900);
+
   const dSize = localStorage.getItem("portfolio-icon-desktop") || "medium";
   const sSize = localStorage.getItem("portfolio-icon-start") || "medium";
   const gSize = localStorage.getItem("portfolio-icon-spacing") || "normal";
   const savedWall = localStorage.getItem("portfolio-wallpaper") || "default";
   const savedIdle = localStorage.getItem("portfolio-ss-idle") || "2";
-  const soundsOn = typeof uiSoundsEnabled === "boolean"
-    ? uiSoundsEnabled
-    : localStorage.getItem("portfolio-sounds") !== "off";
+  const soundsOn =
+    typeof uiSoundsEnabled === "boolean"
+      ? uiSoundsEnabled
+      : localStorage.getItem("portfolio-sounds") !== "off";
   const startupOn = localStorage.getItem("portfolio-startup-sound") !== "off";
-  const isMobileShell = !!(wrap.closest && false); // set after mount; detect by viewport
-  const mobileView = typeof window !== "undefined" && window.innerWidth < 900;
+  const reduceMotion = localStorage.getItem("portfolio-reduce-motion") === "on";
+  const largeText = localStorage.getItem("portfolio-large-text") === "on";
+  const hapticsOn = localStorage.getItem("portfolio-haptics") !== "off";
+  const animUi = localStorage.getItem("portfolio-ui-anim") !== "off";
+  const homeLayout = localStorage.getItem("portfolio-home-layout") || "grid";
 
   const sizeOpts = (cur) =>
     ["small", "medium", "large", "xlarge", "custom"]
       .map(
         (v) =>
-          `<option value="${v}" ${cur === v ? "selected" : ""}>${
-            v[0].toUpperCase() + v.slice(1)
-          }</option>`
+          '<option value="' +
+          v +
+          '"' +
+          (cur === v ? " selected" : "") +
+          ">" +
+          (v[0].toUpperCase() + v.slice(1)) +
+          "</option>"
       )
       .join("");
   const spaceOpts = (cur) =>
@@ -3687,7 +3699,13 @@ function buildControlPanel() {
     ]
       .map(
         ([v, label]) =>
-          `<option value="${v}" ${cur === v ? "selected" : ""}>${label}</option>`
+          '<option value="' +
+          v +
+          '"' +
+          (cur === v ? " selected" : "") +
+          ">" +
+          label +
+          "</option>"
       )
       .join("");
 
@@ -3699,21 +3717,37 @@ function buildControlPanel() {
   ]
     .map(
       ([v, label]) =>
-        `<option value="${v}" ${savedWall === v ? "selected" : ""}>${label}</option>`
+        '<option value="' +
+        v +
+        '"' +
+        (savedWall === v ? " selected" : "") +
+        ">" +
+        label +
+        "</option>"
     )
     .join("");
 
   const idleOpts = ["0", "1", "2", "5"]
     .map((v) => {
-      const label = v === "0" ? "Off" : v;
-      return `<option value="${v}" ${savedIdle === v ? "selected" : ""}>${label}</option>`;
+      const label = v === "0" ? "Off" : v + " min";
+      return (
+        '<option value="' +
+        v +
+        '"' +
+        (savedIdle === v ? " selected" : "") +
+        ">" +
+        label +
+        "</option>"
+      );
     })
     .join("");
 
   wrap.innerHTML =
-    '<h3 class="cp-title">Control Panel</h3>' +
+    '<h3 class="cp-title">' +
+    (mobileView ? "Settings" : "Control Panel") +
+    "</h3>" +
     '<div class="cp-section">' +
-    "  <h4>Display</h4>" +
+    "  <h4>Appearance</h4>" +
     '  <label class="cp-row"><span>Theme</span>' +
     '    <select class="cp-theme" aria-label="Theme">' +
     '      <option value="dark"' +
@@ -3726,8 +3760,12 @@ function buildControlPanel() {
     "  </label>" +
     '  <label class="cp-row"><span data-i18n="language">Language</span>' +
     '    <select class="cp-lang" aria-label="Language">' +
-    '      <option value="en"' + (getLang() === "en" ? " selected" : "") + ">English</option>" +
-    '      <option value="am"' + (getLang() === "am" ? " selected" : "") + ">አማርኛ</option>" +
+    '      <option value="en"' +
+    (typeof getLang === "function" && getLang() === "en" ? " selected" : "") +
+    ">English</option>" +
+    '      <option value="am"' +
+    (typeof getLang === "function" && getLang() === "am" ? " selected" : "") +
+    ">አማርኛ</option>" +
     "    </select>" +
     "  </label>" +
     '  <label class="cp-row"><span data-i18n="wallpaper">Wallpaper</span>' +
@@ -3735,6 +3773,23 @@ function buildControlPanel() {
     wallOpts +
     "    </select>" +
     "  </label>" +
+    (mobileView
+      ? '  <label class="cp-row"><span>Home layout</span>' +
+        '    <select class="cp-home-layout" aria-label="Home layout">' +
+        '      <option value="grid"' +
+        (homeLayout === "grid" ? " selected" : "") +
+        ">App grid</option>" +
+        '      <option value="compact"' +
+        (homeLayout === "compact" ? " selected" : "") +
+        ">Compact</option>" +
+        "    </select>" +
+        "  </label>" +
+        '  <label class="cp-row"><span>Larger text</span>' +
+        '    <input type="checkbox" class="cp-large-text" ' +
+        (largeText ? "checked " : "") +
+        'aria-label="Larger text" />' +
+        "  </label>"
+      : "") +
     "</div>" +
     (mobileView
       ? ""
@@ -3756,7 +3811,7 @@ function buildControlPanel() {
         '  <button type="button" class="cp-open-reg proj-btn">Advanced: Registry Editor…</button>' +
         "</div>") +
     '<div class="cp-section">' +
-    "  <h4>Sound</h4>" +
+    "  <h4>Sound &amp; feedback</h4>" +
     '  <label class="cp-row"><span>Notification sounds</span>' +
     '    <input type="checkbox" class="cp-sounds" ' +
     (soundsOn ? "checked " : "") +
@@ -3767,26 +3822,90 @@ function buildControlPanel() {
     (startupOn ? "checked " : "") +
     'aria-label="Startup sound" />' +
     "  </label>" +
+    (mobileView
+      ? '  <label class="cp-row"><span>Haptic taps</span>' +
+        '    <input type="checkbox" class="cp-haptics" ' +
+        (hapticsOn ? "checked " : "") +
+        'aria-label="Haptic feedback" />' +
+        "  </label>"
+      : "") +
     '  <button type="button" class="cp-test-sound proj-btn">Test notification</button>' +
     "</div>" +
     '<div class="cp-section">' +
-    "  <h4>Screensaver</h4>" +
-    '  <label class="cp-row"><span>Idle minutes</span>' +
-    '    <select class="cp-ss-idle" aria-label="Screensaver idle">' +
-    idleOpts +
-    "    </select>" +
+    "  <h4>Motion</h4>" +
+    '  <label class="cp-row"><span>UI animations</span>' +
+    '    <input type="checkbox" class="cp-ui-anim" ' +
+    (animUi ? "checked " : "") +
+    'aria-label="UI animations" />' +
     "  </label>" +
-    '  <p class="cp-about">Desktop only. Set to Off to disable.</p>' +
+    '  <label class="cp-row"><span>Reduce motion</span>' +
+    '    <input type="checkbox" class="cp-reduce-motion" ' +
+    (reduceMotion ? "checked " : "") +
+    'aria-label="Reduce motion" />' +
+    "  </label>" +
+    (!mobileView
+      ? '  <label class="cp-row"><span>Screensaver idle</span>' +
+        '    <select class="cp-ss-idle" aria-label="Screensaver idle">' +
+        idleOpts +
+        "    </select>" +
+        "  </label>"
+      : "") +
+    "</div>" +
+    '<div class="cp-section">' +
+    "  <h4>Data</h4>" +
+    '  <button type="button" class="cp-clear-chat proj-btn">Clear chat history</button>' +
+    '  <button type="button" class="cp-clear-scores proj-btn">Reset game high scores</button>' +
+    '  <button type="button" class="cp-reset-all proj-btn cp-danger">Reset all settings</button>' +
+    '  <p class="cp-about">Chat and scores are stored only on this device.</p>' +
     "</div>" +
     '<div class="cp-section">' +
     "  <h4>About</h4>" +
-    '  <p class="cp-about">Menelik OS · XP Portfolio<br/>https://menelik.webhop.me</p>' +
+    '  <p class="cp-about">Menelik OS portfolio · Settings save automatically on this device.</p>' +
+    '  <p class="cp-about">Contact: linuxos777@gmail.com</p>' +
     "</div>";
 
   const on = (sel, ev, fn) => {
     const el = wrap.querySelector(sel);
     if (el) el.addEventListener(ev, fn);
   };
+
+  function applyLargeText(onFlag) {
+    document.body.classList.toggle("large-text", !!onFlag);
+    try {
+      localStorage.setItem("portfolio-large-text", onFlag ? "on" : "off");
+    } catch (_) {}
+  }
+  function applyReduceMotion(onFlag) {
+    document.body.classList.toggle("reduce-motion", !!onFlag);
+    try {
+      localStorage.setItem("portfolio-reduce-motion", onFlag ? "on" : "off");
+    } catch (_) {}
+  }
+  function applyUiAnim(onFlag) {
+    document.body.classList.toggle("no-ui-anim", !onFlag);
+    try {
+      localStorage.setItem("portfolio-ui-anim", onFlag ? "on" : "off");
+    } catch (_) {}
+  }
+  function applyHomeLayout(v) {
+    const home = document.getElementById("home-screen");
+    if (home) home.dataset.layout = v;
+    try {
+      localStorage.setItem("portfolio-home-layout", v);
+    } catch (_) {}
+  }
+  function haptic() {
+    try {
+      if (localStorage.getItem("portfolio-haptics") === "off") return;
+      if (navigator.vibrate) navigator.vibrate(12);
+    } catch (_) {}
+  }
+
+  // Apply stored mobile prefs on open
+  if (largeText) applyLargeText(true);
+  if (reduceMotion) applyReduceMotion(true);
+  if (!animUi) applyUiAnim(false);
+  if (mobileView) applyHomeLayout(homeLayout);
 
   on(".cp-theme", "change", (e) => {
     try {
@@ -3796,6 +3915,7 @@ function buildControlPanel() {
         localStorage.setItem("portfolio-theme", e.target.value);
       }
       if (typeof playUiSound === "function") playUiSound("notify");
+      haptic();
     } catch (err) {
       console.warn("Theme change failed", err);
     }
@@ -3803,8 +3923,11 @@ function buildControlPanel() {
 
   on(".cp-lang", "change", (e) => {
     try {
-      applyLanguage(e.target.value === "am" ? "am" : "en");
+      if (typeof applyLanguage === "function") {
+        applyLanguage(e.target.value === "am" ? "am" : "en");
+      }
       if (typeof playUiSound === "function") playUiSound("notify");
+      haptic();
     } catch (err) {
       console.warn("Language change failed", err);
     }
@@ -3812,25 +3935,50 @@ function buildControlPanel() {
 
   on(".cp-wall", "change", (e) => {
     try {
-      document.body.dataset.wallpaper = e.target.value;
-      localStorage.setItem("portfolio-wallpaper", e.target.value);
+      const v = e.target.value;
+      localStorage.setItem("portfolio-wallpaper", v);
+      document.body.dataset.wallpaper = v;
+      const desk = document.getElementById("desktop");
+      if (desk) desk.dataset.wallpaper = v;
+      const mobile = document.getElementById("mobile");
+      if (mobile) mobile.dataset.wallpaper = v;
+      if (typeof playUiSound === "function") playUiSound("notify");
+      haptic();
     } catch (err) {
-      console.warn("Wallpaper change failed", err);
+      console.warn("Wallpaper failed", err);
     }
+  });
+
+  on(".cp-home-layout", "change", (e) => {
+    applyHomeLayout(e.target.value);
+    haptic();
+  });
+
+  on(".cp-large-text", "change", (e) => {
+    applyLargeText(e.target.checked);
+    haptic();
+  });
+
+  on(".cp-haptics", "change", (e) => {
+    try {
+      localStorage.setItem("portfolio-haptics", e.target.checked ? "on" : "off");
+    } catch (_) {}
+    if (e.target.checked) haptic();
+  });
+
+  on(".cp-ui-anim", "change", (e) => {
+    applyUiAnim(e.target.checked);
+    haptic();
+  });
+
+  on(".cp-reduce-motion", "change", (e) => {
+    applyReduceMotion(e.target.checked);
+    haptic();
   });
 
   on(".cp-icon-desktop", "change", (e) => {
     try {
-      const size = e.target.value;
-      if (size !== "custom") {
-        localStorage.removeItem("portfolio-icon-img-px");
-        localStorage.removeItem("portfolio-icon-width");
-        localStorage.removeItem("portfolio-icon-height");
-        document.documentElement.style.removeProperty("--icon-img-size");
-        document.documentElement.style.removeProperty("--icon-cell-w");
-        document.documentElement.style.removeProperty("--icon-cell-h");
-      }
-      if (typeof applyIconSizes === "function") applyIconSizes(size, null, null);
+      if (typeof applyIconSizes === "function") applyIconSizes(e.target.value, null, null);
       if (typeof playUiSound === "function") playUiSound("notify");
     } catch (err) {
       console.warn("Icon desktop size failed", err);
@@ -3883,6 +4031,7 @@ function buildControlPanel() {
   on(".cp-test-sound", "click", () => {
     try {
       if (typeof playUiSound === "function") playUiSound("notify");
+      haptic();
     } catch (_) {}
   });
 
@@ -3893,13 +4042,51 @@ function buildControlPanel() {
     } catch (_) {}
   });
 
+  on(".cp-clear-chat", "click", () => {
+    if (!confirm("Clear chat history on this device?")) return;
+    try {
+      localStorage.removeItem("menelik-chat-history-v2");
+      localStorage.removeItem("menelik-chat-history-v1");
+    } catch (_) {}
+    alert("Chat history cleared.");
+    haptic();
+  });
+
+  on(".cp-clear-scores", "click", () => {
+    if (!confirm("Reset Snake, Tetris, and Sudoku saved scores?")) return;
+    try {
+      localStorage.removeItem("menelik-snake-best");
+      localStorage.removeItem("menelik-tetris-best");
+      localStorage.removeItem("menelik-sudoku-progress");
+    } catch (_) {}
+    alert("Game scores reset.");
+    haptic();
+  });
+
+  on(".cp-reset-all", "click", () => {
+    if (!confirm("Reset all portfolio settings on this device?")) return;
+    const keys = [];
+    try {
+      for (let i = 0; i < localStorage.length; i++) {
+        const k = localStorage.key(i);
+        if (k && (k.startsWith("portfolio-") || k.startsWith("menelik-"))) keys.push(k);
+      }
+      keys.forEach((k) => localStorage.removeItem(k));
+    } catch (_) {}
+    document.body.classList.remove("large-text", "reduce-motion", "no-ui-anim", "light");
+    document.body.dataset.wallpaper = "default";
+    if (typeof applyTheme === "function") applyTheme("dark");
+    if (typeof applyLanguage === "function") applyLanguage("en");
+    alert("Settings reset. Reload recommended.");
+    haptic();
+  });
+
   try {
     document.body.dataset.wallpaper = savedWall;
   } catch (_) {}
 
   return wrap;
 }
-
 
 
 
@@ -9773,7 +9960,7 @@ function initMobileTetris(root) {
 /** Mobile navigation stack (Apps folder → Notepad, etc.) */
 window.__mobilePageStack = window.__mobilePageStack || [];
 
-const APPS_FOLDER_CHILDREN = new Set(["notepad", "paint", "terminal", "voice", "snake"]);
+const APPS_FOLDER_CHILDREN = new Set(["notepad", "paint", "terminal", "voice"]);
 const GAMES_FOLDER_CHILDREN = new Set(["sudoku", "tetris", "snake", "blockblaster"]);
 
 function showPage(pageId, opts) {
@@ -9796,10 +9983,6 @@ function showPage(pageId, opts) {
         window.__mobilePageStack = ["apps"];
       } else if (pageId === "games") {
         window.__mobilePageStack = ["games"];
-      } else if (pageId === "snake") {
-        // Snake lives in both Apps and Games folders — keep parent if already there
-        if (top === "apps" || top === "games") stack.push(pageId);
-        else window.__mobilePageStack = ["apps", pageId];
       } else if (APPS_FOLDER_CHILDREN.has(pageId)) {
         if (top !== "apps") window.__mobilePageStack = ["apps", pageId];
         else stack.push(pageId);
@@ -9880,17 +10063,6 @@ function mobileGoBack() {
   const open = document.querySelector("#mobile .app-page:not([hidden])");
   if (open && open.id) {
     const id = open.id.replace(/^page-/, "");
-    if (id === "snake") {
-      const parent = (window.__mobilePageStack || [])[0];
-      if (parent === "games") {
-        window.__mobilePageStack = ["games"];
-        showPage("games", { fromBack: true });
-      } else {
-        window.__mobilePageStack = ["apps"];
-        showPage("apps", { fromBack: true });
-      }
-      return;
-    }
     if (APPS_FOLDER_CHILDREN.has(id)) {
       window.__mobilePageStack = ["apps"];
       showPage("apps", { fromBack: true });
@@ -11009,6 +11181,22 @@ function runBootSequence() {
 
 try {
   applyLanguage(getLang());
+} catch (_) {}
+try {
+  if (localStorage.getItem("portfolio-large-text") === "on") document.body.classList.add("large-text");
+  if (localStorage.getItem("portfolio-reduce-motion") === "on") document.body.classList.add("reduce-motion");
+  if (localStorage.getItem("portfolio-ui-anim") === "off") document.body.classList.add("no-ui-anim");
+  const hl = localStorage.getItem("portfolio-home-layout");
+  if (hl) {
+    const home = document.getElementById("home-screen");
+    if (home) home.dataset.layout = hl;
+  }
+  const wall = localStorage.getItem("portfolio-wallpaper");
+  if (wall) {
+    document.body.dataset.wallpaper = wall;
+    const m = document.getElementById("mobile");
+    if (m) m.dataset.wallpaper = wall;
+  }
 } catch (_) {}
 try {
   runBootSequence();

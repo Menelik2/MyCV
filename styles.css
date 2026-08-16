@@ -8859,3 +8859,77 @@ body.light .chats-export {
   max-width: 100%;
   margin: 0 auto;
 }
+
+
+/* Mobile settings extras */
+@media (max-width: 899px) {
+  .control-app {
+    padding: 12px 14px 28px;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+  .control-app .cp-title {
+    font-size: 18px;
+    margin: 4px 0 12px;
+  }
+  .control-app .cp-section {
+    margin-bottom: 14px;
+    padding: 12px;
+    border-radius: 14px;
+    background: rgba(0,0,0,0.04);
+  }
+  body:not(.light) .control-app .cp-section {
+    background: rgba(255,255,255,0.06);
+  }
+  .control-app .cp-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    min-height: 44px;
+    padding: 6px 0;
+    font-size: 14px;
+  }
+  .control-app select,
+  .control-app .proj-btn {
+    min-height: 40px;
+    font-size: 14px;
+    border-radius: 10px;
+  }
+  .control-app input[type="checkbox"] {
+    width: 22px;
+    height: 22px;
+  }
+  .control-app .cp-danger {
+    border-color: #f87171;
+    color: #b91c1c;
+  }
+  #home-screen[data-layout="compact"] .app-grid {
+    gap: 10px 6px;
+  }
+  #home-screen[data-layout="compact"] .app-img {
+    width: 48px;
+    height: 48px;
+  }
+  #home-screen[data-layout="compact"] .app-icon span {
+    font-size: 10px;
+  }
+}
+body.large-text {
+  font-size: 17px;
+}
+body.large-text .app-icon span,
+body.large-text .page-header h2 {
+  font-size: 1.05em;
+}
+body.reduce-motion *,
+body.reduce-motion *::before,
+body.reduce-motion *::after {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.01ms !important;
+}
+body.no-ui-anim .window,
+body.no-ui-anim .app-page {
+  transition: none !important;
+}
