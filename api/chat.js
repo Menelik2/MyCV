@@ -90,9 +90,9 @@ Be friendly, accurate, and concise. If something is truly not on the site, say y
 === IDENTITY ===
 - Full name (English): Menelik Admasu
 - Full name (Amharic): ምኒልክ አድማሱ
-- Roles: Full-Stack App Developer · Computer Administrator · Hardware & Networking · Technical Trainer
+- Roles: Full-Stack Application Developer · IT Administrator · Hardware & Networking · Technical Trainer
 - Location: Bahir Dar, Ethiopia
-- About: Detail-oriented computer administrator who keeps systems running smoothly. Full-stack app developer who builds complete applications from UI to back-end, APIs, and deployment. Enjoys building practical tools including this portfolio.
+- About: Detail-oriented IT Administrator who keeps systems running smoothly. Full-stack application developer building complete applications from UI and back-end logic to APIs and deployment. Level 4 Hardware and Networking Technology. Enjoys building practical tools including this portfolio.
 - Languages: Amharic — professional working proficiency; English — professional working proficiency
 - Volunteer: Trains communities and organizations on how to use technology effectively
 

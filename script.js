@@ -12,8 +12,8 @@ const CONTENT = {
           <p style="margin:6px 0 0;color:#555;font-size:13px;">Full-Stack App Developer · Computer Administrator<br>Hardware &amp; Networking · Technical Trainer<br>Bahir Dar, Ethiopia</p>
         </div>
       </div>
-      <p>I am a detail-oriented computer administrator who keeps systems running smoothly. With strong IT and administrative experience, I handle day-to-day technical responsibilities effectively and efficiently.</p>
-      <p>I am also a <strong>full-stack app developer</strong>. I build complete applications — from the user interface to back-end logic, APIs, and deployment.</p>
+      <p>I am a detail-oriented IT Administrator who keeps systems running smoothly. With solid experience in IT, computer networking, hardware, maintenance, and administration, I handle technical tasks effectively and efficiently.</p>
+      <p>I am also a <strong>full-stack application developer</strong>, building complete applications from user interfaces and back-end logic to APIs and deployment.</p>
       <p>I completed a BSc in Computer Science at Bahir Dar University (2022 – 2026), after earlier training in computer hardware and networking. I enjoy building practical tools, including this portfolio.</p>
       <h3>Interests</h3>
       <ul>
