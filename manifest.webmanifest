@@ -1,14 +1,33 @@
 {
+  "id": "/?source=pwa",
   "name": "Menelik OS — Portfolio",
   "short_name": "Menelik OS",
-  "description": "Interactive Windows XP style portfolio of Menelik Admasu",
-  "start_url": "./",
+  "description": "Interactive Windows XP–style portfolio of Menelik Admasu — apps, games, projects, and CV in the browser.",
+  "lang": "en",
+  "dir": "ltr",
+  "start_url": "./?utm_source=pwa",
   "scope": "./",
   "display": "standalone",
+  "display_override": ["window-controls-overlay", "standalone", "minimal-ui", "browser"],
   "background_color": "#0b1220",
   "theme_color": "#245edb",
   "orientation": "any",
+  "categories": ["portfolio", "productivity", "games", "education"],
+  "iarc_rating_id": "",
+  "prefer_related_applications": false,
   "icons": [
+    {
+      "src": "static/images/profile-32.webp",
+      "sizes": "32x32",
+      "type": "image/webp",
+      "purpose": "any"
+    },
+    {
+      "src": "static/images/profile-64.webp",
+      "sizes": "64x64",
+      "type": "image/webp",
+      "purpose": "any"
+    },
     {
       "src": "static/images/profile-128.webp",
       "sizes": "128x128",
@@ -16,10 +35,28 @@
       "purpose": "any"
     },
     {
+      "src": "static/images/profile-128.jpg",
+      "sizes": "128x128",
+      "type": "image/jpeg",
+      "purpose": "any"
+    },
+    {
       "src": "static/images/profile-320.webp",
       "sizes": "320x320",
       "type": "image/webp",
-      "purpose": "any maskable"
+      "purpose": "any"
+    },
+    {
+      "src": "static/images/profile-320.webp",
+      "sizes": "320x320",
+      "type": "image/webp",
+      "purpose": "maskable"
+    },
+    {
+      "src": "static/images/profile-320.jpg",
+      "sizes": "320x320",
+      "type": "image/jpeg",
+      "purpose": "any"
     },
     {
       "src": "profile.jpg",
@@ -27,5 +64,53 @@
       "type": "image/jpeg",
       "purpose": "any"
     }
-  ]
+  ],
+  "shortcuts": [
+    {
+      "name": "Projects",
+      "short_name": "Projects",
+      "description": "Open portfolio projects",
+      "url": "./?app=projects",
+      "icons": [
+        {
+          "src": "static/images/profile-128.webp",
+          "sizes": "128x128",
+          "type": "image/webp"
+        }
+      ]
+    },
+    {
+      "name": "Microsoft Edge",
+      "short_name": "Edge",
+      "description": "Open the in-desktop Microsoft Edge browser",
+      "url": "./?app=edge",
+      "icons": [
+        {
+          "src": "static/images/profile-128.webp",
+          "sizes": "128x128",
+          "type": "image/webp"
+        }
+      ]
+    },
+    {
+      "name": "Resume",
+      "short_name": "Resume",
+      "description": "View resume",
+      "url": "./?app=resume",
+      "icons": [
+        {
+          "src": "static/images/profile-128.webp",
+          "sizes": "128x128",
+          "type": "image/webp"
+        }
+      ]
+    }
+  ],
+  "handle_links": "preferred",
+  "launch_handler": {
+    "client_mode": ["navigate-existing", "auto"]
+  },
+  "edge_side_panel": {
+    "preferred_width": 400
+  }
 }
