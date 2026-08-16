@@ -2305,6 +2305,7 @@ function buildSnake() {
   root.innerHTML =
     '<div class="snake-hud">' +
     '  <span class="snake-score">Score: <b data-sn-score>0</b></span>' +
+    '  <span class="snake-level">Lv: <b data-sn-level>1</b></span>' +
     '  <span class="snake-best">Best: <b data-sn-best>0</b></span>' +
     '  <span class="snake-len">Len: <b data-sn-len>1</b></span>' +
     "</div>" +
@@ -2328,6 +2329,7 @@ function buildSnake() {
   const canvas = root.querySelector(".snake-canvas");
   const ctx = canvas.getContext("2d");
   const scoreEl = root.querySelector("[data-sn-score]");
+  const levelEl = root.querySelector("[data-sn-level]");
   const bestEl = root.querySelector("[data-sn-best]");
   const lenEl = root.querySelector("[data-sn-len]");
   const overlay = root.querySelector("[data-sn-overlay]");
@@ -2336,8 +2338,9 @@ function buildSnake() {
   const COLS = 15;
   const ROWS = 15;
   let cell = 20;
-  let snake, dir, nextDir, food, score, best, tick, running, dead, raf, acc, lastTs;
+  let snake, dir, nextDir, food, score, level, best, tick, running, dead, raf, acc, lastTs;
   const SPEED0 = 140; // ms per step
+  const POINTS_PER_LEVEL = 50;
 
   try {
     best = parseInt(localStorage.getItem("menelik-snake-best") || "0", 10) || 0;
@@ -2371,6 +2374,7 @@ function buildSnake() {
     dir = { x: 1, y: 0 };
     nextDir = { x: 1, y: 0 };
     score = 0;
+    level = 1;
     dead = false;
     running = false;
     placeFood();
@@ -2393,6 +2397,7 @@ function buildSnake() {
 
   function updateHud() {
     scoreEl.textContent = String(score);
+    levelEl.textContent = String(level);
     lenEl.textContent = String(snake.length);
     bestEl.textContent = String(best);
   }
@@ -2457,6 +2462,10 @@ function buildSnake() {
     snake.unshift(head);
     if (food && head.x === food.x && head.y === food.y) {
       score += 10;
+      const newLevel = Math.floor(score / POINTS_PER_LEVEL) + 1;
+      if (newLevel > level) {
+        level = newLevel;
+      }
       if (score > best) {
         best = score;
         try {
@@ -2476,7 +2485,7 @@ function buildSnake() {
     running = false;
     overlay.hidden = false;
     overlay.querySelector(".snake-overlay-title").textContent = "Game Over";
-    overlay.querySelector(".snake-overlay-sub").textContent = "Score " + score;
+    overlay.querySelector(".snake-overlay-sub").textContent = "Score " + score + " · Level " + level;
     startBtn.textContent = "Play again";
   }
 
@@ -2486,7 +2495,7 @@ function buildSnake() {
     if (!lastTs) lastTs = ts;
     acc += ts - lastTs;
     lastTs = ts;
-    const speed = Math.max(70, SPEED0 - Math.floor(score / 50) * 8);
+    const speed = Math.max(55, SPEED0 - (level - 1) * 12);
     while (acc >= speed) {
       acc -= speed;
       step();
