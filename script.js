@@ -1048,29 +1048,332 @@ const windowDesktop = {}; // windowId -> desktop index
 /* ========== Build interactive app UIs ========== */
 function buildNotepad() {
   const wrap = document.createElement("div");
-  wrap.className = "notepad-app";
-  wrap.innerHTML = `
-    <div class="notepad-toolbar">
-      <button data-action="new">New</button>
-      <button data-action="save">Save</button>
-      <button data-action="load">Load</button>
-      <button data-action="clear">Clear</button>
-    </div>
-    <textarea class="notepad-textarea" placeholder="Type something..." spellcheck="false"></textarea>
-  `;
+  wrap.className = "notepad-app notepad-win11";
+  wrap.innerHTML =
+    '<div class="np11-menubar" role="menubar">' +
+    '  <div class="np11-menu">' +
+    '    <button type="button" class="np11-menu-btn" data-menu="file">File</button>' +
+    '    <div class="np11-dropdown" data-for="file" hidden>' +
+    '      <button type="button" data-action="new"><span>New</span><kbd>Ctrl+N</kbd></button>' +
+    '      <button type="button" data-action="open"><span>Open</span><kbd>Ctrl+O</kbd></button>' +
+    '      <button type="button" data-action="save"><span>Save</span><kbd>Ctrl+S</kbd></button>' +
+    '      <button type="button" data-action="saveas"><span>Save as…</span></button>' +
+    '      <hr/>' +
+    '      <button type="button" data-action="print"><span>Print</span><kbd>Ctrl+P</kbd></button>' +
+    '    </div>' +
+    '  </div>' +
+    '  <div class="np11-menu">' +
+    '    <button type="button" class="np11-menu-btn" data-menu="edit">Edit</button>' +
+    '    <div class="np11-dropdown" data-for="edit" hidden>' +
+    '      <button type="button" data-action="undo"><span>Undo</span><kbd>Ctrl+Z</kbd></button>' +
+    '      <hr/>' +
+    '      <button type="button" data-action="cut"><span>Cut</span><kbd>Ctrl+X</kbd></button>' +
+    '      <button type="button" data-action="copy"><span>Copy</span><kbd>Ctrl+C</kbd></button>' +
+    '      <button type="button" data-action="paste"><span>Paste</span><kbd>Ctrl+V</kbd></button>' +
+    '      <button type="button" data-action="selectall"><span>Select all</span><kbd>Ctrl+A</kbd></button>' +
+    '      <hr/>' +
+    '      <button type="button" data-action="find"><span>Find</span><kbd>Ctrl+F</kbd></button>' +
+    '      <button type="button" data-action="clear"><span>Clear all</span></button>' +
+    '    </div>' +
+    '  </div>' +
+    '  <div class="np11-menu">' +
+    '    <button type="button" class="np11-menu-btn" data-menu="view">View</button>' +
+    '    <div class="np11-dropdown" data-for="view" hidden>' +
+    '      <button type="button" data-action="wrap"><span class="np11-check" data-check="wrap">✓</span><span>Word wrap</span></button>' +
+    '      <button type="button" data-action="zoom-in"><span>Zoom in</span><kbd>Ctrl++</kbd></button>' +
+    '      <button type="button" data-action="zoom-out"><span>Zoom out</span><kbd>Ctrl+-</kbd></button>' +
+    '      <button type="button" data-action="zoom-reset"><span>Restore default zoom</span></button>' +
+    '    </div>' +
+    '  </div>' +
+    '</div>' +
+    '<div class="np11-commandbar">' +
+    '  <button type="button" class="np11-cmd" data-action="new" title="New">New</button>' +
+    '  <button type="button" class="np11-cmd" data-action="save" title="Save">Save</button>' +
+    '  <button type="button" class="np11-cmd" data-action="open" title="Open">Open</button>' +
+    '  <span class="np11-sep"></span>' +
+    '  <button type="button" class="np11-cmd" data-action="find" title="Find">Find</button>' +
+    '  <button type="button" class="np11-cmd" data-action="wrap" title="Word wrap">Wrap</button>' +
+    '</div>' +
+    '<div class="np11-findbar" hidden>' +
+    '  <input type="search" class="np11-find-input" placeholder="Find" aria-label="Find" />' +
+    '  <button type="button" class="np11-cmd" data-action="find-next">Next</button>' +
+    '  <button type="button" class="np11-cmd" data-action="find-close" title="Close">✕</button>' +
+    '</div>' +
+    '<textarea class="notepad-textarea np11-editor" placeholder="Start typing…" spellcheck="true"></textarea>' +
+    '<div class="np11-statusbar">' +
+    '  <span class="np11-pos">Ln 1, Col 1</span>' +
+    '  <span class="np11-chars">0 characters</span>' +
+    '  <span class="np11-zoom">100%</span>' +
+    '</div>';
+
   const ta = wrap.querySelector("textarea");
+  const findBar = wrap.querySelector(".np11-findbar");
+  const findInput = wrap.querySelector(".np11-find-input");
+  const posEl = wrap.querySelector(".np11-pos");
+  const charsEl = wrap.querySelector(".np11-chars");
+  const zoomEl = wrap.querySelector(".np11-zoom");
+  const fileInput = document.createElement("input");
+  fileInput.type = "file";
+  fileInput.accept = ".txt,text/plain";
+  fileInput.hidden = true;
+  wrap.appendChild(fileInput);
+
+  let fontScale = 1;
+  let wordWrap = true;
+  try {
+    const savedWrap = localStorage.getItem("notepad-wrap");
+    if (savedWrap === "0") wordWrap = false;
+    const savedZoom = parseFloat(localStorage.getItem("notepad-zoom") || "1");
+    if (savedZoom >= 0.7 && savedZoom <= 2) fontScale = savedZoom;
+  } catch (_) {}
+
   const saved = localStorage.getItem("notepad-content");
   if (saved) ta.value = saved;
 
-  wrap.querySelector('[data-action="new"]').onclick = () => { ta.value = ""; };
-  wrap.querySelector('[data-action="save"]').onclick = () => {
-    localStorage.setItem("notepad-content", ta.value);
-    alert("Saved to browser storage.");
-  };
-  wrap.querySelector('[data-action="load"]').onclick = () => {
-    ta.value = localStorage.getItem("notepad-content") || "";
-  };
-  wrap.querySelector('[data-action="clear"]').onclick = () => { ta.value = ""; };
+  function applyWrap() {
+    ta.style.whiteSpace = wordWrap ? "pre-wrap" : "pre";
+    ta.style.overflowX = wordWrap ? "hidden" : "auto";
+    wrap.querySelectorAll("[data-check=wrap]").forEach((el) => {
+      el.textContent = wordWrap ? "✓" : "";
+    });
+  }
+  function applyZoom() {
+    ta.style.fontSize = (14 * fontScale).toFixed(1) + "px";
+    if (zoomEl) zoomEl.textContent = Math.round(fontScale * 100) + "%";
+    try {
+      localStorage.setItem("notepad-zoom", String(fontScale));
+    } catch (_) {}
+  }
+  function updateStatus() {
+    const v = ta.value;
+    const pos = ta.selectionStart || 0;
+    const before = v.slice(0, pos);
+    const lines = before.split("\n");
+    const ln = lines.length;
+    const col = lines[lines.length - 1].length + 1;
+    if (posEl) posEl.textContent = "Ln " + ln + ", Col " + col;
+    if (charsEl) charsEl.textContent = v.length + " character" + (v.length === 1 ? "" : "s");
+  }
+  function closeMenus() {
+    wrap.querySelectorAll(".np11-dropdown").forEach((d) => {
+      d.hidden = true;
+    });
+  }
+  function toast(msg) {
+    if (typeof showDialog === "function") {
+      try {
+        showDialog("Notepad", msg);
+        return;
+      } catch (_) {}
+    }
+    try {
+      statusFlash(msg);
+    } catch (_) {
+      /* ignore */
+    }
+  }
+  function statusFlash(msg) {
+    if (!charsEl) return;
+    const prev = charsEl.textContent;
+    charsEl.textContent = msg;
+    setTimeout(() => {
+      if (charsEl.textContent === msg) updateStatus();
+    }, 1600);
+  }
+  function doSave() {
+    try {
+      localStorage.setItem("notepad-content", ta.value);
+      statusFlash("Saved");
+    } catch (_) {
+      toast("Could not save.");
+    }
+  }
+  function doSaveAs() {
+    try {
+      const blob = new Blob([ta.value], { type: "text/plain;charset=utf-8" });
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = "Untitled.txt";
+      a.click();
+      setTimeout(() => URL.revokeObjectURL(a.href), 1500);
+      statusFlash("Downloaded");
+    } catch (_) {
+      toast("Download failed.");
+    }
+  }
+  function doOpen() {
+    fileInput.click();
+  }
+  function findNext() {
+    const q = (findInput && findInput.value) || "";
+    if (!q) return;
+    const text = ta.value;
+    const start = ta.selectionEnd || 0;
+    let idx = text.indexOf(q, start);
+    if (idx < 0) idx = text.indexOf(q, 0);
+    if (idx < 0) {
+      statusFlash("Not found");
+      return;
+    }
+    ta.focus();
+    ta.setSelectionRange(idx, idx + q.length);
+    updateStatus();
+  }
+  function runAction(act) {
+    closeMenus();
+    if (act === "new") {
+      ta.value = "";
+      updateStatus();
+    } else if (act === "save") doSave();
+    else if (act === "saveas") doSaveAs();
+    else if (act === "open") doOpen();
+    else if (act === "print") {
+      try {
+        const w = window.open("", "_blank", "noopener,noreferrer");
+        if (w) {
+          w.document.write(
+            "<pre style=\"font-family:Consolas,monospace;white-space:pre-wrap;padding:24px\">" +
+              ta.value
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;") +
+              "</pre>"
+          );
+          w.document.close();
+          w.focus();
+          w.print();
+        }
+      } catch (_) {}
+    } else if (act === "undo") {
+      document.execCommand("undo");
+    } else if (act === "cut") {
+      ta.focus();
+      document.execCommand("cut");
+    } else if (act === "copy") {
+      ta.focus();
+      document.execCommand("copy");
+    } else if (act === "paste") {
+      ta.focus();
+      document.execCommand("paste");
+    } else if (act === "selectall") {
+      ta.focus();
+      ta.select();
+    } else if (act === "clear") {
+      ta.value = "";
+      updateStatus();
+    } else if (act === "find") {
+      if (findBar) findBar.hidden = false;
+      if (findInput) findInput.focus();
+    } else if (act === "find-next") findNext();
+    else if (act === "find-close") {
+      if (findBar) findBar.hidden = true;
+      ta.focus();
+    } else if (act === "wrap") {
+      wordWrap = !wordWrap;
+      try {
+        localStorage.setItem("notepad-wrap", wordWrap ? "1" : "0");
+      } catch (_) {}
+      applyWrap();
+    } else if (act === "zoom-in") {
+      fontScale = Math.min(2, fontScale + 0.1);
+      applyZoom();
+    } else if (act === "zoom-out") {
+      fontScale = Math.max(0.7, fontScale - 0.1);
+      applyZoom();
+    } else if (act === "zoom-reset") {
+      fontScale = 1;
+      applyZoom();
+    }
+  }
+
+  wrap.querySelectorAll(".np11-menu-btn").forEach((btn) => {
+    btn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      const id = btn.getAttribute("data-menu");
+      wrap.querySelectorAll(".np11-dropdown").forEach((d) => {
+        const open = d.getAttribute("data-for") === id && d.hidden;
+        d.hidden = !open;
+      });
+    });
+  });
+  wrap.querySelectorAll("[data-action]").forEach((btn) => {
+    btn.addEventListener("click", (e) => {
+      e.preventDefault();
+      runAction(btn.getAttribute("data-action"));
+    });
+  });
+  fileInput.addEventListener("change", () => {
+    const f = fileInput.files && fileInput.files[0];
+    if (!f) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      ta.value = String(reader.result || "");
+      updateStatus();
+      statusFlash("Opened " + f.name);
+    };
+    reader.readAsText(f);
+    fileInput.value = "";
+  });
+  ta.addEventListener("input", () => {
+    try {
+      localStorage.setItem("notepad-content", ta.value);
+    } catch (_) {}
+    updateStatus();
+  });
+  ta.addEventListener("click", updateStatus);
+  ta.addEventListener("keyup", updateStatus);
+  ta.addEventListener("select", updateStatus);
+  wrap.addEventListener("keydown", (e) => {
+    const mod = e.ctrlKey || e.metaKey;
+    if (!mod) return;
+    const k = e.key.toLowerCase();
+    if (k === "s") {
+      e.preventDefault();
+      doSave();
+    } else if (k === "n") {
+      e.preventDefault();
+      runAction("new");
+    } else if (k === "o") {
+      e.preventDefault();
+      doOpen();
+    } else if (k === "f") {
+      e.preventDefault();
+      runAction("find");
+    } else if (k === "p") {
+      e.preventDefault();
+      runAction("print");
+    } else if (k === "=" || k === "+") {
+      e.preventDefault();
+      runAction("zoom-in");
+    } else if (k === "-") {
+      e.preventDefault();
+      runAction("zoom-out");
+    } else if (k === "0") {
+      e.preventDefault();
+      runAction("zoom-reset");
+    }
+  });
+  document.addEventListener(
+    "click",
+    (e) => {
+      if (!wrap.contains(e.target)) closeMenus();
+      else if (!e.target.closest(".np11-menu")) closeMenus();
+    },
+    true
+  );
+  if (findInput) {
+    findInput.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        findNext();
+      }
+      if (e.key === "Escape") runAction("find-close");
+    });
+  }
+
+  applyWrap();
+  applyZoom();
+  updateStatus();
   return wrap;
 }
 
@@ -8716,7 +9019,7 @@ function openWindow(id) {
 
   // Size: match currently open window when possible so desktop icons open at the same size
   const APP_SIZES = {
-    notepad: { w: 480, h: 340 },
+    notepad: { w: 640, h: 480 },
     paint: { w: 700, h: 520 },
     vector: { w: 720, h: 540 },
     terminal: { w: 500, h: 320 },
