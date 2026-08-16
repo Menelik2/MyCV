@@ -135,7 +135,7 @@ const CONTENT = {
     iconClass: `projects-icon`,
     html: `
 <h2>Featured Projects</h2>
-      <p class="proj-intro">Visual previews below — open a live demo or explore highlights. Live links open in Internet Explorer.</p>
+      <p class="proj-intro">Visual previews below — open a live demo or explore highlights. Live links open in Microsoft Edge.</p>
 
       <div class="project-card" data-project="yeni-movie">
         <div class="proj-header">
@@ -765,7 +765,8 @@ const APPS = {
   control: { title: "Control Panel", iconClass: "control-icon", interactive: true },
   recycle: { title: "Recycle Bin", iconClass: "recycle-icon", interactive: true },
   registry: { title: "Registry Editor", iconClass: "registry-icon", interactive: true },
-  ie: { title: "Internet Explorer", iconClass: "ie-icon", interactive: true },
+  edge: { title: "Microsoft Edge", iconClass: "edge-icon", interactive: true },
+  ie: { title: "Microsoft Edge", iconClass: "edge-icon", interactive: true }, // alias
   mediaplayer: { title: "Windows Media Player", iconClass: "wmp-icon", interactive: true },
   solitaire: { title: "Solitaire", iconClass: "solitaire-icon", interactive: true },
   blog: { title: "My Computer", iconClass: "blog-icon", interactive: true },
@@ -7842,7 +7843,7 @@ function getAppBody(id) {
   if (id === "registry") return buildRegistry();
   if (id === "device") return buildDeviceInspector();
   if (id === "voice") return buildVoiceCall();
-  // Extra apps from features-extra.js (IE, Media Player, Help, Solitaire, …)
+  // Extra apps from features-extra.js (Edge, Media Player, Help, Solitaire, …)
   if (window.extraAppBuilders && typeof window.extraAppBuilders[id] === "function") {
     try {
       const node = window.extraAppBuilders[id]();
@@ -8626,7 +8627,8 @@ function openWindow(id) {
     control: { w: 440, h: 520 },
     recycle: { w: 400, h: 320 },
     registry: { w: 640, h: 460 },
-    ie: { w: 660, h: 480 },
+    edge: { w: 720, h: 520 },
+    ie: { w: 720, h: 520 },
     mediaplayer: { w: 440, h: 400 },
     solitaire: { w: 640, h: 480 },
     blog: { w: 520, h: 440 },
