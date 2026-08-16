@@ -57,7 +57,7 @@ module.exports = async function handler(req, res) {
     process.env.GEMINI_API_KEY ||
     process.env.GOOGLE_GENERATIVE_AI_API_KEY ||
     process.env.GOOGLE_API_KEY ||
-    "AQ.Ab8RN6IuaGR70HRAKmBeWLB8BVJTgRhCWJd8EJ26FYQNMQgSng"
+    ""
   ).trim();
   const apiKey = KEY_RE.test(rawKey) ? rawKey : "";
 
