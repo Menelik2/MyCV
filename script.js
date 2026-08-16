@@ -777,6 +777,164 @@ const APPS = {
 window.CONTENT = CONTENT;
 window.APPS = APPS;
 
+
+/* ========== i18n (English / Amharic) ========== */
+const I18N = {
+  en: {
+    langName: "English",
+    about: "About Me",
+    education: "Education",
+    experience: "Experience",
+    certifications: "Certifications",
+    projects: "Projects",
+    skills: "Skills",
+    contact: "Contact",
+    resume: "Resume",
+    control: "Control Panel",
+    settings: "Settings",
+    chat: "Chats",
+    sudoku: "Sudoku",
+    notepad: "Notepad",
+    paint: "Paint",
+    terminal: "Terminal",
+    device: "Device",
+    voice: "Voice Room",
+    blog: "My Computer",
+    start: "Start",
+    bootTitle: "Welcome to My Portfolio",
+    bootSub: "Professional",
+    bootEnter: "Click the button to enter",
+    bootHint: "Click the button to enter",
+    theme: "Theme",
+    language: "Language",
+    wallpaper: "Wallpaper",
+    display: "Display",
+    sound: "Sound",
+    dark: "Dark",
+    light: "Light",
+    back: "Back",
+  },
+  am: {
+    langName: "አማርኛ",
+    about: "ስለ እኔ",
+    education: "ትምህርት",
+    experience: "የስራ ልምድ",
+    certifications: "ሰርተፍኬቶች",
+    projects: "ፕሮጀክቶች",
+    skills: "ክህሎቶች",
+    contact: "አድራሻ",
+    resume: "ሪዝዩም",
+    control: "የቁጥጥር ፓነል",
+    settings: "ቅንብሮች",
+    chat: "ቻት",
+    sudoku: "ሱዶኩ",
+    notepad: "ማስታወሻ",
+    paint: "ቀለም",
+    terminal: "ተርሚናል",
+    device: "መሣሪያ",
+    voice: "የድምጽ ክፍል",
+    blog: "ኮምፒውተሬ",
+    start: "ጀምር",
+    bootTitle: "እንኳን ወደ ፖርትፎሊዮዬ በደህና መጡ",
+    bootSub: "ሙያዊ",
+    bootEnter: "ለመግባት ቁልፉን ይጫኑ",
+    bootHint: "ለመግባት ቁልፉን ይጫኑ",
+    theme: "ገጽታ",
+    language: "ቋንቋ",
+    wallpaper: "የግድግዳ ወረቀት",
+    display: "ማሳያ",
+    sound: "ድምጽ",
+    dark: "ጨለማ",
+    light: "ብርሃን",
+    back: "ተመለስ",
+  },
+};
+
+function getLang() {
+  try {
+    const l = localStorage.getItem("portfolio-lang");
+    if (l === "am" || l === "en") return l;
+  } catch (_) {}
+  return "en";
+}
+
+function t(key) {
+  const lang = getLang();
+  return (I18N[lang] && I18N[lang][key]) || (I18N.en && I18N.en[key]) || key;
+}
+
+function applyLanguage(lang) {
+  if (lang !== "am" && lang !== "en") lang = "en";
+  try {
+    localStorage.setItem("portfolio-lang", lang);
+  } catch (_) {}
+  document.documentElement.lang = lang === "am" ? "am" : "en";
+  document.body.dataset.lang = lang;
+  const dict = I18N[lang] || I18N.en;
+
+  document.querySelectorAll("[data-i18n]").forEach((el) => {
+    const key = el.getAttribute("data-i18n");
+    if (key && dict[key] != null) el.textContent = dict[key];
+  });
+
+  // Desktop icons by data-window
+  document.querySelectorAll(".desktop-icons .icon[data-window] span").forEach((span) => {
+    const id = span.parentElement && span.parentElement.getAttribute("data-window");
+    if (id && dict[id]) span.textContent = dict[id];
+  });
+  // Start menu buttons
+  document.querySelectorAll(".start-menu [data-window]").forEach((btn) => {
+    const id = btn.getAttribute("data-window");
+    if (!id || !dict[id]) return;
+    // keep icon span, replace text node
+    const parts = [];
+    btn.childNodes.forEach((n) => {
+      if (n.nodeType === 3 && n.textContent.trim()) n.textContent = " " + dict[id];
+    });
+  });
+  // Mobile app labels
+  document.querySelectorAll(".app-grid .app-icon[data-page] span, .dock .app-icon[data-page] span").forEach((span) => {
+    const id = span.parentElement && span.parentElement.getAttribute("data-page");
+    const map = { control: "settings" };
+    const key = map[id] || id;
+    if (key && dict[key]) span.textContent = dict[key];
+  });
+  // Mobile page headers
+  document.querySelectorAll(".app-page .page-header h2").forEach((h2) => {
+    const page = h2.closest(".app-page");
+    if (!page || !page.id) return;
+    const id = page.id.replace(/^page-/, "");
+    const map = { control: "settings", chat: "chat" };
+    const key = map[id] || id;
+    if (dict[key]) h2.textContent = dict[key];
+  });
+  document.querySelectorAll(".back-btn").forEach((b) => {
+    if (dict.back) b.textContent = "‹ " + dict.back;
+  });
+  // Boot
+  const bootTitle = document.querySelector(".boot-title");
+  const bootSub = document.querySelector(".boot-sub");
+  const bootHint = document.querySelector(".boot-hint");
+  const bootBtn = document.getElementById("boot-start-btn");
+  if (bootTitle && dict.bootTitle) bootTitle.textContent = dict.bootTitle;
+  if (bootSub && dict.bootSub) bootSub.textContent = dict.bootSub;
+  if (bootHint && dict.bootHint) bootHint.textContent = dict.bootHint;
+  if (bootBtn && dict.bootEnter) bootBtn.textContent = dict.bootEnter;
+
+  // Start button label if present
+  const startLabel = document.querySelector(".start-button span, #start-button span");
+  if (startLabel && dict.start) startLabel.textContent = dict.start;
+
+  try {
+    document.dispatchEvent(new CustomEvent("menelik-lang", { detail: { lang } }));
+  } catch (_) {}
+}
+
+window.getLang = getLang;
+window.applyLanguage = applyLanguage;
+window.t = t;
+
+
 /* ========== Theme ========== */
 function applyTheme(mode) {
   const isLight = mode === "light";
@@ -3231,7 +3389,13 @@ function buildControlPanel() {
     ">Light</option>" +
     "    </select>" +
     "  </label>" +
-    '  <label class="cp-row"><span>Wallpaper</span>' +
+    '  <label class="cp-row"><span data-i18n="language">Language</span>' +
+    '    <select class="cp-lang" aria-label="Language">' +
+    '      <option value="en"' + (getLang() === "en" ? " selected" : "") + ">English</option>" +
+    '      <option value="am"' + (getLang() === "am" ? " selected" : "") + ">አማርኛ</option>" +
+    "    </select>" +
+    "  </label>" +
+    '  <label class="cp-row"><span data-i18n="wallpaper">Wallpaper</span>' +
     '    <select class="cp-wall" aria-label="Wallpaper">' +
     wallOpts +
     "    </select>" +
@@ -3299,6 +3463,15 @@ function buildControlPanel() {
       if (typeof playUiSound === "function") playUiSound("notify");
     } catch (err) {
       console.warn("Theme change failed", err);
+    }
+  });
+
+  on(".cp-lang", "change", (e) => {
+    try {
+      applyLanguage(e.target.value === "am" ? "am" : "en");
+      if (typeof playUiSound === "function") playUiSound("notify");
+    } catch (err) {
+      console.warn("Language change failed", err);
     }
   });
 
@@ -10285,24 +10458,32 @@ function runBootSequence() {
     return;
   }
 
-  const steps = [
-    { p: 18, msg: "Loading personal settings…" },
-    { p: 40, msg: "Preparing desktop…" },
-    { p: 62, msg: "Starting services…" },
-    { p: 85, msg: "Almost ready…" },
-    { p: 100, msg: "Welcome" }
-  ];
+  const steps = getLang() === "am"
+    ? [
+        { p: 18, msg: "የግል ቅንብሮች በመጫን ላይ…" },
+        { p: 40, msg: "ዴስክቶፕ በማዘጋጀት ላይ…" },
+        { p: 62, msg: "አገልግሎቶች በመጀመር ላይ…" },
+        { p: 85, msg: "ሊጠናቀቅ ነው…" },
+        { p: 100, msg: "እንኳን ደህና መጡ" },
+      ]
+    : [
+        { p: 18, msg: "Loading personal settings…" },
+        { p: 40, msg: "Preparing desktop…" },
+        { p: 62, msg: "Starting services…" },
+        { p: 85, msg: "Almost ready…" },
+        { p: 100, msg: "Welcome" },
+      ];
   let i = 0;
   const tick = () => {
     if (entered) return;
     if (i >= steps.length) {
       readyToEnter = true;
       if (status) {
-        status.textContent = "Click the button to enter";
+        status.textContent = t("bootEnter");
       }
       if (startBtn) {
         startBtn.hidden = false;
-        startBtn.textContent = "Click the button to enter";
+        startBtn.textContent = t("bootEnter");
         startBtn.focus();
       }
       return;
@@ -10340,6 +10521,9 @@ function runBootSequence() {
 
 
 try {
+  applyLanguage(getLang());
+} catch (_) {}
+try {
   runBootSequence();
 } catch (err) {
   console.error("Boot sequence failed:", err);
@@ -10359,11 +10543,11 @@ setTimeout(() => {
   const status = document.getElementById("boot-status");
   const fill = boot.querySelector(".boot-bar-fill");
   if (fill) fill.style.width = "100%";
-  if (status) status.textContent = "Click the button to enter";
+  if (status) status.textContent = t("bootEnter");
   if (startBtn) {
     startBtn.hidden = false;
     startBtn.disabled = false;
-    startBtn.textContent = "Click the button to enter";
+    startBtn.textContent = t("bootEnter");
   }
 }, 5000);
 
