@@ -160,7 +160,7 @@
         },
         {
           "key": "Content-Security-Policy",
-          "value": "frame-src 'self' blob: https://www.tetrisgratuit.fr https://*.tetrisgratuit.fr https://liveweave.com https://*.liveweave.com https://meet.jit.si https://*.jit.si https://*.jitsi.net; frame-ancestors 'self'; object-src 'none'; base-uri 'self'"
+          "value": "frame-src 'self' blob: data: https://www.tetrisgratuit.fr https://*.tetrisgratuit.fr https://liveweave.com https://*.liveweave.com https://meet.jit.si https://*.jit.si https://*.jitsi.net https://yeni-movie.vercel.app https://yeniexams.vercel.app https://*.vercel.app https://fidel.is-local.dev https://github.com https://*.github.com https://*.githubusercontent.com; frame-ancestors 'self'; object-src 'none'; base-uri 'self'"
         }
       ]
     },
@@ -169,7 +169,7 @@
       "headers": [
         {
           "key": "Content-Security-Policy",
-          "value": "frame-src 'self' blob: https://www.tetrisgratuit.fr https://*.tetrisgratuit.fr https://liveweave.com https://*.liveweave.com https://meet.jit.si https://*.jit.si https://*.jitsi.net; frame-ancestors 'self'; object-src 'none'; base-uri 'self'"
+          "value": "frame-src 'self' blob: data: https://www.tetrisgratuit.fr https://*.tetrisgratuit.fr https://liveweave.com https://*.liveweave.com https://meet.jit.si https://*.jit.si https://*.jitsi.net https://yeni-movie.vercel.app https://yeniexams.vercel.app https://*.vercel.app https://fidel.is-local.dev https://github.com https://*.github.com https://*.githubusercontent.com; frame-ancestors 'self'; object-src 'none'; base-uri 'self'"
         }
       ]
     },
@@ -205,6 +205,19 @@
         {
           "key": "Content-Disposition",
           "value": "attachment; filename=\"Menelik-Admasu-Resume.pdf\""
+        }
+      ]
+    },
+    {
+      "source": "/manifest.webmanifest",
+      "headers": [
+        {
+          "key": "Content-Type",
+          "value": "application/manifest+json; charset=utf-8"
+        },
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=0, must-revalidate"
         }
       ]
     }
