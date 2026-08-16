@@ -236,26 +236,68 @@
 
 
   /* ========== Microsoft Edge ========== */
+  /* Browser UX inspired by daedalOS (MIT) — https://github.com/DustinBrett/daedalOS
+     Features adapted: address bar URL/search, history, bookmarks, iframe + proxy modes. */
   function buildEdge() {
+    const GOOGLE_HOME = "https://www.google.com/webhp?igu=1";
+    const GOOGLE_SEARCH = "https://www.google.com/search?igu=1&q=";
+    const BOOKMARKS = [
+      { name: "Home", url: "menelik://home" },
+      { name: "Projects", url: "menelik://projects" },
+      { name: "Yeni Movie", url: "https://yeni-movie.vercel.app/" },
+      { name: "Yeni Exam", url: "https://yeniexams.vercel.app/" },
+      { name: "Google", url: GOOGLE_HOME },
+      { name: "Wikipedia", url: "https://www.wikipedia.org/" },
+      { name: "Archive.org", url: "https://archive.org/" },
+    ];
+
     const wrap = el(`<div class="edge-app">
       <div class="edge-toolbar">
-        <button type="button" class="edge-nav" data-act="back" title="Back">◀</button>
-        <button type="button" class="edge-nav" data-act="fwd" title="Forward">▶</button>
+        <button type="button" class="edge-nav" data-act="back" title="Back" disabled>◀</button>
+        <button type="button" class="edge-nav" data-act="fwd" title="Forward" disabled>▶</button>
         <button type="button" class="edge-nav" data-act="stop" title="Stop">■</button>
         <button type="button" class="edge-nav" data-act="home" title="Home">🏠</button>
         <button type="button" class="edge-nav" data-act="refresh" title="Refresh">↻</button>
-        <input class="edge-address" type="text" value="menelik://home" spellcheck="false" aria-label="Address" />
+        <input class="edge-address" type="text" value="menelik://home" spellcheck="false" aria-label="Address" autocomplete="off" />
         <button type="button" class="edge-nav edge-go" data-act="go" title="Go">Go</button>
+        <select class="edge-proxy" title="Proxy mode" aria-label="Proxy mode">
+          <option value="direct">Direct</option>
+          <option value="allorigins">CORS proxy</option>
+          <option value="wayback">Wayback</option>
+        </select>
       </div>
+      <div class="edge-bookmarks" role="toolbar" aria-label="Bookmarks"></div>
       <div class="edge-body" tabindex="0" role="document"></div>
       <div class="edge-status">Done</div>
     </div>`);
+
     const body = wrap.querySelector(".edge-body");
     const addr = wrap.querySelector(".edge-address");
     const status = wrap.querySelector(".edge-status");
+    const proxySel = wrap.querySelector(".edge-proxy");
+    const btnBack = wrap.querySelector('[data-act="back"]');
+    const btnFwd = wrap.querySelector('[data-act="fwd"]');
+    const bmBar = wrap.querySelector(".edge-bookmarks");
+
     const history = [];
     let histIdx = -1;
     let currentUrl = "menelik://home";
+    let proxyMode = "direct";
+
+    try {
+      proxyMode = localStorage.getItem("menelik-edge-proxy") || "direct";
+    } catch (_) {}
+    if (proxySel) proxySel.value = proxyMode;
+
+    BOOKMARKS.forEach((b) => {
+      const a = document.createElement("button");
+      a.type = "button";
+      a.className = "edge-bm";
+      a.textContent = b.name;
+      a.title = b.url;
+      a.addEventListener("click", () => navigate(b.url, true));
+      bmBar.appendChild(a);
+    });
 
     function contentHtml(key) {
       try {
@@ -267,29 +309,23 @@
     const pages = {
       "menelik://home": () => `
         <div class="edge-home">
-          <h2 style="margin-top:0">Welcome to Microsoft Edge</h2>
-          <p>Browse this portfolio like a website. Type an address or use the links below.</p>
+          <h2 style="margin-top:0">Microsoft Edge</h2>
+          <p>Browse portfolio pages and the web. Type a URL or search terms, then press Enter.</p>
           <h4>Favorites</h4>
           <ul class="edge-links">
             <li><a href="#" data-nav="menelik://about">About Me</a></li>
-            <li><a href="#" data-nav="menelik://education">Education</a></li>
-            <li><a href="#" data-nav="menelik://experience">Experience</a></li>
             <li><a href="#" data-nav="menelik://projects">Projects</a></li>
-            <li><a href="#" data-nav="menelik://skills">Skills</a></li>
-            <li><a href="#" data-nav="menelik://certifications">Certifications</a></li>
             <li><a href="#" data-nav="menelik://resume">Resume</a></li>
+            <li><a href="#" data-nav="menelik://skills">Skills</a></li>
             <li><a href="#" data-nav="menelik://contact">Contact</a></li>
-            <li><a href="#" data-nav="menelik://help">Help and Support</a></li>
           </ul>
           <h4>Live projects</h4>
           <ul class="edge-links">
-            <li><a href="#" data-nav="https://yeni-movie.vercel.app">Yeni Movie</a></li>
-            <li><a href="#" data-nav="https://fidel.is-local.dev">Yeni Typing</a></li>
+            <li><a href="#" data-nav="https://yeni-movie.vercel.app/">Yeni Movie</a></li>
             <li><a href="#" data-nav="https://yeniexams.vercel.app/">Yeni Exam</a></li>
-            <li><a href="#" data-nav="https://github.com/Menelik2">GitHub — Menelik2</a></li>
-            <li><a href="#" data-nav="https://menelik.webhop.me">This portfolio online</a></li>
+            <li><a href="#" data-nav="${GOOGLE_HOME}">Google</a></li>
           </ul>
-          <p class="muted">Tip: you can type <code>menelik://about</code> in the address bar and press Enter.</p>
+          <p class="muted">Tip: if a site shows “content is blocked”, switch <strong>Proxy mode</strong> to <em>CORS proxy</em> or <em>Wayback</em>, or open in the system browser.</p>
         </div>`,
       "menelik://about": () => contentHtml("about"),
       "menelik://education": () => contentHtml("education"),
@@ -300,10 +336,17 @@
       "menelik://resume": () => contentHtml("resume"),
       "menelik://contact": () => contentHtml("contact"),
       "menelik://help": () => {
-        openWindowSafe("help");
-        return "<p>Opening <strong>Help and Support</strong>…</p><p><a href=\"#\" data-nav=\"menelik://home\">Back to home</a></p>";
+        try {
+          if (typeof openWindow === "function") openWindow("help");
+        } catch (_) {}
+        return "<p>Opening Help…</p><p><a href=\"#\" data-nav=\"menelik://home\">Back to home</a></p>";
       },
     };
+
+    function updateNavButtons() {
+      if (btnBack) btnBack.disabled = histIdx <= 0;
+      if (btnFwd) btnFwd.disabled = histIdx < 0 || histIdx >= history.length - 1;
+    }
 
     function bindPageLinks() {
       body.querySelectorAll("[data-nav]").forEach((a) => {
@@ -312,10 +355,14 @@
           navigate(a.getAttribute("data-nav") || "menelik://home", true);
         });
       });
-      // Also turn plain internal-looking anchors into safe handlers
       body.querySelectorAll("a[href]").forEach((a) => {
         const href = a.getAttribute("href") || "";
         if (href.startsWith("menelik://")) {
+          a.addEventListener("click", (e) => {
+            e.preventDefault();
+            navigate(href, true);
+          });
+        } else if (/^https?:\/\//i.test(href) && !a.classList.contains("edge-open-ext")) {
           a.addEventListener("click", (e) => {
             e.preventDefault();
             navigate(href, true);
@@ -324,67 +371,134 @@
       });
     }
 
-    function navigate(url, push) {
-      try {
-      url = String(url || "menelik://home").trim();
-      if (!url) url = "menelik://home";
-      currentUrl = url;
-      status.textContent = "Opening " + url + "…";
-      addr.value = url;
+    async function resolveAddress(input) {
+      input = String(input || "").trim();
+      if (!input) return "menelik://home";
+      if (/^menelik:\/\//i.test(input)) return input.toLowerCase();
+      if (/^https?:\/\//i.test(input)) return input;
+      // bare domain-ish
+      if (/^[\w.-]+\.[a-z]{2,}([/:].*)?$/i.test(input) && !/\s/.test(input)) {
+        return "https://" + input;
+      }
+      // search
+      return GOOGLE_SEARCH + encodeURIComponent(input);
+    }
 
-      if (/^https?:\/\//i.test(url)) {
-        // Always open the real site in a new tab (iframes are often blocked)
-        let opened = false;
+    async function applyProxy(url) {
+      if (proxyMode === "allorigins") {
+        return "https://api.allorigins.win/raw?url=" + encodeURIComponent(url);
+      }
+      if (proxyMode === "wayback") {
         try {
-          const w = window.open(url, "_blank", "noopener,noreferrer");
-          opened = !!w;
+          const r = await fetch(
+            "https://archive.org/wayback/available?url=" + encodeURIComponent(url)
+          );
+          const data = await r.json();
+          const snap =
+            data &&
+            data.archived_snapshots &&
+            data.archived_snapshots.closest &&
+            data.archived_snapshots.closest.url;
+          if (snap) {
+            return String(snap).replace(/^http:/, "https:");
+          }
         } catch (_) {}
-        body.innerHTML =
-          `<div class="edge-external edge-opened">
-            <div class="edge-opened-card">
-              <h2 style="margin:0 0 8px">Opening website</h2>
-              <p class="edge-ext-url"><code class="edge-ext-code"></code></p>
-              <p>${opened
-                ? "The page was opened in a <strong>new browser tab</strong>."
-                : "Pop-up may be blocked — click the button below to open the site."}</p>
-              <p style="margin-top:14px">
-                <a class="proj-btn primary edge-open-ext" href="#" rel="noopener">Open site ↗</a>
-                <a class="proj-btn" href="#" data-nav="menelik://home">Back to Edge home</a>
-              </p>
-            </div>
-          </div>`;
-        const codeEl = body.querySelector(".edge-ext-code");
-        if (codeEl) codeEl.textContent = url;
-        const openBtn = body.querySelector(".edge-open-ext");
-        if (openBtn) {
-          openBtn.setAttribute("href", url);
-          openBtn.addEventListener("click", (e) => {
-            e.preventDefault();
-            window.open(url, "_blank", "noopener,noreferrer");
-            status.textContent = "Opened in system browser";
-          });
-        }
-        status.textContent = opened ? "Opened in new tab" : "Click Open site to continue";
-        bindPageLinks();
-      } else {
-        const key = url.toLowerCase();
-        const render = pages[key] || (() =>
-          `<p>The page <code>${url.replace(/</g, "&lt;")}</code> cannot be found.</p>
-           <p><a href="#" data-nav="menelik://home">Back to home</a></p>`);
-        try {
-          body.innerHTML = `<div class="edge-page">${render()}</div>`;
-        } catch (err) {
-          body.innerHTML = `<p>Could not show this page.</p><pre>${String(err)}</pre>`;
-        }
-        bindPageLinks();
-        status.textContent = "Done";
+        return url;
       }
+      return url;
+    }
 
-      if (push) {
-        history.splice(histIdx + 1);
-        history.push(url);
-        histIdx = history.length - 1;
-      }
+    async function navigate(url, push) {
+      try {
+        url = await resolveAddress(url);
+        currentUrl = url;
+        status.textContent = "Opening " + url + "…";
+        addr.value = url;
+
+        if (/^https?:\/\//i.test(url)) {
+          let frameSrc = url;
+          try {
+            frameSrc = await applyProxy(url);
+          } catch (_) {}
+
+          body.innerHTML =
+            `<div class="edge-external edge-browse">
+              <div class="edge-ext-bar">
+                <span class="edge-ext-label">Web</span>
+                <code class="edge-ext-code"></code>
+                <a class="proj-btn edge-open-ext" href="#" rel="noopener">Open in system browser ↗</a>
+                <a class="proj-btn" href="#" data-nav="menelik://home">Home</a>
+              </div>
+              <iframe class="edge-frame" title="Microsoft Edge" referrerpolicy="no-referrer"
+                sandbox="allow-downloads allow-forms allow-modals allow-pointer-lock allow-popups allow-presentation allow-same-origin allow-scripts"
+                allow="fullscreen"></iframe>
+              <div class="edge-frame-note muted">Loading… Use proxy mode or system browser if content is blocked.</div>
+            </div>`;
+          const codeEl = body.querySelector(".edge-ext-code");
+          if (codeEl) codeEl.textContent = url;
+          const openBtn = body.querySelector(".edge-open-ext");
+          if (openBtn) {
+            openBtn.setAttribute("href", url);
+            openBtn.addEventListener("click", (e) => {
+              e.preventDefault();
+              window.open(url, "_blank", "noopener,noreferrer");
+              status.textContent = "Opened in system browser";
+            });
+          }
+          const frame = body.querySelector(".edge-frame");
+          const note = body.querySelector(".edge-frame-note");
+          if (frame) {
+            let loaded = false;
+            frame.addEventListener("load", () => {
+              loaded = true;
+              status.textContent = "Done";
+              if (note) {
+                note.textContent =
+                  proxyMode === "direct"
+                    ? "Preview loaded (Direct)."
+                    : "Preview loaded via " + proxyMode + ".";
+              }
+            });
+            frame.src = frameSrc;
+            setTimeout(() => {
+              if (!loaded && note) {
+                note.innerHTML =
+                  "Still blocked or slow. Try <strong>CORS proxy</strong> / <strong>Wayback</strong> in the toolbar, or " +
+                  '<a class="edge-open-ext-fallback" href="#">Open in system browser ↗</a>.';
+                const fb = note.querySelector(".edge-open-ext-fallback");
+                if (fb) {
+                  fb.addEventListener("click", (e) => {
+                    e.preventDefault();
+                    window.open(url, "_blank", "noopener,noreferrer");
+                  });
+                }
+                status.textContent = "Blocked or slow — try proxy / system browser";
+              }
+            }, 3000);
+          }
+          bindPageLinks();
+        } else {
+          const key = url.toLowerCase();
+          const render =
+            pages[key] ||
+            (() =>
+              `<p>The page <code>${escapeHtml(url)}</code> cannot be found.</p>
+               <p><a href="#" data-nav="menelik://home">Back to home</a></p>`);
+          try {
+            body.innerHTML = `<div class="edge-page">${render()}</div>`;
+          } catch (err) {
+            body.innerHTML = `<p>Could not show this page.</p><pre>${escapeHtml(err)}</pre>`;
+          }
+          bindPageLinks();
+          status.textContent = "Done";
+        }
+
+        if (push) {
+          history.splice(histIdx + 1);
+          history.push(url);
+          histIdx = history.length - 1;
+        }
+        updateNavButtons();
       } catch (err) {
         console.error("[Edge] navigate", err);
         try {
@@ -419,13 +533,24 @@
         }
       });
     });
+
     addr.addEventListener("keydown", (e) => {
       if (e.key === "Enter") {
         e.preventDefault();
         navigate(addr.value.trim() || "menelik://home", true);
       }
     });
-    // Navigate to pending project URL if any
+
+    if (proxySel) {
+      proxySel.addEventListener("change", () => {
+        proxyMode = proxySel.value || "direct";
+        try {
+          localStorage.setItem("menelik-edge-proxy", proxyMode);
+        } catch (_) {}
+        if (/^https?:\/\//i.test(currentUrl)) navigate(currentUrl, false);
+      });
+    }
+
     const pending = window.__edgePendingUrl;
     if (pending) {
       window.__edgePendingUrl = null;
