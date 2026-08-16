@@ -9,9 +9,9 @@
     Cache bust: bump window.__MENELIK_V__ + the ?v= values below on every public deploy
     so browsers and CDNs treat assets as new URLs.
   -->
-  <script>window.__MENELIK_V__ = "20260815g";</script>
-  <link rel="stylesheet" href="styles.css?v=20260815g" />
-  <link rel="manifest" href="manifest.webmanifest?v=20260815g" />
+  <script>window.__MENELIK_V__ = "20260816a";</script>
+  <link rel="stylesheet" href="styles.css?v=20260816a" />
+  <link rel="manifest" href="manifest.webmanifest?v=20260816a" />
   <link rel="apple-touch-icon" href="static/images/profile-320.webp" />
   <!-- Optimized profile photo preload (responsive sizes) -->
   <link rel="preload" href="static/images/profile-128.webp" as="image" type="image/webp" />
@@ -98,6 +98,10 @@
       <button class="icon" data-window="sudoku">
         <div class="icon-img sudoku-icon"></div>
         <span>Sudoku</span>
+      </button>
+      <button class="icon" data-window="chat">
+        <div class="icon-img chat-icon"></div>
+        <span>Chat</span>
       </button>
     </div>
 
@@ -210,6 +214,7 @@
           <button data-window="vscode"><span class="sm-icon vscode-icon"></span> Liveweave</button>
           <button data-window="minesweeper"><span class="sm-icon minesweeper-icon"></span> Minesweeper</button>
           <button data-window="sudoku"><span class="sm-icon sudoku-icon"></span> Sudoku</button>
+          <button data-window="chat"><span class="sm-icon chat-icon"></span> Chat</button>
           <button data-window="control"><span class="sm-icon control-icon"></span> Control Panel</button>
           <button data-window="registry"><span class="sm-icon registry-icon"></span> Registry Editor</button>
           <button data-window="recycle"><span class="sm-icon recycle-icon"></span> Recycle Bin</button>
@@ -328,6 +333,10 @@
                 <div class="app-img sudoku"></div>
                 <span>Sudoku</span>
               </button>
+              <button class="app-icon" data-page="chat">
+                <div class="app-img chat"></div>
+                <span>Chat</span>
+              </button>
               <button class="app-icon" data-page="control">
                 <div class="app-img control"></div>
                 <span>Settings</span>
@@ -406,6 +415,10 @@
           <div class="app-page" id="page-sudoku" hidden>
             <div class="page-header"><button class="back-btn">‹ Back</button><h2>Sudoku</h2></div>
             <div class="page-body page-body-full" id="content-sudoku"></div>
+          </div>
+          <div class="app-page" id="page-chat" hidden>
+            <div class="page-header"><button class="back-btn">‹ Back</button><h2>Chat</h2></div>
+            <div class="page-body page-body-full" id="content-chat"></div>
           </div>
           <div class="app-page" id="page-control" hidden>
             <div class="page-header"><button class="back-btn">‹ Back</button><h2>Settings</h2></div>
@@ -504,8 +517,8 @@
     </div>
   </div>
 
-  <script src="script.js?v=20260815g"></script>
-  <script src="features-extra.js?v=20260815g"></script>
-  <script src="chat-widget.js?v=20260815g"></script>
+  <script src="script.js?v=20260816a"></script>
+  <script src="features-extra.js?v=20260816a"></script>
+  <script src="chat-widget.js?v=20260816a"></script>
 </body>
 </html>

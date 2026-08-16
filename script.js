@@ -759,6 +759,7 @@ const APPS = {
   vscode: { title: "Liveweave", iconClass: "vscode-icon", interactive: true },
   minesweeper: { title: "Minesweeper", iconClass: "minesweeper-icon", interactive: true },
   sudoku: { title: "Sudoku", iconClass: "sudoku-icon", interactive: true },
+  chat: { title: "Chat Assistant", iconClass: "chat-icon", interactive: true },
   control: { title: "Control Panel", iconClass: "control-icon", interactive: true },
   recycle: { title: "Recycle Bin", iconClass: "recycle-icon", interactive: true },
   registry: { title: "Registry Editor", iconClass: "registry-icon", interactive: true },
@@ -6867,6 +6868,32 @@ function buildDeviceInspector() {
 }
 
 
+
+function buildChatApp() {
+  const wrap = document.createElement("div");
+  wrap.className = "chat-app-host";
+  wrap.style.height = "100%";
+  wrap.style.minHeight = "0";
+  wrap.style.display = "flex";
+  wrap.style.flexDirection = "column";
+  if (typeof window.mountPortfolioChat === "function") {
+    window.mountPortfolioChat(wrap);
+  } else {
+    wrap.innerHTML =
+      '<p style="padding:12px;font-size:12px">Chat module loading…</p>';
+    const s = document.createElement("script");
+    s.src = "chat-widget.js";
+    s.onload = function () {
+      wrap.innerHTML = "";
+      if (typeof window.mountPortfolioChat === "function") {
+        window.mountPortfolioChat(wrap);
+      }
+    };
+    document.head.appendChild(s);
+  }
+  return wrap;
+}
+
 function getAppBody(id) {
   if (id === "notepad") return buildNotepad();
   if (id === "paint") return buildPaint();
@@ -6875,6 +6902,7 @@ function getAppBody(id) {
   if (id === "vscode") return buildVSCode();
   if (id === "minesweeper") return buildMinesweeper();
   if (id === "sudoku") return buildSudoku();
+  if (id === "chat") return buildChatApp();
   if (id === "control") return buildControlPanel();
   if (id === "recycle") return buildRecycleBin();
   if (id === "registry") return buildRegistry();
@@ -7658,6 +7686,7 @@ function openWindow(id) {
     vscode: { w: 900, h: 620 },
     minesweeper: { w: 320, h: 380 },
     sudoku: { w: 400, h: 560 },
+    chat: { w: 380, h: 520 },
     control: { w: 440, h: 520 },
     recycle: { w: 400, h: 320 },
     registry: { w: 640, h: 460 },
