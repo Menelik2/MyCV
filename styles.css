@@ -8933,3 +8933,107 @@ body.no-ui-anim .window,
 body.no-ui-anim .app-page {
   transition: none !important;
 }
+
+/* ========== Mobile Settings UX + home icon sizes (2026) ========== */
+@media (max-width: 899px) {
+  /* Theme toggle in dock – clearer hit target + active state */
+  .theme-toggle-mobile {
+    width: 54px;
+    height: 54px;
+    border-radius: 16px;
+    background: linear-gradient(145deg, #3b82f6, #1d4ed8);
+    color: #fff;
+    box-shadow: 0 4px 12px rgba(29, 78, 216, 0.35);
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .theme-toggle-mobile:active {
+    transform: scale(0.92);
+  }
+  body.light .theme-toggle-mobile {
+    background: linear-gradient(145deg, #f59e0b, #d97706);
+    box-shadow: 0 4px 12px rgba(217, 119, 6, 0.35);
+  }
+
+  /* Settings app icon – clearer gear */
+  .app-img.control {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23fff'%3E%3Cpath d='M19.14 12.94c.04-.31.06-.63.06-.94s-.02-.63-.06-.94l2.03-1.58a.49.49 0 00.12-.61l-1.92-3.32a.49.49 0 00-.59-.22l-2.39.96a7.2 7.2 0 00-1.62-.94l-.36-2.54A.49.49 0 0014 2h-4a.49.49 0 00-.49.42l-.36 2.54c-.59.24-1.13.56-1.62.94l-2.39-.96a.49.49 0 00-.59.22L2.63 8.87a.49.49 0 00.12.61l2.03 1.58c-.04.31-.06.63-.06.94s.02.63.06.94L2.75 14.5a.49.49 0 00-.12.61l1.92 3.32c.12.22.37.3.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.25.42.49.42h4c.24 0 .44-.18.49-.42l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32a.49.49 0 00-.12-.61l-2.03-1.58zM12 15.5A3.5 3.5 0 1112 8.5a3.5 3.5 0 010 7z'/%3E%3C/svg%3E"), linear-gradient(145deg, #0ea5e9 0%, #0369a1 100%);
+    background-size: 52%, cover;
+  }
+
+  /* Settings page – iOS-style rows */
+  #page-control .cp-title {
+    font-size: 22px;
+    font-weight: 700;
+    margin: 4px 0 14px;
+    letter-spacing: -0.02em;
+  }
+  #page-control .cp-toggle-row {
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: space-between;
+  }
+  #page-control .cp-toggle-row > span {
+    flex: 1;
+  }
+  #page-control .cp-toggle-row input[type="checkbox"] {
+    width: 48px;
+    height: 28px;
+    appearance: none;
+    -webkit-appearance: none;
+    background: #3f4146;
+    border-radius: 999px;
+    position: relative;
+    cursor: pointer;
+    border: none;
+    transition: background 0.2s ease;
+  }
+  #page-control .cp-toggle-row input[type="checkbox"]::after {
+    content: "";
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: #fff;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+    transition: transform 0.2s ease;
+  }
+  #page-control .cp-toggle-row input[type="checkbox"]:checked {
+    background: #34c759;
+  }
+  #page-control .cp-toggle-row input[type="checkbox"]:checked::after {
+    transform: translateX(20px);
+  }
+  body.light #page-control .cp-toggle-row input[type="checkbox"] {
+    background: #d1d5db;
+  }
+  body.light #page-control .cp-toggle-row input[type="checkbox"]:checked {
+    background: #34c759;
+  }
+
+  /* Home icon size variants */
+  #home-screen[data-icon-size="small"] .app-img {
+    width: 48px;
+    height: 48px;
+  }
+  #home-screen[data-icon-size="small"] .app-icon span {
+    font-size: 10px;
+  }
+  #home-screen[data-icon-size="large"] .app-img {
+    width: 68px;
+    height: 68px;
+  }
+  #home-screen[data-icon-size="large"] .app-icon span {
+    font-size: 12px;
+  }
+  #home-screen[data-icon-size="large"] .app-grid {
+    gap: 18px 10px;
+  }
+
+  /* Dock theme button never looks like a broken app icon */
+  .dock .theme-toggle-mobile {
+    flex-shrink: 0;
+  }
+}
