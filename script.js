@@ -971,15 +971,28 @@ function applyTheme(mode) {
 }
 
 function initTheme() {
-  // Always open in classic XP light mode
-  applyTheme("light");
+  let saved = "light";
+  try {
+    saved = localStorage.getItem("portfolio-theme") || "light";
+  } catch (_) {}
+  if (saved !== "light" && saved !== "dark") saved = "light";
+  applyTheme(saved);
 }
 function toggleTheme() {
   const next = document.body.classList.contains("light") ? "dark" : "light";
   applyTheme(next);
 }
 document.getElementById("theme-toggle")?.addEventListener("click", toggleTheme);
-document.getElementById("theme-toggle-mobile")?.addEventListener("click", toggleTheme);
+document.getElementById("theme-toggle-mobile")?.addEventListener("click", (e) => {
+  e.preventDefault();
+  e.stopPropagation();
+  toggleTheme();
+  try {
+    if (localStorage.getItem("portfolio-haptics") !== "off" && navigator.vibrate) {
+      navigator.vibrate(10);
+    }
+  } catch (_) {}
+});
 // Ctrl+Shift+L — toggle theme
 document.addEventListener("keydown", (e) => {
   if (e.ctrlKey && e.shiftKey && (e.key === "L" || e.key === "l")) {
@@ -991,12 +1004,21 @@ document.addEventListener("keydown", (e) => {
 /* ========== Clock ========== */
 function updateClock() {
   const now = new Date();
+  let clockFmt = "24";
+  try {
+    clockFmt = localStorage.getItem("portfolio-clock-fmt") || "24";
+  } catch (_) {}
+  const use12 = clockFmt === "12";
   const timeStr = now.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit", hour12: true });
   const clock = document.getElementById("clock");
   if (clock) clock.textContent = timeStr;
   const mobileTime = document.getElementById("mobile-time");
   if (mobileTime) {
-    mobileTime.textContent = now.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit", hour12: false });
+    mobileTime.textContent = now.toLocaleTimeString("en-US", {
+      hour: "numeric",
+      minute: "2-digit",
+      hour12: use12,
+    });
   }
 }
 setInterval(updateClock, 1000);
@@ -2312,8 +2334,8 @@ function buildSnake() {
     '<div class="snake-stage">' +
     '  <canvas class="snake-canvas" width="300" height="300" aria-label="Snake game"></canvas>' +
     '  <div class="snake-overlay" data-sn-overlay>' +
-    '    <div class="snake-overlay-title">SNAKE</div>' +
-    '    <div class="snake-overlay-sub">Nokia style · Arrow / swipe / D-pad</div>' +
+    '    <div class="snake-overlay-title">Snake</div>' +
+    '    <div class="snake-overlay-sub">Arrow keys / swipe / D-pad</div>' +
     '    <button type="button" class="snake-btn" data-sn-start>Play</button>' +
     "  </div>" +
     "</div>" +
@@ -2335,11 +2357,11 @@ function buildSnake() {
   const overlay = root.querySelector("[data-sn-overlay]");
   const startBtn = root.querySelector("[data-sn-start]");
 
-  const COLS = 16;
-  const ROWS = 16;
+  const COLS = 15;
+  const ROWS = 15;
   let cell = 20;
   let snake, dir, nextDir, food, score, level, best, tick, running, dead, raf, acc, lastTs;
-  const SPEED0 = 160; // ms per step (Nokia-like start)
+  const SPEED0 = 140; // ms per step
   const POINTS_PER_LEVEL = 50;
 
   try {
@@ -2405,57 +2427,48 @@ function buildSnake() {
   function draw() {
     const w = COLS * cell;
     const h = ROWS * cell;
-
-    // Classic Nokia black LCD background
-    ctx.fillStyle = "#000000";
+    // board
+    ctx.fillStyle = "#0f172a";
     ctx.fillRect(0, 0, w, h);
-
-    // Outer border (thick green like old phone frame)
-    const border = Math.max(2, cell * 0.12);
-    ctx.strokeStyle = "#33ff33";
-    ctx.lineWidth = border;
-    ctx.strokeRect(border / 2, border / 2, w - border, h - border);
-
-    // Very subtle pixel grid (optional Nokia feel)
-    ctx.strokeStyle = "rgba(51, 255, 51, 0.06)";
+    // grid
+    ctx.strokeStyle = "rgba(148,163,184,0.12)";
     ctx.lineWidth = 1;
-    for (let i = 1; i < COLS; i++) {
+    for (let i = 0; i <= COLS; i++) {
       ctx.beginPath();
       ctx.moveTo(i * cell, 0);
       ctx.lineTo(i * cell, h);
       ctx.stroke();
     }
-    for (let j = 1; j < ROWS; j++) {
+    for (let j = 0; j <= ROWS; j++) {
       ctx.beginPath();
       ctx.moveTo(0, j * cell);
       ctx.lineTo(w, j * cell);
       ctx.stroke();
     }
-
-    // Food – classic solid block (bright green / white style)
+    // food
     if (food) {
-      const pad = cell * 0.15;
-      ctx.fillStyle = "#aaffaa";
-      ctx.fillRect(
-        food.x * cell + pad,
-        food.y * cell + pad,
-        cell - pad * 2,
-        cell - pad * 2
-      );
+      const pad = cell * 0.18;
+      ctx.fillStyle = "#f43f5e";
+      roundRect(food.x * cell + pad, food.y * cell + pad, cell - pad * 2, cell - pad * 2, 4);
+      ctx.fill();
     }
-
-    // Snake – solid bright green blocks (Nokia style, no rounded corners)
+    // snake
     snake.forEach((s, i) => {
-      const pad = cell * 0.08;
-      // Head a bit brighter
-      ctx.fillStyle = i === 0 ? "#66ff66" : "#33cc33";
-      ctx.fillRect(
-        s.x * cell + pad,
-        s.y * cell + pad,
-        cell - pad * 2,
-        cell - pad * 2
-      );
+      const pad = cell * 0.12;
+      ctx.fillStyle = i === 0 ? "#4ade80" : "#22c55e";
+      roundRect(s.x * cell + pad, s.y * cell + pad, cell - pad * 2, cell - pad * 2, 5);
+      ctx.fill();
     });
+  }
+
+  function roundRect(x, y, w, h, r) {
+    ctx.beginPath();
+    ctx.moveTo(x + r, y);
+    ctx.arcTo(x + w, y, x + w, y + h, r);
+    ctx.arcTo(x + w, y + h, x, y + h, r);
+    ctx.arcTo(x, y + h, x, y, r);
+    ctx.arcTo(x, y, x + w, y, r);
+    ctx.closePath();
   }
 
   function step() {
@@ -2493,8 +2506,8 @@ function buildSnake() {
     dead = true;
     running = false;
     overlay.hidden = false;
-    overlay.querySelector(".snake-overlay-title").textContent = "GAME OVER";
-    overlay.querySelector(".snake-overlay-sub").textContent = "Score " + score + "  Level " + level;
+    overlay.querySelector(".snake-overlay-title").textContent = "Game Over";
+    overlay.querySelector(".snake-overlay-sub").textContent = "Score " + score + " · Level " + level;
     startBtn.textContent = "Play again";
   }
 
@@ -2504,7 +2517,7 @@ function buildSnake() {
     if (!lastTs) lastTs = ts;
     acc += ts - lastTs;
     lastTs = ts;
-    const speed = Math.max(50, SPEED0 - (level - 1) * 14);
+    const speed = Math.max(55, SPEED0 - (level - 1) * 12);
     while (acc >= speed) {
       acc -= speed;
       step();
@@ -3693,6 +3706,9 @@ function buildControlPanel() {
   const hapticsOn = localStorage.getItem("portfolio-haptics") !== "off";
   const animUi = localStorage.getItem("portfolio-ui-anim") !== "off";
   const homeLayout = localStorage.getItem("portfolio-home-layout") || "grid";
+  const clockFmt = localStorage.getItem("portfolio-clock-fmt") || "24";
+  const homeIconSize = localStorage.getItem("portfolio-home-icon-size") || "medium";
+  const keepAwake = localStorage.getItem("portfolio-keep-awake") === "on";
 
   const sizeOpts = (cur) =>
     ["small", "medium", "large", "xlarge", "custom"]
@@ -3802,10 +3818,38 @@ function buildControlPanel() {
         ">Compact</option>" +
         "    </select>" +
         "  </label>" +
-        '  <label class="cp-row"><span>Larger text</span>' +
+        '  <label class="cp-row"><span>App icon size</span>' +
+        '    <select class="cp-home-icon-size" aria-label="Home icon size">' +
+        '      <option value="small"' +
+        (homeIconSize === "small" ? " selected" : "") +
+        ">Small</option>" +
+        '      <option value="medium"' +
+        (homeIconSize === "medium" ? " selected" : "") +
+        ">Medium</option>" +
+        '      <option value="large"' +
+        (homeIconSize === "large" ? " selected" : "") +
+        ">Large</option>" +
+        "    </select>" +
+        "  </label>" +
+        '  <label class="cp-row"><span>Clock format</span>' +
+        '    <select class="cp-clock-fmt" aria-label="Clock format">' +
+        '      <option value="24"' +
+        (clockFmt === "24" ? " selected" : "") +
+        ">24-hour</option>" +
+        '      <option value="12"' +
+        (clockFmt === "12" ? " selected" : "") +
+        ">12-hour</option>" +
+        "    </select>" +
+        "  </label>" +
+        '  <label class="cp-row cp-toggle-row"><span>Larger text</span>' +
         '    <input type="checkbox" class="cp-large-text" ' +
         (largeText ? "checked " : "") +
         'aria-label="Larger text" />' +
+        "  </label>" +
+        '  <label class="cp-row cp-toggle-row"><span>Keep screen awake</span>' +
+        '    <input type="checkbox" class="cp-keep-awake" ' +
+        (keepAwake ? "checked " : "") +
+        'aria-label="Keep screen awake" />' +
         "  </label>"
       : "") +
     "</div>" +
@@ -3841,11 +3885,12 @@ function buildControlPanel() {
     'aria-label="Startup sound" />' +
     "  </label>" +
     (mobileView
-      ? '  <label class="cp-row"><span>Haptic taps</span>' +
+      ? '  <label class="cp-row cp-toggle-row"><span>Haptic taps</span>' +
         '    <input type="checkbox" class="cp-haptics" ' +
         (hapticsOn ? "checked " : "") +
         'aria-label="Haptic feedback" />' +
-        "  </label>"
+        "  </label>" +
+        '  <button type="button" class="cp-test-haptic proj-btn">Test vibration</button>'
       : "") +
     '  <button type="button" class="cp-test-sound proj-btn">Test notification</button>' +
     "</div>" +
@@ -3879,7 +3924,12 @@ function buildControlPanel() {
     '<div class="cp-section">' +
     "  <h4>About</h4>" +
     '  <p class="cp-about">Menelik OS portfolio · Settings save automatically on this device.</p>' +
+    '  <p class="cp-about">Version 2.1 · Snake Nokia · Mobile Settings</p>' +
     '  <p class="cp-about">Contact: linuxos777@gmail.com</p>' +
+    (mobileView
+      ? '  <button type="button" class="cp-share proj-btn">Share portfolio</button>' +
+        '  <button type="button" class="cp-open-site proj-btn">Open live site</button>'
+      : "") +
     "</div>";
 
   const on = (sel, ev, fn) => {
@@ -3923,7 +3973,11 @@ function buildControlPanel() {
   if (largeText) applyLargeText(true);
   if (reduceMotion) applyReduceMotion(true);
   if (!animUi) applyUiAnim(false);
-  if (mobileView) applyHomeLayout(homeLayout);
+  if (mobileView) {
+    applyHomeLayout(homeLayout);
+    const home = document.getElementById("home-screen");
+    if (home) home.dataset.iconSize = homeIconSize;
+  }
 
   on(".cp-theme", "change", (e) => {
     try {
@@ -3972,6 +4026,45 @@ function buildControlPanel() {
     haptic();
   });
 
+  on(".cp-home-icon-size", "change", (e) => {
+    const v = e.target.value;
+    try {
+      localStorage.setItem("portfolio-home-icon-size", v);
+    } catch (_) {}
+    const home = document.getElementById("home-screen");
+    if (home) home.dataset.iconSize = v;
+    haptic();
+  });
+
+  on(".cp-clock-fmt", "change", (e) => {
+    try {
+      localStorage.setItem("portfolio-clock-fmt", e.target.value);
+    } catch (_) {}
+    if (typeof updateClock === "function") updateClock();
+    haptic();
+  });
+
+  on(".cp-keep-awake", "change", async (e) => {
+    const onFlag = e.target.checked;
+    try {
+      localStorage.setItem("portfolio-keep-awake", onFlag ? "on" : "off");
+    } catch (_) {}
+    try {
+      if (onFlag && "wakeLock" in navigator) {
+        if (window.__menelikWakeLock) {
+          try { await window.__menelikWakeLock.release(); } catch (_) {}
+        }
+        window.__menelikWakeLock = await navigator.wakeLock.request("screen");
+      } else if (window.__menelikWakeLock) {
+        await window.__menelikWakeLock.release();
+        window.__menelikWakeLock = null;
+      }
+    } catch (err) {
+      console.warn("Wake Lock failed", err);
+    }
+    haptic();
+  });
+
   on(".cp-large-text", "change", (e) => {
     applyLargeText(e.target.checked);
     haptic();
@@ -3982,6 +4075,34 @@ function buildControlPanel() {
       localStorage.setItem("portfolio-haptics", e.target.checked ? "on" : "off");
     } catch (_) {}
     if (e.target.checked) haptic();
+  });
+
+  on(".cp-test-haptic", "click", () => {
+    try {
+      if (navigator.vibrate) navigator.vibrate([20, 40, 20]);
+      else alert("Vibration not supported on this device.");
+    } catch (_) {}
+  });
+
+  on(".cp-share", "click", async () => {
+    const url = location.href.split("#")[0];
+    const data = { title: "Menelik Admasu — Portfolio", text: "Check out this Windows XP + iPhone portfolio", url };
+    try {
+      if (navigator.share) {
+        await navigator.share(data);
+      } else if (navigator.clipboard && navigator.clipboard.writeText) {
+        await navigator.clipboard.writeText(url);
+        alert("Link copied to clipboard.");
+      } else {
+        prompt("Copy this link:", url);
+      }
+    } catch (_) {}
+    haptic();
+  });
+
+  on(".cp-open-site", "click", () => {
+    window.open("https://menelik.webhop.me", "_blank", "noopener");
+    haptic();
   });
 
   on(".cp-ui-anim", "change", (e) => {
@@ -10307,6 +10428,26 @@ initAndroidNavGestures();
 
 /* ========== Init ========== */
 initTheme();
+/* Restore mobile home prefs */
+(function restoreMobilePrefs() {
+  try {
+    const home = document.getElementById("home-screen");
+    if (!home) return;
+    const layout = localStorage.getItem("portfolio-home-layout") || "grid";
+    const iconSize = localStorage.getItem("portfolio-home-icon-size") || "medium";
+    home.dataset.layout = layout;
+    home.dataset.iconSize = iconSize;
+    if (localStorage.getItem("portfolio-large-text") === "on") {
+      document.body.classList.add("large-text");
+    }
+    if (localStorage.getItem("portfolio-reduce-motion") === "on") {
+      document.body.classList.add("reduce-motion");
+    }
+    if (localStorage.getItem("portfolio-ui-anim") === "off") {
+      document.body.classList.add("no-ui-anim");
+    }
+  } catch (_) {}
+})();
 
 /* ========== Screensaver ========== */
 let ssTimer = null;
