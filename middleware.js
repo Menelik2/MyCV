@@ -30,10 +30,8 @@ const CSP_REPORT =
  * object-src / base-uri — basic hardening
  */
 const CSP_FRAME_SITE =
-  "frame-src 'self' blob: " +
-  "https://www.tetrisgratuit.fr https://*.tetrisgratuit.fr " +
-  "https://liveweave.com https://*.liveweave.com " +
-  "https://meet.jit.si https://*.jit.si https://*.jitsi.net; " +
+  // Trust HTTPS embeds for in-app Microsoft Edge (project demos, etc.)
+  "frame-src 'self' https: blob: data:; " +
   "frame-ancestors 'self'; " +
   "object-src 'none'; " +
   "base-uri 'self'";
@@ -53,7 +51,7 @@ const CSP_SITE =
   "img-src 'self' data: blob: https:; " +
   "connect-src 'self' https://formspree.io https://jsonplaceholder.typicode.com https://api.github.com https://dog.ceo https://*.dog.ceo https://httpbin.org; " +
   "form-action 'self' https://formspree.io mailto:; " +
-  "frame-src 'self' blob: https://liveweave.com https://*.liveweave.com https://www.tetrisgratuit.fr https://*.tetrisgratuit.fr https://meet.jit.si https://*.jit.si https://*.jitsi.net; " +
+  "frame-src 'self' https: blob: data:; " +
   "worker-src 'self' blob:; " +
   "frame-ancestors 'self'; " +
   "object-src 'none'; base-uri 'self'" +
