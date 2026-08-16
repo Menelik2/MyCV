@@ -60,7 +60,7 @@
       '<div class="chat-box" id="chatBox" role="dialog" aria-label="Chat assistant">' +
       '  <div class="chat-header"><h3>🤖 ረዳት</h3><span>ኦንላይን</span></div>' +
       '  <div class="chat-messages" id="chatMessages">' +
-      '    <div class="message bot">ጤና ይስጥልኝ! እንዴት ልረዳዎ እችላለሁ? 😊</div>' +
+      '    <div class="message bot">ጤና ይስጥልኝ! ስለ Menelik፣ ፕሮጀክቶቹ፣ ወይም ስራው ይጠይቁኝ። How can I help? 😊</div>' +
       "  </div>" +
       '  <div class="chat-input-area">' +
       '    <input type="text" id="chatInput" placeholder="መልእክትዎን ይጻፉ..." autocomplete="off" />' +
