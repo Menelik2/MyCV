@@ -794,6 +794,7 @@ const I18N = {
     settings: "Settings",
     chat: "Chats",
     apps: "Apps",
+    games: "Games",
     notepad: "Notepad",
     paint: "Paint",
     voice: "Voice Room",
@@ -832,6 +833,7 @@ const I18N = {
     settings: "ቅንብሮች",
     chat: "ቻት",
     apps: "መተግበሪያዎች",
+    games: "ጨዋታዎች",
     notepad: "ማስታወሻ",
     paint: "ቀለም",
     voice: "የድምጽ ክፍል",
@@ -9386,6 +9388,7 @@ function initMobileTetris(root) {
 window.__mobilePageStack = window.__mobilePageStack || [];
 
 const APPS_FOLDER_CHILDREN = new Set(["notepad", "paint", "terminal", "voice"]);
+const GAMES_FOLDER_CHILDREN = new Set(["sudoku", "tetris", "blockblaster"]);
 
 function showPage(pageId, opts) {
   opts = opts || {};
@@ -9405,9 +9408,13 @@ function showPage(pageId, opts) {
     if (top !== pageId) {
       if (pageId === "apps") {
         window.__mobilePageStack = ["apps"];
+      } else if (pageId === "games") {
+        window.__mobilePageStack = ["games"];
       } else if (APPS_FOLDER_CHILDREN.has(pageId)) {
-        // ensure apps is under child
         if (top !== "apps") window.__mobilePageStack = ["apps", pageId];
+        else stack.push(pageId);
+      } else if (GAMES_FOLDER_CHILDREN.has(pageId)) {
+        if (top !== "games") window.__mobilePageStack = ["games", pageId];
         else stack.push(pageId);
       } else {
         window.__mobilePageStack = [pageId];
@@ -9415,8 +9422,8 @@ function showPage(pageId, opts) {
     }
   }
 
-  // Folder page has no content-* body — static HTML is enough
-  if (pageId === "apps") {
+  // Folder pages have no content-* body — static HTML is enough
+  if (pageId === "apps" || pageId === "games") {
     return;
   }
 
@@ -9476,17 +9483,21 @@ function mobileGoBack() {
     showPage(prev, { fromBack: true });
     return;
   }
-  if (stack.length === 1 && stack[0] === "apps") {
+  if (stack.length === 1 && (stack[0] === "apps" || stack[0] === "games")) {
     showHome();
     return;
   }
-  // If currently in an apps child but stack empty, prefer apps folder
   const open = document.querySelector("#mobile .app-page:not([hidden])");
   if (open && open.id) {
     const id = open.id.replace(/^page-/, "");
     if (APPS_FOLDER_CHILDREN.has(id)) {
       window.__mobilePageStack = ["apps"];
       showPage("apps", { fromBack: true });
+      return;
+    }
+    if (GAMES_FOLDER_CHILDREN.has(id)) {
+      window.__mobilePageStack = ["games"];
+      showPage("games", { fromBack: true });
       return;
     }
   }
