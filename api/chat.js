@@ -24,7 +24,21 @@ module.exports = async function handler(req, res) {
     return;
   }
 
+  // Robust body parse (Vercel may give object, string, or raw stream)
   let body = req.body;
+  async function readRaw() {
+    if (body != null) return body;
+    const chunks = [];
+    for await (const chunk of req) chunks.push(chunk);
+    const raw = Buffer.concat(chunks).toString("utf8");
+    if (!raw) return {};
+    try {
+      return JSON.parse(raw);
+    } catch (_) {
+      return {};
+    }
+  }
+  body = await readRaw();
   if (typeof body === "string") {
     try {
       body = JSON.parse(body);

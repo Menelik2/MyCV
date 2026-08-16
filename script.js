@@ -6876,18 +6876,24 @@ function buildChatApp() {
   wrap.style.minHeight = "0";
   wrap.style.display = "flex";
   wrap.style.flexDirection = "column";
-  if (typeof window.mountPortfolioChat === "function") {
-    window.mountPortfolioChat(wrap);
-  } else {
-    wrap.innerHTML =
-      '<p style="padding:12px;font-size:12px">Chat module loading…</p>';
+  const mount = () => {
+    if (typeof window.mountPortfolioChat === "function") {
+      window.mountPortfolioChat(wrap);
+      return true;
+    }
+    return false;
+  };
+  if (!mount()) {
+    wrap.innerHTML = '<p class="chat-app-loading" style="padding:12px;font-size:12px">Loading chat…</p>';
     const s = document.createElement("script");
-    s.src = "chat-widget.js";
-    s.onload = function () {
+    s.src = "chat-widget.js?v=20260816b";
+    s.onload = () => {
       wrap.innerHTML = "";
-      if (typeof window.mountPortfolioChat === "function") {
-        window.mountPortfolioChat(wrap);
-      }
+      mount();
+    };
+    s.onerror = () => {
+      wrap.innerHTML =
+        '<p style="padding:12px;font-size:12px;color:#b91c1c">Chat failed to load. Refresh the page.</p>';
     };
     document.head.appendChild(s);
   }

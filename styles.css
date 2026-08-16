@@ -8340,3 +8340,25 @@ body:not(.light) .cp-section {
 }
 /* Hide legacy floating widget if any left over */
 #chat-widget { display: none !important; }
+
+.chat-app-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 0 10px 8px;
+  flex-shrink: 0;
+  background: #f8fafc;
+}
+.chat-app-chips button {
+  border: 1px solid #c7d2fe;
+  background: #eef2ff;
+  color: #3730a3;
+  border-radius: 999px;
+  padding: 6px 10px;
+  font-size: 11px;
+  cursor: pointer;
+  font-family: inherit;
+}
+.chat-app-chips button:hover {
+  background: #e0e7ff;
+}
