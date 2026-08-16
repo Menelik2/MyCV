@@ -218,7 +218,7 @@ function localAnswer(raw) {
   if (/email|e-mail|mail|contact|reach|phone|call|linkedin|github|ኢሜይል|ስልክ|አድራሻ|ማግኘት|ኢሜል/.test(q + raw)) {
     if (isAm) {
       return (
-        "መነሊክን ማግኘት የሚችሉበት:\n📧 ኢሜይል: " +
+        "ምኒልክን ማግኘት የሚችሉበት:\n📧 ኢሜይል: " +
         email +
         "\n☎ ስልክ: " +
         phone +
@@ -256,7 +256,7 @@ function localAnswer(raw) {
   if (/experience|work|job|trainer|career|ስራ|ልምድ|አሰልጣኝ/.test(q + raw)) {
     if (isAm) {
       return (
-        "መነሊክ ወደ ~10 ዓመት የስራ ልምድ አለው:\n• አሰልጣኝ — Dejen TVET College (2004–2012)\n• አሰልጣኝ — Debre Elias TVET College (2012–2014)\nትኩረት: system administration, networking, technical training።"
+        "ምኒልክ ወደ ~10 ዓመት የስራ ልምድ አለው:\n• አሰልጣኝ — Dejen TVET College (2004–2012)\n• አሰልጣኝ — Debre Elias TVET College (2012–2014)\nትኩረት: system administration, networking, technical training።"
       );
     }
     return (
@@ -282,10 +282,10 @@ function localAnswer(raw) {
     return "Skills include HTML, CSS, JavaScript, Python, Java, Git, SQL, networking, system administration, cybersecurity, and technical training.";
   }
 
-  if (/who|about|menelik|name|ማን|ስለ|መነሊክ|introduce|profile|hi|hello|ሰላም|ጤና/.test(q + raw)) {
+  if (/who|about|menelik|name|ማን|ስለ|ምኒልክ|introduce|profile|hi|hello|ሰላም|ጤና/.test(q + raw)) {
     if (isAm) {
       return (
-        "መነሊክ አድማሱ Full-Stack App Developer፣ Computer Administrator እና Technical Trainer ነው። በባሕር ዳር፣ ኢትዮጵያ ይገኛል። BSc Computer Science (Bahir Dar University) አለው፣ እና ~10 ዓመት የ IT / training ልምድ።\n\nኢሜይል: " +
+        "ምኒልክ አድማሱ Full-Stack App Developer፣ Computer Administrator እና Technical Trainer ነው። በባሕር ዳር፣ ኢትዮጵያ ይገኛል። BSc Computer Science (Bahir Dar University) አለው፣ እና ~10 ዓመት የ IT / training ልምድ።\n\nኢሜይል: " +
         email
       );
     }
@@ -297,7 +297,7 @@ function localAnswer(raw) {
 
   if (isAm) {
     return (
-      "ስለ መነሊክ፣ ፕሮጀክቶቹ፣ ስራው፣ ትምህርቱ ወይም አድራሻው መጠየቅ ይችላሉ።\nለምሳሌ: «ፕሮጀክቶቹ ምንድን ናቸው?» ወይም «ኢሜይል ምንድን ነው?»\n\nቀጥታ ኢሜይል: " +
+      "ስለ ምኒልክ፣ ፕሮጀክቶቹ፣ ስራው፣ ትምህርቱ ወይም አድራሻው መጠየቅ ይችላሉ።\nለምሳሌ: «ፕሮጀክቶቹ ምንድን ናቸው?» ወይም «ኢሜይል ምንድን ነው?»\n\nቀጥታ ኢሜይል: " +
       email
     );
   }

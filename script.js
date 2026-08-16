@@ -9623,7 +9623,7 @@ const PORTFOLIO_CONTACT_AUTOREPLY =
   "Portfolio: https://menelik.webhop.me\n\n" +
   "---\n" +
   "አመሰግናለሁ! መልእክትዎ ደርሶኛል። በቅርቡ እመልስልዎታለሁ።\n" +
-  "— መነሊክ አድማሱ";
+  "— ምኒልክ አድማሱ";
 
 function getFormspreeId() {
   try {

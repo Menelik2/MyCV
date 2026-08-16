@@ -34,7 +34,7 @@
 
     if (/email|e-mail|mail|contact|reach|phone|call|linkedin|github|ኢሜይል|ስልክ|አድራሻ|ማግኘት|ኢሜል/.test(q + raw)) {
       return isAm
-        ? "መነሊክን ማግኘት:\n📧 " + email + "\n☎ " + phone + "\n🔗 " + linkedin + "\n⌥ " + github
+        ? "ምኒልክን ማግኘት:\n📧 " + email + "\n☎ " + phone + "\n🔗 " + linkedin + "\n⌥ " + github
         : "Reach Menelik:\n📧 " + email + "\n☎ " + phone + "\n🔗 " + linkedin + "\n⌥ " + github;
     }
     if (/project|yen|cv|movie|typing|exam|ፕሮጀክት/.test(q + raw)) {
@@ -57,13 +57,13 @@
         ? "ክህሎቶች: HTML, CSS, JS, Python, Java, Git, SQL, networking, system admin, cybersecurity, training."
         : "Skills: HTML, CSS, JS, Python, Java, Git, SQL, networking, system admin, cybersecurity, training.";
     }
-    if (/who|about|menelik|ማን|መነሊክ|hi|hello|ሰላም|ጤና/.test(q + raw)) {
+    if (/who|about|menelik|ማን|ምኒልክ|hi|hello|ሰላም|ጤና/.test(q + raw)) {
       return isAm
-        ? "እኔ የ Menelik OS ረዳት ነኝ። መነሊክ አድማሱ Full-Stack Developer እና Computer Administrator ነው (ባሕር ዳር)። ኢሜይል: " + email
+        ? "እኔ የ Menelik OS ረዳት ነኝ። ምኒልክ አድማሱ Full-Stack Developer እና Computer Administrator ነው (ባሕር ዳር)። ኢሜይል: " + email
         : "I'm the Menelik OS assistant. Menelik Admasu is a Full-Stack Developer & Computer Administrator in Bahir Dar. Email: " + email;
     }
     return isAm
-      ? "ስለ መነሊክ፣ ፕሮጀክት፣ ስራ፣ ትምህርት ወይም አድራሻ ይጠይቁ። ኢሜይል: " + email
+      ? "ስለ ምኒልክ፣ ፕሮጀክት፣ ስራ፣ ትምህርት ወይም አድራሻ ይጠይቁ። ኢሜይል: " + email
       : "Ask about Menelik, projects, work, education, or contact. Email: " + email;
   }
 
@@ -210,7 +210,7 @@
       if (!history.length) {
         addBubble(
           "assistant",
-          "Hi — I'm the Menelik OS assistant (like Ryo in ryOS).\nAsk about Menelik, open apps (“open projects”), or get contact info.\n\nጤና ይስጥልኝ! ስለ መነሊክ ወይም ፕሮጀክቶቹ ይጠይቁኝ።"
+          "Hi — I'm the Menelik OS assistant (like Ryo in ryOS).\nAsk about Menelik, open apps (“open projects”), or get contact info.\n\nጤና ይስጥልኝ! ስለ ምኒልክ ወይም ፕሮጀክቶቹ ይጠይቁኝ።"
         );
         return;
       }
@@ -224,7 +224,7 @@
       '<button type="button" data-q="What projects has he built?">Projects</button>' +
       '<button type="button" data-q="How can I contact him?">Contact</button>' +
       '<button type="button" data-q="Open resume">Open Resume</button>' +
-      '<button type="button" data-q="መነሊክ ማን ነው?">ስለ እሱ</button>';
+      '<button type="button" data-q="ምኒልክ ማን ነው?">ስለ እሱ</button>';
 
     suggestions.addEventListener("click", function (e) {
       var b = e.target.closest("button[data-q]");
