@@ -8546,3 +8546,109 @@ body.light .chats-input {
   .chats-input { font-size: 16px; min-height: 44px; }
   .chats-send { min-height: 44px; }
 }
+
+
+/* Advanced Chats extras */
+.chats-app-advanced .chats-composer {
+  align-items: flex-end;
+}
+.chats-app-advanced .chats-input {
+  resize: none;
+  min-height: 42px;
+  max-height: 120px;
+  line-height: 1.4;
+  font-family: inherit;
+}
+.chats-attach {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,0.12);
+  background: rgba(255,255,255,0.06);
+  color: inherit;
+  font-size: 20px;
+  line-height: 1;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+body.light .chats-attach {
+  border-color: rgba(0,0,0,0.1);
+  background: #f1f5f9;
+}
+.chats-quick {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 0 10px 8px;
+}
+.chats-quick[hidden] { display: none !important; }
+.chats-quick button {
+  border: 1px solid rgba(129,140,248,0.35);
+  background: rgba(99,102,241,0.12);
+  color: #c7d2fe;
+  border-radius: 999px;
+  padding: 6px 10px;
+  font-size: 11px;
+  cursor: pointer;
+}
+.chats-foot {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 3px;
+  padding: 0 4px;
+  font-size: 10px;
+  opacity: 0.55;
+}
+.chats-copy {
+  border: none;
+  background: transparent;
+  color: inherit;
+  font-size: 10px;
+  cursor: pointer;
+  text-decoration: underline;
+  padding: 0;
+  opacity: 0.8;
+}
+.chats-link {
+  color: #a5b4fc;
+  text-decoration: underline;
+  word-break: break-all;
+}
+body.light .chats-link { color: #4338ca; }
+.chats-code {
+  font-family: ui-monospace, monospace;
+  font-size: 0.9em;
+  background: rgba(0,0,0,0.25);
+  padding: 1px 5px;
+  border-radius: 4px;
+}
+body.light .chats-code { background: #e2e8f0; }
+.chats-tool-card {
+  margin-top: 6px;
+  padding: 8px 10px;
+  border-radius: 10px;
+  background: rgba(34,197,94,0.12);
+  border: 1px solid rgba(34,197,94,0.3);
+  font-size: 12px;
+}
+.chats-tool-card span {
+  display: inline-block;
+  margin: 2px 4px 0 0;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: rgba(34,197,94,0.2);
+}
+.chats-export {
+  border: 1px solid rgba(255,255,255,0.12);
+  background: rgba(255,255,255,0.06);
+  color: inherit;
+  border-radius: 8px;
+  padding: 6px 10px;
+  font-size: 11px;
+  cursor: pointer;
+}
+body.light .chats-export {
+  border-color: rgba(0,0,0,0.1);
+  background: #fff;
+}
