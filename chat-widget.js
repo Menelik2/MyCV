@@ -1,8 +1,28 @@
 /**
- * Portfolio Chat app — reliable send/receive with API + local fallback
+ * Menelik OS — Chats app (ryOS-inspired)
+ * Messenger UI + portfolio AI + local tools (open apps)
  */
 (function () {
   "use strict";
+
+  var HISTORY_KEY = "menelik-chat-history-v1";
+  var MAX_HISTORY = 24;
+
+  function loadHistory() {
+    try {
+      var raw = localStorage.getItem(HISTORY_KEY);
+      var arr = raw ? JSON.parse(raw) : [];
+      return Array.isArray(arr) ? arr.slice(-MAX_HISTORY) : [];
+    } catch (_) {
+      return [];
+    }
+  }
+
+  function saveHistory(msgs) {
+    try {
+      localStorage.setItem(HISTORY_KEY, JSON.stringify(msgs.slice(-MAX_HISTORY)));
+    } catch (_) {}
+  }
 
   function localAnswer(raw) {
     var q = String(raw || "").toLowerCase();
@@ -13,98 +33,65 @@
     var github = "https://github.com/Menelik2";
 
     if (/email|e-mail|mail|contact|reach|phone|call|linkedin|github|ኢሜይል|ስልክ|አድራሻ|ማግኘት|ኢሜል/.test(q + raw)) {
-      if (isAm) {
-        return (
-          "መነሊክን ማግኘት የሚችሉበት:\n📧 ኢሜይል: " +
-          email +
-          "\n☎ ስልክ: " +
-          phone +
-          " / +251 977 832 379\n🔗 LinkedIn: " +
-          linkedin +
-          "\n⌥ GitHub: " +
-          github +
-          "\n📍 ቦታ: ባሕር ዳር፣ ኢትዮጵያ"
-        );
-      }
-      return (
-        "You can reach Menelik at:\n📧 Email: " +
-        email +
-        "\n☎ Phone: " +
-        phone +
-        " / +251 977 832 379\n🔗 LinkedIn: " +
-        linkedin +
-        "\n⌥ GitHub: " +
-        github +
-        "\n📍 Bahir Dar, Ethiopia"
-      );
+      return isAm
+        ? "መነሊክን ማግኘት:\n📧 " + email + "\n☎ " + phone + "\n🔗 " + linkedin + "\n⌥ " + github
+        : "Reach Menelik:\n📧 " + email + "\n☎ " + phone + "\n🔗 " + linkedin + "\n⌥ " + github;
     }
-
-    if (/project|portfolio|demo|app|yen|cv|movie|typing|exam|ፕሮጀክት/.test(q + raw)) {
-      if (isAm) {
-        return (
-          "ዋና ፕሮጀክቶች:\n• Yeni Pro CV → https://procv.is-cool.dev\n• Yeni Movie → https://yeni-movie.vercel.app\n• Yeni Typing → https://fidel.is-local.dev\n• Yeni Exam → https://yeniexams.vercel.app/\n• ይህ Windows XP / Android style ፖርትፎሊዮ"
-        );
-      }
-      return (
-        "Featured projects:\n• Yeni Pro CV → https://procv.is-cool.dev\n• Yeni Movie → https://yeni-movie.vercel.app\n• Yeni Typing → https://fidel.is-local.dev\n• Yeni Exam → https://yeniexams.vercel.app/\n• This XP / Android-style portfolio site"
-      );
+    if (/project|yen|cv|movie|typing|exam|ፕሮጀክት/.test(q + raw)) {
+      return isAm
+        ? "ፕሮጀክቶች:\n• Yeni Pro CV → https://procv.is-cool.dev\n• Yeni Movie → https://yeni-movie.vercel.app\n• Yeni Typing → https://fidel.is-local.dev\n• Yeni Exam → https://yeniexams.vercel.app/"
+        : "Projects:\n• Yeni Pro CV → https://procv.is-cool.dev\n• Yeni Movie → https://yeni-movie.vercel.app\n• Yeni Typing → https://fidel.is-local.dev\n• Yeni Exam → https://yeniexams.vercel.app/";
     }
-
-    if (/experience|work|job|trainer|career|ስራ|ልምድ|አሰልጣኝ/.test(q + raw)) {
-      if (isAm) {
-        return (
-          "መነሊክ ወደ ~10 ዓመት የስራ ልምድ አለው:\n• አሰልጣኝ — Dejen TVET College (2004–2012)\n• አሰልጣኝ — Debre Elias TVET College (2012–2014)\nትኩረት: system administration, networking, technical training።"
-        );
-      }
-      return (
-        "Menelik has about 10 years of experience:\n• Trainer — Dejen TVET College (2004–2012)\n• Trainer — Debre Elias TVET College (2012–2014)\nFocus: system administration, networking, and technical training."
-      );
+    if (/experience|work|job|trainer|ስራ|ልምድ|አሰልጣኝ/.test(q + raw)) {
+      return isAm
+        ? "~10 ዓመት ልምድ: Dejen TVET (2004–2012) · Debre Elias TVET (2012–2014). ትኩረት: systems, networking, training."
+        : "~10 years experience: Dejen TVET (2004–2012) · Debre Elias TVET (2012–2014). Focus: systems, networking, training.";
     }
-
-    if (/education|degree|university|study|bsc|ትምህርት|ዩኒቨርሲቲ|ዲግሪ/.test(q + raw)) {
-      if (isAm) {
-        return (
-          "ትምህርት:\n• BSc Computer Science — Bahir Dar University (2022–2026)\n• Computer Hardware & Networking — Bahir Dar Poly Technical College (2002–2004)"
-        );
-      }
-      return (
-        "Education:\n• BSc Computer Science — Bahir Dar University (2022–2026, completed)\n• Computer Hardware & Networking — Bahir Dar Poly Technical College (2002–2004)"
-      );
+    if (/education|degree|university|bsc|ትምህርት|ዩኒቨርሲቲ/.test(q + raw)) {
+      return isAm
+        ? "BSc Computer Science — Bahir Dar University (2022–2026). Hardware & Networking diploma earlier."
+        : "BSc Computer Science — Bahir Dar University (2022–2026, completed). Earlier hardware & networking diploma.";
     }
-
-    if (/skill|stack|tech|language|ክህሎት|ቴክኖሎጂ/.test(q + raw)) {
-      if (isAm) {
-        return "ክህሎቶች: HTML, CSS, JavaScript, Python, Java, Git, SQL, networking, system administration, cybersecurity, technical training።";
-      }
-      return "Skills include HTML, CSS, JavaScript, Python, Java, Git, SQL, networking, system administration, cybersecurity, and technical training.";
+    if (/skill|ክህሎት/.test(q + raw)) {
+      return isAm
+        ? "ክህሎቶች: HTML, CSS, JS, Python, Java, Git, SQL, networking, system admin, cybersecurity, training."
+        : "Skills: HTML, CSS, JS, Python, Java, Git, SQL, networking, system admin, cybersecurity, training.";
     }
-
-    if (/who|about|menelik|name|ማን|ስለ|መነሊክ|introduce|profile|hi|hello|ሰላም|ጤና/.test(q + raw)) {
-      if (isAm) {
-        return (
-          "መነሊክ አድማሱ Full-Stack App Developer፣ Computer Administrator እና Technical Trainer ነው። በባሕር ዳር፣ ኢትዮጵያ ይገኛል። BSc Computer Science (Bahir Dar University) አለው፣ እና ~10 ዓመት የ IT / training ልምድ።\n\nኢሜይል: " +
-          email
-        );
-      }
-      return (
-        "Menelik Admasu is a Full-Stack App Developer, Computer Administrator, and Technical Trainer based in Bahir Dar, Ethiopia. He holds a BSc in Computer Science from Bahir Dar University and about 10 years of IT / training experience.\n\nEmail: " +
-        email
-      );
+    if (/who|about|menelik|ማን|መነሊክ|hi|hello|ሰላም|ጤና/.test(q + raw)) {
+      return isAm
+        ? "እኔ የ Menelik OS ረዳት ነኝ። መነሊክ አድማሱ Full-Stack Developer እና Computer Administrator ነው (ባሕር ዳር)። ኢሜይል: " + email
+        : "I'm the Menelik OS assistant. Menelik Admasu is a Full-Stack Developer & Computer Administrator in Bahir Dar. Email: " + email;
     }
-
-    if (isAm) {
-      return (
-        "ስለ መነሊክ፣ ፕሮጀክቶቹ፣ ስራው፣ ትምህርቱ ወይም አድራሻው መጠየቅ ይችላሉ።\nለምሳሌ: «ፕሮጀክቶቹ ምንድን ናቸው?» ወይም «ኢሜይል ምንድን ነው?»\n\nቀጥታ ኢሜይል: " +
-        email
-      );
-    }
-    return (
-      "You can ask about Menelik's background, projects, experience, education, skills, or contact details.\nExamples: “What projects has he built?” or “How do I email him?”\n\nDirect email: " +
-      email
-    );
+    return isAm
+      ? "ስለ መነሊክ፣ ፕሮጀክት፣ ስራ፣ ትምህርት ወይም አድራሻ ይጠይቁ። ኢሜይል: " + email
+      : "Ask about Menelik, projects, work, education, or contact. Email: " + email;
   }
 
-  async function callAPI(userMessage) {
+  /** Lightweight tools like ryOS launchApp */
+  function runLocalTools(text) {
+    var q = text.toLowerCase();
+    var actions = [];
+    function open(id, label) {
+      try {
+        if (window.innerWidth < 900 && typeof window.showPage === "function") {
+          window.showPage(id);
+          actions.push(label);
+        } else if (typeof window.openWindow === "function") {
+          window.openWindow(id);
+          actions.push(label);
+        }
+      } catch (_) {}
+    }
+    if (/\b(open|show|launch)\b.*\b(about|profile)\b|ስለ.*ክፈት/.test(q + text)) open("about", "About");
+    if (/\b(open|show|launch)\b.*\bprojects?\b|ፕሮጀክት.*ክፈት/.test(q + text)) open("projects", "Projects");
+    if (/\b(open|show|launch)\b.*\bresume\b|ሪዝዩም/.test(q + text)) open("resume", "Resume");
+    if (/\b(open|show|launch)\b.*\bcontact\b|እውቂያ/.test(q + text)) open("contact", "Contact");
+    if (/\b(open|show|launch)\b.*\bsudoku\b/.test(q)) open("sudoku", "Sudoku");
+    if (/\b(open|show|launch)\b.*\b(settings|control)\b/.test(q)) open("control", "Settings");
+    return actions;
+  }
+
+  async function callAPI(userMessage, history) {
     var controller = typeof AbortController !== "undefined" ? new AbortController() : null;
     var timer =
       controller &&
@@ -112,78 +99,145 @@
         try {
           controller.abort();
         } catch (_) {}
-      }, 12000);
+      }, 20000);
 
     try {
       var res = await fetch("/api/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json", Accept: "application/json" },
-        body: JSON.stringify({ message: userMessage }),
+        body: JSON.stringify({
+          message: userMessage,
+          messages: history.slice(-12).map(function (m) {
+            return { role: m.role, content: m.content };
+          }),
+        }),
         signal: controller ? controller.signal : undefined,
       });
       if (timer) clearTimeout(timer);
       var data = {};
       try {
         data = await res.json();
-      } catch (_) {
-        data = {};
+      } catch (_) {}
+      if (res.ok && data && data.reply) {
+        return { text: String(data.reply), source: data.source || "api" };
       }
-      if (res.ok && data && data.reply) return String(data.reply);
-      // Non-OK or empty → local
-      return localAnswer(userMessage);
-    } catch (err) {
+      return { text: localAnswer(userMessage), source: "local" };
+    } catch (_) {
       if (timer) clearTimeout(timer);
-      return localAnswer(userMessage);
+      return { text: localAnswer(userMessage), source: "local" };
     }
+  }
+
+  function typewriter(el, text, done) {
+    el.textContent = "";
+    var i = 0;
+    var step = Math.max(1, Math.floor(text.length / 80));
+    function tick() {
+      i = Math.min(text.length, i + step);
+      el.textContent = text.slice(0, i);
+      el.parentElement && (el.parentElement.parentElement.scrollTop = 1e9);
+      if (i < text.length) requestAnimationFrame(tick);
+      else if (done) done();
+    }
+    requestAnimationFrame(tick);
   }
 
   window.mountPortfolioChat = function mountPortfolioChat(container) {
     if (!container) return null;
-    // Always rebuild clean UI in this container
     container.innerHTML = "";
     container.dataset.chatMounted = "1";
 
+    var history = loadHistory();
+
     var root = document.createElement("div");
-    root.className = "chat-app";
+    root.className = "chats-app";
     root.innerHTML =
-      '<div class="chat-app-header">' +
-      '  <div class="chat-app-title"><span class="chat-app-orb">💬</span> ረዳት · Assistant</div>' +
-      '  <a class="chat-app-email" href="mailto:linuxos777@gmail.com">linuxos777@gmail.com</a>' +
+      '<div class="chats-top">' +
+      '  <div class="chats-persona">' +
+      '    <div class="chats-avatar" aria-hidden="true">M</div>' +
+      '    <div class="chats-persona-text">' +
+      '      <div class="chats-name">Menelik OS Assistant</div>' +
+      '      <div class="chats-status"><span class="chats-dot"></span> Online · portfolio AI</div>' +
+      "    </div>" +
+      "  </div>" +
+      '  <div class="chats-top-actions">' +
+      '    <a class="chats-mail" href="mailto:linuxos777@gmail.com" title="Email">✉</a>' +
+      '    <button type="button" class="chats-clear" title="Clear chat">Clear</button>' +
+      "  </div>" +
       "</div>" +
-      '<div class="chat-app-messages" role="log" aria-live="polite">' +
-      '  <div class="message bot">ጤና ይስጥልኝ! 👋 የ Menelik Admasu ፖርትፎሊዮ ረዳት ነኝ። ስለ እሱ፣ ስራው፣ ፕሮጀክቶቹ ወይም እንዴት ማግኘት እንደሚችሉ ይጠይቁኝ።\n\nHi! I\'m Menelik\'s portfolio assistant. Ask about his work, projects, or how to reach him.\n\nContact: linuxos777@gmail.com</div>' +
-      "</div>" +
-      '<div class="chat-app-input">' +
-      '  <input type="text" class="chat-app-field" placeholder="መልእክትዎን ይጻፉ... / Type a message..." autocomplete="off" enterkeyhint="send" />' +
-      '  <button type="button" class="chat-app-send">ላክ</button>' +
+      '<div class="chats-messages" role="log" aria-live="polite"></div>' +
+      '<div class="chats-suggestions"></div>' +
+      '<div class="chats-composer">' +
+      '  <input type="text" class="chats-input" placeholder="Message Menelik OS…" autocomplete="off" enterkeyhint="send" />' +
+      '  <button type="button" class="chats-send" aria-label="Send">Send</button>' +
       "</div>";
 
     container.appendChild(root);
 
-    var messages = root.querySelector(".chat-app-messages");
-    var input = root.querySelector(".chat-app-field");
-    var sendBtn = root.querySelector(".chat-app-send");
+    var messagesEl = root.querySelector(".chats-messages");
+    var input = root.querySelector(".chats-input");
+    var sendBtn = root.querySelector(".chats-send");
+    var clearBtn = root.querySelector(".chats-clear");
+    var suggestions = root.querySelector(".chats-suggestions");
     var inFlight = false;
 
-    function addMessage(text, sender) {
-      var div = document.createElement("div");
-      div.className = "message " + sender;
-      div.textContent = text;
-      messages.appendChild(div);
-      messages.scrollTop = messages.scrollHeight;
-      return div;
+    function addBubble(role, text, opts) {
+      opts = opts || {};
+      var row = document.createElement("div");
+      row.className = "chats-row chats-row-" + role;
+      var bubble = document.createElement("div");
+      bubble.className = "chats-bubble chats-bubble-" + role;
+      if (opts.typing) {
+        bubble.innerHTML =
+          '<span class="chats-typing"><i></i><i></i><i></i></span>';
+      } else {
+        bubble.textContent = text || "";
+      }
+      row.appendChild(bubble);
+      if (opts.source && role === "assistant") {
+        var meta = document.createElement("div");
+        meta.className = "chats-meta";
+        meta.textContent = opts.source === "gemini" ? "Gemini" : opts.source === "local" ? "Local" : "";
+        if (meta.textContent) row.appendChild(meta);
+      }
+      messagesEl.appendChild(row);
+      messagesEl.scrollTop = messagesEl.scrollHeight;
+      return { row: row, bubble: bubble };
     }
 
-    function showTyping() {
-      var div = document.createElement("div");
-      div.className = "message bot";
-      div.dataset.typing = "1";
-      div.innerHTML =
-        '<div class="typing-dots"><span></span><span></span><span></span></div>';
-      messages.appendChild(div);
-      messages.scrollTop = messages.scrollHeight;
-      return div;
+    function renderHistory() {
+      messagesEl.innerHTML = "";
+      if (!history.length) {
+        addBubble(
+          "assistant",
+          "Hi — I'm the Menelik OS assistant (like Ryo in ryOS).\nAsk about Menelik, open apps (“open projects”), or get contact info.\n\nጤና ይስጥልኝ! ስለ መነሊክ ወይም ፕሮጀክቶቹ ይጠይቁኝ።"
+        );
+        return;
+      }
+      history.forEach(function (m) {
+        addBubble(m.role === "user" ? "user" : "assistant", m.content);
+      });
     }
+
+    suggestions.innerHTML =
+      '<button type="button" data-q="Who is Menelik?">About</button>' +
+      '<button type="button" data-q="What projects has he built?">Projects</button>' +
+      '<button type="button" data-q="How can I contact him?">Contact</button>' +
+      '<button type="button" data-q="Open resume">Open Resume</button>' +
+      '<button type="button" data-q="መነሊክ ማን ነው?">ስለ እሱ</button>';
+
+    suggestions.addEventListener("click", function (e) {
+      var b = e.target.closest("button[data-q]");
+      if (!b) return;
+      input.value = b.getAttribute("data-q");
+      sendMessage();
+    });
+
+    clearBtn.addEventListener("click", function () {
+      history = [];
+      saveHistory(history);
+      renderHistory();
+    });
 
     function sendMessage() {
       if (inFlight) return;
@@ -191,21 +245,40 @@
       if (!text) return;
 
       inFlight = true;
-      addMessage(text, "user");
       input.value = "";
       sendBtn.disabled = true;
       input.disabled = true;
 
-      var typing = showTyping();
+      history.push({ role: "user", content: text });
+      saveHistory(history);
+      addBubble("user", text);
 
-      callAPI(text)
-        .then(function (reply) {
-          if (typing && typing.parentNode) typing.remove();
-          addMessage(reply || localAnswer(text), "bot");
+      var toolActions = runLocalTools(text);
+      var typing = addBubble("assistant", "", { typing: true });
+
+      callAPI(text, history)
+        .then(function (result) {
+          typing.row.remove();
+          var reply = result.text || localAnswer(text);
+          if (toolActions.length) {
+            reply +=
+              (reply ? "\n\n" : "") +
+              "Opened: " +
+              toolActions.join(", ") +
+              ".";
+          }
+          var node = addBubble("assistant", "", { source: result.source });
+          typewriter(node.bubble, reply, function () {
+            history.push({ role: "assistant", content: reply });
+            saveHistory(history);
+          });
         })
         .catch(function () {
-          if (typing && typing.parentNode) typing.remove();
-          addMessage(localAnswer(text), "bot");
+          typing.row.remove();
+          var reply = localAnswer(text);
+          addBubble("assistant", reply, { source: "local" });
+          history.push({ role: "assistant", content: reply });
+          saveHistory(history);
         })
         .finally(function () {
           inFlight = false;
@@ -221,7 +294,6 @@
       e.preventDefault();
       sendMessage();
     });
-
     input.addEventListener("keydown", function (e) {
       if (e.key === "Enter" && !e.shiftKey) {
         e.preventDefault();
@@ -229,28 +301,18 @@
       }
     });
 
-    // Quick suggestion chips
-    var chips = document.createElement("div");
-    chips.className = "chat-app-chips";
-    chips.innerHTML =
-      '<button type="button" data-q="Who is Menelik?">About</button>' +
-      '<button type="button" data-q="What projects has he built?">Projects</button>' +
-      '<button type="button" data-q="How can I contact him?">Contact</button>' +
-      '<button type="button" data-q="መነሊክ ማን ነው?">ስለ እሱ</button>';
-    messages.parentNode.insertBefore(chips, messages.nextSibling);
-    chips.addEventListener("click", function (e) {
-      var btn = e.target.closest("button[data-q]");
-      if (!btn) return;
-      input.value = btn.getAttribute("data-q");
-      sendMessage();
-    });
-
+    renderHistory();
     setTimeout(function () {
       try {
         input.focus();
       } catch (_) {}
-    }, 150);
+    }, 120);
 
     return root;
   };
+
+  // Expose showPage for tools if not global
+  if (typeof window.showPage !== "function") {
+    // no-op; script.js defines it
+  }
 })();

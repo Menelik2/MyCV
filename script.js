@@ -759,7 +759,7 @@ const APPS = {
   vscode: { title: "Liveweave", iconClass: "vscode-icon", interactive: true },
   minesweeper: { title: "Minesweeper", iconClass: "minesweeper-icon", interactive: true },
   sudoku: { title: "Sudoku", iconClass: "sudoku-icon", interactive: true },
-  chat: { title: "Chat Assistant", iconClass: "chat-icon", interactive: true },
+  chat: { title: "Chats — Menelik OS", iconClass: "chat-icon", interactive: true },
   control: { title: "Control Panel", iconClass: "control-icon", interactive: true },
   recycle: { title: "Recycle Bin", iconClass: "recycle-icon", interactive: true },
   registry: { title: "Registry Editor", iconClass: "registry-icon", interactive: true },

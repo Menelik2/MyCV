@@ -50,6 +50,7 @@ module.exports = async function handler(req, res) {
   if (!body || typeof body !== "object") body = {};
 
   const message = String(body.message || body.text || "").trim();
+  const prior = Array.isArray(body.messages) ? body.messages.slice(-12) : [];
   if (!message) {
     res.statusCode = 400;
     res.setHeader("Content-Type", "application/json");
@@ -67,7 +68,7 @@ module.exports = async function handler(req, res) {
   // Try Gemini first when a key is configured
   if (apiKey) {
     try {
-      const reply = await callGemini(apiKey, message);
+      const reply = await callGemini(apiKey, message, prior);
       if (reply) {
         res.statusCode = 200;
         res.setHeader("Content-Type", "application/json");
@@ -118,7 +119,7 @@ Rules:
 - You are the portfolio assistant, not Menelik himself.
 `.trim();
 
-async function callGemini(apiKey, message) {
+async function callGemini(apiKey, message, prior) {
   const preferred = process.env.GEMINI_MODEL || "gemini-2.0-flash";
   const models = [
     preferred,
@@ -138,7 +139,7 @@ async function callGemini(apiKey, message) {
   let lastErr = null;
   for (const model of list) {
     try {
-      const text = await generateWithModel(apiKey, model, message);
+      const text = await generateWithModel(apiKey, model, message, prior);
       if (text) return text;
     } catch (e) {
       lastErr = e;
@@ -149,7 +150,25 @@ async function callGemini(apiKey, message) {
   return null;
 }
 
-async function generateWithModel(apiKey, model, message) {
+
+function buildGeminiContents(prior, message) {
+  const out = [];
+  if (Array.isArray(prior)) {
+    for (const m of prior) {
+      if (!m || !m.content) continue;
+      const role = m.role === "assistant" || m.role === "model" ? "model" : "user";
+      out.push({ role, parts: [{ text: String(m.content) }] });
+    }
+  }
+  // Ensure last is the current user message if not already duplicated
+  const last = out[out.length - 1];
+  if (!last || last.role !== "user" || last.parts[0].text !== message) {
+    out.push({ role: "user", parts: [{ text: message }] });
+  }
+  return out.length ? out : [{ role: "user", parts: [{ text: message }] }];
+}
+
+async function generateWithModel(apiKey, model, message, prior) {
   const url =
     "https://generativelanguage.googleapis.com/v1beta/models/" +
     encodeURIComponent(model) +
@@ -161,7 +180,7 @@ async function generateWithModel(apiKey, model, message) {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
       systemInstruction: { parts: [{ text: SITE_KNOWLEDGE }] },
-      contents: [{ role: "user", parts: [{ text: message }] }],
+      contents: buildGeminiContents(prior, message),
       generationConfig: {
         temperature: 0.5,
         maxOutputTokens: 1024,
