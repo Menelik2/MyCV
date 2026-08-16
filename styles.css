@@ -4044,170 +4044,6 @@ body.light[data-wallpaper="slate"] .wallpaper {
     linear-gradient(155deg, #f0f2f6 0%, #e0e4ec 50%, #c8d0dc 100%) !important;
 }
 
-/* ========== Wallpaper visual picker (Control Panel) ========== */
-.cp-wall-block {
-  margin: 8px 0 12px;
-}
-.cp-wall-label-row {
-  margin-bottom: 8px;
-  font-weight: 600;
-}
-.wall-picker {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(88px, 1fr));
-  gap: 10px;
-  max-height: 280px;
-  overflow-y: auto;
-  padding: 4px 2px 8px;
-  -webkit-overflow-scrolling: touch;
-}
-.wall-thumb {
-  display: flex;
-  flex-direction: column;
-  align-items: stretch;
-  gap: 4px;
-  padding: 0;
-  border: 2px solid transparent;
-  border-radius: 12px;
-  background: transparent;
-  cursor: pointer;
-  font-family: inherit;
-  color: inherit;
-  transition: border-color 0.15s ease, transform 0.12s ease, box-shadow 0.15s ease;
-  -webkit-tap-highlight-color: transparent;
-}
-.wall-thumb:hover {
-  transform: translateY(-1px);
-}
-.wall-thumb:focus-visible {
-  outline: 2px solid #3b82f6;
-  outline-offset: 2px;
-}
-.wall-thumb.is-active {
-  border-color: #3b82f6;
-  box-shadow: 0 0 0 1px rgba(59, 130, 246, 0.4);
-}
-body.light .wall-thumb.is-active {
-  border-color: #2563eb;
-}
-.wall-thumb-swatch {
-  display: block;
-  height: 56px;
-  border-radius: 10px;
-  border: 1px solid rgba(255,255,255,0.12);
-  background-size: cover;
-  background-position: center;
-}
-body.light .wall-thumb-swatch {
-  border-color: rgba(0,0,0,0.1);
-}
-.wall-thumb-label {
-  font-size: 10px;
-  text-align: center;
-  line-height: 1.2;
-  opacity: 0.9;
-  padding: 0 2px 4px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-.cp-wall-select-fallback {
-  display: none;
-  width: 100%;
-  margin-top: 8px;
-}
-@media (max-width: 899px) {
-  .wall-picker {
-    grid-template-columns: repeat(3, 1fr);
-    max-height: 320px;
-    gap: 8px;
-  }
-  .wall-thumb-swatch {
-    height: 52px;
-  }
-  .wall-thumb-label {
-    font-size: 11px;
-  }
-}
-
-/* Thumbnail previews (match full wallpapers) */
-.wall-thumb-swatch[data-wall-preview="default"] {
-  background: linear-gradient(160deg, #3a6ea5 0%, #2a5080 40%, #1e3a5f 100%);
-}
-.wall-thumb-swatch[data-wall-preview="green"] {
-  background: linear-gradient(160deg, #1b4332 0%, #2d6a4f 40%, #40916c 100%);
-}
-.wall-thumb-swatch[data-wall-preview="sunset"] {
-  background: linear-gradient(160deg, #4a1942 0%, #c44900 45%, #ffb703 100%);
-}
-.wall-thumb-swatch[data-wall-preview="night"] {
-  background: linear-gradient(160deg, #0d1b2a 0%, #1b263b 50%, #415a77 100%);
-}
-.wall-thumb-swatch[data-wall-preview="sonoma"] {
-  background:
-    radial-gradient(ellipse 80% 60% at 20% 80%, rgba(255, 180, 140, 0.55) 0%, transparent 55%),
-    radial-gradient(ellipse 70% 50% at 85% 25%, rgba(140, 190, 255, 0.5) 0%, transparent 50%),
-    linear-gradient(165deg, #f5e6dc 0%, #c8d9f0 45%, #9bb8e0 100%);
-}
-.wall-thumb-swatch[data-wall-preview="sequoia"] {
-  background:
-    radial-gradient(ellipse 90% 70% at 10% 90%, rgba(20, 80, 70, 0.7) 0%, transparent 50%),
-    linear-gradient(160deg, #0a1f1c 0%, #143d36 40%, #1a5c52 100%);
-}
-.wall-thumb-swatch[data-wall-preview="ventura"] {
-  background:
-    radial-gradient(ellipse 70% 55% at 15% 70%, rgba(120, 60, 180, 0.55) 0%, transparent 55%),
-    radial-gradient(ellipse 65% 50% at 85% 25%, rgba(60, 100, 220, 0.5) 0%, transparent 50%),
-    linear-gradient(155deg, #1a1030 0%, #2a1a50 40%, #1e2a60 100%);
-}
-.wall-thumb-swatch[data-wall-preview="monterey"] {
-  background:
-    radial-gradient(ellipse 100% 40% at 50% 100%, rgba(20, 80, 140, 0.6) 0%, transparent 50%),
-    linear-gradient(180deg, #0a1628 0%, #0e2848 35%, #143a60 70%, #1a4a70 100%);
-}
-.wall-thumb-swatch[data-wall-preview="bigsur"] {
-  background:
-    linear-gradient(180deg, transparent 55%, rgba(20, 50, 40, 0.85) 55%, #0a1a18 100%),
-    radial-gradient(ellipse 50% 30% at 70% 22%, rgba(255, 200, 120, 0.35) 0%, transparent 60%),
-    linear-gradient(180deg, #1a3050 0%, #2a5080 25%, #3a7090 50%, #2a6050 100%);
-}
-.wall-thumb-swatch[data-wall-preview="aurora"] {
-  background:
-    radial-gradient(ellipse 90% 40% at 20% 30%, rgba(40, 220, 160, 0.35) 0%, transparent 50%),
-    radial-gradient(ellipse 80% 35% at 70% 40%, rgba(80, 120, 255, 0.4) 0%, transparent 50%),
-    linear-gradient(180deg, #050a18 0%, #0a1528 40%, #0e1a30 100%);
-}
-.wall-thumb-swatch[data-wall-preview="horizon"] {
-  background: linear-gradient(180deg, #1a2040 0%, #3a4060 30%, #8a6070 60%, #e09060 85%, #f0c080 100%);
-}
-.wall-thumb-swatch[data-wall-preview="nebula"] {
-  background:
-    radial-gradient(ellipse 50% 40% at 30% 40%, rgba(180, 60, 200, 0.45) 0%, transparent 55%),
-    radial-gradient(ellipse 45% 35% at 70% 60%, rgba(60, 80, 220, 0.4) 0%, transparent 50%),
-    linear-gradient(160deg, #08051a 0%, #120a28 50%, #0a1028 100%);
-}
-.wall-thumb-swatch[data-wall-preview="midnight"] {
-  background:
-    radial-gradient(ellipse 70% 50% at 50% 110%, rgba(40, 100, 200, 0.4) 0%, transparent 55%),
-    linear-gradient(165deg, #050810 0%, #0a1220 40%, #0e1a30 100%);
-}
-.wall-thumb-swatch[data-wall-preview="mint"] {
-  background:
-    radial-gradient(ellipse 80% 60% at 20% 30%, rgba(100, 230, 200, 0.35) 0%, transparent 50%),
-    linear-gradient(150deg, #0a201c 0%, #143830 45%, #1a5048 100%);
-}
-.wall-thumb-swatch[data-wall-preview="peach"] {
-  background:
-    radial-gradient(ellipse 90% 70% at 30% 80%, rgba(255, 140, 100, 0.45) 0%, transparent 55%),
-    linear-gradient(160deg, #2a1820 0%, #4a2830 40%, #6a3840 100%);
-}
-.wall-thumb-swatch[data-wall-preview="slate"] {
-  background:
-    radial-gradient(ellipse 60% 40% at 70% 20%, rgba(100, 140, 180, 0.25) 0%, transparent 55%),
-    linear-gradient(155deg, #1a1e28 0%, #252a38 45%, #2e3444 100%);
-}
-
-
 /* ========== Recycle Bin ========== */
 .recycle-icon { background: linear-gradient(135deg, #78909c, #455a64); }
 .recycle-icon::after {
@@ -9274,4 +9110,234 @@ body.reduce-motion *::after {
 body.no-ui-anim .window,
 body.no-ui-anim .app-page {
   transition: none !important;
+}
+
+/* ========== Android-style Settings (mobile) ========== */
+@media (max-width: 899px) {
+  #page-control {
+    background: #121212 !important;
+  }
+  body.light #page-control {
+    background: #f0f2f5 !important;
+  }
+  #page-control .page-header {
+    background: #1c1c1e;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+  }
+  body.light #page-control .page-header {
+    background: #fff;
+    border-bottom: 1px solid rgba(0,0,0,0.08);
+  }
+  #page-control .page-header h2 {
+    font-size: 20px;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+  }
+
+  .control-app-android {
+    padding: 12px 12px max(24px, env(safe-area-inset-bottom, 0px)) !important;
+    background: transparent !important;
+    font-family: "Roboto", "Google Sans", -apple-system, "Segoe UI", sans-serif !important;
+    color: #e8eaed !important;
+  }
+  body.light .control-app-android {
+    color: #202124 !important;
+  }
+
+  .control-app-android .cp-title {
+    display: none; /* page header already says Settings */
+  }
+
+  .control-app-android .cp-section {
+    background: #1e1f22 !important;
+    border: none !important;
+    border-radius: 16px !important;
+    padding: 4px 0 8px !important;
+    margin-bottom: 16px !important;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.25);
+    overflow: hidden;
+  }
+  body.light .control-app-android .cp-section {
+    background: #ffffff !important;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+  }
+
+  .control-app-android .cp-section h4 {
+    margin: 0 !important;
+    padding: 14px 16px 6px !important;
+    font-size: 12px !important;
+    font-weight: 600 !important;
+    letter-spacing: 0.06em !important;
+    text-transform: uppercase !important;
+    color: #8ab4f8 !important; /* Android accent blue */
+  }
+  body.light .control-app-android .cp-section h4 {
+    color: #1a73e8 !important;
+  }
+
+  .control-app-android .cp-row {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: 12px !important;
+    margin: 0 !important;
+    padding: 14px 16px !important;
+    min-height: 52px;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    box-sizing: border-box;
+  }
+  body.light .control-app-android .cp-row {
+    border-bottom-color: rgba(0,0,0,0.06);
+  }
+  .control-app-android .cp-section .cp-row:last-of-type {
+    border-bottom: none;
+  }
+
+  .control-app-android .cp-row > span {
+    flex: 1;
+    font-size: 15px !important;
+    font-weight: 400;
+    color: #e8eaed;
+  }
+  body.light .control-app-android .cp-row > span {
+    color: #202124;
+  }
+
+  .control-app-android .cp-row select {
+    flex: 0 1 auto;
+    min-width: 120px;
+    max-width: 55%;
+    min-height: 40px !important;
+    font-size: 14px !important;
+    border-radius: 8px !important;
+    padding: 8px 12px !important;
+    background: #2d2e31 !important;
+    color: #e8eaed !important;
+    border: 1px solid rgba(255,255,255,0.12) !important;
+    margin: 0 !important;
+  }
+  body.light .control-app-android .cp-row select {
+    background: #f1f3f4 !important;
+    color: #202124 !important;
+    border-color: rgba(0,0,0,0.12) !important;
+  }
+
+  /* Material-style switches */
+  .control-app-android .cp-toggle-row input[type="checkbox"],
+  .control-app-android .cp-row input[type="checkbox"] {
+    width: 52px !important;
+    height: 32px !important;
+    appearance: none !important;
+    -webkit-appearance: none !important;
+    background: #5f6368 !important;
+    border-radius: 999px !important;
+    position: relative !important;
+    cursor: pointer;
+    border: none !important;
+    flex-shrink: 0;
+    transition: background 0.2s ease;
+  }
+  .control-app-android .cp-toggle-row input[type="checkbox"]::after,
+  .control-app-android .cp-row input[type="checkbox"]::after {
+    content: "" !important;
+    position: absolute !important;
+    top: 4px !important;
+    left: 4px !important;
+    width: 24px !important;
+    height: 24px !important;
+    border-radius: 50% !important;
+    background: #fff !important;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.35) !important;
+    transition: transform 0.2s ease !important;
+  }
+  .control-app-android .cp-toggle-row input[type="checkbox"]:checked,
+  .control-app-android .cp-row input[type="checkbox"]:checked {
+    background: #8ab4f8 !important;
+  }
+  body.light .control-app-android .cp-toggle-row input[type="checkbox"]:checked,
+  body.light .control-app-android .cp-row input[type="checkbox"]:checked {
+    background: #1a73e8 !important;
+  }
+  .control-app-android .cp-toggle-row input[type="checkbox"]:checked::after,
+  .control-app-android .cp-row input[type="checkbox"]:checked::after {
+    transform: translateX(20px) !important;
+  }
+
+  .control-app-android .proj-btn,
+  .control-app-android .cp-test-sound,
+  .control-app-android .cp-test-haptic,
+  .control-app-android .cp-share,
+  .control-app-android .cp-open-site {
+    width: calc(100% - 32px) !important;
+    margin: 8px 16px !important;
+    min-height: 48px !important;
+    border-radius: 24px !important;
+    font-size: 15px !important;
+    font-weight: 500 !important;
+    border: none !important;
+    background: #2d2e31 !important;
+    color: #8ab4f8 !important;
+    box-shadow: none !important;
+  }
+  body.light .control-app-android .proj-btn,
+  body.light .control-app-android .cp-test-sound,
+  body.light .control-app-android .cp-test-haptic,
+  body.light .control-app-android .cp-share,
+  body.light .control-app-android .cp-open-site {
+    background: #e8f0fe !important;
+    color: #1a73e8 !important;
+  }
+  .control-app-android .cp-danger {
+    background: transparent !important;
+    color: #f28b82 !important;
+    border: 1px solid rgba(242, 139, 130, 0.4) !important;
+  }
+  body.light .control-app-android .cp-danger {
+    color: #d93025 !important;
+    border-color: rgba(217, 48, 37, 0.35) !important;
+    background: transparent !important;
+  }
+
+  .control-app-android .cp-about,
+  .control-app-android .cp-contact {
+    padding: 8px 16px 12px !important;
+    margin: 0 !important;
+    font-size: 13px !important;
+    color: #9aa0a6 !important;
+    line-height: 1.4;
+  }
+  body.light .control-app-android .cp-about,
+  body.light .control-app-android .cp-contact {
+    color: #5f6368 !important;
+  }
+
+  /* Wallpaper picker inside Android settings */
+  .control-app-android .cp-wall-block {
+    padding: 8px 12px 12px;
+  }
+  .control-app-android .cp-wall-label-row {
+    display: none;
+  }
+  .control-app-android .wall-picker {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    max-height: 240px;
+  }
+  .control-app-android .wall-thumb {
+    border-radius: 12px;
+  }
+  .control-app-android .wall-thumb.is-active {
+    border-color: #8ab4f8;
+  }
+  body.light .control-app-android .wall-thumb.is-active {
+    border-color: #1a73e8;
+  }
+  .control-app-android .wall-thumb-swatch {
+    height: 56px;
+    border-radius: 10px;
+  }
+  .control-app-android .cp-wall-select-fallback {
+    display: none !important;
+  }
 }
