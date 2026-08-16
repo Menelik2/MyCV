@@ -2312,8 +2312,8 @@ function buildSnake() {
     '<div class="snake-stage">' +
     '  <canvas class="snake-canvas" width="300" height="300" aria-label="Snake game"></canvas>' +
     '  <div class="snake-overlay" data-sn-overlay>' +
-    '    <div class="snake-overlay-title">Snake</div>' +
-    '    <div class="snake-overlay-sub">Arrow keys / swipe / D-pad</div>' +
+    '    <div class="snake-overlay-title">SNAKE</div>' +
+    '    <div class="snake-overlay-sub">Nokia style · Arrow / swipe / D-pad</div>' +
     '    <button type="button" class="snake-btn" data-sn-start>Play</button>' +
     "  </div>" +
     "</div>" +
@@ -2335,11 +2335,11 @@ function buildSnake() {
   const overlay = root.querySelector("[data-sn-overlay]");
   const startBtn = root.querySelector("[data-sn-start]");
 
-  const COLS = 15;
-  const ROWS = 15;
+  const COLS = 16;
+  const ROWS = 16;
   let cell = 20;
   let snake, dir, nextDir, food, score, level, best, tick, running, dead, raf, acc, lastTs;
-  const SPEED0 = 140; // ms per step
+  const SPEED0 = 160; // ms per step (Nokia-like start)
   const POINTS_PER_LEVEL = 50;
 
   try {
@@ -2405,48 +2405,57 @@ function buildSnake() {
   function draw() {
     const w = COLS * cell;
     const h = ROWS * cell;
-    // board
-    ctx.fillStyle = "#0f172a";
+
+    // Classic Nokia black LCD background
+    ctx.fillStyle = "#000000";
     ctx.fillRect(0, 0, w, h);
-    // grid
-    ctx.strokeStyle = "rgba(148,163,184,0.12)";
+
+    // Outer border (thick green like old phone frame)
+    const border = Math.max(2, cell * 0.12);
+    ctx.strokeStyle = "#33ff33";
+    ctx.lineWidth = border;
+    ctx.strokeRect(border / 2, border / 2, w - border, h - border);
+
+    // Very subtle pixel grid (optional Nokia feel)
+    ctx.strokeStyle = "rgba(51, 255, 51, 0.06)";
     ctx.lineWidth = 1;
-    for (let i = 0; i <= COLS; i++) {
+    for (let i = 1; i < COLS; i++) {
       ctx.beginPath();
       ctx.moveTo(i * cell, 0);
       ctx.lineTo(i * cell, h);
       ctx.stroke();
     }
-    for (let j = 0; j <= ROWS; j++) {
+    for (let j = 1; j < ROWS; j++) {
       ctx.beginPath();
       ctx.moveTo(0, j * cell);
       ctx.lineTo(w, j * cell);
       ctx.stroke();
     }
-    // food
-    if (food) {
-      const pad = cell * 0.18;
-      ctx.fillStyle = "#f43f5e";
-      roundRect(food.x * cell + pad, food.y * cell + pad, cell - pad * 2, cell - pad * 2, 4);
-      ctx.fill();
-    }
-    // snake
-    snake.forEach((s, i) => {
-      const pad = cell * 0.12;
-      ctx.fillStyle = i === 0 ? "#4ade80" : "#22c55e";
-      roundRect(s.x * cell + pad, s.y * cell + pad, cell - pad * 2, cell - pad * 2, 5);
-      ctx.fill();
-    });
-  }
 
-  function roundRect(x, y, w, h, r) {
-    ctx.beginPath();
-    ctx.moveTo(x + r, y);
-    ctx.arcTo(x + w, y, x + w, y + h, r);
-    ctx.arcTo(x + w, y + h, x, y + h, r);
-    ctx.arcTo(x, y + h, x, y, r);
-    ctx.arcTo(x, y, x + w, y, r);
-    ctx.closePath();
+    // Food – classic solid block (bright green / white style)
+    if (food) {
+      const pad = cell * 0.15;
+      ctx.fillStyle = "#aaffaa";
+      ctx.fillRect(
+        food.x * cell + pad,
+        food.y * cell + pad,
+        cell - pad * 2,
+        cell - pad * 2
+      );
+    }
+
+    // Snake – solid bright green blocks (Nokia style, no rounded corners)
+    snake.forEach((s, i) => {
+      const pad = cell * 0.08;
+      // Head a bit brighter
+      ctx.fillStyle = i === 0 ? "#66ff66" : "#33cc33";
+      ctx.fillRect(
+        s.x * cell + pad,
+        s.y * cell + pad,
+        cell - pad * 2,
+        cell - pad * 2
+      );
+    });
   }
 
   function step() {
@@ -2484,8 +2493,8 @@ function buildSnake() {
     dead = true;
     running = false;
     overlay.hidden = false;
-    overlay.querySelector(".snake-overlay-title").textContent = "Game Over";
-    overlay.querySelector(".snake-overlay-sub").textContent = "Score " + score + " · Level " + level;
+    overlay.querySelector(".snake-overlay-title").textContent = "GAME OVER";
+    overlay.querySelector(".snake-overlay-sub").textContent = "Score " + score + "  Level " + level;
     startBtn.textContent = "Play again";
   }
 
@@ -2495,7 +2504,7 @@ function buildSnake() {
     if (!lastTs) lastTs = ts;
     acc += ts - lastTs;
     lastTs = ts;
-    const speed = Math.max(55, SPEED0 - (level - 1) * 12);
+    const speed = Math.max(50, SPEED0 - (level - 1) * 14);
     while (acc >= speed) {
       acc -= speed;
       step();
