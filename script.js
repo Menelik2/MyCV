@@ -1111,15 +1111,83 @@ function buildPaint() {
       </div>
     </div>
     <div class="paint-canvas-wrap">
-      <canvas width="640" height="400"></canvas>
+      <canvas class="paint-surface" width="800" height="500" aria-label="Drawing surface"></canvas>
     </div>
     <div class="paint-status"><span class="paint-tool-name">Pencil</span> · <span class="paint-coords">0, 0</span></div>
   `;
 
   const canvas = wrap.querySelector("canvas");
-  const ctx = canvas.getContext("2d", { willReadFrequently: true });
-  ctx.fillStyle = "#ffffff";
-  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  const canvasWrap = wrap.querySelector(".paint-canvas-wrap");
+  const ctx = canvas.getContext("2d", { willReadFrequently: true, alpha: false });
+  // Logical drawing size (CSS pixels); buffer may be scaled by devicePixelRatio
+  let logicalW = 800;
+  let logicalH = 500;
+  let dpr = 1;
+
+  function fillWhite() {
+    ctx.save();
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    ctx.fillStyle = "#ffffff";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.restore();
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+
+  function resizePaintSurface(force) {
+    if (!canvasWrap) return;
+    const pad = 0;
+    const availW = Math.max(120, canvasWrap.clientWidth - pad);
+    const availH = Math.max(120, canvasWrap.clientHeight - pad);
+    // Full-bleed white surface inside the gray workspace
+    const nextW = Math.max(1, Math.floor(availW));
+    const nextH = Math.max(1, Math.floor(availH));
+    const nextDpr = Math.min(window.devicePixelRatio || 1, 2);
+
+    if (
+      !force &&
+      nextW === logicalW &&
+      nextH === logicalH &&
+      nextDpr === dpr
+    ) {
+      return;
+    }
+
+    let saved = null;
+    try {
+      if (canvas.width > 0 && canvas.height > 0) {
+        saved = ctx.getImageData(0, 0, canvas.width, canvas.height);
+      }
+    } catch (_) {
+      saved = null;
+    }
+
+    logicalW = nextW;
+    logicalH = nextH;
+    dpr = nextDpr;
+
+    canvas.style.width = logicalW + "px";
+    canvas.style.height = logicalH + "px";
+    canvas.width = Math.round(logicalW * dpr);
+    canvas.height = Math.round(logicalH * dpr);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.imageSmoothingEnabled = true;
+
+    fillWhite();
+    if (saved) {
+      try {
+        // Stretch previous pixels into new surface (best-effort compatibility)
+        const off = document.createElement("canvas");
+        off.width = saved.width;
+        off.height = saved.height;
+        off.getContext("2d").putImageData(saved, 0, 0);
+        ctx.drawImage(off, 0, 0, logicalW, logicalH);
+      } catch (_) {}
+    }
+
+  }
+
+  // Initial white fill; full resize runs after layout
+  fillWhite();
 
   let drawing = false;
   let color = "#000000";
@@ -1146,6 +1214,7 @@ function buildPaint() {
   function restore(data) {
     if (!data) return;
     ctx.putImageData(data, 0, 0);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
   }
   function undo() {
     if (!undoStack.length) return;
@@ -1177,12 +1246,17 @@ function buildPaint() {
   }
   function pos(e) {
     const r = canvas.getBoundingClientRect();
-    const scaleX = canvas.width / r.width;
-    const scaleY = canvas.height / r.height;
-    const src = e.touches ? e.touches[0] : e;
+    const src = e.touches && e.touches[0]
+      ? e.touches[0]
+      : e.changedTouches && e.changedTouches[0]
+        ? e.changedTouches[0]
+        : e;
+    const cssW = r.width || logicalW || 1;
+    const cssH = r.height || logicalH || 1;
+    // Map pointer into logical canvas space (matches ctx after setTransform(dpr))
     return {
-      x: (src.clientX - r.left) * scaleX,
-      y: (src.clientY - r.top) * scaleY
+      x: ((src.clientX - r.left) / cssW) * logicalW,
+      y: ((src.clientY - r.top) / cssH) * logicalH
     };
   }
   function hexToRgb(hex) {
@@ -1191,11 +1265,12 @@ function buildPaint() {
     return { r: (n >> 16) & 255, g: (n >> 8) & 255, b: n & 255 };
   }
   function floodFill(x, y, fillHex) {
+    // Image data is in device pixels; drawing coords are logical
     const w = canvas.width, h = canvas.height;
     const img = ctx.getImageData(0, 0, w, h);
     const d = img.data;
-    const sx = Math.floor(x), sy = Math.floor(y);
-    if (sx < 0 || sy < 0 || sx >= w || sy >= h) return;
+    const sx = Math.max(0, Math.min(w - 1, Math.floor(x * dpr)));
+    const sy = Math.max(0, Math.min(h - 1, Math.floor(y * dpr)));
     const i0 = (sy * w + sx) * 4;
     const tr = d[i0], tg = d[i0 + 1], tb = d[i0 + 2], ta = d[i0 + 3];
     const fill = hexToRgb(fillHex);
@@ -1215,6 +1290,7 @@ function buildPaint() {
       stack.push([cx + 1, cy], [cx - 1, cy], [cx, cy + 1], [cx, cy - 1]);
     }
     ctx.putImageData(img, 0, 0);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
   }
   function sprayAt(x, y) {
     ctx.fillStyle = color;
@@ -1227,7 +1303,10 @@ function buildPaint() {
     }
   }
   function drawShape(x1, y1, x2, y2, preview) {
-    if (snapshot && preview) ctx.putImageData(snapshot, 0, 0);
+    if (snapshot && preview) {
+      ctx.putImageData(snapshot, 0, 0);
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    }
     ctx.lineWidth = size;
     ctx.lineCap = "round";
     ctx.lineJoin = "round";
@@ -1270,8 +1349,7 @@ function buildPaint() {
   });
   wrap.querySelector('[data-action="clear"]').addEventListener("click", () => {
     pushHistory();
-    ctx.fillStyle = "#ffffff";
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    fillWhite();
   });
   wrap.querySelector('[data-action="undo"]').addEventListener("click", undo);
   wrap.querySelector('[data-action="redo"]').addEventListener("click", redo);
@@ -1380,6 +1458,30 @@ function buildPaint() {
   canvas.addEventListener("touchstart", start, { passive: false });
   canvas.addEventListener("touchmove", move, { passive: false });
   canvas.addEventListener("touchend", end);
+  canvas.addEventListener("touchcancel", end);
+
+  // Full-size white surface + resize compatibility
+  let resizeTimer = 0;
+  function scheduleResize() {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(() => {
+      const prevW = logicalW, prevH = logicalH;
+      resizePaintSurface(false);
+      if (logicalW !== prevW || logicalH !== prevH) {
+        undoStack.length = 0;
+        redoStack.length = 0;
+      }
+    }, 50);
+  }
+  if (typeof ResizeObserver !== "undefined" && canvasWrap) {
+    new ResizeObserver(scheduleResize).observe(canvasWrap);
+  }
+  window.addEventListener("resize", scheduleResize);
+  // After window layout / first paint
+  requestAnimationFrame(() => {
+    resizePaintSurface(true);
+    requestAnimationFrame(() => resizePaintSurface(true));
+  });
 
   wrap.tabIndex = 0;
   wrap.addEventListener("keydown", (e) => {
