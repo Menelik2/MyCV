@@ -51,12 +51,15 @@ module.exports = async function handler(req, res) {
     return;
   }
 
-  const apiKey = (
+  // Accept classic AIza… and newer AQ.… Google AI keys (no AIza-only regex)
+  const KEY_RE = /^(AIza|AQ\.)[a-zA-Z0-9_.-]+$/;
+  const rawKey = (
     process.env.GEMINI_API_KEY ||
     process.env.GOOGLE_GENERATIVE_AI_API_KEY ||
     process.env.GOOGLE_API_KEY ||
-    ""
+    "AQ.Ab8RN6IuaGR70HRAKmBeWLB8BVJTgRhCWJd8EJ26FYQNMQgSng"
   ).trim();
+  const apiKey = KEY_RE.test(rawKey) ? rawKey : "";
 
   if (apiKey) {
     try {
@@ -190,32 +193,57 @@ function buildGeminiContents(prior, message) {
 }
 
 async function generateWithModel(apiKey, model, message, prior) {
-  const url =
+  // Native Gemini endpoint only (not OpenAI-compatible / Bearer)
+  const base =
     "https://generativelanguage.googleapis.com/v1beta/models/" +
     encodeURIComponent(model) +
-    ":generateContent?key=" +
-    encodeURIComponent(apiKey);
+    ":generateContent";
 
-  const upstream = await fetch(url, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      systemInstruction: { parts: [{ text: SITE_KNOWLEDGE }] },
-      contents: buildGeminiContents(prior, message),
-      generationConfig: { temperature: 0.45, maxOutputTokens: 1200, topP: 0.9 },
-    }),
-  });
+  const payload = {
+    systemInstruction: { parts: [{ text: SITE_KNOWLEDGE }] },
+    contents: buildGeminiContents(prior, message),
+    generationConfig: { temperature: 0.45, maxOutputTokens: 1200, topP: 0.9 },
+  };
 
-  const data = await upstream.json().catch(() => ({}));
-  if (!upstream.ok) {
-    const msg = (data && data.error && data.error.message) || "Gemini HTTP " + upstream.status;
-    const err = new Error(msg);
-    err.status = upstream.status;
-    throw err;
+  // 1) Header X-goog-api-key (works for AIza and AQ. formats)
+  // 2) Fallback: ?key= query on same native endpoint
+  const attempts = [
+    {
+      url: base,
+      headers: {
+        "Content-Type": "application/json",
+        "X-goog-api-key": apiKey,
+      },
+    },
+    {
+      url: base + "?key=" + encodeURIComponent(apiKey),
+      headers: { "Content-Type": "application/json" },
+    },
+  ];
+
+  let lastErr = null;
+  for (const attempt of attempts) {
+    const upstream = await fetch(attempt.url, {
+      method: "POST",
+      headers: attempt.headers,
+      body: JSON.stringify(payload),
+    });
+    const data = await upstream.json().catch(() => ({}));
+    if (upstream.ok) {
+      const parts = data?.candidates?.[0]?.content?.parts;
+      if (!parts || !parts.length) continue;
+      return parts.map((p) => p.text || "").join("").trim();
+    }
+    const msg =
+      (data && data.error && data.error.message) ||
+      "Gemini HTTP " + upstream.status;
+    lastErr = new Error(msg);
+    lastErr.status = upstream.status;
+    // Try next auth style on 401/403
+    if (upstream.status !== 401 && upstream.status !== 403) break;
   }
-  const parts = data?.candidates?.[0]?.content?.parts;
-  if (!parts || !parts.length) return null;
-  return parts.map((p) => p.text || "").join("").trim();
+  if (lastErr) throw lastErr;
+  return null;
 }
 
 function localAnswer(raw) {
