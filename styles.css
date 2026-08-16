@@ -9445,3 +9445,56 @@ body:not(.light) .edge-opened-card .edge-ext-code {
   background: #0f172a;
   color: #93c5fd;
 }
+
+/* Edge bookmarks + proxy (daedalOS-inspired) */
+.edge-bookmarks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  padding: 4px 8px;
+  background: #f3f4f6;
+  border-bottom: 1px solid #ccc;
+}
+.edge-bm {
+  font-family: Tahoma, "Segoe UI", sans-serif;
+  font-size: 11px;
+  padding: 3px 8px;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  background: transparent;
+  cursor: pointer;
+  color: #1e3a5f;
+}
+.edge-bm:hover {
+  background: #e0e7ff;
+  border-color: #93c5fd;
+}
+.edge-proxy {
+  font-family: Tahoma, sans-serif;
+  font-size: 11px;
+  padding: 3px 6px;
+  max-width: 110px;
+  border: 1px solid #888;
+  border-radius: 3px;
+  background: #fff;
+}
+.edge-nav:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+body:not(.light) .edge-bookmarks {
+  background: #252530;
+  border-color: #444;
+}
+body:not(.light) .edge-bm {
+  color: #e2e8f0;
+}
+body:not(.light) .edge-bm:hover {
+  background: #334155;
+  border-color: #64748b;
+}
+body:not(.light) .edge-proxy {
+  background: #1e1e24;
+  color: #e2e8f0;
+  border-color: #555;
+}
