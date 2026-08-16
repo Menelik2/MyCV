@@ -18,7 +18,7 @@
 @keyframes chatSlideUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
 .chat-header{background:linear-gradient(135deg,#4f46e5,#7c3aed);color:#fff;padding:14px 16px;display:flex;align-items:center;justify-content:space-between}
 .chat-header h3{font-size:15px;font-weight:600;margin:0}
-.chat-header span{font-size:11px;opacity:.9;background:rgba(255,255,255,.2);padding:2px 10px;border-radius:20px}
+.chat-header span{font-size:11px;opacity:.9;background:rgba(255,255,255,.2);padding:2px 10px;border-radius:20px}.chat-contact-email{background:#eef2ff;color:#3730a3;font-size:12px;padding:6px 12px;text-align:center;border-bottom:1px solid #e0e7ff}.chat-contact-email a{color:#4338ca;text-decoration:none;font-weight:600}.chat-contact-email a:hover{text-decoration:underline}
 .chat-messages{flex:1;padding:14px;overflow-y:auto;background:#f8fafc;display:flex;flex-direction:column;gap:10px;-webkit-overflow-scrolling:touch}
 .chat-messages::-webkit-scrollbar{width:4px}
 .chat-messages::-webkit-scrollbar-thumb{background:#cbd5e1;border-radius:10px}
@@ -59,6 +59,7 @@
     root.innerHTML =
       '<div class="chat-box" id="chatBox" role="dialog" aria-label="Chat assistant">' +
       '  <div class="chat-header"><h3>🤖 ረዳት</h3><span>ኦንላይን</span></div>' +
+      '  <div class="chat-contact-email"><a href="mailto:linuxos777@gmail.com">linuxos777@gmail.com</a></div>' +
       '  <div class="chat-messages" id="chatMessages">' +
       '    <div class="message bot">ጤና ይስጥልኝ! 👋 የ Menelik Admasu ፖርትፎሊዮ ረዳት ነኝ። ስለ እሱ፣ ስራው፣ ፕሮጀክቶቹ ወይም እንዴት ማግኘት እንደሚችሉ ይጠይቁኝ።
 
