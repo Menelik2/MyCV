@@ -1,11 +1,5 @@
 /**
- * Portfolio chat — Gemini primary, local knowledge fallback
- *
- * Vercel env:
- *   GEMINI_API_KEY  — Google AI Studio key (starts with AIza…)
- *   GEMINI_MODEL    — optional, default gemini-2.0-flash
- *
- * Get a key: https://aistudio.google.com/apikey
+ * Portfolio chat — full site knowledge + Gemini + smart local answers
  */
 module.exports = async function handler(req, res) {
   res.setHeader("Access-Control-Allow-Origin", "*");
@@ -18,7 +12,6 @@ module.exports = async function handler(req, res) {
     res.end();
     return;
   }
-
   if (req.method !== "POST") {
     res.statusCode = 405;
     res.setHeader("Content-Type", "application/json");
@@ -65,7 +58,6 @@ module.exports = async function handler(req, res) {
     ""
   ).trim();
 
-  // Try Gemini first when a key is configured
   if (apiKey) {
     try {
       const reply = await callGemini(apiKey, message, prior);
@@ -77,79 +69,109 @@ module.exports = async function handler(req, res) {
       }
     } catch (err) {
       console.error("[chat] Gemini:", err && err.message ? err.message : err);
-      // fall through to local — still return 200 so the UI stays smooth
     }
   }
 
-  const local = localAnswer(message);
   res.statusCode = 200;
   res.setHeader("Content-Type", "application/json");
   res.end(
     JSON.stringify({
-      reply: local,
+      reply: localAnswer(message),
       source: "local",
       geminiConfigured: Boolean(apiKey),
     })
   );
 };
 
-const SITE_KNOWLEDGE = `
-You are the official assistant on Menelik Admasu's portfolio website.
-Answer in the same language the user writes (Amharic or English). Be friendly, accurate, and concise.
+const SITE_KNOWLEDGE = `You are the official assistant for ምኒልክ አድማሱ (Menelik Admasu) on his Menelik OS portfolio website.
+Answer ANY visitor question using the facts below. Match the user's language (Amharic or English).
+Be friendly, accurate, and concise. If something is truly not on the site, say you don't have that detail and offer email/LinkedIn.
 
-Facts about Menelik Admasu:
-- Full-Stack App Developer, Computer Administrator, Hardware & Networking, Technical Trainer
+=== IDENTITY ===
+- Full name (English): Menelik Admasu
+- Full name (Amharic): ምኒልክ አድማሱ
+- Roles: Full-Stack App Developer · Computer Administrator · Hardware & Networking · Technical Trainer
 - Location: Bahir Dar, Ethiopia
-- Education: BSc Computer Science, Bahir Dar University (2022–2026, completed)
-- Earlier: Computer Hardware & Networking (Bahir Dar Poly Technical College, 2002–2004, GPA 3.45)
-- Experience (~10 years): Trainer at Dejen TVET College (2004–2012); Trainer at Debre Elias TVET College (2012–2014)
-- Skills: HTML, CSS, JavaScript, Python, Java, Git, SQL, networking, system administration, cybersecurity, technical training, UI/UX
-- Projects:
-  • Yeni Pro CV — https://procv.is-cool.dev
-  • Yeni Movie — https://yeni-movie.vercel.app
-  • Yeni Typing — https://fidel.is-local.dev
-  • Yeni Exam — https://yeniexams.vercel.app/
-  • This Windows XP / Android-style portfolio site
-- Contact: linuxos777@gmail.com · +251 918 006 053 · +251 977 832 379
-- GitHub: https://github.com/Menelik2 · LinkedIn: https://www.linkedin.com/in/menelik7
+- About: Detail-oriented computer administrator who keeps systems running smoothly. Full-stack app developer who builds complete applications from UI to back-end, APIs, and deployment. Enjoys building practical tools including this portfolio.
+- Languages: Amharic — professional working proficiency; English — professional working proficiency
+- Volunteer: Trains communities and organizations on how to use technology effectively
 
-Rules:
-- Prefer these facts. If unknown, say so and suggest email or LinkedIn.
-- Do not invent employers, degrees, or URLs.
-- You are the portfolio assistant, not Menelik himself.
-`.trim();
+=== EDUCATION (all completed) ===
+1. Bahir Dar University — Bachelor of Science in Computer Science (2022–2026, completed)
+   Coursework: programming, data structures, algorithms, databases, software engineering, computer networks, web technologies, operating systems, OOP, web development
+2. Bahir Dar Poly Technical College — Computer Hardware & Networking Technology (2002–2004, GPA 3.45)
+3. Debre Markos Poly College — Computer Hardware & Networking Service (2007)
+
+=== EXPERIENCE (~10 years total) ===
+1. Trainer — Dejen TVET College (2004–2012): trained students in computer skills, supported IT operations, maintained lab systems
+2. Trainer — Debre Elias TVET College (2012–2014): technical training and computer administration
+Focus: system administration, networking, multi-platform support, technical training (governmental TVET colleges)
+
+=== CERTIFICATIONS & AWARDS ===
+- Computer Hardware and Networking Technology Level IV
+- National Qualifications Certificates (COC) — Certificate of Competence
+- Certificate in Computer Cybersecurity
+- Best Worker of the Year (2010) — Dejen TVET College
+
+=== SKILLS ===
+Soft: problem solving, team collaboration, communication, learning & adapting
+Technical: HTML, CSS, JavaScript, Python, Java, Git & GitHub, SQL, responsive design, website design, video editing, computer networking, cybersecurity, hardware maintenance, system administration, technical training, coding
+Interests: full-stack web/app development, UI/UX and interactive interfaces, networking and maintenance, cybersecurity, learning new technologies, reading
+
+=== PROJECTS ===
+1. Yeni Pro CV — Resume Builder (Live: https://procv.is-cool.dev)
+   Privacy-first ATS-friendly resume builder with live preview, multiple templates; data stays in the browser
+2. Yeni Movie (Live: https://yeni-movie.vercel.app)
+   Movies & TV discovery with trailers, ratings, cast, search
+3. Yeni Typing Learning (Live: https://fidel.is-local.dev)
+   Typing tutor with live WPM, accuracy, timed practice
+4. Yeni Exam — Exit Exam Generator (Live: https://yeniexams.vercel.app/)
+   Topic-driven exit-exam style practice questions
+5. BDU Internship Management System — university project (demo coming soon)
+6. Windows XP Portfolio / Menelik OS (this site: https://menelik.webhop.me)
+   Interactive XP desktop + Android-style phone shell with apps: About, Education, Experience, Projects, Skills, Contact, Resume, Notepad, Paint, Terminal, Sudoku, Tetris, Settings/Control Panel, Chats assistant, Device Inspector, etc.
+
+=== CONTACT ===
+- Email: linuxos777@gmail.com
+- Phone: +251 918 006 053 and +251 977 832 379
+- GitHub: https://github.com/Menelik2 (@Menelik2)
+- LinkedIn: https://www.linkedin.com/in/menelik7
+- Location: Bahir Dar, Ethiopia
+- Contact form on the site sends via Formspree; auto-reply confirms receipt
+
+=== THIS WEBSITE (Menelik OS) ===
+- Desktop: Windows XP-style UI (icons, Start menu, windows, taskbar)
+- Phone: Android-style shell with app grid and navigation gestures
+- Theme: light/dark and wallpapers via Control Panel / Settings
+- Resume downloadable as PDF
+- Chat app: this assistant
+- Boot screen: Click the button to enter (fullscreen)
+
+=== HOW TO ANSWER ===
+- Use only facts above; do not invent employers, degrees, or URLs
+- For hiring/collaboration: highlight relevant skills/projects and point to email or LinkedIn
+- For "what can you do": explain you answer questions about ምኒልክ and can open portfolio topics
+- Amharic name spelling: always ምኒልክ (not መነሊክ)
+`;
 
 async function callGemini(apiKey, message, prior) {
   const preferred = process.env.GEMINI_MODEL || "gemini-2.0-flash";
-  const models = [
-    preferred,
-    "gemini-2.0-flash",
-    "gemini-flash-latest",
-    "gemini-1.5-flash",
-    "gemini-1.5-flash-latest",
-  ];
-  // unique preserve order
-  const tried = new Set();
-  const list = models.filter((m) => {
-    if (tried.has(m)) return false;
-    tried.add(m);
-    return true;
-  });
-
+  const models = [preferred, "gemini-2.0-flash", "gemini-flash-latest", "gemini-1.5-flash", "gemini-1.5-flash-latest"];
+  const seen = new Set();
   let lastErr = null;
-  for (const model of list) {
+  for (const model of models) {
+    if (seen.has(model)) continue;
+    seen.add(model);
     try {
       const text = await generateWithModel(apiKey, model, message, prior);
       if (text) return text;
     } catch (e) {
       lastErr = e;
-      // try next model
     }
   }
   if (lastErr) throw lastErr;
   return null;
 }
-
 
 function buildGeminiContents(prior, message) {
   const out = [];
@@ -160,7 +182,6 @@ function buildGeminiContents(prior, message) {
       out.push({ role, parts: [{ text: String(m.content) }] });
     }
   }
-  // Ensure last is the current user message if not already duplicated
   const last = out[out.length - 1];
   if (!last || last.role !== "user" || last.parts[0].text !== message) {
     out.push({ role: "user", parts: [{ text: message }] });
@@ -181,128 +202,137 @@ async function generateWithModel(apiKey, model, message, prior) {
     body: JSON.stringify({
       systemInstruction: { parts: [{ text: SITE_KNOWLEDGE }] },
       contents: buildGeminiContents(prior, message),
-      generationConfig: {
-        temperature: 0.5,
-        maxOutputTokens: 1024,
-        topP: 0.9,
-      },
+      generationConfig: { temperature: 0.45, maxOutputTokens: 1200, topP: 0.9 },
     }),
   });
 
   const data = await upstream.json().catch(() => ({}));
   if (!upstream.ok) {
-    const msg =
-      (data && data.error && data.error.message) ||
-      "Gemini HTTP " + upstream.status;
+    const msg = (data && data.error && data.error.message) || "Gemini HTTP " + upstream.status;
     const err = new Error(msg);
     err.status = upstream.status;
     throw err;
   }
-
   const parts = data?.candidates?.[0]?.content?.parts;
   if (!parts || !parts.length) return null;
-  return parts
-    .map((p) => p.text || "")
-    .join("")
-    .trim();
+  return parts.map((p) => p.text || "").join("").trim();
 }
 
 function localAnswer(raw) {
-  const q = String(raw || "").toLowerCase();
-  const isAm = /[\u1200-\u137F]/.test(raw);
+  const text = String(raw || "");
+  const q = text.toLowerCase();
+  const isAm = /[\u1200-\u137F]/.test(text);
   const email = "linuxos777@gmail.com";
   const phone = "+251 918 006 053";
+  const phone2 = "+251 977 832 379";
   const linkedin = "https://www.linkedin.com/in/menelik7";
   const github = "https://github.com/Menelik2";
+  const site = "https://menelik.webhop.me";
 
-  if (/email|e-mail|mail|contact|reach|phone|call|linkedin|github|ኢሜይል|ስልክ|አድራሻ|ማግኘት|ኢሜል/.test(q + raw)) {
-    if (isAm) {
-      return (
-        "ምኒልክን ማግኘት የሚችሉበት:\n📧 ኢሜይል: " +
+  const checks = [
+    {
+      keys: /email|e-mail|mail|contact|reach|phone|call|linkedin|github|hire|collaborat|ኢሜይል|ስልክ|አድራሻ|ማግኘት|ኢሜል|ቅጥር/,
+      en:
+        "Contact ምኒልክ (Menelik Admasu):\n📧 " +
         email +
-        "\n☎ ስልክ: " +
+        "\n☎ " +
         phone +
-        " / +251 977 832 379\n🔗 LinkedIn: " +
+        " · " +
+        phone2 +
+        "\n🔗 LinkedIn: " +
         linkedin +
         "\n⌥ GitHub: " +
         github +
-        "\n📍 ቦታ: ባሕር ዳር፣ ኢትዮጵያ"
-      );
-    }
-    return (
-      "You can reach Menelik at:\n📧 Email: " +
-      email +
-      "\n☎ Phone: " +
-      phone +
-      " / +251 977 832 379\n🔗 LinkedIn: " +
-      linkedin +
-      "\n⌥ GitHub: " +
-      github +
-      "\n📍 Bahir Dar, Ethiopia"
-    );
+        "\n📍 Bahir Dar, Ethiopia\n🌐 " +
+        site +
+        "\nYou can also use the Contact form on this site.",
+      am:
+        "ምኒልክ አድማሱን ማግኘት:\n📧 " +
+        email +
+        "\n☎ " +
+        phone +
+        " · " +
+        phone2 +
+        "\n🔗 LinkedIn: " +
+        linkedin +
+        "\n⌥ GitHub: " +
+        github +
+        "\n📍 ባሕር ዳር፣ ኢትዮጵያ\n🌐 " +
+        site +
+        "\nበጣቢያው Contact ቅጽም መላክ ይችላሉ።",
+    },
+    {
+      keys: /project|yen|cv|movie|typing|exam|internship|portfolio site|demo|ፕሮጀክት|የኒ/,
+      en:
+        "Featured projects:\n• Yeni Pro CV — ATS resume builder → https://procv.is-cool.dev\n• Yeni Movie — movies & TV → https://yeni-movie.vercel.app\n• Yeni Typing — typing tutor → https://fidel.is-local.dev\n• Yeni Exam — exit exam practice → https://yeniexams.vercel.app/\n• BDU Internship Management System (demo soon)\n• Menelik OS / XP portfolio — this site (" +
+        site +
+        ")",
+      am:
+        "ዋና ፕሮጀክቶች:\n• Yeni Pro CV — የሪዝዩም ገንቢ → https://procv.is-cool.dev\n• Yeni Movie → https://yeni-movie.vercel.app\n• Yeni Typing → https://fidel.is-local.dev\n• Yeni Exam → https://yeniexams.vercel.app/\n• BDU Internship Management (በቅርቡ)\n• Menelik OS ፖርትፎሊዮ — ይህ ጣቢያ",
+    },
+    {
+      keys: /experience|work|job|trainer|career|tv et|ደጀን|ስራ|ልምድ|አሰልጣኝ/,
+      en:
+        "About 10 years of experience:\n• Trainer — Dejen TVET College (2004–2012): teaching, IT ops, lab systems\n• Trainer — Debre Elias TVET College (2012–2014): training & computer administration\nFocus: system administration, networking, multi-platform support, technical training.",
+      am:
+        "ወደ 10 ዓመት የስራ ልምድ:\n• አሰልጣኝ — Dejen TVET College (2004–2012)\n• አሰልጣኝ — Debre Elias TVET College (2012–2014)\nትኩረት: system administration, networking, technical training።",
+    },
+    {
+      keys: /education|degree|university|study|bsc|college|gpa|ትምህርት|ዩኒቨርሲቲ|ዲግሪ/,
+      en:
+        "Education (all completed):\n• BSc Computer Science — Bahir Dar University (2022–2026)\n  Coursework: DSA, OOP, databases, web, networks, OS, software engineering\n• Computer Hardware & Networking Technology — Bahir Dar Poly Technical College (2002–2004, GPA 3.45)\n• Computer Hardware & Networking Service — Debre Markos Poly College (2007)",
+      am:
+        "ትምህርት (ሁሉም ተጠናቅቋል):\n• BSc Computer Science — Bahir Dar University (2022–2026)\n• Computer Hardware & Networking — Bahir Dar Poly Technical College (2002–2004, GPA 3.45)\n• Computer Hardware & Networking Service — Debre Markos Poly College (2007)",
+    },
+    {
+      keys: /certif|award|coc|cybersecurity certificate|best worker|ሰርተፍ|ሽልማት/,
+      en:
+        "Certifications & awards:\n• Computer Hardware and Networking Technology Level IV\n• National Qualifications Certificates (COC)\n• Certificate in Computer Cybersecurity\n• Best Worker of the Year (2010) — Dejen TVET College",
+      am:
+        "ሰርተፍኬቶችና ሽልማቶች:\n• Hardware & Networking Technology Level IV\n• COC (National Qualifications)\n• Computer Cybersecurity certificate\n• Best Worker of the Year (2010) — Dejen TVET",
+    },
+    {
+      keys: /skill|stack|tech|html|python|javascript|strength|ክህሎት|ቴክኖሎጂ/,
+      en:
+        "Skills:\nSoft — problem solving, teamwork, communication, learning & adapting\nTechnical — HTML, CSS, JavaScript, Python, Java, Git, SQL, networking, system administration, cybersecurity, hardware, website design, video editing, technical training",
+      am:
+        "ክህሎቶች:\nSoft — problem solving, teamwork, communication\nTechnical — HTML, CSS, JS, Python, Java, Git, SQL, networking, system admin, cybersecurity, hardware, website design, training",
+    },
+    {
+      keys: /language|amharic|english|ቋንቋ|አማርኛ|እንግሊዝኛ/,
+      en: "Languages: Amharic — professional working proficiency; English — professional working proficiency.",
+      am: "ቋንቋዎች: አማርኛ — professional working proficiency፤ እንግሊዝኛ — professional working proficiency።",
+    },
+    {
+      keys: /volunteer|community|train communities|በጎ ፈቃድ/,
+      en: "Volunteer work: trains communities and organizations in practical technology use.",
+      am: "በጎ ፈቃድ: ማህበረሰቦችንና ድርጅቶችን በተግባራዊ ቴክኖሎጂ አጠቃቀም ያሰለጥናል።",
+    },
+    {
+      keys: /who|about|menelik|name|profile|introduce|ምኒልክ|ማን ነው|ስለ እሱ|hi\b|hello|ሰላም|ጤና/,
+      en:
+        "ምኒልክ አድማሱ (Menelik Admasu) is a Full-Stack App Developer, Computer Administrator, and Technical Trainer based in Bahir Dar, Ethiopia. BSc Computer Science (Bahir Dar University, 2022–2026) and about 10 years of IT/training experience. Email: " +
+        email,
+      am:
+        "ምኒልክ አድማሱ Full-Stack App Developer፣ Computer Administrator እና Technical Trainer ነው። ቦታው ባሕር ዳር፣ ኢትዮጵያ። BSc Computer Science (Bahir Dar University, 2022–2026) እና ወደ 10 ዓመት የ IT/training ልምድ አለው። ኢሜይል: " +
+        email,
+    },
+    {
+      keys: /site|website|this portfolio|menelik os|windows xp|android|sudoku|how (do|to) use|ጣቢያ|ፖርትፎሊዮ/,
+      en:
+        "This site is Menelik OS: a Windows XP-style desktop on large screens and an Android-style phone UI on mobile. Open apps from icons (About, Projects, Resume, Chats, Sudoku, Settings, …). Resume can be downloaded as PDF. Chat is this assistant.",
+      am:
+        "ይህ ጣቢያ Menelik OS ነው — በኮምፒውተር Windows XP-style፣ በስልክ Android-style። ከ icons Apps ይክፈቱ (About, Projects, Resume, Chats, …)። Resume እንደ PDF ማውረድ ይችላሉ።",
+    },
+  ];
+
+  for (const c of checks) {
+    if (c.keys.test(q) || c.keys.test(text)) return isAm ? c.am : c.en;
   }
 
-  if (/project|portfolio|demo|app|yen|cv|movie|typing|exam|ፕሮጀክት/.test(q + raw)) {
-    if (isAm) {
-      return (
-        "ዋና ፕሮጀክቶች:\n• Yeni Pro CV → https://procv.is-cool.dev\n• Yeni Movie → https://yeni-movie.vercel.app\n• Yeni Typing → https://fidel.is-local.dev\n• Yeni Exam → https://yeniexams.vercel.app/\n• ይህ Windows XP / Android style ፖርትፎሊዮ"
-      );
-    }
-    return (
-      "Featured projects:\n• Yeni Pro CV → https://procv.is-cool.dev\n• Yeni Movie → https://yeni-movie.vercel.app\n• Yeni Typing → https://fidel.is-local.dev\n• Yeni Exam → https://yeniexams.vercel.app/\n• This XP / Android-style portfolio site"
-    );
-  }
-
-  if (/experience|work|job|trainer|career|ስራ|ልምድ|አሰልጣኝ/.test(q + raw)) {
-    if (isAm) {
-      return (
-        "ምኒልክ ወደ ~10 ዓመት የስራ ልምድ አለው:\n• አሰልጣኝ — Dejen TVET College (2004–2012)\n• አሰልጣኝ — Debre Elias TVET College (2012–2014)\nትኩረት: system administration, networking, technical training።"
-      );
-    }
-    return (
-      "Menelik has about 10 years of experience:\n• Trainer — Dejen TVET College (2004–2012)\n• Trainer — Debre Elias TVET College (2012–2014)\nFocus: system administration, networking, and technical training."
-    );
-  }
-
-  if (/education|degree|university|study|bsc|ትምህርት|ዩኒቨርሲቲ|ዲግሪ/.test(q + raw)) {
-    if (isAm) {
-      return (
-        "ትምህርት:\n• BSc Computer Science — Bahir Dar University (2022–2026)\n• Computer Hardware & Networking — Bahir Dar Poly Technical College (2002–2004)"
-      );
-    }
-    return (
-      "Education:\n• BSc Computer Science — Bahir Dar University (2022–2026, completed)\n• Computer Hardware & Networking — Bahir Dar Poly Technical College (2002–2004)"
-    );
-  }
-
-  if (/skill|stack|tech|language|ክህሎት|ቴክኖሎጂ/.test(q + raw)) {
-    if (isAm) {
-      return "ክህሎቶች: HTML, CSS, JavaScript, Python, Java, Git, SQL, networking, system administration, cybersecurity, technical training።";
-    }
-    return "Skills include HTML, CSS, JavaScript, Python, Java, Git, SQL, networking, system administration, cybersecurity, and technical training.";
-  }
-
-  if (/who|about|menelik|name|ማን|ስለ|ምኒልክ|introduce|profile|hi|hello|ሰላም|ጤና/.test(q + raw)) {
-    if (isAm) {
-      return (
-        "ምኒልክ አድማሱ Full-Stack App Developer፣ Computer Administrator እና Technical Trainer ነው። በባሕር ዳር፣ ኢትዮጵያ ይገኛል። BSc Computer Science (Bahir Dar University) አለው፣ እና ~10 ዓመት የ IT / training ልምድ።\n\nኢሜይል: " +
+  return isAm
+    ? "ስለ ምኒልክ ማንኛውንም ጥያቄ መጠየቅ ይችላሉ — ስራ፣ ትምህርት፣ ፕሮጀክት፣ ክህሎት፣ ሰርተፍኬት፣ ወይም አድራሻ።\nለምሳሌ: «ፕሮጀክቶቹ ምንድን ናቸው?» «ትምህርቱ ምንድን ነው?»\n\nኢሜይል: " +
         email
-      );
-    }
-    return (
-      "Menelik Admasu is a Full-Stack App Developer, Computer Administrator, and Technical Trainer based in Bahir Dar, Ethiopia. He holds a BSc in Computer Science from Bahir Dar University and about 10 years of IT / training experience.\n\nEmail: " +
-      email
-    );
-  }
-
-  if (isAm) {
-    return (
-      "ስለ ምኒልክ፣ ፕሮጀክቶቹ፣ ስራው፣ ትምህርቱ ወይም አድራሻው መጠየቅ ይችላሉ።\nለምሳሌ: «ፕሮጀክቶቹ ምንድን ናቸው?» ወይም «ኢሜይል ምንድን ነው?»\n\nቀጥታ ኢሜይል: " +
-      email
-    );
-  }
-  return (
-    "You can ask about Menelik's background, projects, experience, education, skills, or contact details.\nExamples: “What projects has he built?” or “How do I email him?”\n\nDirect email: " +
-    email
-  );
+    : "Ask anything about Menelik — work, education, projects, skills, certificates, or contact.\nExamples: “What projects has he built?” “What is his education?”\n\nEmail: " +
+        email;
 }
