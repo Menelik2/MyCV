@@ -9773,7 +9773,7 @@ function initMobileTetris(root) {
 /** Mobile navigation stack (Apps folder → Notepad, etc.) */
 window.__mobilePageStack = window.__mobilePageStack || [];
 
-const APPS_FOLDER_CHILDREN = new Set(["notepad", "paint", "terminal", "voice"]);
+const APPS_FOLDER_CHILDREN = new Set(["notepad", "paint", "terminal", "voice", "snake"]);
 const GAMES_FOLDER_CHILDREN = new Set(["sudoku", "tetris", "snake", "blockblaster"]);
 
 function showPage(pageId, opts) {
@@ -9796,6 +9796,10 @@ function showPage(pageId, opts) {
         window.__mobilePageStack = ["apps"];
       } else if (pageId === "games") {
         window.__mobilePageStack = ["games"];
+      } else if (pageId === "snake") {
+        // Snake lives in both Apps and Games folders — keep parent if already there
+        if (top === "apps" || top === "games") stack.push(pageId);
+        else window.__mobilePageStack = ["apps", pageId];
       } else if (APPS_FOLDER_CHILDREN.has(pageId)) {
         if (top !== "apps") window.__mobilePageStack = ["apps", pageId];
         else stack.push(pageId);
@@ -9876,6 +9880,17 @@ function mobileGoBack() {
   const open = document.querySelector("#mobile .app-page:not([hidden])");
   if (open && open.id) {
     const id = open.id.replace(/^page-/, "");
+    if (id === "snake") {
+      const parent = (window.__mobilePageStack || [])[0];
+      if (parent === "games") {
+        window.__mobilePageStack = ["games"];
+        showPage("games", { fromBack: true });
+      } else {
+        window.__mobilePageStack = ["apps"];
+        showPage("apps", { fromBack: true });
+      }
+      return;
+    }
     if (APPS_FOLDER_CHILDREN.has(id)) {
       window.__mobilePageStack = ["apps"];
       showPage("apps", { fromBack: true });
