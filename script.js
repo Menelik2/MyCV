@@ -3687,56 +3687,9 @@ const WALLPAPER_BG = {
     dark: "linear-gradient(160deg, #0d1b2a 0%, #1b263b 50%, #415a77 100%)",
     light: "linear-gradient(160deg, #e3f2fd 0%, #90caf9 50%, #1565c0 100%)",
   },
-  sonoma: {
-    dark: "radial-gradient(ellipse 80% 60% at 20% 80%, rgba(255,180,140,0.55) 0%, transparent 55%), radial-gradient(ellipse 70% 50% at 85% 25%, rgba(140,190,255,0.5) 0%, transparent 50%), linear-gradient(165deg, #f5e6dc 0%, #c8d9f0 45%, #9bb8e0 100%)",
-    light: "radial-gradient(ellipse 80% 60% at 15% 85%, rgba(255,160,120,0.45) 0%, transparent 55%), radial-gradient(ellipse 70% 50% at 90% 20%, rgba(120,180,255,0.4) 0%, transparent 50%), linear-gradient(165deg, #fff5ef 0%, #d6e8fa 50%, #a8c8f0 100%)",
-  },
-  sequoia: {
-    dark: "radial-gradient(ellipse 90% 70% at 10% 90%, rgba(20,80,70,0.7) 0%, transparent 50%), radial-gradient(ellipse 60% 50% at 90% 15%, rgba(40,120,100,0.45) 0%, transparent 45%), linear-gradient(160deg, #0a1f1c 0%, #143d36 40%, #1a5c52 100%)",
-    light: "radial-gradient(ellipse 80% 60% at 20% 80%, rgba(80,160,140,0.4) 0%, transparent 55%), linear-gradient(160deg, #e8f5f2 0%, #b8ddd4 50%, #7eb8a8 100%)",
-  },
-  ventura: {
-    dark: "radial-gradient(ellipse 70% 55% at 15% 70%, rgba(120,60,180,0.55) 0%, transparent 55%), radial-gradient(ellipse 65% 50% at 85% 25%, rgba(60,100,220,0.5) 0%, transparent 50%), linear-gradient(155deg, #1a1030 0%, #2a1a50 40%, #1e2a60 100%)",
-    light: "radial-gradient(ellipse 70% 55% at 20% 75%, rgba(180,140,230,0.45) 0%, transparent 55%), linear-gradient(155deg, #f0e8ff 0%, #d4d0f5 45%, #b0c0f0 100%)",
-  },
-  monterey: {
-    dark: "radial-gradient(ellipse 100% 40% at 50% 100%, rgba(20,80,140,0.6) 0%, transparent 50%), linear-gradient(180deg, #0a1628 0%, #0e2848 35%, #143a60 70%, #1a4a70 100%)",
-    light: "radial-gradient(ellipse 100% 45% at 50% 100%, rgba(60,140,200,0.35) 0%, transparent 50%), linear-gradient(180deg, #e8f4fc 0%, #b8d8f0 40%, #78b0d8 100%)",
-  },
-  bigsur: {
-    dark: "linear-gradient(180deg, transparent 55%, rgba(20,50,40,0.85) 55%, #0a1a18 100%), radial-gradient(ellipse 50% 30% at 70% 22%, rgba(255,200,120,0.35) 0%, transparent 60%), linear-gradient(180deg, #1a3050 0%, #2a5080 25%, #3a7090 50%, #2a6050 100%)",
-    light: "linear-gradient(180deg, transparent 55%, rgba(80,140,110,0.5) 55%, #4a9070 100%), radial-gradient(ellipse 45% 28% at 75% 18%, rgba(255,220,150,0.5) 0%, transparent 55%), linear-gradient(180deg, #a8d0f0 0%, #90c0e8 30%, #78b0c8 55%, #68a090 100%)",
-  },
-  aurora: {
-    dark: "radial-gradient(ellipse 90% 40% at 20% 30%, rgba(40,220,160,0.35) 0%, transparent 50%), radial-gradient(ellipse 80% 35% at 70% 40%, rgba(80,120,255,0.4) 0%, transparent 50%), linear-gradient(180deg, #050a18 0%, #0a1528 40%, #0e1a30 100%)",
-    light: "radial-gradient(ellipse 90% 40% at 25% 35%, rgba(80,220,180,0.3) 0%, transparent 50%), linear-gradient(180deg, #e8f0ff 0%, #d0e0f8 50%, #b8d0f0 100%)",
-  },
-  horizon: {
-    dark: "radial-gradient(ellipse 100% 50% at 50% 100%, rgba(255,160,80,0.45) 0%, transparent 55%), linear-gradient(180deg, #1a2040 0%, #3a4060 30%, #8a6070 60%, #e09060 85%, #f0c080 100%)",
-    light: "radial-gradient(ellipse 100% 45% at 50% 100%, rgba(255,180,100,0.4) 0%, transparent 55%), linear-gradient(180deg, #c8d8f0 0%, #e0d0d8 40%, #f0c8a0 70%, #ffd8a8 100%)",
-  },
-  nebula: {
-    dark: "radial-gradient(ellipse 50% 40% at 30% 40%, rgba(180,60,200,0.45) 0%, transparent 55%), radial-gradient(ellipse 45% 35% at 70% 60%, rgba(60,80,220,0.4) 0%, transparent 50%), linear-gradient(160deg, #08051a 0%, #120a28 50%, #0a1028 100%)",
-    light: "radial-gradient(ellipse 50% 40% at 30% 40%, rgba(200,120,220,0.35) 0%, transparent 55%), linear-gradient(160deg, #f0e8ff 0%, #e0d8f8 50%, #d0d8f5 100%)",
-  },
-  midnight: {
-    dark: "radial-gradient(ellipse 70% 50% at 50% 110%, rgba(40,100,200,0.4) 0%, transparent 55%), linear-gradient(165deg, #050810 0%, #0a1220 40%, #0e1a30 100%)",
-    light: "radial-gradient(ellipse 70% 50% at 50% 110%, rgba(80,140,220,0.25) 0%, transparent 55%), linear-gradient(165deg, #e8eef8 0%, #d0dcec 50%, #b8cce0 100%)",
-  },
-  mint: {
-    dark: "radial-gradient(ellipse 80% 60% at 20% 30%, rgba(100,230,200,0.35) 0%, transparent 50%), linear-gradient(150deg, #0a201c 0%, #143830 45%, #1a5048 100%)",
-    light: "radial-gradient(ellipse 80% 60% at 25% 35%, rgba(140,240,210,0.4) 0%, transparent 50%), linear-gradient(150deg, #e8faf5 0%, #c0f0e4 50%, #90e0d0 100%)",
-  },
-  peach: {
-    dark: "radial-gradient(ellipse 90% 70% at 30% 80%, rgba(255,140,100,0.45) 0%, transparent 55%), linear-gradient(160deg, #2a1820 0%, #4a2830 40%, #6a3840 100%)",
-    light: "radial-gradient(ellipse 90% 70% at 25% 75%, rgba(255,160,120,0.4) 0%, transparent 55%), linear-gradient(160deg, #fff0ea 0%, #ffd8cc 50%, #ffc0b0 100%)",
-  },
-  slate: {
-    dark: "radial-gradient(ellipse 60% 40% at 70% 20%, rgba(100,140,180,0.25) 0%, transparent 55%), linear-gradient(155deg, #1a1e28 0%, #252a38 45%, #2e3444 100%)",
-    light: "radial-gradient(ellipse 60% 40% at 70% 20%, rgba(140,170,200,0.3) 0%, transparent 55%), linear-gradient(155deg, #f0f2f6 0%, #e0e4ec 50%, #c8d0dc 100%)",
-  },
 };
 
+/** Desktop-only wallpapers (old set). Not used on mobile. */
 function applyWallpaper(v, opts) {
   opts = opts || {};
   if (!v || !WALLPAPER_BG[v]) v = "default";
@@ -3750,11 +3703,9 @@ function applyWallpaper(v, opts) {
   document.body.dataset.wallpaper = v;
   const desk = document.getElementById("desktop");
   if (desk) desk.dataset.wallpaper = v;
-  const mobile = document.getElementById("mobile");
-  if (mobile) mobile.dataset.wallpaper = v;
 
-  // Desktop wallpaper layer — set inline so change is always visible
-  document.querySelectorAll(".wallpaper").forEach((el) => {
+  // Desktop wallpaper only — do not change mobile home screen
+  document.querySelectorAll("#desktop .wallpaper, .desktop > .wallpaper").forEach((el) => {
     el.style.background = bg;
     el.style.backgroundSize = "cover";
     el.style.filter = "none";
@@ -3764,14 +3715,6 @@ function applyWallpaper(v, opts) {
     }
   });
 
-  // Mobile home screen wallpaper
-  document.querySelectorAll(".home-screen").forEach((el) => {
-    el.dataset.wallpaper = v;
-    el.style.background = bg;
-    el.style.backgroundSize = "cover";
-  });
-
-  // Sync picker UI if open
   document.querySelectorAll(".wall-thumb").forEach((btn) => {
     btn.classList.toggle("is-active", btn.getAttribute("data-wall") === v);
   });
@@ -3869,22 +3812,10 @@ function buildControlPanel() {
       .join("");
 
   const wallList = [
-    ["default", "Default"],
-    ["green", "Green"],
+    ["default", "Default blue"],
+    ["green", "Green field"],
     ["sunset", "Sunset"],
-    ["night", "Night"],
-    ["sonoma", "Sonoma"],
-    ["sequoia", "Sequoia"],
-    ["ventura", "Ventura"],
-    ["monterey", "Monterey"],
-    ["bigsur", "Big Sur"],
-    ["aurora", "Aurora"],
-    ["horizon", "Horizon"],
-    ["nebula", "Nebula"],
-    ["midnight", "Midnight"],
-    ["mint", "Mint"],
-    ["peach", "Peach"],
-    ["slate", "Slate"],
+    ["night", "Deep night"],
   ];
   const wallOpts = wallList
     .map(
@@ -3958,15 +3889,17 @@ function buildControlPanel() {
     ">አማርኛ</option>" +
     "    </select>" +
     "  </label>" +
-    '  <div class="cp-wall-block">' +
-    '    <div class="cp-row cp-wall-label-row"><span data-i18n="wallpaper">Wallpaper</span></div>' +
-    '    <div class="wall-picker" role="listbox" aria-label="Wallpaper">' +
-    wallPickerHtml +
-    "    </div>" +
-    '    <select class="cp-wall cp-wall-select-fallback" hidden aria-label="Wallpaper">' +
-    wallOpts +
-    "    </select>" +
-    "  </div>" +
+    (mobileView
+      ? ""
+      : '  <div class="cp-wall-block">' +
+        '    <div class="cp-row cp-wall-label-row"><span data-i18n="wallpaper">Wallpaper</span></div>' +
+        '    <div class="wall-picker" role="listbox" aria-label="Wallpaper">' +
+        wallPickerHtml +
+        "    </div>" +
+        '    <select class="cp-wall cp-wall-select-fallback" hidden aria-label="Wallpaper">' +
+        wallOpts +
+        "    </select>" +
+        "  </div>") +
     (mobileView
       ? '  <label class="cp-row"><span>Home layout</span>' +
         '    <select class="cp-home-layout" aria-label="Home layout">' +
@@ -10630,10 +10563,19 @@ function resetScreensaverTimer() {
 resetScreensaverTimer();
 // Wallpaper from control panel
 (function () {
-  const w = localStorage.getItem("portfolio-wallpaper") || "default";
+  let w = localStorage.getItem("portfolio-wallpaper") || "default";
+  const allowed = { default: 1, green: 1, sunset: 1, night: 1 };
+  if (!allowed[w]) {
+    w = "default";
+    try { localStorage.setItem("portfolio-wallpaper", "default"); } catch (_) {}
+  }
   document.body.dataset.wallpaper = w;
-  // Defer until DOM wallpaper nodes exist
   const run = () => {
+    // Clear any previous mobile home wallpaper overrides
+    document.querySelectorAll(".home-screen").forEach((el) => {
+      el.style.background = "";
+      el.removeAttribute("data-wallpaper");
+    });
     if (typeof applyWallpaper === "function") applyWallpaper(w, { silent: true });
   };
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", run);
