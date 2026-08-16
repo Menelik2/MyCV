@@ -60,7 +60,9 @@
       '<div class="chat-box" id="chatBox" role="dialog" aria-label="Chat assistant">' +
       '  <div class="chat-header"><h3>🤖 ረዳት</h3><span>ኦንላይን</span></div>' +
       '  <div class="chat-messages" id="chatMessages">' +
-      '    <div class="message bot">ጤና ይስጥልኝ! ስለ Menelik፣ ፕሮጀክቶቹ፣ ወይም ስራው ይጠይቁኝ። How can I help? 😊</div>' +
+      '    <div class="message bot">ጤና ይስጥልኝ! 👋 የ Menelik Admasu ፖርትፎሊዮ ረዳት ነኝ። ስለ እሱ፣ ስራው፣ ፕሮጀክቶቹ ወይም እንዴት ማግኘት እንደሚችሉ ይጠይቁኝ።
+
+Hi! I'm Menelik's portfolio assistant. Ask about his work, projects, or how to reach him.</div>' +
       "  </div>" +
       '  <div class="chat-input-area">' +
       '    <input type="text" id="chatInput" placeholder="መልእክትዎን ይጻፉ..." autocomplete="off" />' +
