@@ -336,7 +336,7 @@
               <a class="proj-btn" href="#" data-nav="menelik://home">Home</a>
             </div>
             <iframe class="edge-frame" title="Microsoft Edge" referrerpolicy="no-referrer-when-downgrade" allow="fullscreen"></iframe>
-            <div class="edge-frame-note muted">If this page stays blank, the site blocks embedding — use “Open in system browser”.</div>
+            <div class="edge-frame-note muted">Loading preview… If you see “content is blocked”, use <strong>Open in system browser</strong> (some sites refuse iframes).</div>
           </div>`;
         const codeEl = body.querySelector(".edge-ext-code");
         if (codeEl) codeEl.textContent = url;
@@ -350,17 +350,33 @@
           });
         }
         const frame = body.querySelector(".edge-frame");
+        const note = body.querySelector(".edge-frame-note");
         if (frame) {
           try {
             frame.src = url;
+            let loaded = false;
             frame.addEventListener("load", () => {
+              loaded = true;
               status.textContent = "Done";
+              if (note) note.textContent = "Preview loaded in Microsoft Edge.";
             });
             setTimeout(() => {
-              if (status.textContent.indexOf("Opening") === 0) {
-                status.textContent = "Done — if blank, site blocks iframe preview";
+              if (!loaded && note) {
+                note.innerHTML =
+                  "Preview may be blocked by this site’s security settings. " +
+                  "<a class="edge-open-ext-fallback" href="#">Open in system browser ↗</a>";
+                const fb = note.querySelector(".edge-open-ext-fallback");
+                if (fb) {
+                  fb.addEventListener("click", (e) => {
+                    e.preventDefault();
+                    window.open(url, "_blank", "noopener,noreferrer");
+                  });
+                }
+                status.textContent = "Blocked or slow — try system browser";
+              } else if (status.textContent.indexOf("Opening") === 0) {
+                status.textContent = "Done";
               }
-            }, 2500);
+            }, 2800);
           } catch (_) {
             status.textContent = "Done";
           }
