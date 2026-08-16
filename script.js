@@ -3669,7 +3669,7 @@ function buildRecycleBin() {
   return wrap;
 }
 
-/* ========== Wallpaper engine (real visible apply) ========== */
+/* ========== Wallpaper engine (desktop only, original set) ========== */
 const WALLPAPER_BG = {
   default: {
     dark: "radial-gradient(ellipse at 30% 20%, rgba(255,255,255,0.12) 0%, transparent 50%), linear-gradient(160deg, #3a6ea5 0%, #2a5080 40%, #1e3a5f 100%)",
@@ -3689,7 +3689,6 @@ const WALLPAPER_BG = {
   },
 };
 
-/** Desktop-only wallpapers (old set). Not used on mobile. */
 function applyWallpaper(v, opts) {
   opts = opts || {};
   if (!v || !WALLPAPER_BG[v]) v = "default";
@@ -3704,7 +3703,7 @@ function applyWallpaper(v, opts) {
   const desk = document.getElementById("desktop");
   if (desk) desk.dataset.wallpaper = v;
 
-  // Desktop wallpaper only — do not change mobile home screen
+  // Desktop only — do not change mobile home screen
   document.querySelectorAll("#desktop .wallpaper, .desktop > .wallpaper").forEach((el) => {
     el.style.background = bg;
     el.style.backgroundSize = "cover";
@@ -3730,6 +3729,7 @@ function applyWallpaper(v, opts) {
 }
 
 window.applyWallpaper = applyWallpaper;
+
 
 /* ========== Control Panel ========== */
 function applyIconSizes(desktopSize, startSize, spacing) {
@@ -3896,7 +3896,7 @@ function buildControlPanel() {
         '    <div class="wall-picker" role="listbox" aria-label="Wallpaper">' +
         wallPickerHtml +
         "    </div>" +
-        '    <select class="cp-wall cp-wall-select-fallback" hidden aria-label="Wallpaper">' +
+        '    <select class="cp-wall" aria-label="Wallpaper" style="margin-top:8px;width:100%">' +
         wallOpts +
         "    </select>" +
         "  </div>") +
@@ -10571,12 +10571,12 @@ resetScreensaverTimer();
   }
   document.body.dataset.wallpaper = w;
   const run = () => {
-    // Clear any previous mobile home wallpaper overrides
+    if (typeof applyWallpaper === "function") applyWallpaper(w, { silent: true });
+    // Clear any leftover mobile home-screen inline wallpaper
     document.querySelectorAll(".home-screen").forEach((el) => {
       el.style.background = "";
       el.removeAttribute("data-wallpaper");
     });
-    if (typeof applyWallpaper === "function") applyWallpaper(w, { silent: true });
   };
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", run);
   else setTimeout(run, 0);
