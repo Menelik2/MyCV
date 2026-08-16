@@ -14,7 +14,7 @@ const CONTENT = {
       </div>
       <p>I am a detail-oriented computer administrator who keeps systems running smoothly. With strong IT and administrative experience, I handle day-to-day technical responsibilities effectively and efficiently.</p>
       <p>I am also a <strong>full-stack app developer</strong>. I build complete applications — from the user interface to back-end logic, APIs, and deployment.</p>
-      <p>I completed a BSc in Computer Science at Bahir Dar University (2022 – 2026), after earlier training in computer hardware and networking. I enjoy building practical tools — including this portfolio.</p>
+      <p>I completed a BSc in Computer Science at Bahir Dar University (2022 – 2026), after earlier training in computer hardware and networking. I enjoy building practical tools, including this portfolio.</p>
       <h3>Interests</h3>
       <ul>
         <li>Full-stack web and app development</li>
@@ -532,7 +532,7 @@ const CONTENT = {
         <span class="tag">Git &amp; GitHub</span>
         <span class="tag">SQL</span>
         <span class="tag">Responsive Design</span>
-        <span class="tag">Web Site Design</span>
+        <span class="tag">Website Design</span>
         <span class="tag">Video Editing</span>
         <span class="tag">Computer Networking</span>
         <span class="tag">Cybersecurity</span>
@@ -597,7 +597,7 @@ const CONTENT = {
         <label>Email<input type="email" name="email" required placeholder="you@example.com" autocomplete="email" /></label>
         <label>Message<textarea name="message" rows="4" required placeholder="How can I help?"></textarea></label>
         <button type="submit" class="proj-btn primary" id="contact-send-btn">Send message</button>
-        <p class="contact-form-note">Messages are sent securely via Formspree.</p>
+        <p class="contact-form-note">Messages are sent securely through Formspree.</p>
         <p class="contact-form-status" id="contact-form-status" hidden role="status"></p>
       </form>
     `
@@ -10292,11 +10292,11 @@ function runBootSequence() {
     if (i >= steps.length) {
       readyToEnter = true;
       if (status) {
-        status.textContent = "Click button to Enter";
+        status.textContent = "Click the button to enter";
       }
       if (startBtn) {
         startBtn.hidden = false;
-        startBtn.textContent = "Click button to Enter";
+        startBtn.textContent = "Click the button to enter";
         startBtn.focus();
       }
       return;
@@ -10353,11 +10353,11 @@ setTimeout(() => {
   const status = document.getElementById("boot-status");
   const fill = boot.querySelector(".boot-bar-fill");
   if (fill) fill.style.width = "100%";
-  if (status) status.textContent = "Click button to Enter";
+  if (status) status.textContent = "Click the button to enter";
   if (startBtn) {
     startBtn.hidden = false;
     startBtn.disabled = false;
-    startBtn.textContent = "Click button to Enter";
+    startBtn.textContent = "Click the button to enter";
   }
 }, 5000);
 

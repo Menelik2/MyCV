@@ -275,7 +275,7 @@ function localAnswer(raw) {
     );
   }
   return (
-    "You can ask about Menelik’s background, projects, experience, education, skills, or contact details.\n" +
+    "You can ask about Menelik's background, projects, experience, education, skills, or contact details.\n" +
     "Examples: “What projects has he built?” or “How do I email him?”\n\n" +
     "Direct email: " +
     email

@@ -1169,7 +1169,7 @@ END:VCARD`;
         <ul>
           <li><strong>Stuck on startup?</strong> Click the green button or press Enter. Wait a few seconds for auto-start.</li>
           <li><strong>No fullscreen?</strong> Your browser may block it — the desktop still works. Try clicking the start button again.</li>
-          <li><strong>No sound?</strong> Unmute the tab and check Control Panel → sounds. Media Player needs one click to unlock audio.</li>
+          <li><strong>No sound?</strong> Unmute the tab and check Control Panel → Sounds. Media Player needs one click to unlock audio.</li>
           <li><strong>Empty program window?</strong> Hard-refresh the page (Ctrl+Shift+R), then open the program again.</li>
           <li><strong>Offline?</strong> The main desktop still works; live GitHub data needs internet.</li>
         </ul>
