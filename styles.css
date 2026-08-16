@@ -9402,3 +9402,46 @@ body.no-ui-anim .app-page {
     display: none !important;
   }
 }
+
+
+/* Edge: opened external site confirmation */
+.edge-opened {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100%;
+  padding: 24px;
+  box-sizing: border-box;
+  background: linear-gradient(160deg, #e8f4fc 0%, #f5f7fa 100%);
+}
+.edge-opened-card {
+  max-width: 420px;
+  width: 100%;
+  background: #fff;
+  border: 1px solid #c5d0dc;
+  border-radius: 12px;
+  padding: 20px 22px;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
+  font-family: "Segoe UI", Tahoma, sans-serif;
+  color: #1e293b;
+}
+.edge-opened-card .edge-ext-code {
+  display: block;
+  word-break: break-all;
+  font-size: 12px;
+  background: #f1f5f9;
+  padding: 8px 10px;
+  border-radius: 6px;
+}
+body:not(.light) .edge-opened {
+  background: linear-gradient(160deg, #0f172a 0%, #1e293b 100%);
+}
+body:not(.light) .edge-opened-card {
+  background: #1e1e24;
+  border-color: #334155;
+  color: #e2e8f0;
+}
+body:not(.light) .edge-opened-card .edge-ext-code {
+  background: #0f172a;
+  color: #93c5fd;
+}
