@@ -760,6 +760,7 @@ const APPS = {
   minesweeper: { title: "Minesweeper", iconClass: "minesweeper-icon", interactive: true },
   sudoku: { title: "Sudoku", iconClass: "sudoku-icon", interactive: true },
   snake: { title: "Snake", iconClass: "snake-icon", interactive: true },
+  tetris: { title: "Tetris", iconClass: "tetris-icon", interactive: true },
   chat: { title: "Chats — Menelik OS", iconClass: "chat-icon", interactive: true },
   control: { title: "Control Panel", iconClass: "control-icon", interactive: true },
   recycle: { title: "Recycle Bin", iconClass: "recycle-icon", interactive: true },
@@ -3253,6 +3254,11 @@ function buildSudoku() {
       startTimer();
     }
     if (notesOn) {
+      // Only allow a note if the digit is legal in this cell
+      if (!canPlace(selected, d)) {
+        setStatus("Note " + d + " is not allowed here (row/col/box).");
+        return;
+      }
       board[selected] = 0;
       if (noteMap[selected].has(d)) noteMap[selected].delete(d);
       else noteMap[selected].add(d);
@@ -3260,26 +3266,38 @@ function buildSudoku() {
       return;
     }
 
-    // Validation: allow entry, then flag rule conflicts
-    board[selected] = d;
-    noteMap[selected].clear();
-    render();
-
-    if (conflicts(selected)) {
+    // Core Sudoku rule: digit must be unique in row, column, and box
+    if (!canPlace(selected, d)) {
       setStatus("Invalid — " + d + " already used in this row, column, or box.");
+      // Still show brief conflict highlight without committing? allow overwrite only if same cell
+      // Keep previous value; flash selection
+      render();
       return;
     }
-    if (solution[selected] && d !== solution[selected]) {
-      // Soft hint only when checking later; keep play free
+
+    board[selected] = d;
+    noteMap[selected].clear();
+    // Eliminate this digit from peer notes (logic assist)
+    const [r, c] = rc(selected);
+    for (let k = 0; k < 9; k++) {
+      noteMap[idx(r, k)].delete(d);
+      noteMap[idx(k, c)].delete(d);
     }
-    if (isComplete()) onSolved();
-    else {
+    const br = Math.floor(r / 3) * 3;
+    const bc = Math.floor(c / 3) * 3;
+    for (let dr = 0; dr < 3; dr++)
+      for (let dc = 0; dc < 3; dc++) noteMap[idx(br + dr, bc + dc)].delete(d);
+
+    render();
+
+    if (isComplete()) {
+      // Full grid: verify uniqueness rules + match unique solution
+      const report = validateBoard({ againstSolution: true });
+      if (report.ok && report.complete) onSolved();
+      else setStatus(report.message || "Grid filled but not solved.");
+    } else {
       const left = board.filter((x) => !x).length;
-      setStatus(left ? left + " empty cell(s) remaining." : "Checking…");
-      if (!left) {
-        const report = validateBoard();
-        setStatus(report.message);
-      }
+      setStatus(left + " empty cell(s) remaining.");
     }
   }
 
@@ -7399,6 +7417,7 @@ function getAppBody(id) {
   if (id === "minesweeper") return buildMinesweeper();
   if (id === "sudoku") return buildSudoku();
   if (id === "snake") return buildSnake();
+  if (id === "tetris") return buildTetris();
   if (id === "chat") return buildChatApp();
   if (id === "control") return buildControlPanel();
   if (id === "recycle") return buildRecycleBin();
@@ -8184,6 +8203,7 @@ function openWindow(id) {
     minesweeper: { w: 320, h: 380 },
     sudoku: { w: 400, h: 560 },
     snake: { w: 380, h: 480 },
+    tetris: { w: 420, h: 560 },
     chat: { w: 380, h: 520 },
     control: { w: 440, h: 520 },
     recycle: { w: 400, h: 320 },
@@ -8888,6 +8908,51 @@ function mobileContent(key) {
     .replace(/class="tag"/g, 'style="font-size:11px;background:rgba(10,132,255,0.15);color:var(--accent);padding:3px 8px;border-radius:6px;"');
 }
 
+
+function buildTetris() {
+  const wrap = document.createElement("div");
+  wrap.className = "tt-shell tt-desktop";
+  wrap.style.height = "100%";
+  wrap.innerHTML =
+    '<div class="tt-device">' +
+    '  <div class="tt-brand">TETRIS</div>' +
+    '  <div class="tt-screen-wrap">' +
+    '    <canvas class="tt-board" width="200" height="400" aria-label="Tetris board"></canvas>' +
+    '    <div class="tt-side">' +
+    '      <div class="tt-stat"><span>Score</span><strong class="tt-score">0</strong></div>' +
+    '      <div class="tt-stat"><span>Best</span><strong class="tt-best">0</strong></div>' +
+    '      <div class="tt-stat"><span>Lines</span><strong class="tt-lines">0</strong></div>' +
+    '      <div class="tt-stat"><span>Level</span><strong class="tt-level">1</strong></div>' +
+    '      <div class="tt-stat"><span>Hold</span><canvas class="tt-hold" width="64" height="64"></canvas></div>' +
+    '      <div class="tt-stat"><span>Next</span><canvas class="tt-next" width="64" height="64"></canvas></div>' +
+    '    </div>' +
+    '    <div class="tt-overlay tt-start">' +
+    '      <p class="tt-overlay-msg">Tetris</p>' +
+    '      <p class="tt-overlay-sub">Arrow keys · Z rotate · C hold · Space drop</p>' +
+    '      <button type="button" class="tt-btn tt-restart">Start</button>' +
+    '    </div>' +
+    '  </div>' +
+    '  <div class="tt-controls">' +
+    '    <div class="tt-row">' +
+    '      <button type="button" class="tt-btn" data-act="hold" title="Hold">H</button>' +
+    '      <button type="button" class="tt-btn tt-pause" data-act="pause" title="Pause">❚❚</button>' +
+    '      <button type="button" class="tt-btn tt-sound" data-act="sound" title="Sound">♪</button>' +
+    '      <button type="button" class="tt-btn tt-reset" data-act="reset" title="New game">↺</button>' +
+    '    </div>' +
+    '    <div class="tt-dpad">' +
+    '      <button type="button" class="tt-pad tt-rot" data-act="rotate" aria-label="Rotate">↻</button>' +
+    '      <button type="button" class="tt-pad tt-left" data-act="left" aria-label="Left">◀</button>' +
+    '      <button type="button" class="tt-pad tt-down" data-act="down" aria-label="Soft drop">▼</button>' +
+    '      <button type="button" class="tt-pad tt-right" data-act="right" aria-label="Right">▶</button>' +
+    '      <button type="button" class="tt-pad tt-drop" data-act="drop" aria-label="Hard drop">⬇ DROP</button>' +
+    '    </div>' +
+    '  </div>' +
+    '</div>';
+  // Reuse shared Tetris engine
+  initMobileTetris(wrap);
+  return wrap;
+}
+
 function mountMobileGame(body) {
   body.classList.add("page-body-full");
   body.innerHTML = "";
@@ -9306,6 +9371,25 @@ function initMobileTetris(root) {
       }
     }
     if (piece && started && !over) {
+      // Ghost piece (hard-drop preview)
+      let gy = 0;
+      while (!collides(piece, 0, gy + 1)) gy++;
+      if (gy > 0) {
+        const s = piece.shape;
+        for (let y = 0; y < s.length; y++) {
+          for (let x = 0; x < s[y].length; x++) {
+            if (!s[y][x]) continue;
+            drawCell(
+              ctx,
+              (piece.x + x) * cellW,
+              (piece.y + gy + y) * cellH,
+              cellW,
+              COLORS[piece.type],
+              0.22
+            );
+          }
+        }
+      }
       const s = piece.shape;
       for (let y = 0; y < s.length; y++) {
         for (let x = 0; x < s[y].length; x++) {
@@ -9406,18 +9490,11 @@ function initMobileTetris(root) {
       piece.y++;
       dist++;
     }
+    // Guideline-style hard drop: 2 pts per cell
     score += dist * 2;
     updateHud();
     lockPiece();
     beep(300, 0.04);
-  }
-
-  function move(dx) {
-    if (!started || over || paused || !piece) return;
-    if (!collides(piece, dx, 0)) {
-      piece.x += dx;
-      beep(180, 0.015);
-    }
   }
 
   function tryRotate() {

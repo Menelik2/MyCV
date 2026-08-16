@@ -8843,3 +8843,19 @@ body.light .chats-export {
 @media (min-width: 900px) {
   .snake-pad { display: none; }
 }
+
+.tetris-icon, .sm-icon.tetris-icon {
+  background: linear-gradient(145deg, #0ea5e9, #0369a1);
+}
+.app-img.tetris {
+  border-radius: 16px;
+}
+.tt-desktop {
+  height: 100%;
+  min-height: 0;
+  overflow: auto;
+}
+.tt-desktop .tt-device {
+  max-width: 100%;
+  margin: 0 auto;
+}
