@@ -3748,6 +3748,18 @@ function buildControlPanel() {
     ["green", "Green field"],
     ["sunset", "Sunset"],
     ["night", "Deep night"],
+    ["sonoma", "Sonoma (Apple)"],
+    ["sequoia", "Sequoia (Apple)"],
+    ["ventura", "Ventura (Apple)"],
+    ["monterey", "Monterey waves"],
+    ["bigsur", "Big Sur hills"],
+    ["aurora", "Aurora Borealis"],
+    ["horizon", "Soft horizon"],
+    ["nebula", "Deep nebula"],
+    ["midnight", "Midnight glow"],
+    ["mint", "Mint glass"],
+    ["peach", "Peach bloom"],
+    ["slate", "Modern slate"],
   ]
     .map(
       ([v, label]) =>
