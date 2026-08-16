@@ -9576,6 +9576,20 @@ document.addEventListener("click", (e) => {
 /* ========== Contact form -> Gmail via Formspree (or mailto fallback) ========== */
 const PORTFOLIO_CONTACT_EMAIL = "linuxos777@gmail.com";
 
+/** Auto-reply sent to the visitor (Formspree _autoresponse). */
+const PORTFOLIO_CONTACT_AUTOREPLY =
+  "Thank you for contacting Menelik Admasu.\n\n" +
+  "I received your message and will reply as soon as possible.\n\n" +
+  "— Menelik Admasu\n" +
+  "Full-Stack App Developer · Computer Administrator\n" +
+  "Bahir Dar, Ethiopia\n" +
+  "Email: linuxos777@gmail.com\n" +
+  "LinkedIn: https://www.linkedin.com/in/menelik7\n" +
+  "Portfolio: https://menelik.webhop.me\n\n" +
+  "---\n" +
+  "አመሰግናለሁ! መልእክትዎ ደርሶኛል። በቅርቡ እመልስልዎታለሁ።\n" +
+  "— መነሊክ አድማሱ";
+
 function getFormspreeId() {
   try {
     const ls = localStorage.getItem("menelik-formspree-id");
@@ -9665,6 +9679,7 @@ document.addEventListener("submit", async (e) => {
         message: message,
         _replyto: email,
         _subject: "Portfolio contact from " + name,
+        _autoresponse: PORTFOLIO_CONTACT_AUTOREPLY,
       }),
     });
     const data = await res.json().catch(() => ({}));
@@ -9676,9 +9691,9 @@ document.addEventListener("submit", async (e) => {
       throw new Error(errMsg);
     }
     form.reset();
-    setContactStatus(form, "Sent! Your message was delivered to " + PORTFOLIO_CONTACT_EMAIL + ".", "ok");
+    setContactStatus(form, "Sent! Check your inbox for an auto-reply from " + PORTFOLIO_CONTACT_EMAIL + ".", "ok");
     if (typeof showXpDialog === "function") {
-      showXpDialog("Contact", "Thanks! Your message was sent to " + PORTFOLIO_CONTACT_EMAIL + ".");
+      showXpDialog("Contact", "Thanks! Your message was sent. You should also receive an automatic confirmation email.");
     }
   } catch (err) {
     console.error("[contact]", err);
