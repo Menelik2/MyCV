@@ -9,9 +9,9 @@
     Cache bust: bump window.__MENELIK_V__ + the ?v= values below on every public deploy
     so browsers and CDNs treat assets as new URLs.
   -->
-  <script>window.__MENELIK_V__ = "20260817edge";</script>
-  <link rel="stylesheet" href="styles.css?v=20260817edge" />
-  <link rel="manifest" href="manifest.webmanifest?v=20260817edge" />
+  <script>window.__MENELIK_V__ = "20260817ehome";</script>
+  <link rel="stylesheet" href="styles.css?v=20260817ehome" />
+  <link rel="manifest" href="manifest.webmanifest?v=20260817ehome" />
   <link rel="apple-touch-icon" href="static/images/profile-320.webp" />
   <!-- Optimized profile photo preload (responsive sizes) -->
   <link rel="preload" href="static/images/profile-128.webp" as="image" type="image/webp" />
@@ -322,6 +322,10 @@
                 <div class="app-img games-folder"></div>
                 <span>Games</span>
               </button>
+              <button class="app-icon" data-page="edge">
+                <div class="app-img edge"></div>
+                <span>Edge</span>
+              </button>
               <button class="app-icon" data-page="chat">
                 <div class="app-img chat"></div>
                 <span>Chat</span>
@@ -341,6 +345,7 @@
             <div class="dock">
               <button class="app-icon" data-page="about"><div class="app-img about"></div></button>
               <button class="app-icon" data-page="projects"><div class="app-img projects"></div></button>
+              <button class="app-icon" data-page="edge" title="Edge"><div class="app-img edge"></div></button>
               <button class="app-icon" data-page="apps"><div class="app-img apps-folder"></div></button>
               <button class="theme-toggle-mobile" id="theme-toggle-mobile">
                 <span class="sun">☀</span>
@@ -424,10 +429,6 @@
                 <button class="app-icon" data-page="voice">
                   <div class="app-img voice"></div>
                   <span>Voice Room</span>
-                </button>
-                <button class="app-icon" data-page="edge">
-                  <div class="app-img edge"></div>
-                  <span>Edge</span>
                 </button>
               </div>
             </div>
@@ -562,8 +563,8 @@
     </div>
   </div>
 
-  <script src="script.js?v=20260817edge"></script>
-  <script src="features-extra.js?v=20260817edge"></script>
-  <script src="chat-widget.js?v=20260817edge"></script>
+  <script src="script.js?v=20260817ehome"></script>
+  <script src="features-extra.js?v=20260817ehome"></script>
+  <script src="chat-widget.js?v=20260817ehome"></script>
 </body>
 </html>

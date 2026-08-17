@@ -10615,7 +10615,7 @@ function initMobileTetris(root) {
 /** Mobile navigation stack (Apps folder → Notepad, etc.) */
 window.__mobilePageStack = window.__mobilePageStack || [];
 
-const APPS_FOLDER_CHILDREN = new Set(["notepad", "paint", "terminal", "voice", "edge"]);
+const APPS_FOLDER_CHILDREN = new Set(["notepad", "paint", "terminal", "voice"]);
 const GAMES_FOLDER_CHILDREN = new Set(["sudoku", "tetris", "snake", "blockblaster"]);
 
 function showPage(pageId, opts) {
