@@ -9,9 +9,9 @@
     Cache bust: bump window.__MENELIK_V__ + the ?v= values below on every public deploy
     so browsers and CDNs treat assets as new URLs.
   -->
-  <script>window.__MENELIK_V__ = "20260817esmall";</script>
-  <link rel="stylesheet" href="styles.css?v=20260817esmall" />
-  <link rel="manifest" href="manifest.webmanifest?v=20260817esmall" />
+  <script>window.__MENELIK_V__ = "20260817mario";</script>
+  <link rel="stylesheet" href="styles.css?v=20260817mario" />
+  <link rel="manifest" href="manifest.webmanifest?v=20260817mario" />
   <link rel="apple-touch-icon" href="static/images/profile-320.webp" />
   <!-- Optimized profile photo preload (responsive sizes) -->
   <link rel="preload" href="static/images/profile-128.webp" as="image" type="image/webp" />
@@ -98,6 +98,10 @@
       <button class="icon" data-window="sudoku">
         <div class="icon-img sudoku-icon"></div>
         <span>Sudoku</span>
+      </button>
+      <button class="icon" data-window="mario">
+        <div class="icon-img mario-icon"></div>
+        <span>Mario</span>
       </button>
       <button class="icon" data-window="chat">
         <div class="icon-img chat-icon"></div>
@@ -214,6 +218,7 @@
           <button data-window="vscode"><span class="sm-icon vscode-icon"></span> Liveweave</button>
           <button data-window="minesweeper"><span class="sm-icon minesweeper-icon"></span> Minesweeper</button>
           <button data-window="sudoku"><span class="sm-icon sudoku-icon"></span> Sudoku</button>
+          <button data-window="mario"><span class="sm-icon mario-icon"></span> Super Mario</button>
           <button data-window="snake"><span class="sm-icon snake-icon"></span> Snake</button>
           <button data-window="tetris"><span class="sm-icon tetris-icon"></span> Tetris</button>
           <button data-window="chat"><span class="sm-icon chat-icon"></span> Chat</button>
@@ -405,6 +410,10 @@
                   <div class="app-img snake"></div>
                   <span>Snake</span>
                 </button>
+                <button class="app-icon" data-page="mario">
+                  <div class="app-img mario"></div>
+                  <span>Mario</span>
+                </button>
               </div>
             </div>
           </div>
@@ -457,6 +466,10 @@
           <div class="app-page" id="page-snake" hidden>
             <div class="page-header"><button class="back-btn">‹ Back</button><h2>Snake</h2></div>
             <div class="page-body page-body-full" id="content-snake"></div>
+          </div>
+          <div class="app-page" id="page-mario" hidden>
+            <div class="page-header"><button class="back-btn">‹ Back</button><h2>Super Mario</h2></div>
+            <div class="page-body page-body-full" id="content-mario"></div>
           </div>
           <div class="app-page" id="page-chat" hidden>
             <div class="page-header"><button class="back-btn">‹ Back</button><h2>Chats</h2></div>
@@ -563,8 +576,9 @@
     </div>
   </div>
 
-  <script src="script.js?v=20260817esmall"></script>
-  <script src="features-extra.js?v=20260817esmall"></script>
-  <script src="chat-widget.js?v=20260817esmall"></script>
+  <script src="mario-game.js?v=20260817mario"></script>
+  <script src="script.js?v=20260817mario"></script>
+  <script src="features-extra.js?v=20260817mario"></script>
+  <script src="chat-widget.js?v=20260817mario"></script>
 </body>
 </html>

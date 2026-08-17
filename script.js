@@ -760,6 +760,7 @@ const APPS = {
   minesweeper: { title: "Minesweeper", iconClass: "minesweeper-icon", interactive: true },
   sudoku: { title: "Sudoku", iconClass: "sudoku-icon", interactive: true },
   snake: { title: "Snake", iconClass: "snake-icon", interactive: true },
+  mario: { title: "Super Mario", iconClass: "mario-icon", interactive: true },
   tetris: { title: "Tetris", iconClass: "tetris-icon", interactive: true },
   chat: { title: "Chats — Menelik OS", iconClass: "chat-icon", interactive: true },
   control: { title: "Control Panel", iconClass: "control-icon", interactive: true },
@@ -800,6 +801,7 @@ const I18N = {
     edge: "Edge",
     games: "Games",
     snake: "Snake",
+    mario: "Mario",
     notepad: "Notepad",
     paint: "Paint",
     voice: "Voice Room",
@@ -841,6 +843,7 @@ const I18N = {
     edge: "ኤጅ",
     games: "ጨዋታዎች",
     snake: "እባብ",
+    mario: "ማሪዮ",
     notepad: "ማስታወሻ",
     paint: "ቀለም",
     voice: "የድምጽ ክፍል",
@@ -8251,6 +8254,7 @@ function getAppBody(id) {
   if (id === "minesweeper") return buildMinesweeper();
   if (id === "sudoku") return buildSudoku();
   if (id === "snake") return buildSnake();
+  if (id === "mario") return typeof buildMario === "function" ? buildMario() : document.createElement("div");
   if (id === "tetris") return buildTetris();
   if (id === "chat") return buildChatApp();
   if (id === "control") return buildControlPanel();
@@ -9037,6 +9041,7 @@ function openWindow(id) {
     minesweeper: { w: 320, h: 380 },
     sudoku: { w: 400, h: 560 },
     snake: { w: 380, h: 480 },
+    mario: { w: 520, h: 480 },
     tetris: { w: 420, h: 560 },
     chat: { w: 380, h: 520 },
     control: { w: 440, h: 520 },
@@ -10616,7 +10621,7 @@ function initMobileTetris(root) {
 window.__mobilePageStack = window.__mobilePageStack || [];
 
 const APPS_FOLDER_CHILDREN = new Set(["notepad", "paint", "terminal", "voice"]);
-const GAMES_FOLDER_CHILDREN = new Set(["sudoku", "tetris", "snake", "blockblaster"]);
+const GAMES_FOLDER_CHILDREN = new Set(["sudoku", "tetris", "snake", "mario", "blockblaster"]);
 
 function showPage(pageId, opts) {
   opts = opts || {};
