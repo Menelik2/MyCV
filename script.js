@@ -135,7 +135,7 @@ const CONTENT = {
     iconClass: `projects-icon`,
     html: `
 <h2>Featured Projects</h2>
-      <p class="proj-intro">Visual previews below — open a live demo or explore highlights. Links open in a new tab.</p>
+      <p class="proj-intro">Visual previews below — open a live demo or explore highlights. Live links open in Microsoft Edge.</p>
 
       <div class="project-card" data-project="yeni-movie">
         <div class="proj-header">
@@ -752,7 +752,7 @@ const CONTENT = {
 
 /* Interactive apps meta */
 const APPS = {
-  notepad: { title: "Untitled — Notepad", iconClass: "notepad-icon", interactive: true },
+  notepad: { title: "Untitled - Notepad", iconClass: "notepad-icon", interactive: true },
   paint: { title: "untitled - Paint", iconClass: "paint-icon", interactive: true },
   vector: { title: "Vector Graphics", iconClass: "vector-icon", interactive: true },
   terminal: { title: "Terminal — menelik@bahirdar", iconClass: "terminal-icon", interactive: true },
@@ -765,7 +765,8 @@ const APPS = {
   control: { title: "Control Panel", iconClass: "control-icon", interactive: true },
   recycle: { title: "Recycle Bin", iconClass: "recycle-icon", interactive: true },
   registry: { title: "Registry Editor", iconClass: "registry-icon", interactive: true },
-  ie: { title: "Internet Explorer", iconClass: "ie-icon", interactive: true },
+  edge: { title: "Microsoft Edge", iconClass: "edge-icon", interactive: true },
+  ie: { title: "Microsoft Edge", iconClass: "edge-icon", interactive: true }, // alias
   mediaplayer: { title: "Windows Media Player", iconClass: "wmp-icon", interactive: true },
   solitaire: { title: "Solitaire", iconClass: "solitaire-icon", interactive: true },
   blog: { title: "My Computer", iconClass: "blog-icon", interactive: true },
@@ -968,18 +969,36 @@ function applyTheme(mode) {
   try {
     document.dispatchEvent(new CustomEvent("menelik-theme", { detail: { mode: isLight ? "light" : "dark" } }));
   } catch (_) {}
+  // Refresh wallpaper for light/dark variant
+  try {
+    const w = localStorage.getItem("portfolio-wallpaper") || "default";
+    if (typeof applyWallpaper === "function") applyWallpaper(w, { silent: true });
+  } catch (_) {}
 }
 
 function initTheme() {
-  // Always open in classic XP light mode
-  applyTheme("light");
+  let saved = "light";
+  try {
+    saved = localStorage.getItem("portfolio-theme") || "light";
+  } catch (_) {}
+  if (saved !== "light" && saved !== "dark") saved = "light";
+  applyTheme(saved);
 }
 function toggleTheme() {
   const next = document.body.classList.contains("light") ? "dark" : "light";
   applyTheme(next);
 }
 document.getElementById("theme-toggle")?.addEventListener("click", toggleTheme);
-document.getElementById("theme-toggle-mobile")?.addEventListener("click", toggleTheme);
+document.getElementById("theme-toggle-mobile")?.addEventListener("click", (e) => {
+  e.preventDefault();
+  e.stopPropagation();
+  toggleTheme();
+  try {
+    if (localStorage.getItem("portfolio-haptics") !== "off" && navigator.vibrate) {
+      navigator.vibrate(10);
+    }
+  } catch (_) {}
+});
 // Ctrl+Shift+L — toggle theme
 document.addEventListener("keydown", (e) => {
   if (e.ctrlKey && e.shiftKey && (e.key === "L" || e.key === "l")) {
@@ -991,12 +1010,21 @@ document.addEventListener("keydown", (e) => {
 /* ========== Clock ========== */
 function updateClock() {
   const now = new Date();
+  let clockFmt = "24";
+  try {
+    clockFmt = localStorage.getItem("portfolio-clock-fmt") || "24";
+  } catch (_) {}
+  const use12 = clockFmt === "12";
   const timeStr = now.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit", hour12: true });
   const clock = document.getElementById("clock");
   if (clock) clock.textContent = timeStr;
   const mobileTime = document.getElementById("mobile-time");
   if (mobileTime) {
-    mobileTime.textContent = now.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit", hour12: false });
+    mobileTime.textContent = now.toLocaleTimeString("en-US", {
+      hour: "numeric",
+      minute: "2-digit",
+      hour12: use12,
+    });
   }
 }
 setInterval(updateClock, 1000);
@@ -1023,267 +1051,329 @@ function buildNotepad() {
   wrap.className = "notepad-app notepad-win11";
   wrap.innerHTML =
     '<div class="np11-menubar" role="menubar">' +
-    '  <button type="button" class="np11-menu-btn" data-menu="file">File</button>' +
-    '  <button type="button" class="np11-menu-btn" data-menu="edit">Edit</button>' +
-    '  <button type="button" class="np11-menu-btn" data-menu="view">View</button>' +
-    "</div>" +
+    '  <div class="np11-menu">' +
+    '    <button type="button" class="np11-menu-btn" data-menu="file">File</button>' +
+    '    <div class="np11-dropdown" data-for="file" hidden>' +
+    '      <button type="button" data-action="new"><span>New</span><kbd>Ctrl+N</kbd></button>' +
+    '      <button type="button" data-action="open"><span>Open</span><kbd>Ctrl+O</kbd></button>' +
+    '      <button type="button" data-action="save"><span>Save</span><kbd>Ctrl+S</kbd></button>' +
+    '      <button type="button" data-action="saveas"><span>Save as…</span></button>' +
+    '      <hr/>' +
+    '      <button type="button" data-action="print"><span>Print</span><kbd>Ctrl+P</kbd></button>' +
+    '    </div>' +
+    '  </div>' +
+    '  <div class="np11-menu">' +
+    '    <button type="button" class="np11-menu-btn" data-menu="edit">Edit</button>' +
+    '    <div class="np11-dropdown" data-for="edit" hidden>' +
+    '      <button type="button" data-action="undo"><span>Undo</span><kbd>Ctrl+Z</kbd></button>' +
+    '      <hr/>' +
+    '      <button type="button" data-action="cut"><span>Cut</span><kbd>Ctrl+X</kbd></button>' +
+    '      <button type="button" data-action="copy"><span>Copy</span><kbd>Ctrl+C</kbd></button>' +
+    '      <button type="button" data-action="paste"><span>Paste</span><kbd>Ctrl+V</kbd></button>' +
+    '      <button type="button" data-action="selectall"><span>Select all</span><kbd>Ctrl+A</kbd></button>' +
+    '      <hr/>' +
+    '      <button type="button" data-action="find"><span>Find</span><kbd>Ctrl+F</kbd></button>' +
+    '      <button type="button" data-action="clear"><span>Clear all</span></button>' +
+    '    </div>' +
+    '  </div>' +
+    '  <div class="np11-menu">' +
+    '    <button type="button" class="np11-menu-btn" data-menu="view">View</button>' +
+    '    <div class="np11-dropdown" data-for="view" hidden>' +
+    '      <button type="button" data-action="wrap"><span class="np11-check" data-check="wrap">✓</span><span>Word wrap</span></button>' +
+    '      <button type="button" data-action="zoom-in"><span>Zoom in</span><kbd>Ctrl++</kbd></button>' +
+    '      <button type="button" data-action="zoom-out"><span>Zoom out</span><kbd>Ctrl+-</kbd></button>' +
+    '      <button type="button" data-action="zoom-reset"><span>Restore default zoom</span></button>' +
+    '    </div>' +
+    '  </div>' +
+    '</div>' +
     '<div class="np11-commandbar">' +
-    '  <button type="button" class="np11-cmd" data-action="new" title="New (Ctrl+N)"><span class="np11-ico">📄</span><span>New</span></button>' +
-    '  <button type="button" class="np11-cmd" data-action="open" title="Open"><span class="np11-ico">📂</span><span>Open</span></button>' +
-    '  <button type="button" class="np11-cmd" data-action="save" title="Save (Ctrl+S)"><span class="np11-ico">💾</span><span>Save</span></button>' +
-    '  <button type="button" class="np11-cmd" data-action="download" title="Download .txt"><span class="np11-ico">⬇</span><span>Download</span></button>' +
+    '  <button type="button" class="np11-cmd" data-action="new" title="New">New</button>' +
+    '  <button type="button" class="np11-cmd" data-action="save" title="Save">Save</button>' +
+    '  <button type="button" class="np11-cmd" data-action="open" title="Open">Open</button>' +
     '  <span class="np11-sep"></span>' +
-    '  <button type="button" class="np11-cmd" data-action="find" title="Find (Ctrl+F)"><span class="np11-ico">🔍</span><span>Find</span></button>' +
-    '  <button type="button" class="np11-cmd" data-action="wrap" title="Word wrap"><span class="np11-ico">↩</span><span>Wrap</span></button>' +
-    '  <button type="button" class="np11-cmd" data-action="zoom-in" title="Zoom in">＋</button>' +
-    '  <button type="button" class="np11-cmd" data-action="zoom-out" title="Zoom out">－</button>' +
-    "</div>" +
+    '  <button type="button" class="np11-cmd" data-action="find" title="Find">Find</button>' +
+    '  <button type="button" class="np11-cmd" data-action="wrap" title="Word wrap">Wrap</button>' +
+    '</div>' +
     '<div class="np11-findbar" hidden>' +
-    '  <input type="search" class="np11-find-input" placeholder="Find…" aria-label="Find" />' +
+    '  <input type="search" class="np11-find-input" placeholder="Find" aria-label="Find" />' +
     '  <button type="button" class="np11-cmd" data-action="find-next">Next</button>' +
-    '  <button type="button" class="np11-cmd" data-action="find-close">✕</button>' +
-    "</div>" +
+    '  <button type="button" class="np11-cmd" data-action="find-close" title="Close">✕</button>' +
+    '</div>' +
     '<textarea class="notepad-textarea np11-editor" placeholder="Start typing…" spellcheck="true"></textarea>' +
     '<div class="np11-statusbar">' +
-    '  <span class="np11-status-left" data-np-status>Ready</span>' +
-    '  <span class="np11-status-right">' +
-    '    <span data-np-pos>Ln 1, Col 1</span>' +
-    '    <span class="np11-dot">·</span>' +
-    '    <span data-np-chars>0 characters</span>' +
-    '    <span class="np11-dot">·</span>' +
-    '    <span data-np-zoom>100%</span>' +
-    "  </span>" +
-    "</div>" +
-    '<input type="file" class="np11-file" accept=".txt,text/plain" hidden />';
+    '  <span class="np11-pos">Ln 1, Col 1</span>' +
+    '  <span class="np11-chars">0 characters</span>' +
+    '  <span class="np11-zoom">100%</span>' +
+    '</div>';
 
-  const ta = wrap.querySelector(".np11-editor");
-  const status = wrap.querySelector("[data-np-status]");
-  const posEl = wrap.querySelector("[data-np-pos]");
-  const charsEl = wrap.querySelector("[data-np-chars]");
-  const zoomEl = wrap.querySelector("[data-np-zoom]");
+  const ta = wrap.querySelector("textarea");
   const findBar = wrap.querySelector(".np11-findbar");
   const findInput = wrap.querySelector(".np11-find-input");
-  const fileInput = wrap.querySelector(".np11-file");
-  const wrapBtn = wrap.querySelector('[data-action="wrap"]');
+  const posEl = wrap.querySelector(".np11-pos");
+  const charsEl = wrap.querySelector(".np11-chars");
+  const zoomEl = wrap.querySelector(".np11-zoom");
+  const fileInput = document.createElement("input");
+  fileInput.type = "file";
+  fileInput.accept = ".txt,text/plain";
+  fileInput.hidden = true;
+  wrap.appendChild(fileInput);
 
-  let zoom = 100;
-  let wordWrap = localStorage.getItem("notepad-wrap") !== "off";
-  let saveTimer = null;
-  let dirty = false;
+  let fontScale = 1;
+  let wordWrap = true;
+  try {
+    const savedWrap = localStorage.getItem("notepad-wrap");
+    if (savedWrap === "0") wordWrap = false;
+    const savedZoom = parseFloat(localStorage.getItem("notepad-zoom") || "1");
+    if (savedZoom >= 0.7 && savedZoom <= 2) fontScale = savedZoom;
+  } catch (_) {}
 
   const saved = localStorage.getItem("notepad-content");
   if (saved) ta.value = saved;
-  applyWrap();
-  updateStatus();
-
-  function setStatus(msg) {
-    if (status) status.textContent = msg;
-  }
 
   function applyWrap() {
     ta.style.whiteSpace = wordWrap ? "pre-wrap" : "pre";
     ta.style.overflowX = wordWrap ? "hidden" : "auto";
-    wrapBtn && wrapBtn.classList.toggle("active", wordWrap);
+    wrap.querySelectorAll("[data-check=wrap]").forEach((el) => {
+      el.textContent = wordWrap ? "✓" : "";
+    });
+  }
+  function applyZoom() {
+    ta.style.fontSize = (14 * fontScale).toFixed(1) + "px";
+    if (zoomEl) zoomEl.textContent = Math.round(fontScale * 100) + "%";
     try {
-      localStorage.setItem("notepad-wrap", wordWrap ? "on" : "off");
+      localStorage.setItem("notepad-zoom", String(fontScale));
     } catch (_) {}
   }
-
-  function applyZoom() {
-    ta.style.fontSize = Math.round(14 * (zoom / 100)) + "px";
-    if (zoomEl) zoomEl.textContent = zoom + "%";
-  }
-
   function updateStatus() {
     const v = ta.value;
-    const start = ta.selectionStart || 0;
-    const lines = v.slice(0, start).split("\n");
+    const pos = ta.selectionStart || 0;
+    const before = v.slice(0, pos);
+    const lines = before.split("\n");
     const ln = lines.length;
     const col = lines[lines.length - 1].length + 1;
     if (posEl) posEl.textContent = "Ln " + ln + ", Col " + col;
-    if (charsEl) charsEl.textContent = v.length + " characters";
+    if (charsEl) charsEl.textContent = v.length + " character" + (v.length === 1 ? "" : "s");
   }
-
-  function markDirty() {
-    dirty = true;
-    setStatus("Editing…");
-    clearTimeout(saveTimer);
-    saveTimer = setTimeout(() => {
+  function closeMenus() {
+    wrap.querySelectorAll(".np11-dropdown").forEach((d) => {
+      d.hidden = true;
+    });
+  }
+  function toast(msg) {
+    if (typeof showDialog === "function") {
       try {
-        localStorage.setItem("notepad-content", ta.value);
-        dirty = false;
-        setStatus("Saved");
-      } catch (_) {
-        setStatus("Could not auto-save");
-      }
-    }, 600);
+        showDialog("Notepad", msg);
+        return;
+      } catch (_) {}
+    }
+    try {
+      statusFlash(msg);
+    } catch (_) {
+      /* ignore */
+    }
   }
-
-  function doNew() {
-    if (ta.value && !confirm("Clear this document?")) return;
-    ta.value = "";
-    localStorage.removeItem("notepad-content");
-    dirty = false;
-    setStatus("New document");
-    updateStatus();
-    ta.focus();
+  function statusFlash(msg) {
+    if (!charsEl) return;
+    const prev = charsEl.textContent;
+    charsEl.textContent = msg;
+    setTimeout(() => {
+      if (charsEl.textContent === msg) updateStatus();
+    }, 1600);
   }
-
   function doSave() {
     try {
       localStorage.setItem("notepad-content", ta.value);
-      dirty = false;
-      setStatus("Saved to this device");
+      statusFlash("Saved");
     } catch (_) {
-      setStatus("Save failed");
+      toast("Could not save.");
     }
   }
-
-  function doDownload() {
-    const blob = new Blob([ta.value], { type: "text/plain;charset=utf-8" });
-    const a = document.createElement("a");
-    a.href = URL.createObjectURL(blob);
-    a.download = "Untitled.txt";
-    a.click();
-    setTimeout(() => URL.revokeObjectURL(a.href), 800);
-    setStatus("Downloaded Untitled.txt");
+  function doSaveAs() {
+    try {
+      const blob = new Blob([ta.value], { type: "text/plain;charset=utf-8" });
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = "Untitled.txt";
+      a.click();
+      setTimeout(() => URL.revokeObjectURL(a.href), 1500);
+      statusFlash("Downloaded");
+    } catch (_) {
+      toast("Download failed.");
+    }
   }
-
-  function doOpenFile(file) {
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onload = () => {
-      ta.value = String(reader.result || "");
-      markDirty();
-      updateStatus();
-      setStatus("Opened " + (file.name || "file"));
-    };
-    reader.readAsText(file);
+  function doOpen() {
+    fileInput.click();
   }
-
   function findNext() {
-    const q = (findInput.value || "").trim();
+    const q = (findInput && findInput.value) || "";
     if (!q) return;
     const text = ta.value;
-    const from = ta.selectionEnd || 0;
-    let i = text.indexOf(q, from);
-    if (i < 0) i = text.indexOf(q, 0);
-    if (i < 0) {
-      setStatus("Not found");
+    const start = ta.selectionEnd || 0;
+    let idx = text.indexOf(q, start);
+    if (idx < 0) idx = text.indexOf(q, 0);
+    if (idx < 0) {
+      statusFlash("Not found");
       return;
     }
     ta.focus();
-    ta.setSelectionRange(i, i + q.length);
+    ta.setSelectionRange(idx, idx + q.length);
     updateStatus();
-    setStatus("Found");
+  }
+  function runAction(act) {
+    closeMenus();
+    if (act === "new") {
+      ta.value = "";
+      updateStatus();
+    } else if (act === "save") doSave();
+    else if (act === "saveas") doSaveAs();
+    else if (act === "open") doOpen();
+    else if (act === "print") {
+      try {
+        const w = window.open("", "_blank", "noopener,noreferrer");
+        if (w) {
+          w.document.write(
+            "<pre style=\"font-family:Consolas,monospace;white-space:pre-wrap;padding:24px\">" +
+              ta.value
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;") +
+              "</pre>"
+          );
+          w.document.close();
+          w.focus();
+          w.print();
+        }
+      } catch (_) {}
+    } else if (act === "undo") {
+      document.execCommand("undo");
+    } else if (act === "cut") {
+      ta.focus();
+      document.execCommand("cut");
+    } else if (act === "copy") {
+      ta.focus();
+      document.execCommand("copy");
+    } else if (act === "paste") {
+      ta.focus();
+      document.execCommand("paste");
+    } else if (act === "selectall") {
+      ta.focus();
+      ta.select();
+    } else if (act === "clear") {
+      ta.value = "";
+      updateStatus();
+    } else if (act === "find") {
+      if (findBar) findBar.hidden = false;
+      if (findInput) findInput.focus();
+    } else if (act === "find-next") findNext();
+    else if (act === "find-close") {
+      if (findBar) findBar.hidden = true;
+      ta.focus();
+    } else if (act === "wrap") {
+      wordWrap = !wordWrap;
+      try {
+        localStorage.setItem("notepad-wrap", wordWrap ? "1" : "0");
+      } catch (_) {}
+      applyWrap();
+    } else if (act === "zoom-in") {
+      fontScale = Math.min(2, fontScale + 0.1);
+      applyZoom();
+    } else if (act === "zoom-out") {
+      fontScale = Math.max(0.7, fontScale - 0.1);
+      applyZoom();
+    } else if (act === "zoom-reset") {
+      fontScale = 1;
+      applyZoom();
+    }
   }
 
-  wrap.querySelectorAll("[data-action]").forEach((btn) => {
-    btn.addEventListener("click", () => {
-      const act = btn.getAttribute("data-action");
-      if (act === "new") doNew();
-      else if (act === "save") doSave();
-      else if (act === "download") doDownload();
-      else if (act === "open") fileInput.click();
-      else if (act === "wrap") {
-        wordWrap = !wordWrap;
-        applyWrap();
-        setStatus(wordWrap ? "Word wrap on" : "Word wrap off");
-      } else if (act === "zoom-in") {
-        zoom = Math.min(200, zoom + 10);
-        applyZoom();
-      } else if (act === "zoom-out") {
-        zoom = Math.max(70, zoom - 10);
-        applyZoom();
-      } else if (act === "find") {
-        findBar.hidden = !findBar.hidden;
-        if (!findBar.hidden) {
-          findInput.focus();
-          findInput.select();
-        }
-      } else if (act === "find-next") findNext();
-      else if (act === "find-close") {
-        findBar.hidden = true;
-        ta.focus();
-      }
-    });
-  });
-
-  // Simple File/Edit/View menus
   wrap.querySelectorAll(".np11-menu-btn").forEach((btn) => {
-    btn.addEventListener("click", () => {
-      const m = btn.getAttribute("data-menu");
-      if (m === "file") {
-        const choice = prompt("File: type new / save / open / download", "save");
-        if (!choice) return;
-        const c = choice.trim().toLowerCase();
-        if (c === "new") doNew();
-        else if (c === "save") doSave();
-        else if (c === "open") fileInput.click();
-        else if (c === "download") doDownload();
-      } else if (m === "edit") {
-        const choice = prompt("Edit: type find / selectall", "find");
-        if (!choice) return;
-        const c = choice.trim().toLowerCase();
-        if (c === "find") {
-          findBar.hidden = false;
-          findInput.focus();
-        } else if (c === "selectall") {
-          ta.focus();
-          ta.select();
-        }
-      } else if (m === "view") {
-        wordWrap = !wordWrap;
-        applyWrap();
-        setStatus(wordWrap ? "Word wrap on" : "Word wrap off");
-      }
+    btn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      const id = btn.getAttribute("data-menu");
+      wrap.querySelectorAll(".np11-dropdown").forEach((d) => {
+        const open = d.getAttribute("data-for") === id && d.hidden;
+        d.hidden = !open;
+      });
     });
   });
-
+  wrap.querySelectorAll("[data-action]").forEach((btn) => {
+    btn.addEventListener("click", (e) => {
+      e.preventDefault();
+      runAction(btn.getAttribute("data-action"));
+    });
+  });
   fileInput.addEventListener("change", () => {
     const f = fileInput.files && fileInput.files[0];
-    doOpenFile(f);
+    if (!f) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      ta.value = String(reader.result || "");
+      updateStatus();
+      statusFlash("Opened " + f.name);
+    };
+    reader.readAsText(f);
     fileInput.value = "";
   });
-
   ta.addEventListener("input", () => {
-    markDirty();
+    try {
+      localStorage.setItem("notepad-content", ta.value);
+    } catch (_) {}
     updateStatus();
   });
   ta.addEventListener("click", updateStatus);
   ta.addEventListener("keyup", updateStatus);
   ta.addEventListener("select", updateStatus);
-
   wrap.addEventListener("keydown", (e) => {
     const mod = e.ctrlKey || e.metaKey;
-    if (mod && e.key.toLowerCase() === "s") {
+    if (!mod) return;
+    const k = e.key.toLowerCase();
+    if (k === "s") {
       e.preventDefault();
       doSave();
-    } else if (mod && e.key.toLowerCase() === "n") {
+    } else if (k === "n") {
       e.preventDefault();
-      doNew();
-    } else if (mod && e.key.toLowerCase() === "f") {
+      runAction("new");
+    } else if (k === "o") {
       e.preventDefault();
-      findBar.hidden = false;
-      findInput.focus();
-      findInput.select();
-    } else if (mod && (e.key === "=" || e.key === "+")) {
+      doOpen();
+    } else if (k === "f") {
       e.preventDefault();
-      zoom = Math.min(200, zoom + 10);
-      applyZoom();
-    } else if (mod && e.key === "-") {
+      runAction("find");
+    } else if (k === "p") {
       e.preventDefault();
-      zoom = Math.max(70, zoom - 10);
-      applyZoom();
+      runAction("print");
+    } else if (k === "=" || k === "+") {
+      e.preventDefault();
+      runAction("zoom-in");
+    } else if (k === "-") {
+      e.preventDefault();
+      runAction("zoom-out");
+    } else if (k === "0") {
+      e.preventDefault();
+      runAction("zoom-reset");
     }
   });
+  document.addEventListener(
+    "click",
+    (e) => {
+      if (!wrap.contains(e.target)) closeMenus();
+      else if (!e.target.closest(".np11-menu")) closeMenus();
+    },
+    true
+  );
+  if (findInput) {
+    findInput.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        findNext();
+      }
+      if (e.key === "Escape") runAction("find-close");
+    });
+  }
 
+  applyWrap();
   applyZoom();
-  setTimeout(() => {
-    try {
-      ta.focus();
-    } catch (_) {}
-  }, 80);
+  updateStatus();
   return wrap;
 }
 
@@ -1324,15 +1414,83 @@ function buildPaint() {
       </div>
     </div>
     <div class="paint-canvas-wrap">
-      <canvas width="640" height="400"></canvas>
+      <canvas class="paint-surface" width="800" height="500" aria-label="Drawing surface"></canvas>
     </div>
     <div class="paint-status"><span class="paint-tool-name">Pencil</span> · <span class="paint-coords">0, 0</span></div>
   `;
 
   const canvas = wrap.querySelector("canvas");
-  const ctx = canvas.getContext("2d", { willReadFrequently: true });
-  ctx.fillStyle = "#ffffff";
-  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  const canvasWrap = wrap.querySelector(".paint-canvas-wrap");
+  const ctx = canvas.getContext("2d", { willReadFrequently: true, alpha: false });
+  // Logical drawing size (CSS pixels); buffer may be scaled by devicePixelRatio
+  let logicalW = 800;
+  let logicalH = 500;
+  let dpr = 1;
+
+  function fillWhite() {
+    ctx.save();
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    ctx.fillStyle = "#ffffff";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.restore();
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+
+  function resizePaintSurface(force) {
+    if (!canvasWrap) return;
+    const pad = 0;
+    const availW = Math.max(120, canvasWrap.clientWidth - pad);
+    const availH = Math.max(120, canvasWrap.clientHeight - pad);
+    // Full-bleed white surface inside the gray workspace
+    const nextW = Math.max(1, Math.floor(availW));
+    const nextH = Math.max(1, Math.floor(availH));
+    const nextDpr = Math.min(window.devicePixelRatio || 1, 2);
+
+    if (
+      !force &&
+      nextW === logicalW &&
+      nextH === logicalH &&
+      nextDpr === dpr
+    ) {
+      return;
+    }
+
+    let saved = null;
+    try {
+      if (canvas.width > 0 && canvas.height > 0) {
+        saved = ctx.getImageData(0, 0, canvas.width, canvas.height);
+      }
+    } catch (_) {
+      saved = null;
+    }
+
+    logicalW = nextW;
+    logicalH = nextH;
+    dpr = nextDpr;
+
+    canvas.style.width = logicalW + "px";
+    canvas.style.height = logicalH + "px";
+    canvas.width = Math.round(logicalW * dpr);
+    canvas.height = Math.round(logicalH * dpr);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.imageSmoothingEnabled = true;
+
+    fillWhite();
+    if (saved) {
+      try {
+        // Stretch previous pixels into new surface (best-effort compatibility)
+        const off = document.createElement("canvas");
+        off.width = saved.width;
+        off.height = saved.height;
+        off.getContext("2d").putImageData(saved, 0, 0);
+        ctx.drawImage(off, 0, 0, logicalW, logicalH);
+      } catch (_) {}
+    }
+
+  }
+
+  // Initial white fill; full resize runs after layout
+  fillWhite();
 
   let drawing = false;
   let color = "#000000";
@@ -1359,6 +1517,7 @@ function buildPaint() {
   function restore(data) {
     if (!data) return;
     ctx.putImageData(data, 0, 0);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
   }
   function undo() {
     if (!undoStack.length) return;
@@ -1390,12 +1549,17 @@ function buildPaint() {
   }
   function pos(e) {
     const r = canvas.getBoundingClientRect();
-    const scaleX = canvas.width / r.width;
-    const scaleY = canvas.height / r.height;
-    const src = e.touches ? e.touches[0] : e;
+    const src = e.touches && e.touches[0]
+      ? e.touches[0]
+      : e.changedTouches && e.changedTouches[0]
+        ? e.changedTouches[0]
+        : e;
+    const cssW = r.width || logicalW || 1;
+    const cssH = r.height || logicalH || 1;
+    // Map pointer into logical canvas space (matches ctx after setTransform(dpr))
     return {
-      x: (src.clientX - r.left) * scaleX,
-      y: (src.clientY - r.top) * scaleY
+      x: ((src.clientX - r.left) / cssW) * logicalW,
+      y: ((src.clientY - r.top) / cssH) * logicalH
     };
   }
   function hexToRgb(hex) {
@@ -1404,11 +1568,12 @@ function buildPaint() {
     return { r: (n >> 16) & 255, g: (n >> 8) & 255, b: n & 255 };
   }
   function floodFill(x, y, fillHex) {
+    // Image data is in device pixels; drawing coords are logical
     const w = canvas.width, h = canvas.height;
     const img = ctx.getImageData(0, 0, w, h);
     const d = img.data;
-    const sx = Math.floor(x), sy = Math.floor(y);
-    if (sx < 0 || sy < 0 || sx >= w || sy >= h) return;
+    const sx = Math.max(0, Math.min(w - 1, Math.floor(x * dpr)));
+    const sy = Math.max(0, Math.min(h - 1, Math.floor(y * dpr)));
     const i0 = (sy * w + sx) * 4;
     const tr = d[i0], tg = d[i0 + 1], tb = d[i0 + 2], ta = d[i0 + 3];
     const fill = hexToRgb(fillHex);
@@ -1428,6 +1593,7 @@ function buildPaint() {
       stack.push([cx + 1, cy], [cx - 1, cy], [cx, cy + 1], [cx, cy - 1]);
     }
     ctx.putImageData(img, 0, 0);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
   }
   function sprayAt(x, y) {
     ctx.fillStyle = color;
@@ -1440,7 +1606,10 @@ function buildPaint() {
     }
   }
   function drawShape(x1, y1, x2, y2, preview) {
-    if (snapshot && preview) ctx.putImageData(snapshot, 0, 0);
+    if (snapshot && preview) {
+      ctx.putImageData(snapshot, 0, 0);
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    }
     ctx.lineWidth = size;
     ctx.lineCap = "round";
     ctx.lineJoin = "round";
@@ -1483,8 +1652,7 @@ function buildPaint() {
   });
   wrap.querySelector('[data-action="clear"]').addEventListener("click", () => {
     pushHistory();
-    ctx.fillStyle = "#ffffff";
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    fillWhite();
   });
   wrap.querySelector('[data-action="undo"]').addEventListener("click", undo);
   wrap.querySelector('[data-action="redo"]').addEventListener("click", redo);
@@ -1593,6 +1761,30 @@ function buildPaint() {
   canvas.addEventListener("touchstart", start, { passive: false });
   canvas.addEventListener("touchmove", move, { passive: false });
   canvas.addEventListener("touchend", end);
+  canvas.addEventListener("touchcancel", end);
+
+  // Full-size white surface + resize compatibility
+  let resizeTimer = 0;
+  function scheduleResize() {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(() => {
+      const prevW = logicalW, prevH = logicalH;
+      resizePaintSurface(false);
+      if (logicalW !== prevW || logicalH !== prevH) {
+        undoStack.length = 0;
+        redoStack.length = 0;
+      }
+    }, 50);
+  }
+  if (typeof ResizeObserver !== "undefined" && canvasWrap) {
+    new ResizeObserver(scheduleResize).observe(canvasWrap);
+  }
+  window.addEventListener("resize", scheduleResize);
+  // After window layout / first paint
+  requestAnimationFrame(() => {
+    resizePaintSurface(true);
+    requestAnimationFrame(() => resizePaintSurface(true));
+  });
 
   wrap.tabIndex = 0;
   wrap.addEventListener("keydown", (e) => {
@@ -2546,6 +2738,7 @@ function buildSnake() {
   root.innerHTML =
     '<div class="snake-hud">' +
     '  <span class="snake-score">Score: <b data-sn-score>0</b></span>' +
+    '  <span class="snake-level">Lv: <b data-sn-level>1</b></span>' +
     '  <span class="snake-best">Best: <b data-sn-best>0</b></span>' +
     '  <span class="snake-len">Len: <b data-sn-len>1</b></span>' +
     "</div>" +
@@ -2569,6 +2762,7 @@ function buildSnake() {
   const canvas = root.querySelector(".snake-canvas");
   const ctx = canvas.getContext("2d");
   const scoreEl = root.querySelector("[data-sn-score]");
+  const levelEl = root.querySelector("[data-sn-level]");
   const bestEl = root.querySelector("[data-sn-best]");
   const lenEl = root.querySelector("[data-sn-len]");
   const overlay = root.querySelector("[data-sn-overlay]");
@@ -2577,8 +2771,9 @@ function buildSnake() {
   const COLS = 15;
   const ROWS = 15;
   let cell = 20;
-  let snake, dir, nextDir, food, score, best, tick, running, dead, raf, acc, lastTs;
+  let snake, dir, nextDir, food, score, level, best, tick, running, dead, raf, acc, lastTs;
   const SPEED0 = 140; // ms per step
+  const POINTS_PER_LEVEL = 50;
 
   try {
     best = parseInt(localStorage.getItem("menelik-snake-best") || "0", 10) || 0;
@@ -2612,6 +2807,7 @@ function buildSnake() {
     dir = { x: 1, y: 0 };
     nextDir = { x: 1, y: 0 };
     score = 0;
+    level = 1;
     dead = false;
     running = false;
     placeFood();
@@ -2634,6 +2830,7 @@ function buildSnake() {
 
   function updateHud() {
     scoreEl.textContent = String(score);
+    levelEl.textContent = String(level);
     lenEl.textContent = String(snake.length);
     bestEl.textContent = String(best);
   }
@@ -2698,6 +2895,10 @@ function buildSnake() {
     snake.unshift(head);
     if (food && head.x === food.x && head.y === food.y) {
       score += 10;
+      const newLevel = Math.floor(score / POINTS_PER_LEVEL) + 1;
+      if (newLevel > level) {
+        level = newLevel;
+      }
       if (score > best) {
         best = score;
         try {
@@ -2717,7 +2918,7 @@ function buildSnake() {
     running = false;
     overlay.hidden = false;
     overlay.querySelector(".snake-overlay-title").textContent = "Game Over";
-    overlay.querySelector(".snake-overlay-sub").textContent = "Score " + score;
+    overlay.querySelector(".snake-overlay-sub").textContent = "Score " + score + " · Level " + level;
     startBtn.textContent = "Play again";
   }
 
@@ -2727,7 +2928,7 @@ function buildSnake() {
     if (!lastTs) lastTs = ts;
     acc += ts - lastTs;
     lastTs = ts;
-    const speed = Math.max(70, SPEED0 - Math.floor(score / 50) * 8);
+    const speed = Math.max(55, SPEED0 - (level - 1) * 12);
     while (acc >= speed) {
       acc -= speed;
       step();
@@ -3289,7 +3490,6 @@ function buildSudoku() {
     for (let k = 0; k < 9; k++) {
       const rowI = idx(r, k);
       const colI = idx(k, c);
-      // Skip the target cell so replacing a digit works correctly
       if (rowI !== i && grid[rowI] === val) return false;
       if (colI !== i && grid[colI] === val) return false;
     }
@@ -3883,6 +4083,68 @@ function buildRecycleBin() {
   return wrap;
 }
 
+/* ========== Wallpaper engine (desktop only, original set) ========== */
+const WALLPAPER_BG = {
+  default: {
+    dark: "radial-gradient(ellipse at 30% 20%, rgba(255,255,255,0.12) 0%, transparent 50%), linear-gradient(160deg, #3a6ea5 0%, #2a5080 40%, #1e3a5f 100%)",
+    light: "radial-gradient(ellipse at 70% 10%, rgba(255,255,255,0.4) 0%, transparent 45%), linear-gradient(160deg, #7eb8e8 0%, #5b9bd5 50%, #3a7ab8 100%)",
+  },
+  green: {
+    dark: "linear-gradient(160deg, #1b4332 0%, #2d6a4f 40%, #40916c 100%)",
+    light: "linear-gradient(160deg, #d8f3dc 0%, #95d5b2 45%, #52b788 100%)",
+  },
+  sunset: {
+    dark: "linear-gradient(160deg, #4a1942 0%, #c44900 45%, #ffb703 100%)",
+    light: "linear-gradient(160deg, #fff3e0 0%, #ffb74d 50%, #e65100 100%)",
+  },
+  night: {
+    dark: "linear-gradient(160deg, #0d1b2a 0%, #1b263b 50%, #415a77 100%)",
+    light: "linear-gradient(160deg, #e3f2fd 0%, #90caf9 50%, #1565c0 100%)",
+  },
+};
+
+function applyWallpaper(v, opts) {
+  opts = opts || {};
+  if (!v || !WALLPAPER_BG[v]) v = "default";
+  const isLight = document.body.classList.contains("light");
+  const bg = WALLPAPER_BG[v][isLight ? "light" : "dark"];
+
+  try {
+    localStorage.setItem("portfolio-wallpaper", v);
+  } catch (_) {}
+
+  document.body.dataset.wallpaper = v;
+  const desk = document.getElementById("desktop");
+  if (desk) desk.dataset.wallpaper = v;
+
+  // Desktop only — do not change mobile home screen
+  document.querySelectorAll("#desktop .wallpaper, .desktop > .wallpaper").forEach((el) => {
+    el.style.background = bg;
+    el.style.backgroundSize = "cover";
+    el.style.filter = "none";
+    if (!opts.silent) {
+      el.classList.add("refresh-flash");
+      setTimeout(() => el.classList.remove("refresh-flash"), 280);
+    }
+  });
+
+  document.querySelectorAll(".wall-thumb").forEach((btn) => {
+    btn.classList.toggle("is-active", btn.getAttribute("data-wall") === v);
+  });
+  document.querySelectorAll(".cp-wall").forEach((sel) => {
+    if (sel.value !== v) sel.value = v;
+  });
+
+  if (!opts.silent) {
+    try {
+      if (typeof playUiSound === "function") playUiSound("notify");
+    } catch (_) {}
+  }
+}
+
+window.applyWallpaper = applyWallpaper;
+
+
 /* ========== Control Panel ========== */
 function applyIconSizes(desktopSize, startSize, spacing) {
   const validSize = new Set(["small", "medium", "large", "xlarge", "custom"]);
@@ -3909,6 +4171,7 @@ function buildControlPanel() {
   const mobileView =
     (typeof window !== "undefined" && window.innerWidth < 900) ||
     !!(document.getElementById("mobile") && window.getComputedStyle(document.getElementById("mobile")).display !== "none" && window.innerWidth < 900);
+  if (mobileView) wrap.classList.add("control-app-android");
 
   const dSize = localStorage.getItem("portfolio-icon-desktop") || "medium";
   const sSize = localStorage.getItem("portfolio-icon-start") || "medium";
@@ -3925,6 +4188,9 @@ function buildControlPanel() {
   const hapticsOn = localStorage.getItem("portfolio-haptics") !== "off";
   const animUi = localStorage.getItem("portfolio-ui-anim") !== "off";
   const homeLayout = localStorage.getItem("portfolio-home-layout") || "grid";
+  const clockFmt = localStorage.getItem("portfolio-clock-fmt") || "24";
+  const homeIconSize = localStorage.getItem("portfolio-home-icon-size") || "medium";
+  const keepAwake = localStorage.getItem("portfolio-keep-awake") === "on";
 
   const sizeOpts = (cur) =>
     ["small", "medium", "large", "xlarge", "custom"]
@@ -3959,12 +4225,13 @@ function buildControlPanel() {
       )
       .join("");
 
-  const wallOpts = [
+  const wallList = [
     ["default", "Default blue"],
     ["green", "Green field"],
     ["sunset", "Sunset"],
     ["night", "Deep night"],
-  ]
+  ];
+  const wallOpts = wallList
     .map(
       ([v, label]) =>
         '<option value="' +
@@ -3974,6 +4241,24 @@ function buildControlPanel() {
         ">" +
         label +
         "</option>"
+    )
+    .join("");
+  const wallPickerHtml = wallList
+    .map(
+      ([v, label]) =>
+        '<button type="button" class="wall-thumb' +
+        (savedWall === v ? " is-active" : "") +
+        '" data-wall="' +
+        v +
+        '" title="' +
+        label +
+        '" aria-label="' +
+        label +
+        '"><span class="wall-thumb-swatch" data-wall-preview="' +
+        v +
+        '"></span><span class="wall-thumb-label">' +
+        label +
+        "</span></button>"
     )
     .join("");
 
@@ -4018,11 +4303,17 @@ function buildControlPanel() {
     ">አማርኛ</option>" +
     "    </select>" +
     "  </label>" +
-    '  <label class="cp-row"><span data-i18n="wallpaper">Wallpaper</span>' +
-    '    <select class="cp-wall" aria-label="Wallpaper">' +
-    wallOpts +
-    "    </select>" +
-    "  </label>" +
+    (mobileView
+      ? ""
+      : '  <div class="cp-wall-block">' +
+        '    <div class="cp-row cp-wall-label-row"><span data-i18n="wallpaper">Wallpaper</span></div>' +
+        '    <div class="wall-picker" role="listbox" aria-label="Wallpaper">' +
+        wallPickerHtml +
+        "    </div>" +
+        '    <select class="cp-wall" aria-label="Wallpaper" style="margin-top:8px;width:100%">' +
+        wallOpts +
+        "    </select>" +
+        "  </div>") +
     (mobileView
       ? '  <label class="cp-row"><span>Home layout</span>' +
         '    <select class="cp-home-layout" aria-label="Home layout">' +
@@ -4034,10 +4325,38 @@ function buildControlPanel() {
         ">Compact</option>" +
         "    </select>" +
         "  </label>" +
-        '  <label class="cp-row"><span>Larger text</span>' +
+        '  <label class="cp-row"><span>App icon size</span>' +
+        '    <select class="cp-home-icon-size" aria-label="Home icon size">' +
+        '      <option value="small"' +
+        (homeIconSize === "small" ? " selected" : "") +
+        ">Small</option>" +
+        '      <option value="medium"' +
+        (homeIconSize === "medium" ? " selected" : "") +
+        ">Medium</option>" +
+        '      <option value="large"' +
+        (homeIconSize === "large" ? " selected" : "") +
+        ">Large</option>" +
+        "    </select>" +
+        "  </label>" +
+        '  <label class="cp-row"><span>Clock format</span>' +
+        '    <select class="cp-clock-fmt" aria-label="Clock format">' +
+        '      <option value="24"' +
+        (clockFmt === "24" ? " selected" : "") +
+        ">24-hour</option>" +
+        '      <option value="12"' +
+        (clockFmt === "12" ? " selected" : "") +
+        ">12-hour</option>" +
+        "    </select>" +
+        "  </label>" +
+        '  <label class="cp-row cp-toggle-row"><span>Larger text</span>' +
         '    <input type="checkbox" class="cp-large-text" ' +
         (largeText ? "checked " : "") +
         'aria-label="Larger text" />' +
+        "  </label>" +
+        '  <label class="cp-row cp-toggle-row"><span>Keep screen awake</span>' +
+        '    <input type="checkbox" class="cp-keep-awake" ' +
+        (keepAwake ? "checked " : "") +
+        'aria-label="Keep screen awake" />' +
         "  </label>"
       : "") +
     "</div>" +
@@ -4062,33 +4381,34 @@ function buildControlPanel() {
         "</div>") +
     '<div class="cp-section">' +
     "  <h4>Sound &amp; feedback</h4>" +
-    '  <label class="cp-row"><span>Notification sounds</span>' +
+    '  <label class="cp-row cp-toggle-row"><span>Notification sounds</span>' +
     '    <input type="checkbox" class="cp-sounds" ' +
     (soundsOn ? "checked " : "") +
     'aria-label="Notification sounds" />' +
     "  </label>" +
-    '  <label class="cp-row"><span>Startup sound</span>' +
+    '  <label class="cp-row cp-toggle-row"><span>Startup sound</span>' +
     '    <input type="checkbox" class="cp-startup-sound" ' +
     (startupOn ? "checked " : "") +
     'aria-label="Startup sound" />' +
     "  </label>" +
     (mobileView
-      ? '  <label class="cp-row"><span>Haptic taps</span>' +
+      ? '  <label class="cp-row cp-toggle-row"><span>Haptic taps</span>' +
         '    <input type="checkbox" class="cp-haptics" ' +
         (hapticsOn ? "checked " : "") +
         'aria-label="Haptic feedback" />' +
-        "  </label>"
+        "  </label>" +
+        '  <button type="button" class="cp-test-haptic proj-btn">Test vibration</button>'
       : "") +
     '  <button type="button" class="cp-test-sound proj-btn">Test notification</button>' +
     "</div>" +
     '<div class="cp-section">' +
     "  <h4>Motion</h4>" +
-    '  <label class="cp-row"><span>UI animations</span>' +
+    '  <label class="cp-row cp-toggle-row"><span>UI animations</span>' +
     '    <input type="checkbox" class="cp-ui-anim" ' +
     (animUi ? "checked " : "") +
     'aria-label="UI animations" />' +
     "  </label>" +
-    '  <label class="cp-row"><span>Reduce motion</span>' +
+    '  <label class="cp-row cp-toggle-row"><span>Reduce motion</span>' +
     '    <input type="checkbox" class="cp-reduce-motion" ' +
     (reduceMotion ? "checked " : "") +
     'aria-label="Reduce motion" />' +
@@ -4106,13 +4426,21 @@ function buildControlPanel() {
     '  <button type="button" class="cp-clear-chat proj-btn">Clear chat history</button>' +
     '  <button type="button" class="cp-clear-scores proj-btn">Reset game high scores</button>' +
     '  <button type="button" class="cp-reset-all proj-btn cp-danger">Reset all settings</button>' +
-    '  <p class="cp-about">Chat and scores are stored only on this device.</p>' +
+    (mobileView ? "" : '  <p class="cp-about">Chat and scores are stored only on this device.</p>') +
     "</div>" +
-    '<div class="cp-section">' +
-    "  <h4>About</h4>" +
-    '  <p class="cp-about">Menelik OS portfolio · Settings save automatically on this device.</p>' +
-    '  <p class="cp-about">Contact: linuxos777@gmail.com</p>' +
-    "</div>";
+    (mobileView
+      ? '<div class="cp-section cp-section-about">' +
+        "  <h4>About</h4>" +
+        '  <button type="button" class="cp-share proj-btn">Share portfolio</button>' +
+        '  <button type="button" class="cp-open-site proj-btn">Open live site</button>' +
+        '  <p class="cp-about cp-contact">Contact: linuxos777@gmail.com</p>' +
+        "</div>"
+      : '<div class="cp-section">' +
+        "  <h4>About</h4>" +
+        '  <p class="cp-about">Menelik OS portfolio · Settings save automatically on this device.</p>' +
+        '  <p class="cp-about">Contact: linuxos777@gmail.com</p>' +
+        "</div>") +
+    "";
 
   const on = (sel, ev, fn) => {
     const el = wrap.querySelector(sel);
@@ -4155,7 +4483,11 @@ function buildControlPanel() {
   if (largeText) applyLargeText(true);
   if (reduceMotion) applyReduceMotion(true);
   if (!animUi) applyUiAnim(false);
-  if (mobileView) applyHomeLayout(homeLayout);
+  if (mobileView) {
+    applyHomeLayout(homeLayout);
+    const home = document.getElementById("home-screen");
+    if (home) home.dataset.iconSize = homeIconSize;
+  }
 
   on(".cp-theme", "change", (e) => {
     try {
@@ -4184,23 +4516,58 @@ function buildControlPanel() {
   });
 
   on(".cp-wall", "change", (e) => {
-    try {
-      const v = e.target.value;
-      localStorage.setItem("portfolio-wallpaper", v);
-      document.body.dataset.wallpaper = v;
-      const desk = document.getElementById("desktop");
-      if (desk) desk.dataset.wallpaper = v;
-      const mobile = document.getElementById("mobile");
-      if (mobile) mobile.dataset.wallpaper = v;
-      if (typeof playUiSound === "function") playUiSound("notify");
+    applyWallpaper(e.target.value);
+    haptic();
+  });
+  wrap.querySelectorAll(".wall-thumb").forEach((btn) => {
+    btn.addEventListener("click", (e) => {
+      e.preventDefault();
+      applyWallpaper(btn.getAttribute("data-wall"));
       haptic();
-    } catch (err) {
-      console.warn("Wallpaper failed", err);
-    }
+    });
   });
 
   on(".cp-home-layout", "change", (e) => {
     applyHomeLayout(e.target.value);
+    haptic();
+  });
+
+  on(".cp-home-icon-size", "change", (e) => {
+    const v = e.target.value;
+    try {
+      localStorage.setItem("portfolio-home-icon-size", v);
+    } catch (_) {}
+    const home = document.getElementById("home-screen");
+    if (home) home.dataset.iconSize = v;
+    haptic();
+  });
+
+  on(".cp-clock-fmt", "change", (e) => {
+    try {
+      localStorage.setItem("portfolio-clock-fmt", e.target.value);
+    } catch (_) {}
+    if (typeof updateClock === "function") updateClock();
+    haptic();
+  });
+
+  on(".cp-keep-awake", "change", async (e) => {
+    const onFlag = e.target.checked;
+    try {
+      localStorage.setItem("portfolio-keep-awake", onFlag ? "on" : "off");
+    } catch (_) {}
+    try {
+      if (onFlag && "wakeLock" in navigator) {
+        if (window.__menelikWakeLock) {
+          try { await window.__menelikWakeLock.release(); } catch (_) {}
+        }
+        window.__menelikWakeLock = await navigator.wakeLock.request("screen");
+      } else if (window.__menelikWakeLock) {
+        await window.__menelikWakeLock.release();
+        window.__menelikWakeLock = null;
+      }
+    } catch (err) {
+      console.warn("Wake Lock failed", err);
+    }
     haptic();
   });
 
@@ -4214,6 +4581,34 @@ function buildControlPanel() {
       localStorage.setItem("portfolio-haptics", e.target.checked ? "on" : "off");
     } catch (_) {}
     if (e.target.checked) haptic();
+  });
+
+  on(".cp-test-haptic", "click", () => {
+    try {
+      if (navigator.vibrate) navigator.vibrate([20, 40, 20]);
+      else alert("Vibration not supported on this device.");
+    } catch (_) {}
+  });
+
+  on(".cp-share", "click", async () => {
+    const url = location.href.split("#")[0];
+    const data = { title: "Menelik Admasu — Portfolio", text: "Check out this Windows XP + iPhone portfolio", url };
+    try {
+      if (navigator.share) {
+        await navigator.share(data);
+      } else if (navigator.clipboard && navigator.clipboard.writeText) {
+        await navigator.clipboard.writeText(url);
+        alert("Link copied to clipboard.");
+      } else {
+        prompt("Copy this link:", url);
+      }
+    } catch (_) {}
+    haptic();
+  });
+
+  on(".cp-open-site", "click", () => {
+    window.open("https://menelik.webhop.me", "_blank", "noopener");
+    haptic();
   });
 
   on(".cp-ui-anim", "change", (e) => {
@@ -7846,45 +8241,54 @@ function buildChatApp() {
 }
 
 function getAppBody(id) {
-  try {
-    if (id === "notepad") return buildNotepad();
-    if (id === "paint") return buildPaint();
-    if (id === "vector") return buildVectorGraphics();
-    if (id === "terminal") return buildTerminal();
-    if (id === "vscode") return buildVSCode();
-    if (id === "minesweeper") return buildMinesweeper();
-    if (id === "sudoku") return buildSudoku();
-    if (id === "snake") return buildSnake();
-    if (id === "tetris") return buildTetris();
-    if (id === "chat") return buildChatApp();
-    if (id === "control") return buildControlPanel();
-    if (id === "recycle") return buildRecycleBin();
-    if (id === "registry") return buildRegistry();
-    if (id === "device") return buildDeviceInspector();
-    if (id === "voice") return buildVoiceCall();
-    if (id === "ie" && typeof buildIE === "function") return buildIE();
-    if (id === "mediaplayer" && typeof buildMediaPlayer === "function") return buildMediaPlayer();
-    if (id === "solitaire" && typeof buildSolitaire === "function") return buildSolitaire();
-    if (id === "blog" && typeof buildBlog === "function") return buildBlog();
-    if (id === "help" && typeof buildHelp === "function") return buildHelp();
-    if (id === "testimonials" && typeof buildTestimonials === "function") return buildTestimonials();
-    if (id === "github" && typeof buildGitHub === "function") return buildGitHub();
-    if (id === "downloadpack" && typeof buildDownloadPack === "function") return buildDownloadPack();
-  } catch (err) {
-    console.error("[getAppBody]", id, err);
-    const fail = document.createElement("div");
-    fail.className = "app-missing";
-    fail.style.padding = "16px";
-    fail.textContent = "Could not open " + id + ": " + (err && err.message ? err.message : err);
-    return fail;
+  if (id === "notepad") return buildNotepad();
+  if (id === "paint") return buildPaint();
+  if (id === "vector") return buildVectorGraphics();
+  if (id === "terminal") return buildTerminal();
+  if (id === "vscode") return buildVSCode();
+  if (id === "minesweeper") return buildMinesweeper();
+  if (id === "sudoku") return buildSudoku();
+  if (id === "snake") return buildSnake();
+  if (id === "tetris") return buildTetris();
+  if (id === "chat") return buildChatApp();
+  if (id === "control") return buildControlPanel();
+  if (id === "recycle") return buildRecycleBin();
+  if (id === "registry") return buildRegistry();
+  if (id === "device") return buildDeviceInspector();
+  if (id === "voice") return buildVoiceCall();
+  // Extra apps from features-extra.js (Edge, Media Player, Help, Solitaire, …)
+  if (window.extraAppBuilders && typeof window.extraAppBuilders[id] === "function") {
+    try {
+      const node = window.extraAppBuilders[id]();
+      if (node) return node;
+      throw new Error("App builder returned empty content");
+    } catch (err) {
+      console.warn("[Menelik OS] extra app failed:", id, err);
+      const fallback = document.createElement("div");
+      fallback.className = "app-error-panel";
+      fallback.setAttribute("role", "alert");
+      fallback.innerHTML =
+        "<h3 style=\"margin:0 0 8px\">Could not open this program</h3>" +
+        "<p>" + String(err && err.message ? err.message : err).replace(/</g, "&lt;") + "</p>" +
+        "<p class=\"muted\">Try hard-refresh (Ctrl+Shift+R), then open it again from the Start menu.</p>" +
+        "<p><button type=\"button\" class=\"proj-btn app-error-retry\">Try again</button></p>";
+      fallback.querySelector(".app-error-retry")?.addEventListener("click", () => {
+        try {
+          if (typeof closeWindow === "function") closeWindow(id);
+        } catch (_) {}
+        setTimeout(() => {
+          try {
+            if (typeof openWindow === "function") openWindow(id);
+          } catch (e2) {
+            console.warn(e2);
+          }
+        }, 80);
+      });
+      return fallback;
+    }
   }
-  const empty = document.createElement("div");
-  empty.className = "app-missing";
-  empty.style.padding = "16px";
-  empty.textContent = "App unavailable: " + id;
-  return empty;
+  return null;
 }
-
 
 /* ========== Advanced Window Management (Aero Snap + triple + linked split) ========== */
 const SNAP_THRESHOLD = 18;
@@ -8623,7 +9027,7 @@ function openWindow(id) {
 
   // Size: match currently open window when possible so desktop icons open at the same size
   const APP_SIZES = {
-    notepad: { w: 480, h: 340 },
+    notepad: { w: 640, h: 480 },
     paint: { w: 700, h: 520 },
     vector: { w: 720, h: 540 },
     terminal: { w: 500, h: 320 },
@@ -8636,7 +9040,8 @@ function openWindow(id) {
     control: { w: 440, h: 520 },
     recycle: { w: 400, h: 320 },
     registry: { w: 640, h: 460 },
-    ie: { w: 660, h: 480 },
+    edge: { w: 720, h: 520 },
+    ie: { w: 720, h: 520 },
     mediaplayer: { w: 440, h: 400 },
     solitaire: { w: 640, h: 480 },
     blog: { w: 520, h: 440 },
@@ -9489,9 +9894,15 @@ function initMobileTetris(root) {
   const overlayMsg = root.querySelector(".tt-overlay-msg");
   const overlaySub = root.querySelector(".tt-overlay-sub");
   const restartBtn = root.querySelector(".tt-restart");
+  if (!boardEl) {
+    console.warn("[Tetris] board canvas missing");
+    return;
+  }
   const ctx = boardEl.getContext("2d");
-  const nctx = nextEl.getContext("2d");
-  const hctx = holdEl.getContext("2d");
+  if (!ctx) {
+    console.warn("[Tetris] 2d context unavailable");
+    return;
+  }
 
   let grid, piece, nextQueue, holdType, holdUsed;
   let score, lines, level, best, paused, over, started, soundOn;
@@ -9714,10 +10125,12 @@ function initMobileTetris(root) {
   }
 
   function drawMini(canvas, type) {
+    if (!canvas) return;
     const c = canvas.getContext("2d");
+    if (!c) return;
     c.fillStyle = "#9ca88a";
     c.fillRect(0, 0, canvas.width, canvas.height);
-    if (!type) return;
+    if (!type || !SHAPES[type]) return;
     const s = SHAPES[type];
     const size = type === "I" ? 12 : 14;
     const ox = (canvas.width - s[0].length * size) / 2;
@@ -9799,25 +10212,6 @@ function initMobileTetris(root) {
       }
     }
     if (piece && started && !over) {
-      // Ghost piece (hard-drop preview)
-      let gy = 0;
-      while (!collides(piece, 0, gy + 1)) gy++;
-      if (gy > 0) {
-        const s = piece.shape;
-        for (let y = 0; y < s.length; y++) {
-          for (let x = 0; x < s[y].length; x++) {
-            if (!s[y][x]) continue;
-            drawCell(
-              ctx,
-              (piece.x + x) * cellW,
-              (piece.y + gy + y) * cellH,
-              cellW,
-              COLORS[piece.type],
-              0.22
-            );
-          }
-        }
-      }
       const s = piece.shape;
       for (let y = 0; y < s.length; y++) {
         for (let x = 0; x < s[y].length; x++) {
@@ -9857,13 +10251,18 @@ function initMobileTetris(root) {
   }
 
   function nextPiece() {
-    const type = nextQueue.shift();
+    let type = nextQueue.shift();
+    if (!type) {
+      fillBag();
+      type = takeFromBag();
+    }
     nextQueue.push(takeFromBag());
     piece = spawnPiece(type);
     holdUsed = false;
     if (collides(piece, 0, 0)) {
-      // try one row up for I
+      piece.y -= 1;
       if (collides(piece, 0, 0)) {
+        piece.y += 1;
         endGame();
       }
     }
@@ -9925,13 +10324,24 @@ function initMobileTetris(root) {
     beep(300, 0.04);
   }
 
+  function move(dx) {
+    if (!started || over || paused || !piece) return;
+    if (!collides(piece, dx, 0)) {
+      piece.x += dx;
+    }
+  }
+
   function tryRotate() {
     if (!started || over || paused || !piece || piece.type === "O") return;
     const rotated = rotateCW(piece.shape);
-    const kicks = [0, -1, 1, -2, 2];
-    for (const kick of kicks) {
-      if (!collides(piece, kick, 0, rotated)) {
-        piece.x += kick;
+    const kicks = [
+      [0, 0], [-1, 0], [1, 0], [-2, 0], [2, 0],
+      [0, -1], [-1, -1], [1, -1],
+    ];
+    for (const [kx, ky] of kicks) {
+      if (!collides(piece, kx, ky, rotated)) {
+        piece.x += kx;
+        piece.y += ky;
         piece.shape = rotated;
         beep(380, 0.03);
         return;
@@ -10099,8 +10509,10 @@ function initMobileTetris(root) {
       window.removeEventListener("keydown", keyHandler);
       return;
     }
+    const tag = (e.target && e.target.tagName) || "";
+    if (tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT") return;
     const k = e.key;
-    const block = ["ArrowLeft", "ArrowRight", "ArrowDown", "ArrowUp", " ", "p", "P", "c", "C", "Shift"];
+    const block = ["ArrowLeft", "ArrowRight", "ArrowDown", "ArrowUp", " ", "p", "P", "c", "C", "Shift", "z", "Z", "Escape"];
     if (block.includes(k)) e.preventDefault();
     if (!started && (k === "Enter" || k === " ")) {
       startGame();
@@ -10109,10 +10521,10 @@ function initMobileTetris(root) {
     if (k === "ArrowLeft" || k === "a" || k === "A") onAct("left");
     else if (k === "ArrowRight" || k === "d" || k === "D") onAct("right");
     else if (k === "ArrowDown" || k === "s" || k === "S") onAct("down");
-    else if (k === "ArrowUp" || k === "w" || k === "W" || k === "x" || k === "X") onAct("rotate");
+    else if (k === "ArrowUp" || k === "w" || k === "W" || k === "x" || k === "X" || k === "z" || k === "Z") onAct("rotate");
     else if (k === " ") onAct("drop");
     else if (k === "c" || k === "C" || k === "Shift") onAct("hold");
-    else if (k === "p" || k === "P") onAct("pause");
+    else if (k === "p" || k === "P" || k === "Escape") onAct("pause");
     else if (k === "r" || k === "R") onAct("reset");
   };
   window.addEventListener("keydown", keyHandler);
@@ -10322,9 +10734,8 @@ function mobileGoBack() {
 document.getElementById("mobile")?.addEventListener("click", (e) => {
   const btn = e.target.closest(".app-icon[data-page]");
   if (!btn || !btn.dataset.page) return;
-  // Folder grids live inside pages; one delegated handler is enough
+  // avoid double-handling if something else needs the click
   e.preventDefault();
-  e.stopPropagation();
   showPage(btn.dataset.page);
 });
 
@@ -10531,6 +10942,26 @@ initAndroidNavGestures();
 
 /* ========== Init ========== */
 initTheme();
+/* Restore mobile home prefs */
+(function restoreMobilePrefs() {
+  try {
+    const home = document.getElementById("home-screen");
+    if (!home) return;
+    const layout = localStorage.getItem("portfolio-home-layout") || "grid";
+    const iconSize = localStorage.getItem("portfolio-home-icon-size") || "medium";
+    home.dataset.layout = layout;
+    home.dataset.iconSize = iconSize;
+    if (localStorage.getItem("portfolio-large-text") === "on") {
+      document.body.classList.add("large-text");
+    }
+    if (localStorage.getItem("portfolio-reduce-motion") === "on") {
+      document.body.classList.add("reduce-motion");
+    }
+    if (localStorage.getItem("portfolio-ui-anim") === "off") {
+      document.body.classList.add("no-ui-anim");
+    }
+  } catch (_) {}
+})();
 
 /* ========== Screensaver ========== */
 let ssTimer = null;
@@ -10553,7 +10984,25 @@ function resetScreensaverTimer() {
 });
 resetScreensaverTimer();
 // Wallpaper from control panel
-document.body.dataset.wallpaper = localStorage.getItem("portfolio-wallpaper") || "default";
+(function () {
+  let w = localStorage.getItem("portfolio-wallpaper") || "default";
+  const allowed = { default: 1, green: 1, sunset: 1, night: 1 };
+  if (!allowed[w]) {
+    w = "default";
+    try { localStorage.setItem("portfolio-wallpaper", "default"); } catch (_) {}
+  }
+  document.body.dataset.wallpaper = w;
+  const run = () => {
+    if (typeof applyWallpaper === "function") applyWallpaper(w, { silent: true });
+    // Clear any leftover mobile home-screen inline wallpaper
+    document.querySelectorAll(".home-screen").forEach((el) => {
+      el.style.background = "";
+      el.removeAttribute("data-wallpaper");
+    });
+  };
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", run);
+  else setTimeout(run, 0);
+})();
 if (typeof applyIconSizes === "function") applyIconSizes();
 (function restoreIconMetrics() {
   const px = localStorage.getItem("portfolio-icon-gap-px");

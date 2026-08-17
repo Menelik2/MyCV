@@ -1619,9 +1619,8 @@ body.light .theme-toggle-mobile .moon { display: inline; }
   height: 100%;
 }
 
-/* ---- Notepad (Windows 11 style) ---- */
-.notepad-app,
-.notepad-win11 {
+/* ---- Notepad ---- */
+.notepad-app {
   display: flex;
   flex-direction: column;
   height: 100%;
@@ -1629,175 +1628,236 @@ body.light .theme-toggle-mobile .moon { display: inline; }
   flex: 1;
   background: #f3f3f3;
   color: #1a1a1a;
-  font-family: "Segoe UI", system-ui, sans-serif;
+  font-family: "Segoe UI Variable", "Segoe UI", system-ui, sans-serif;
 }
-body:not(.light) .notepad-win11 {
-  background: #202020;
-  color: #f3f3f3;
+
+/* Windows 11–style Notepad */
+.notepad-win11 {
+  background: #f9f9f9;
 }
 .np11-menubar {
   display: flex;
   gap: 2px;
   padding: 4px 8px 0;
-  flex-shrink: 0;
+  background: #f9f9f9;
+  user-select: none;
+}
+.np11-menu {
+  position: relative;
 }
 .np11-menu-btn {
   border: none;
   background: transparent;
-  color: inherit;
-  font: 600 12px/1 "Segoe UI", system-ui, sans-serif;
-  padding: 6px 10px;
-  border-radius: 6px;
+  padding: 4px 10px;
+  font-size: 12.5px;
+  font-family: inherit;
+  border-radius: 4px;
   cursor: pointer;
+  color: #1a1a1a;
 }
 .np11-menu-btn:hover {
-  background: rgba(0, 0, 0, 0.06);
+  background: rgba(0, 0, 0, 0.04);
 }
-body:not(.light) .np11-menu-btn:hover {
-  background: rgba(255, 255, 255, 0.08);
+.np11-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  z-index: 40;
+  min-width: 220px;
+  padding: 4px;
+  background: #f7f7f7;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 8px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.14);
+}
+.np11-dropdown button {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  width: 100%;
+  border: none;
+  background: transparent;
+  padding: 8px 10px;
+  font-size: 12.5px;
+  font-family: inherit;
+  border-radius: 4px;
+  cursor: pointer;
+  color: #1a1a1a;
+  text-align: left;
+}
+.np11-dropdown button:hover {
+  background: rgba(0, 0, 0, 0.05);
+}
+.np11-dropdown kbd {
+  font-family: inherit;
+  font-size: 11px;
+  opacity: 0.55;
+  font-weight: 400;
+}
+.np11-dropdown hr {
+  border: none;
+  border-top: 1px solid rgba(0, 0, 0, 0.08);
+  margin: 4px 6px;
+}
+.np11-check {
+  display: inline-block;
+  width: 14px;
+  margin-right: 4px;
+  color: #0067c0;
+  font-weight: 600;
 }
 .np11-commandbar {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   gap: 4px;
-  padding: 6px 8px 8px;
-  flex-shrink: 0;
+  padding: 6px 10px 8px;
+  background: #f9f9f9;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
 }
 .np11-cmd {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  border: 1px solid transparent;
-  background: rgba(255, 255, 255, 0.7);
-  color: inherit;
-  font: 12px/1 "Segoe UI", system-ui, sans-serif;
-  padding: 7px 10px;
-  border-radius: 8px;
+  border: none;
+  background: transparent;
+  padding: 6px 12px;
+  font-size: 12.5px;
+  font-family: inherit;
+  border-radius: 6px;
   cursor: pointer;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
-}
-body:not(.light) .np11-cmd {
-  background: rgba(255, 255, 255, 0.06);
-  box-shadow: none;
+  color: #1a1a1a;
 }
 .np11-cmd:hover {
-  background: #fff;
-  border-color: rgba(0, 0, 0, 0.08);
+  background: rgba(0, 0, 0, 0.05);
 }
-body:not(.light) .np11-cmd:hover {
-  background: rgba(255, 255, 255, 0.12);
-  border-color: rgba(255, 255, 255, 0.08);
+.np11-cmd:active {
+  background: rgba(0, 0, 0, 0.08);
 }
-.np11-cmd.active {
-  background: rgba(0, 103, 192, 0.12);
-  color: #0067c0;
-  border-color: rgba(0, 103, 192, 0.25);
-}
-body:not(.light) .np11-cmd.active {
-  background: rgba(96, 205, 255, 0.15);
-  color: #60cdff;
-}
-.np11-ico { font-size: 13px; line-height: 1; }
 .np11-sep {
   width: 1px;
-  height: 22px;
-  background: rgba(0, 0, 0, 0.12);
+  height: 16px;
+  background: rgba(0, 0, 0, 0.1);
   margin: 0 4px;
-}
-body:not(.light) .np11-sep {
-  background: rgba(255, 255, 255, 0.14);
 }
 .np11-findbar {
   display: flex;
-  gap: 6px;
   align-items: center;
-  padding: 0 8px 8px;
-  flex-shrink: 0;
+  gap: 6px;
+  padding: 6px 10px;
+  background: #f3f3f3;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
 }
-.np11-findbar[hidden] { display: none !important; }
 .np11-find-input {
   flex: 1;
   min-width: 0;
   border: 1px solid rgba(0, 0, 0, 0.12);
-  border-radius: 8px;
-  padding: 8px 10px;
-  font: 13px "Segoe UI", system-ui, sans-serif;
+  border-radius: 6px;
+  padding: 6px 10px;
+  font-size: 13px;
+  font-family: inherit;
   outline: none;
   background: #fff;
-  color: #1a1a1a;
-}
-body:not(.light) .np11-find-input {
-  background: #2c2c2c;
-  border-color: rgba(255, 255, 255, 0.12);
-  color: #f3f3f3;
 }
 .np11-find-input:focus {
   border-color: #0067c0;
-  box-shadow: 0 0 0 2px rgba(0, 103, 192, 0.25);
+  box-shadow: 0 0 0 1px #0067c0;
 }
-.np11-editor.notepad-textarea {
+.notepad-textarea,
+.np11-editor {
   flex: 1;
   width: 100%;
   border: none;
   outline: none;
   resize: none;
   padding: 12px 16px;
-  margin: 0 8px;
-  width: calc(100% - 16px);
-  box-sizing: border-box;
-  font-family: "Cascadia Mono", "Consolas", "Segoe UI", monospace;
+  font-family: "Cascadia Mono", "Consolas", "Courier New", monospace;
   font-size: 14px;
   line-height: 1.55;
   background: #ffffff;
   color: #1a1a1a;
-  border-radius: 8px;
-  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.06);
   min-height: 200px;
-}
-body:not(.light) .np11-editor.notepad-textarea {
-  background: #1e1e1e;
-  color: #f3f3f3;
-  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.08);
+  white-space: pre-wrap;
 }
 .np11-statusbar {
   display: flex;
-  justify-content: space-between;
-  gap: 10px;
   flex-wrap: wrap;
-  padding: 6px 12px 8px;
-  font-size: 11px;
-  opacity: 0.85;
-  flex-shrink: 0;
+  gap: 12px 20px;
+  padding: 4px 12px;
+  font-size: 11.5px;
+  color: #5c5c5c;
+  background: #f9f9f9;
+  border-top: 1px solid rgba(0, 0, 0, 0.06);
+  font-family: "Segoe UI Variable", "Segoe UI", system-ui, sans-serif;
 }
-.np11-status-right {
-  display: flex;
-  gap: 6px;
-  align-items: center;
-  flex-wrap: wrap;
+.np11-statusbar span {
+  white-space: nowrap;
 }
-.np11-dot { opacity: 0.45; }
 
-/* Legacy toolbar fallback */
+/* Win11 dark */
+body:not(.light) .notepad-app,
+body:not(.light) .notepad-win11 {
+  background: #202020;
+  color: #ffffff;
+}
+body:not(.light) .np11-menubar,
+body:not(.light) .np11-commandbar,
+body:not(.light) .np11-statusbar {
+  background: #202020;
+  border-color: rgba(255, 255, 255, 0.08);
+  color: #e6e6e6;
+}
+body:not(.light) .np11-menu-btn,
+body:not(.light) .np11-cmd {
+  color: #e6e6e6;
+}
+body:not(.light) .np11-menu-btn:hover,
+body:not(.light) .np11-cmd:hover {
+  background: rgba(255, 255, 255, 0.06);
+}
+body:not(.light) .np11-dropdown {
+  background: #2c2c2c;
+  border-color: rgba(255, 255, 255, 0.1);
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.45);
+}
+body:not(.light) .np11-dropdown button {
+  color: #e6e6e6;
+}
+body:not(.light) .np11-dropdown button:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+body:not(.light) .np11-dropdown hr {
+  border-color: rgba(255, 255, 255, 0.1);
+}
+body:not(.light) .np11-findbar {
+  background: #1b1b1b;
+  border-color: rgba(255, 255, 255, 0.08);
+}
+body:not(.light) .np11-find-input {
+  background: #2c2c2c;
+  border-color: rgba(255, 255, 255, 0.12);
+  color: #fff;
+}
+body:not(.light) .np11-find-input:focus {
+  border-color: #60cdff;
+  box-shadow: 0 0 0 1px #60cdff;
+}
+body:not(.light) .notepad-textarea,
+body:not(.light) .np11-editor {
+  background: #1e1e1e;
+  color: #e6e6e6;
+}
+body:not(.light) .np11-statusbar {
+  color: #b3b3b3;
+}
+body:not(.light) .np11-check {
+  color: #60cdff;
+}
+body:not(.light) .np11-sep {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+/* legacy toolbar (if any) */
 .notepad-toolbar {
   display: none;
-}
-
-@media (max-width: 899px) {
-  .np11-cmd span:not(.np11-ico) {
-    display: none;
-  }
-  .np11-cmd {
-    min-width: 40px;
-    min-height: 40px;
-    justify-content: center;
-    padding: 8px;
-  }
-  .np11-editor.notepad-textarea {
-    margin: 0 6px;
-    width: calc(100% - 12px);
-    font-size: 16px;
-  }
 }
 
 /* ---- Paint ---- */
@@ -1864,18 +1924,25 @@ body:not(.light) .np11-editor.notepad-textarea {
 
 .paint-canvas-wrap {
   flex: 1;
-  overflow: auto;
-  background: #808080;
+  min-height: 0;
+  overflow: hidden;
+  background: #6b6b6b;
   display: flex;
-  align-items: flex-start;
-  justify-content: center;
-  padding: 8px;
+  align-items: stretch;
+  justify-content: stretch;
+  padding: 0;
+  position: relative;
 }
 
 .paint-canvas-wrap canvas {
-  background: #fff;
+  background: #ffffff;
   cursor: crosshair;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+  display: block;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  touch-action: none;
+  user-select: none;
 }
 
 body:not(.light) .paint-toolbar {
@@ -3221,12 +3288,17 @@ body:not(.light) .admin-btn {
 
 
 /* ========== Dark mode polish ========== */
-body:not(.light) .wallpaper {
+/* Only tint default wallpaper in dark mode — never fight custom wallpapers */
+body:not(.light):not([data-wallpaper]) .wallpaper,
+body:not(.light)[data-wallpaper="default"] .wallpaper {
   background:
     radial-gradient(ellipse at 30% 20%, #1e3a5f 0%, transparent 50%),
     radial-gradient(ellipse at 70% 80%, #0f172a 0%, transparent 45%),
     linear-gradient(160deg, #0b1220 0%, #1a2744 40%, #0f172a 100%);
   filter: saturate(1.05);
+}
+body:not(.light)[data-wallpaper]:not([data-wallpaper="default"]) .wallpaper {
+  filter: none;
 }
 body:not(.light) .desktop-icons .icon span {
   color: var(--icon-label);
@@ -3346,8 +3418,14 @@ body, .desktop, .wallpaper, .window, .taskbar, .start-menu, .mobile {
   margin: 4px 8px;
 }
 .wallpaper.refresh-flash {
-  filter: brightness(1.15);
-  transition: filter 0.15s;
+  filter: brightness(1.25) saturate(1.15) !important;
+  transition: filter 0.2s ease, background 0.35s ease;
+}
+.wallpaper {
+  transition: background 0.35s ease, filter 0.2s ease;
+}
+.home-screen {
+  transition: background 0.35s ease;
 }
 
 /* ========== OS logoff / shutdown overlay ========== */
@@ -3981,6 +4059,184 @@ body[data-wallpaper="sunset"] .wallpaper {
 }
 body[data-wallpaper="night"] .wallpaper {
   background: linear-gradient(160deg, #0d1b2a 0%, #1b263b 50%, #415a77 100%) !important;
+}
+
+/* —— Modern Apple-inspired wallpapers (CSS only) —— */
+
+/* Sonoma — soft peach / sky abstract */
+body[data-wallpaper="sonoma"] .wallpaper {
+  background:
+    radial-gradient(ellipse 80% 60% at 20% 80%, rgba(255, 180, 140, 0.55) 0%, transparent 55%),
+    radial-gradient(ellipse 70% 50% at 85% 25%, rgba(140, 190, 255, 0.5) 0%, transparent 50%),
+    radial-gradient(ellipse 50% 40% at 50% 50%, rgba(255, 220, 200, 0.35) 0%, transparent 60%),
+    linear-gradient(165deg, #f5e6dc 0%, #c8d9f0 45%, #9bb8e0 100%) !important;
+}
+body.light[data-wallpaper="sonoma"] .wallpaper {
+  background:
+    radial-gradient(ellipse 80% 60% at 15% 85%, rgba(255, 160, 120, 0.45) 0%, transparent 55%),
+    radial-gradient(ellipse 70% 50% at 90% 20%, rgba(120, 180, 255, 0.4) 0%, transparent 50%),
+    linear-gradient(165deg, #fff5ef 0%, #d6e8fa 50%, #a8c8f0 100%) !important;
+}
+
+/* Sequoia — deep teal / forest glass */
+body[data-wallpaper="sequoia"] .wallpaper {
+  background:
+    radial-gradient(ellipse 90% 70% at 10% 90%, rgba(20, 80, 70, 0.7) 0%, transparent 50%),
+    radial-gradient(ellipse 60% 50% at 90% 15%, rgba(40, 120, 100, 0.45) 0%, transparent 45%),
+    radial-gradient(circle at 50% 40%, rgba(60, 140, 120, 0.25) 0%, transparent 55%),
+    linear-gradient(160deg, #0a1f1c 0%, #143d36 40%, #1a5c52 100%) !important;
+}
+body.light[data-wallpaper="sequoia"] .wallpaper {
+  background:
+    radial-gradient(ellipse 80% 60% at 20% 80%, rgba(80, 160, 140, 0.4) 0%, transparent 55%),
+    radial-gradient(ellipse 60% 50% at 85% 20%, rgba(100, 180, 160, 0.35) 0%, transparent 50%),
+    linear-gradient(160deg, #e8f5f2 0%, #b8ddd4 50%, #7eb8a8 100%) !important;
+}
+
+/* Ventura — purple / indigo aurora */
+body[data-wallpaper="ventura"] .wallpaper {
+  background:
+    radial-gradient(ellipse 70% 55% at 15% 70%, rgba(120, 60, 180, 0.55) 0%, transparent 55%),
+    radial-gradient(ellipse 65% 50% at 85% 25%, rgba(60, 100, 220, 0.5) 0%, transparent 50%),
+    radial-gradient(ellipse 40% 35% at 55% 45%, rgba(180, 100, 220, 0.3) 0%, transparent 55%),
+    linear-gradient(155deg, #1a1030 0%, #2a1a50 40%, #1e2a60 100%) !important;
+}
+body.light[data-wallpaper="ventura"] .wallpaper {
+  background:
+    radial-gradient(ellipse 70% 55% at 20% 75%, rgba(180, 140, 230, 0.45) 0%, transparent 55%),
+    radial-gradient(ellipse 65% 50% at 80% 20%, rgba(140, 170, 255, 0.4) 0%, transparent 50%),
+    linear-gradient(155deg, #f0e8ff 0%, #d4d0f5 45%, #b0c0f0 100%) !important;
+}
+
+/* Monterey — ocean wave blues */
+body[data-wallpaper="monterey"] .wallpaper {
+  background:
+    radial-gradient(ellipse 100% 40% at 50% 100%, rgba(20, 80, 140, 0.6) 0%, transparent 50%),
+    radial-gradient(ellipse 80% 35% at 30% 85%, rgba(40, 140, 200, 0.4) 0%, transparent 45%),
+    radial-gradient(ellipse 60% 30% at 70% 75%, rgba(80, 180, 220, 0.3) 0%, transparent 40%),
+    linear-gradient(180deg, #0a1628 0%, #0e2848 35%, #143a60 70%, #1a4a70 100%) !important;
+}
+body.light[data-wallpaper="monterey"] .wallpaper {
+  background:
+    radial-gradient(ellipse 100% 45% at 50% 100%, rgba(60, 140, 200, 0.35) 0%, transparent 50%),
+    radial-gradient(ellipse 70% 40% at 25% 80%, rgba(100, 180, 230, 0.3) 0%, transparent 45%),
+    linear-gradient(180deg, #e8f4fc 0%, #b8d8f0 40%, #78b0d8 100%) !important;
+}
+
+/* Big Sur — layered hill silhouettes */
+body[data-wallpaper="bigsur"] .wallpaper {
+  background:
+    linear-gradient(180deg, transparent 55%, rgba(20, 50, 40, 0.85) 55%, rgba(15, 40, 35, 0.95) 70%, #0a1a18 100%),
+    linear-gradient(180deg, transparent 42%, rgba(40, 90, 70, 0.55) 42%, rgba(30, 70, 55, 0.7) 58%, transparent 58%),
+    linear-gradient(180deg, transparent 28%, rgba(60, 120, 90, 0.35) 28%, rgba(50, 100, 80, 0.45) 45%, transparent 45%),
+    radial-gradient(ellipse 50% 30% at 70% 22%, rgba(255, 200, 120, 0.35) 0%, transparent 60%),
+    linear-gradient(180deg, #1a3050 0%, #2a5080 25%, #3a7090 50%, #2a6050 100%) !important;
+}
+body.light[data-wallpaper="bigsur"] .wallpaper {
+  background:
+    linear-gradient(180deg, transparent 55%, rgba(80, 140, 110, 0.5) 55%, rgba(60, 120, 95, 0.65) 70%, #4a9070 100%),
+    linear-gradient(180deg, transparent 40%, rgba(120, 180, 150, 0.4) 40%, rgba(100, 160, 130, 0.5) 55%, transparent 55%),
+    radial-gradient(ellipse 45% 28% at 75% 18%, rgba(255, 220, 150, 0.5) 0%, transparent 55%),
+    linear-gradient(180deg, #a8d0f0 0%, #90c0e8 30%, #78b0c8 55%, #68a090 100%) !important;
+}
+
+/* Aurora Borealis */
+body[data-wallpaper="aurora"] .wallpaper {
+  background:
+    radial-gradient(ellipse 90% 40% at 20% 30%, rgba(40, 220, 160, 0.35) 0%, transparent 50%),
+    radial-gradient(ellipse 80% 35% at 70% 40%, rgba(80, 120, 255, 0.4) 0%, transparent 50%),
+    radial-gradient(ellipse 70% 30% at 45% 55%, rgba(160, 80, 255, 0.3) 0%, transparent 50%),
+    radial-gradient(ellipse 60% 25% at 80% 20%, rgba(0, 255, 180, 0.25) 0%, transparent 45%),
+    linear-gradient(180deg, #050a18 0%, #0a1528 40%, #0e1a30 100%) !important;
+}
+body.light[data-wallpaper="aurora"] .wallpaper {
+  background:
+    radial-gradient(ellipse 90% 40% at 25% 35%, rgba(80, 220, 180, 0.3) 0%, transparent 50%),
+    radial-gradient(ellipse 80% 35% at 70% 45%, rgba(120, 150, 255, 0.3) 0%, transparent 50%),
+    radial-gradient(ellipse 70% 30% at 50% 60%, rgba(180, 120, 255, 0.25) 0%, transparent 50%),
+    linear-gradient(180deg, #e8f0ff 0%, #d0e0f8 50%, #b8d0f0 100%) !important;
+}
+
+/* Soft horizon — dawn peach / gold */
+body[data-wallpaper="horizon"] .wallpaper {
+  background:
+    radial-gradient(ellipse 100% 50% at 50% 100%, rgba(255, 160, 80, 0.45) 0%, transparent 55%),
+    radial-gradient(ellipse 60% 30% at 50% 70%, rgba(255, 200, 140, 0.35) 0%, transparent 50%),
+    linear-gradient(180deg, #1a2040 0%, #3a4060 30%, #8a6070 60%, #e09060 85%, #f0c080 100%) !important;
+}
+body.light[data-wallpaper="horizon"] .wallpaper {
+  background:
+    radial-gradient(ellipse 100% 45% at 50% 100%, rgba(255, 180, 100, 0.4) 0%, transparent 55%),
+    linear-gradient(180deg, #c8d8f0 0%, #e0d0d8 40%, #f0c8a0 70%, #ffd8a8 100%) !important;
+}
+
+/* Deep nebula */
+body[data-wallpaper="nebula"] .wallpaper {
+  background:
+    radial-gradient(ellipse 50% 40% at 30% 40%, rgba(180, 60, 200, 0.45) 0%, transparent 55%),
+    radial-gradient(ellipse 45% 35% at 70% 60%, rgba(60, 80, 220, 0.4) 0%, transparent 50%),
+    radial-gradient(ellipse 35% 30% at 55% 25%, rgba(255, 100, 180, 0.3) 0%, transparent 50%),
+    radial-gradient(circle at 15% 80%, rgba(40, 200, 255, 0.2) 0%, transparent 40%),
+    linear-gradient(160deg, #08051a 0%, #120a28 50%, #0a1028 100%) !important;
+}
+body.light[data-wallpaper="nebula"] .wallpaper {
+  background:
+    radial-gradient(ellipse 50% 40% at 30% 40%, rgba(200, 120, 220, 0.35) 0%, transparent 55%),
+    radial-gradient(ellipse 45% 35% at 70% 55%, rgba(120, 140, 240, 0.3) 0%, transparent 50%),
+    linear-gradient(160deg, #f0e8ff 0%, #e0d8f8 50%, #d0d8f5 100%) !important;
+}
+
+/* Midnight glow — elegant dark with blue rim light */
+body[data-wallpaper="midnight"] .wallpaper {
+  background:
+    radial-gradient(ellipse 70% 50% at 50% 110%, rgba(40, 100, 200, 0.4) 0%, transparent 55%),
+    radial-gradient(ellipse 40% 25% at 80% 15%, rgba(100, 140, 255, 0.2) 0%, transparent 50%),
+    linear-gradient(165deg, #050810 0%, #0a1220 40%, #0e1a30 100%) !important;
+}
+body.light[data-wallpaper="midnight"] .wallpaper {
+  background:
+    radial-gradient(ellipse 70% 50% at 50% 110%, rgba(80, 140, 220, 0.25) 0%, transparent 55%),
+    linear-gradient(165deg, #e8eef8 0%, #d0dcec 50%, #b8cce0 100%) !important;
+}
+
+/* Mint glass */
+body[data-wallpaper="mint"] .wallpaper {
+  background:
+    radial-gradient(ellipse 80% 60% at 20% 30%, rgba(100, 230, 200, 0.35) 0%, transparent 50%),
+    radial-gradient(ellipse 70% 50% at 80% 70%, rgba(80, 200, 180, 0.3) 0%, transparent 50%),
+    linear-gradient(150deg, #0a201c 0%, #143830 45%, #1a5048 100%) !important;
+}
+body.light[data-wallpaper="mint"] .wallpaper {
+  background:
+    radial-gradient(ellipse 80% 60% at 25% 35%, rgba(140, 240, 210, 0.4) 0%, transparent 50%),
+    radial-gradient(ellipse 70% 50% at 75% 65%, rgba(120, 220, 200, 0.3) 0%, transparent 50%),
+    linear-gradient(150deg, #e8faf5 0%, #c0f0e4 50%, #90e0d0 100%) !important;
+}
+
+/* Peach bloom */
+body[data-wallpaper="peach"] .wallpaper {
+  background:
+    radial-gradient(ellipse 90% 70% at 30% 80%, rgba(255, 140, 100, 0.45) 0%, transparent 55%),
+    radial-gradient(ellipse 60% 45% at 80% 25%, rgba(255, 180, 160, 0.35) 0%, transparent 50%),
+    linear-gradient(160deg, #2a1820 0%, #4a2830 40%, #6a3840 100%) !important;
+}
+body.light[data-wallpaper="peach"] .wallpaper {
+  background:
+    radial-gradient(ellipse 90% 70% at 25% 75%, rgba(255, 160, 120, 0.4) 0%, transparent 55%),
+    radial-gradient(ellipse 60% 45% at 80% 20%, rgba(255, 200, 180, 0.35) 0%, transparent 50%),
+    linear-gradient(160deg, #fff0ea 0%, #ffd8cc 50%, #ffc0b0 100%) !important;
+}
+
+/* Modern slate — clean gray / blue professional */
+body[data-wallpaper="slate"] .wallpaper {
+  background:
+    radial-gradient(ellipse 60% 40% at 70% 20%, rgba(100, 140, 180, 0.25) 0%, transparent 55%),
+    linear-gradient(155deg, #1a1e28 0%, #252a38 45%, #2e3444 100%) !important;
+}
+body.light[data-wallpaper="slate"] .wallpaper {
+  background:
+    radial-gradient(ellipse 60% 40% at 70% 20%, rgba(140, 170, 200, 0.3) 0%, transparent 55%),
+    linear-gradient(155deg, #f0f2f6 0%, #e0e4ec 50%, #c8d0dc 100%) !important;
 }
 
 /* ========== Recycle Bin ========== */
@@ -4926,19 +5182,28 @@ body:not(.light) .reg-status { color: #cbd5e1; }
 .paint-pro .paint-canvas-wrap {
   flex: 1;
   min-height: 0;
-  overflow: auto;
-  background: #808080;
+  overflow: hidden;
+  background: #6b6b6b;
   display: flex;
-  align-items: flex-start;
-  justify-content: center;
-  padding: 8px;
+  align-items: stretch;
+  justify-content: stretch;
+  padding: 0;
+  position: relative;
 }
-.paint-pro canvas {
-  background: #fff;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.35);
+.paint-pro canvas,
+.paint-pro canvas.paint-surface {
+  background: #ffffff;
+  box-shadow: none;
   cursor: crosshair;
-  max-width: 100%;
-  height: auto;
+  display: block;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  max-height: none;
+  flex: 1;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
 }
 .paint-status {
   font-size: 11px;
@@ -5174,8 +5439,8 @@ body.high-contrast .testimonial-card {
 }
 
 /* ========== New app icons ========== */
-.ie-icon { background: linear-gradient(135deg, #60a5fa, #1d4ed8); }
-.ie-icon::after {
+.edge-icon, .ie-icon { background: linear-gradient(135deg, #0ea5e9, #2563eb 45%, #1d4ed8); }
+.edge-icon::after, .ie-icon::after {
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Ccircle cx='24' cy='24' r='14' fill='none' stroke='%23fff' stroke-width='3'/%3E%3Cpath stroke='%23fff' stroke-width='2' d='M10 24h28M24 10c-6 6-6 22 0 28M24 10c6 6 6 22 0 28' fill='none'/%3E%3C/svg%3E");
 }
 .wmp-icon { background: linear-gradient(135deg, #fbbf24, #b45309); }
@@ -5207,15 +5472,15 @@ body.high-contrast .testimonial-card {
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Cpath fill='%23fff' d='M10 12h28v6H10v-6zm2 10h24v18H12V22zm8 4v8h4v-8h4l-6-6-6 6h4z'/%3E%3C/svg%3E");
 }
 
-/* ========== IE ========== */
-.ie-app { display:flex; flex-direction:column; height:100%; min-height:0; flex:1; background:#fff; color:#111; font-family:Tahoma,sans-serif; font-size:12px; box-sizing:border-box; }
-.ie-toolbar { display:flex; gap:4px; padding:6px; background:#ece9d8; border-bottom:1px solid #888; align-items:center; }
-.ie-nav { padding:3px 8px; font-size:12px; cursor:pointer; border:1px solid #888; background:linear-gradient(to bottom,#fff,#e0e0e0); border-radius:3px; }
-.ie-address { flex:1; padding:4px 8px; border:1px solid #7f9db9; font-family:Consolas,monospace; font-size:12px; }
-.ie-body { flex:1; overflow:auto; padding:12px 14px; }
-.ie-status { padding:3px 8px; background:#ece9d8; border-top:1px solid #aaa; font-size:11px; }
-.ie-links { margin:8px 0 0 18px; line-height:1.8; }
-.ie-page img { max-width:100%; }
+/* ========== Microsoft Edge ========== */
+.edge-app { display:flex; flex-direction:column; height:100%; min-height:0; flex:1; background:#fff; color:#111; font-family:Tahoma,sans-serif; font-size:12px; box-sizing:border-box; }
+.edge-toolbar { display:flex; gap:4px; padding:6px; background:#ece9d8; border-bottom:1px solid #888; align-items:center; }
+.edge-nav { padding:3px 8px; font-size:12px; cursor:pointer; border:1px solid #888; background:linear-gradient(to bottom,#fff,#e0e0e0); border-radius:3px; }
+.edge-address { flex:1; padding:4px 8px; border:1px solid #7f9db9; font-family:Consolas,monospace; font-size:12px; }
+.edge-body { flex:1; overflow:auto; padding:12px 14px; }
+.edge-status { padding:3px 8px; background:#ece9d8; border-top:1px solid #aaa; font-size:11px; }
+.edge-links { margin:8px 0 0 18px; line-height:1.8; }
+.edge-page img { max-width:100%; }
 
 /* ========== Media Player ========== */
 .wmp-app { display:flex; flex-direction:column; height:100%; min-height:0; flex:1; background:#1a1a1a; color:#eee; font-family:Tahoma,sans-serif; font-size:12px; box-sizing:border-box; }
@@ -5702,9 +5967,9 @@ body:not(.light) .mc-drive-bar { background: #334155; }
 .help-app table { width:100%; border-collapse:collapse; margin:8px 0 12px; font-size:12px; }
 .help-app td, .help-app th { border:1px solid var(--border,#ccc); padding:6px 8px; text-align:left; }
 .help-app th { background:var(--card-bg,#f0f0f0); }
-body:not(.light) .ie-body, body:not(.light) .ie-status { background:#1e1e24; color:#e2e8f0; }
-body:not(.light) .ie-toolbar { background:#2a2a32; border-color:#444; color:#eee; }
-body:not(.light) .ie-address { background:#1e1e24; color:#eee; border-color:#555; }
+body:not(.light) .edge-body, body:not(.light) .edge-status { background:#1e1e24; color:#e2e8f0; }
+body:not(.light) .edge-toolbar { background:#2a2a32; border-color:#444; color:#eee; }
+body:not(.light) .edge-address { background:#1e1e24; color:#eee; border-color:#555; }
 .help-table { width:100%; border-collapse:collapse; margin:8px 0 14px; }
 .help-table td { padding:6px 8px; border-bottom:1px solid #ddd; vertical-align:top; }
 .help-table kbd { background:#eee; border:1px solid #bbb; border-radius:3px; padding:1px 5px; font-size:11px; }
@@ -5734,28 +5999,78 @@ body:not(.light) .testimonial-card { background:#1e293b; }
 body:not(.light) .cert-tile { background:#1e1e24; border-color:#444; color:#e2e8f0; }
 body:not(.light) .resume-timeline { background:#1e293b; border-color:#334155; color:#e2e8f0; }
 body:not(.light) .help-table kbd { background:#334155; border-color:#555; color:#e2e8f0; }
-body:not(.light) .ie-app { background:#1e1e24; color:#e2e8f0; }
-body:not(.light) .ie-toolbar, body:not(.light) .ie-status { background:#2a2a32; border-color:#444; color:#ccc; }
-body:not(.light) .ie-address { background:#111; color:#eee; border-color:#555; }
+body:not(.light) .edge-app { background:#1e1e24; color:#e2e8f0; }
+body:not(.light) .edge-toolbar, body:not(.light) .edge-status { background:#2a2a32; border-color:#444; color:#ccc; }
+body:not(.light) .edge-address { background:#111; color:#eee; border-color:#555; }
 
 
-/* ========== IE / WMP / Help — working apps polish ========== */
-.ie-toolbar { display:flex; flex-wrap:wrap; gap:4px; align-items:center; padding:6px 8px; background:#ece9d8; border-bottom:1px solid #888; }
-.ie-nav { padding:3px 8px; font-size:12px; cursor:pointer; font-family:Tahoma,sans-serif; border:1px solid #888; background:linear-gradient(to bottom,#fff,#e8e8e8); border-radius:3px; }
-.ie-nav:hover { border-color:#316ac5; background:#e8f0ff; }
-.ie-go { font-weight:700; }
-.ie-address { flex:1; min-width:120px; padding:4px 8px; border:1px solid #7f9db9; font-family:Consolas,monospace; font-size:12px; }
-.ie-body { flex:1; overflow:auto; padding:12px 14px; min-height:0; background:#fff; }
-.ie-status { padding:3px 8px; background:#ece9d8; border-top:1px solid #aaa; font-size:11px; }
-.ie-links { margin:8px 0 12px 18px; line-height:1.85; }
-.ie-frame { width:100%; height:220px; border:1px solid #ccc; margin-top:10px; background:#fafafa; }
-.ie-external .proj-btn { margin-right:6px; margin-top:6px; }
-.ie-home .muted, .ie-page .muted { color:#666; font-size:12px; }
-body:not(.light) .ie-toolbar, body:not(.light) .ie-status { background:#2a2a32; border-color:#444; color:#e2e8f0; }
-body:not(.light) .ie-body { background:#1e1e24; color:#e2e8f0; }
-body:not(.light) .ie-nav { background:#334155; border-color:#555; color:#e2e8f0; }
-body:not(.light) .ie-address { background:#111; color:#eee; border-color:#555; }
-body:not(.light) .ie-frame { border-color:#444; background:#111; }
+/* ========== Edge / WMP / Help — working apps polish ========== */
+.edge-toolbar { display:flex; flex-wrap:wrap; gap:4px; align-items:center; padding:6px 8px; background:#ece9d8; border-bottom:1px solid #888; }
+.edge-nav { padding:3px 8px; font-size:12px; cursor:pointer; font-family:Tahoma,sans-serif; border:1px solid #888; background:linear-gradient(to bottom,#fff,#e8e8e8); border-radius:3px; }
+.edge-nav:hover { border-color:#316ac5; background:#e8f0ff; }
+.edge-go { font-weight:700; }
+.edge-address { flex:1; min-width:120px; padding:4px 8px; border:1px solid #7f9db9; font-family:Consolas,monospace; font-size:12px; }
+.edge-body { flex:1; overflow:auto; padding:12px 14px; min-height:0; background:#fff; }
+.edge-status { padding:3px 8px; background:#ece9d8; border-top:1px solid #aaa; font-size:11px; }
+.edge-links { margin:8px 0 12px 18px; line-height:1.85; }
+.edge-frame { width:100%; height:220px; border:1px solid #ccc; margin-top:10px; background:#fafafa; }
+.edge-external .proj-btn { margin-right:6px; margin-top:6px; }
+/* Full in-app browser when opening project / external links */
+.edge-body:has(.edge-browse) { padding: 0; display: flex; flex-direction: column; overflow: hidden; }
+.edge-browse {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  height: 100%;
+}
+.edge-ext-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 8px;
+  padding: 6px 10px;
+  background: #ece9d8;
+  border-bottom: 1px solid #aaa;
+  font-size: 11px;
+}
+.edge-ext-label {
+  font-weight: 700;
+  color: #1e3a5f;
+}
+.edge-ext-code {
+  flex: 1;
+  min-width: 100px;
+  font-size: 11px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.edge-browse .edge-frame {
+  flex: 1;
+  min-height: 280px;
+  height: auto;
+  margin: 0;
+  border: none;
+  border-bottom: 1px solid #ccc;
+  background: #fff;
+}
+.edge-frame-note {
+  padding: 4px 10px 6px;
+  font-size: 11px;
+  background: #f5f5f0;
+}
+body:not(.light) .edge-ext-bar { background: #2a2a32; border-color: #444; color: #e2e8f0; }
+body:not(.light) .edge-ext-label { color: #93c5fd; }
+body:not(.light) .edge-frame-note { background: #1a1a20; color: #94a3b8; }
+body:not(.light) .edge-browse .edge-frame { background: #111; border-color: #333; }
+
+.edge-home .muted, .edge-page .muted { color:#666; font-size:12px; }
+body:not(.light) .edge-toolbar, body:not(.light) .edge-status { background:#2a2a32; border-color:#444; color:#e2e8f0; }
+body:not(.light) .edge-body { background:#1e1e24; color:#e2e8f0; }
+body:not(.light) .edge-nav { background:#334155; border-color:#555; color:#e2e8f0; }
+body:not(.light) .edge-address { background:#111; color:#eee; border-color:#555; }
+body:not(.light) .edge-frame { border-color:#444; background:#111; }
 
 .wmp-time { font-size:11px; opacity:0.85; margin-top:6px; font-variant-numeric:tabular-nums; }
 .wmp-vol-label { display:inline-flex; align-items:center; gap:4px; margin-left:auto; font-size:11px; }
@@ -9049,4 +9364,330 @@ body.reduce-motion *::after {
 body.no-ui-anim .window,
 body.no-ui-anim .app-page {
   transition: none !important;
+}
+
+/* ========== Android-style Settings (mobile) ========== */
+@media (max-width: 899px) {
+  #page-control {
+    background: #121212 !important;
+  }
+  body.light #page-control {
+    background: #f0f2f5 !important;
+  }
+  #page-control .page-header {
+    background: #1c1c1e;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+  }
+  body.light #page-control .page-header {
+    background: #fff;
+    border-bottom: 1px solid rgba(0,0,0,0.08);
+  }
+  #page-control .page-header h2 {
+    font-size: 20px;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+  }
+
+  .control-app-android {
+    padding: 12px 12px max(24px, env(safe-area-inset-bottom, 0px)) !important;
+    background: transparent !important;
+    font-family: "Roboto", "Google Sans", -apple-system, "Segoe UI", sans-serif !important;
+    color: #e8eaed !important;
+  }
+  body.light .control-app-android {
+    color: #202124 !important;
+  }
+
+  .control-app-android .cp-title {
+    display: none; /* page header already says Settings */
+  }
+
+  .control-app-android .cp-section {
+    background: #1e1f22 !important;
+    border: none !important;
+    border-radius: 16px !important;
+    padding: 4px 0 8px !important;
+    margin-bottom: 16px !important;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.25);
+    overflow: hidden;
+  }
+  body.light .control-app-android .cp-section {
+    background: #ffffff !important;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+  }
+
+  .control-app-android .cp-section h4 {
+    margin: 0 !important;
+    padding: 14px 16px 6px !important;
+    font-size: 12px !important;
+    font-weight: 600 !important;
+    letter-spacing: 0.06em !important;
+    text-transform: uppercase !important;
+    color: #8ab4f8 !important; /* Android accent blue */
+  }
+  body.light .control-app-android .cp-section h4 {
+    color: #1a73e8 !important;
+  }
+
+  .control-app-android .cp-row {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: 12px !important;
+    margin: 0 !important;
+    padding: 14px 16px !important;
+    min-height: 52px;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    box-sizing: border-box;
+  }
+  body.light .control-app-android .cp-row {
+    border-bottom-color: rgba(0,0,0,0.06);
+  }
+  .control-app-android .cp-section .cp-row:last-of-type {
+    border-bottom: none;
+  }
+
+  .control-app-android .cp-row > span {
+    flex: 1;
+    font-size: 15px !important;
+    font-weight: 400;
+    color: #e8eaed;
+  }
+  body.light .control-app-android .cp-row > span {
+    color: #202124;
+  }
+
+  .control-app-android .cp-row select {
+    flex: 0 1 auto;
+    min-width: 120px;
+    max-width: 55%;
+    min-height: 40px !important;
+    font-size: 14px !important;
+    border-radius: 8px !important;
+    padding: 8px 12px !important;
+    background: #2d2e31 !important;
+    color: #e8eaed !important;
+    border: 1px solid rgba(255,255,255,0.12) !important;
+    margin: 0 !important;
+  }
+  body.light .control-app-android .cp-row select {
+    background: #f1f3f4 !important;
+    color: #202124 !important;
+    border-color: rgba(0,0,0,0.12) !important;
+  }
+
+  /* Material-style switches */
+  .control-app-android .cp-toggle-row input[type="checkbox"],
+  .control-app-android .cp-row input[type="checkbox"] {
+    width: 52px !important;
+    height: 32px !important;
+    appearance: none !important;
+    -webkit-appearance: none !important;
+    background: #5f6368 !important;
+    border-radius: 999px !important;
+    position: relative !important;
+    cursor: pointer;
+    border: none !important;
+    flex-shrink: 0;
+    transition: background 0.2s ease;
+  }
+  .control-app-android .cp-toggle-row input[type="checkbox"]::after,
+  .control-app-android .cp-row input[type="checkbox"]::after {
+    content: "" !important;
+    position: absolute !important;
+    top: 4px !important;
+    left: 4px !important;
+    width: 24px !important;
+    height: 24px !important;
+    border-radius: 50% !important;
+    background: #fff !important;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.35) !important;
+    transition: transform 0.2s ease !important;
+  }
+  .control-app-android .cp-toggle-row input[type="checkbox"]:checked,
+  .control-app-android .cp-row input[type="checkbox"]:checked {
+    background: #8ab4f8 !important;
+  }
+  body.light .control-app-android .cp-toggle-row input[type="checkbox"]:checked,
+  body.light .control-app-android .cp-row input[type="checkbox"]:checked {
+    background: #1a73e8 !important;
+  }
+  .control-app-android .cp-toggle-row input[type="checkbox"]:checked::after,
+  .control-app-android .cp-row input[type="checkbox"]:checked::after {
+    transform: translateX(20px) !important;
+  }
+
+  .control-app-android .proj-btn,
+  .control-app-android .cp-test-sound,
+  .control-app-android .cp-test-haptic,
+  .control-app-android .cp-share,
+  .control-app-android .cp-open-site {
+    width: calc(100% - 32px) !important;
+    margin: 8px 16px !important;
+    min-height: 48px !important;
+    border-radius: 24px !important;
+    font-size: 15px !important;
+    font-weight: 500 !important;
+    border: none !important;
+    background: #2d2e31 !important;
+    color: #8ab4f8 !important;
+    box-shadow: none !important;
+  }
+  body.light .control-app-android .proj-btn,
+  body.light .control-app-android .cp-test-sound,
+  body.light .control-app-android .cp-test-haptic,
+  body.light .control-app-android .cp-share,
+  body.light .control-app-android .cp-open-site {
+    background: #e8f0fe !important;
+    color: #1a73e8 !important;
+  }
+  .control-app-android .cp-danger {
+    background: transparent !important;
+    color: #f28b82 !important;
+    border: 1px solid rgba(242, 139, 130, 0.4) !important;
+  }
+  body.light .control-app-android .cp-danger {
+    color: #d93025 !important;
+    border-color: rgba(217, 48, 37, 0.35) !important;
+    background: transparent !important;
+  }
+
+  .control-app-android .cp-about,
+  .control-app-android .cp-contact {
+    padding: 8px 16px 12px !important;
+    margin: 0 !important;
+    font-size: 13px !important;
+    color: #9aa0a6 !important;
+    line-height: 1.4;
+  }
+  body.light .control-app-android .cp-about,
+  body.light .control-app-android .cp-contact {
+    color: #5f6368 !important;
+  }
+
+  /* Wallpaper picker inside Android settings */
+  .control-app-android .cp-wall-block {
+    padding: 8px 12px 12px;
+  }
+  .control-app-android .cp-wall-label-row {
+    display: none;
+  }
+  .control-app-android .wall-picker {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    max-height: 240px;
+  }
+  .control-app-android .wall-thumb {
+    border-radius: 12px;
+  }
+  .control-app-android .wall-thumb.is-active {
+    border-color: #8ab4f8;
+  }
+  body.light .control-app-android .wall-thumb.is-active {
+    border-color: #1a73e8;
+  }
+  .control-app-android .wall-thumb-swatch {
+    height: 56px;
+    border-radius: 10px;
+  }
+  .control-app-android .cp-wall-select-fallback {
+    display: none !important;
+  }
+}
+
+
+/* Edge: opened external site confirmation */
+.edge-opened {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100%;
+  padding: 24px;
+  box-sizing: border-box;
+  background: linear-gradient(160deg, #e8f4fc 0%, #f5f7fa 100%);
+}
+.edge-opened-card {
+  max-width: 420px;
+  width: 100%;
+  background: #fff;
+  border: 1px solid #c5d0dc;
+  border-radius: 12px;
+  padding: 20px 22px;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
+  font-family: "Segoe UI", Tahoma, sans-serif;
+  color: #1e293b;
+}
+.edge-opened-card .edge-ext-code {
+  display: block;
+  word-break: break-all;
+  font-size: 12px;
+  background: #f1f5f9;
+  padding: 8px 10px;
+  border-radius: 6px;
+}
+body:not(.light) .edge-opened {
+  background: linear-gradient(160deg, #0f172a 0%, #1e293b 100%);
+}
+body:not(.light) .edge-opened-card {
+  background: #1e1e24;
+  border-color: #334155;
+  color: #e2e8f0;
+}
+body:not(.light) .edge-opened-card .edge-ext-code {
+  background: #0f172a;
+  color: #93c5fd;
+}
+
+/* Edge bookmarks + proxy (daedalOS-inspired) */
+.edge-bookmarks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  padding: 4px 8px;
+  background: #f3f4f6;
+  border-bottom: 1px solid #ccc;
+}
+.edge-bm {
+  font-family: Tahoma, "Segoe UI", sans-serif;
+  font-size: 11px;
+  padding: 3px 8px;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  background: transparent;
+  cursor: pointer;
+  color: #1e3a5f;
+}
+.edge-bm:hover {
+  background: #e0e7ff;
+  border-color: #93c5fd;
+}
+.edge-proxy {
+  font-family: Tahoma, sans-serif;
+  font-size: 11px;
+  padding: 3px 6px;
+  max-width: 110px;
+  border: 1px solid #888;
+  border-radius: 3px;
+  background: #fff;
+}
+.edge-nav:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+body:not(.light) .edge-bookmarks {
+  background: #252530;
+  border-color: #444;
+}
+body:not(.light) .edge-bm {
+  color: #e2e8f0;
+}
+body:not(.light) .edge-bm:hover {
+  background: #334155;
+  border-color: #64748b;
+}
+body:not(.light) .edge-proxy {
+  background: #1e1e24;
+  color: #e2e8f0;
+  border-color: #555;
 }
