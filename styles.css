@@ -10312,3 +10312,184 @@ body:not(.light) .edge-proxy {
     background: #f3f3f3 !important;
   }
 }
+
+
+/* ========== Mobile Edge header layouts ========== */
+.edge-chrome {
+  flex: 0 0 auto;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+.edge-addr-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+  min-width: 0;
+}
+.edge-nav-row {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  width: 100%;
+  min-width: 0;
+  flex-wrap: nowrap;
+}
+.edge-addr-row .edge-address {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+.edge-nav-row .edge-proxy {
+  flex: 1 1 auto;
+  min-width: 0;
+  margin-left: 2px;
+}
+
+@media (max-width: 899px) {
+  #page-edge .page-header {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    flex: 0 0 auto;
+    min-height: 44px;
+    max-height: 48px;
+    padding: 4px 10px 4px 4px !important;
+    background: #ece9d8 !important;
+    border-bottom: 1px solid #aca899 !important;
+    box-sizing: border-box;
+  }
+  #page-edge .page-header h2 {
+    flex: 1;
+    margin: 0 !important;
+    margin-right: 0 !important;
+    text-align: left !important;
+    font-size: 15px !important;
+    font-weight: 600;
+    color: #1a1a1a !important;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  #page-edge .back-btn {
+    flex: 0 0 auto;
+    min-width: 44px;
+    min-height: 44px;
+    padding: 0 8px !important;
+    font-size: 22px !important;
+    color: #1e4a8c !important;
+  }
+
+  #page-edge .edge-chrome {
+    background: #ece9d8;
+    border-bottom: 1px solid #888;
+  }
+  #page-edge .edge-toolbar {
+    display: flex !important;
+    flex-direction: column !important;
+    flex-wrap: nowrap !important;
+    gap: 6px !important;
+    padding: 8px !important;
+    background: #ece9d8 !important;
+    border-bottom: none !important;
+  }
+  #page-edge .edge-addr-row {
+    display: flex;
+    gap: 6px;
+    width: 100%;
+  }
+  #page-edge .edge-address {
+    flex: 1 1 auto !important;
+    order: 0 !important;
+    width: auto !important;
+    min-height: 40px !important;
+    font-size: 16px !important;
+    padding: 8px 12px !important;
+    border: 1px solid #7f9db9 !important;
+    border-radius: 4px !important;
+    background: #fff !important;
+    color: #111 !important;
+    box-sizing: border-box;
+  }
+  #page-edge .edge-go {
+    flex: 0 0 auto;
+    min-width: 52px !important;
+    min-height: 40px !important;
+    font-weight: 700;
+    border-radius: 4px !important;
+  }
+  #page-edge .edge-nav-row {
+    display: flex;
+    gap: 4px;
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 1px;
+  }
+  #page-edge .edge-nav-row .edge-nav {
+    flex: 0 0 auto;
+    min-width: 40px !important;
+    min-height: 36px !important;
+    border-radius: 4px !important;
+    border: 1px solid #888 !important;
+    background: linear-gradient(to bottom, #fff, #e8e8e8) !important;
+    color: #111 !important;
+  }
+  #page-edge .edge-nav-row .edge-proxy {
+    flex: 1 1 auto;
+    min-width: 96px;
+    min-height: 36px !important;
+    max-width: none;
+    border-radius: 4px !important;
+    border: 1px solid #888 !important;
+    background: #fff !important;
+    color: #111 !important;
+    font-size: 12px;
+  }
+
+  #page-edge .edge-bookmarks {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 4px;
+    max-height: none;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding: 4px 8px 8px !important;
+    background: #f0eee1 !important;
+    border-bottom: 1px solid #c0c0c0 !important;
+    -webkit-overflow-scrolling: touch;
+  }
+  #page-edge .edge-bm {
+    flex: 0 0 auto;
+    margin: 0 !important;
+    padding: 6px 10px !important;
+    border-radius: 4px !important;
+    font-size: 11px !important;
+    white-space: nowrap;
+  }
+
+  #page-edge .edge-status {
+    font-size: 10px;
+    padding: 3px 8px !important;
+    padding-bottom: max(3px, env(safe-area-inset-bottom, 0px)) !important;
+  }
+}
+
+/* Desktop keeps rows horizontal via toolbar flex from base styles */
+@media (min-width: 900px) {
+  .edge-toolbar {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .edge-addr-row,
+  .edge-nav-row {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    width: 100%;
+  }
+  .edge-addr-row .edge-address {
+    flex: 1;
+  }
+}

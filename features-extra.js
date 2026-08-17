@@ -253,21 +253,27 @@
     ];
 
     const wrap = el(`<div class="edge-app">
-      <div class="edge-toolbar">
-        <button type="button" class="edge-nav" data-act="back" title="Back" disabled>◀</button>
-        <button type="button" class="edge-nav" data-act="fwd" title="Forward" disabled>▶</button>
-        <button type="button" class="edge-nav" data-act="stop" title="Stop">■</button>
-        <button type="button" class="edge-nav" data-act="home" title="Home">🏠</button>
-        <button type="button" class="edge-nav" data-act="refresh" title="Refresh">↻</button>
-        <input class="edge-address" type="text" value="menelik://home" spellcheck="false" aria-label="Address" autocomplete="off" />
-        <button type="button" class="edge-nav edge-go" data-act="go" title="Go">Go</button>
-        <select class="edge-proxy" title="Proxy mode" aria-label="Proxy mode">
-          <option value="direct">Direct</option>
-          <option value="allorigins">CORS proxy</option>
-          <option value="wayback">Wayback</option>
-        </select>
+      <div class="edge-chrome">
+        <div class="edge-toolbar">
+          <div class="edge-addr-row">
+            <input class="edge-address" type="text" value="menelik://home" spellcheck="false" aria-label="Address" autocomplete="off" inputmode="url" enterkeyhint="go" />
+            <button type="button" class="edge-nav edge-go" data-act="go" title="Go">Go</button>
+          </div>
+          <div class="edge-nav-row">
+            <button type="button" class="edge-nav" data-act="back" title="Back" disabled>◀</button>
+            <button type="button" class="edge-nav" data-act="fwd" title="Forward" disabled>▶</button>
+            <button type="button" class="edge-nav" data-act="stop" title="Stop">■</button>
+            <button type="button" class="edge-nav" data-act="home" title="Home">🏠</button>
+            <button type="button" class="edge-nav" data-act="refresh" title="Refresh">↻</button>
+            <select class="edge-proxy" title="Proxy mode" aria-label="Proxy mode">
+              <option value="direct">Direct</option>
+              <option value="allorigins">CORS proxy</option>
+              <option value="wayback">Wayback</option>
+            </select>
+          </div>
+        </div>
+        <div class="edge-bookmarks" role="toolbar" aria-label="Bookmarks"></div>
       </div>
-      <div class="edge-bookmarks" role="toolbar" aria-label="Bookmarks"></div>
       <div class="edge-body" tabindex="0" role="document"></div>
       <div class="edge-status">Done</div>
     </div>`);
