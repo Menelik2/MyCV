@@ -9960,3 +9960,185 @@ body:not(.light) .edge-proxy {
     border-radius: 16px;
   }
 }
+
+
+/* ========== Mobile UI icon polish 20260817 ========== */
+@media (max-width: 899px) {
+  .home-screen {
+    padding: 6px 14px 0;
+    padding-bottom: calc(8px + env(safe-area-inset-bottom, 0px));
+  }
+
+  .mobile-header {
+    padding: 12px 0 16px;
+  }
+  .mobile-avatar {
+    width: 84px;
+    height: 84px;
+    margin-bottom: 10px;
+  }
+  .mobile-header h1 {
+    font-size: 22px;
+    letter-spacing: -0.02em;
+  }
+  .mobile-header .subtitle {
+    font-size: 13px;
+    opacity: 0.85;
+  }
+
+  .app-grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px 8px;
+    padding: 4px 2px 20px;
+    align-content: start;
+  }
+
+  .app-icon {
+    gap: 5px;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+    min-width: 0;
+  }
+  .app-icon:active .app-img {
+    transform: scale(0.92);
+    filter: brightness(1.08);
+  }
+  .app-icon span {
+    font-size: 11px;
+    font-weight: 500;
+    line-height: 1.15;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    text-align: center;
+    opacity: 0.95;
+  }
+
+  .app-img {
+    width: 56px;
+    height: 56px;
+    border-radius: 15px;
+    box-shadow:
+      0 1px 0 rgba(255, 255, 255, 0.18) inset,
+      0 4px 12px rgba(0, 0, 0, 0.28);
+    background-size: 52% !important;
+    background-repeat: no-repeat !important;
+    background-position: center !important;
+    transition: transform 0.12s ease, filter 0.12s ease;
+  }
+
+  /* Consistent modern icons */
+  .app-img.edge {
+    background-color: transparent !important;
+    background-image:
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23fff'%3E%3Cpath d='M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c1.3 0 2.5-.3 3.6-.7-2.4-.6-4.2-2.8-4.2-5.3 0-3 2.5-5.5 5.5-5.5.6 0 1.2.1 1.7.3C17.3 5.5 14.9 2 12 2zm7.5 9.5c-2.5 0-4.5 2-4.5 4.5s2 4.5 4.5 4.5 4.5-2 4.5-4.5-2-4.5-4.5-4.5z'/%3E%3C/svg%3E"),
+      linear-gradient(145deg, #38bdf8, #2563eb 55%, #1d4ed8) !important;
+    background-size: 54%, cover !important;
+  }
+  .app-img.chat {
+    background-image:
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23fff'%3E%3Cpath d='M4 4h16a2 2 0 012 2v9a2 2 0 01-2 2H9l-5 4v-4H4a2 2 0 01-2-2V6a2 2 0 012-2z'/%3E%3C/svg%3E"),
+      linear-gradient(145deg, #34d399, #059669) !important;
+    background-color: transparent !important;
+    background-size: 52%, cover !important;
+  }
+  .app-img.apps-folder {
+    background-image:
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23fff'%3E%3Cpath d='M4 4h6v6H4V4zm10 0h6v6h-6V4zM4 14h6v6H4v-6zm10 0h6v6h-6v-6z'/%3E%3C/svg%3E"),
+      linear-gradient(145deg, #94a3b8, #475569) !important;
+    background-size: 50%, cover !important;
+  }
+  .app-img.games-folder {
+    background-image:
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23fff'%3E%3Cpath d='M15 7.5V2H9v5.5l3 3 3-3zM7.5 9H2v6h5.5l3-3-3-3zM9 16.5V22h6v-5.5l-3-3-3 3zM16.5 9l-3 3 3 3H22V9h-5.5z'/%3E%3C/svg%3E"),
+      linear-gradient(145deg, #fbbf24, #ea580c) !important;
+    background-size: 52%, cover !important;
+  }
+  .app-img.control {
+    background-image:
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23fff'%3E%3Cpath d='M19.14 12.94c.04-.31.06-.63.06-.94s-.02-.63-.06-.94l2.03-1.58a.49.49 0 00.12-.61l-1.92-3.32a.49.49 0 00-.59-.22l-2.39.96a7.2 7.2 0 00-1.62-.94l-.36-2.54A.48.48 0 0014 2h-4a.48.48 0 00-.47.4l-.36 2.54c-.59.24-1.13.55-1.62.94l-2.39-.96a.49.49 0 00-.59.22L2.65 8.87a.49.49 0 00.12.61l2.03 1.58c-.04.31-.06.63-.06.94s.02.63.06.94L2.77 14.5a.49.49 0 00-.12.61l1.92 3.32c.12.22.37.3.59.22l2.39-.96c.5.39 1.04.7 1.62.94l.36 2.54c.05.22.24.4.47.4h4c.23 0 .42-.18.47-.4l.36-2.54c.58-.24 1.12-.55 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32a.49.49 0 00-.12-.61l-2.03-1.58zM12 15.5A3.5 3.5 0 1112 8.5a3.5 3.5 0 010 7z'/%3E%3C/svg%3E"),
+      linear-gradient(145deg, #64748b, #334155) !important;
+    background-size: 54%, cover !important;
+  }
+  .app-img.device {
+    background-image:
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23fff'%3E%3Cpath d='M17 1H7a2 2 0 00-2 2v18a2 2 0 002 2h10a2 2 0 002-2V3a2 2 0 00-2-2zm0 18H7V5h10v14z'/%3E%3C/svg%3E"),
+      linear-gradient(145deg, #22d3ee, #0284c7) !important;
+    background-size: 48%, cover !important;
+  }
+
+  .dock {
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 12px;
+    padding-bottom: max(12px, env(safe-area-inset-bottom, 0px));
+    margin: 0 10px 10px;
+    border-radius: 22px;
+    background: rgba(15, 23, 42, 0.55);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+  }
+  body.light .dock {
+    background: rgba(255, 255, 255, 0.72);
+    border-color: rgba(0, 0, 0, 0.08);
+  }
+  .dock .app-icon {
+    flex: 0 0 auto;
+  }
+  .dock .app-img {
+    width: 48px;
+    height: 48px;
+    border-radius: 13px;
+  }
+  .theme-toggle-mobile {
+    width: 48px;
+    height: 48px;
+    border-radius: 13px;
+    flex-shrink: 0;
+  }
+
+  /* Folder grids */
+  .apps-folder-grid,
+  .games-folder-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px 12px;
+    padding: 8px 4px 24px;
+    max-width: 100%;
+    margin: 0 auto;
+  }
+  .apps-folder-lead {
+    text-align: center;
+    opacity: 0.75;
+    font-size: 13px;
+    margin: 4px 0 12px;
+  }
+
+  /* Page headers cleaner */
+  .page-header {
+    padding-top: max(8px, env(safe-area-inset-top, 0px));
+    min-height: 48px;
+  }
+  .back-btn {
+    min-width: 44px;
+    min-height: 40px;
+    font-size: 22px;
+  }
+
+  /* Compact home layout preference */
+  #home-screen[data-layout="compact"] .app-grid {
+    gap: 10px 6px;
+  }
+  #home-screen[data-layout="compact"] .app-img {
+    width: 48px;
+    height: 48px;
+    border-radius: 13px;
+  }
+  #home-screen[data-layout="compact"] .app-icon span {
+    font-size: 10px;
+  }
+}
