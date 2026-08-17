@@ -243,11 +243,11 @@
     const GOOGLE_HOME = "https://www.google.com/webhp?igu=1";
     const GOOGLE_SEARCH = "https://www.google.com/search?igu=1&q=";
     const BOOKMARKS = [
-      { name: "Home", url: "menelik://home" },
+      { name: "Google", url: GOOGLE_HOME },
+      { name: "Portfolio", url: "menelik://home" },
       { name: "Projects", url: "menelik://projects" },
       { name: "Yeni Movie", url: "https://yeni-movie.vercel.app/" },
       { name: "Yeni Exam", url: "https://yeniexams.vercel.app/" },
-      { name: "Google", url: GOOGLE_HOME },
       { name: "Wikipedia", url: "https://www.wikipedia.org/" },
       { name: "Archive.org", url: "https://archive.org/" },
     ];
@@ -256,7 +256,7 @@
       <div class="edge-chrome">
         <div class="edge-toolbar">
           <div class="edge-addr-row">
-            <input class="edge-address" type="text" value="menelik://home" spellcheck="false" aria-label="Address" autocomplete="off" inputmode="url" enterkeyhint="go" />
+            <input class="edge-address" type="text" value="https://www.google.com/webhp?igu=1" spellcheck="false" aria-label="Address" autocomplete="off" inputmode="url" enterkeyhint="go" />
             <button type="button" class="edge-nav edge-go" data-act="go" title="Go">Go</button>
           </div>
           <div class="edge-nav-row">
@@ -288,7 +288,7 @@
 
     const history = [];
     let histIdx = -1;
-    let currentUrl = "menelik://home";
+    let currentUrl = GOOGLE_HOME;
     let proxyMode = "direct";
 
     try {
@@ -523,8 +523,8 @@
         } else if (act === "fwd" && histIdx < history.length - 1) {
           histIdx++;
           navigate(history[histIdx], false);
-        } else if (act === "home") navigate("menelik://home", true);
-        else if (act === "go") navigate(addr.value.trim() || "menelik://home", true);
+        } else if (act === "home") navigate(GOOGLE_HOME, true);
+        else if (act === "go") navigate(addr.value.trim() || GOOGLE_HOME, true);
         else if (act === "refresh") navigate(currentUrl, false);
         else if (act === "stop") {
           const frame = body.querySelector(".edge-frame");
@@ -537,7 +537,7 @@
     addr.addEventListener("keydown", (e) => {
       if (e.key === "Enter") {
         e.preventDefault();
-        navigate(addr.value.trim() || "menelik://home", true);
+        navigate(addr.value.trim() || GOOGLE_HOME, true);
       }
     });
 
@@ -556,7 +556,7 @@
       window.__edgePendingUrl = null;
       navigate(pending, true);
     } else {
-      navigate("menelik://home", true);
+      navigate(GOOGLE_HOME, true);
     }
 
     wrap.__edgeNavigate = navigate;
