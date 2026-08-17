@@ -797,6 +797,7 @@ const I18N = {
     settings: "Settings",
     chat: "Chats",
     apps: "Apps",
+    edge: "Edge",
     games: "Games",
     snake: "Snake",
     notepad: "Notepad",
@@ -837,6 +838,7 @@ const I18N = {
     settings: "ቅንብሮች",
     chat: "ቻት",
     apps: "መተግበሪያዎች",
+    edge: "ኤጅ",
     games: "ጨዋታዎች",
     snake: "እባብ",
     notepad: "ማስታወሻ",
@@ -10613,7 +10615,7 @@ function initMobileTetris(root) {
 /** Mobile navigation stack (Apps folder → Notepad, etc.) */
 window.__mobilePageStack = window.__mobilePageStack || [];
 
-const APPS_FOLDER_CHILDREN = new Set(["notepad", "paint", "terminal", "voice"]);
+const APPS_FOLDER_CHILDREN = new Set(["notepad", "paint", "terminal", "voice", "edge"]);
 const GAMES_FOLDER_CHILDREN = new Set(["sudoku", "tetris", "snake", "blockblaster"]);
 
 function showPage(pageId, opts) {

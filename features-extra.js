@@ -162,21 +162,31 @@
         if (/^[\w.-]+\.[a-z]{2,}/i.test(url)) url = "https://" + url;
         else if (!url.startsWith("menelik://")) url = "https://" + url;
       }
-      // Stay inside Microsoft Edge (in-app iframe) — do not force system browser
+      // Stay inside Microsoft Edge (in-app) on desktop and mobile
       window.__edgePendingUrl = url;
       document.dispatchEvent(
         new CustomEvent("menelik-edge-navigate", { detail: { url: url } })
       );
-      if (typeof openWindow === "function") {
+      const isMobile =
+        window.innerWidth < 900 &&
+        document.getElementById("page-edge") &&
+        document.getElementById("mobile") &&
+        window.getComputedStyle(document.getElementById("mobile")).display !== "none";
+      if (isMobile && typeof window.showPage === "function") {
+        window.showPage("edge");
+      } else if (typeof openWindow === "function") {
         openWindow("edge");
       } else if (typeof window.openWindow === "function") {
         window.openWindow("edge");
       }
     } catch (err) {
       console.warn("[Edge] openInEdge", err);
-      // Last resort only if Edge cannot open
       try {
-        if (typeof openWindow === "function") openWindow("edge");
+        if (typeof window.showPage === "function" && document.getElementById("page-edge")) {
+          window.showPage("edge");
+        } else if (typeof openWindow === "function") {
+          openWindow("edge");
+        }
       } catch (_) {}
     }
   };
@@ -190,12 +200,7 @@
           // Only on desktop shell, not pure mobile-only chrome if desktop hidden
           const desktop = document.getElementById("desktop");
           if (desktop && desktop.classList.contains("boot-hidden")) return;
-          if (window.innerWidth < 900 && document.getElementById("mobile") &&
-              window.getComputedStyle(document.getElementById("mobile")).display !== "none" &&
-              (!desktop || desktop.style.display === "none" || getComputedStyle(desktop).display === "none")) {
-            // Mobile view: leave normal browser navigation
-            return;
-          }
+          // Mobile + desktop: open http(s) project links inside Edge app when available
           const a = e.target.closest("a[href]");
           if (!a) return;
           // Already handled inside IE

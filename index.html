@@ -9,9 +9,9 @@
     Cache bust: bump window.__MENELIK_V__ + the ?v= values below on every public deploy
     so browsers and CDNs treat assets as new URLs.
   -->
-  <script>window.__MENELIK_V__ = "20260817restore";</script>
-  <link rel="stylesheet" href="styles.css?v=20260817restore" />
-  <link rel="manifest" href="manifest.webmanifest?v=20260817restore" />
+  <script>window.__MENELIK_V__ = "20260817edge";</script>
+  <link rel="stylesheet" href="styles.css?v=20260817edge" />
+  <link rel="manifest" href="manifest.webmanifest?v=20260817edge" />
   <link rel="apple-touch-icon" href="static/images/profile-320.webp" />
   <!-- Optimized profile photo preload (responsive sizes) -->
   <link rel="preload" href="static/images/profile-128.webp" as="image" type="image/webp" />
@@ -425,6 +425,10 @@
                   <div class="app-img voice"></div>
                   <span>Voice Room</span>
                 </button>
+                <button class="app-icon" data-page="edge">
+                  <div class="app-img edge"></div>
+                  <span>Edge</span>
+                </button>
               </div>
             </div>
           </div>
@@ -456,6 +460,10 @@
           <div class="app-page" id="page-chat" hidden>
             <div class="page-header"><button class="back-btn">‹ Back</button><h2>Chats</h2></div>
             <div class="page-body page-body-full" id="content-chat"></div>
+          </div>
+          <div class="app-page" id="page-edge" hidden>
+            <div class="page-header"><button class="back-btn">‹ Back</button><h2>Microsoft Edge</h2></div>
+            <div class="page-body page-body-full" id="content-edge"></div>
           </div>
           <div class="app-page" id="page-control" hidden>
             <div class="page-header"><button class="back-btn">‹ Back</button><h2>Settings</h2></div>
@@ -554,8 +562,8 @@
     </div>
   </div>
 
-  <script src="script.js?v=20260817restore"></script>
-  <script src="features-extra.js?v=20260817restore"></script>
-  <script src="chat-widget.js?v=20260817restore"></script>
+  <script src="script.js?v=20260817edge"></script>
+  <script src="features-extra.js?v=20260817edge"></script>
+  <script src="chat-widget.js?v=20260817edge"></script>
 </body>
 </html>
