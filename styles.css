@@ -6036,7 +6036,7 @@ body:not(.light) .edge-address { background:#111; color:#eee; border-color:#555;
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  background: #0f172a;
+  background: #ffffff;
 }
 .edge-browse,
 .edge-external.edge-browse {
@@ -6046,7 +6046,7 @@ body:not(.light) .edge-address { background:#111; color:#eee; border-color:#555;
   min-height: 0;
   height: 100%;
   position: relative;
-  background: #0f172a;
+  background: #ffffff;
 }
 .edge-ext-bar { display: none !important; }
 
@@ -6067,15 +6067,15 @@ body:not(.light) .edge-address { background:#111; color:#eee; border-color:#555;
   padding: 8px 12px;
   font-size: 11px;
   line-height: 1.4;
-  background: rgba(15, 23, 42, 0.92);
-  color: #cbd5e1;
-  border-top: 1px solid rgba(148, 163, 184, 0.25);
+  background: #f5f5f0;
+  color: #444;
+  border-top: 1px solid #ccc;
 }
 .edge-frame-note:not([hidden]) {
   display: block;
 }
 .edge-frame-note a {
-  color: #7dd3fc;
+  color: #1e4a8c;
 }
 
 body:not(.light) .edge-frame-note {
@@ -6094,8 +6094,8 @@ body:not(.light) .edge-browse .edge-frame {
   z-index: 0;
   pointer-events: none;
   background:
-    radial-gradient(ellipse at 50% 30%, rgba(14, 165, 233, 0.12), transparent 55%),
-    #0f172a;
+    radial-gradient(ellipse at 50% 30%, rgba(49, 106, 197, 0.08), transparent 55%),
+    #f3f3f3;
 }
 .edge-browse .edge-frame,
 .edge-browse .edge-frame-note {
@@ -9779,11 +9779,11 @@ body:not(.light) .edge-proxy {
   flex: 1;
   height: 100%;
   min-height: 0;
-  background: #0f172a;
+  background: #ffffff;
 }
 #page-edge .edge-body {
   padding: 0;
-  background: #0f172a;
+  background: #ffffff;
 }
 @media (max-width: 899px) {
   #page-edge .edge-nav {
@@ -9791,55 +9791,35 @@ body:not(.light) .edge-proxy {
     min-height: 40px;
     border-radius: 10px;
   }
-  #page-edge .edge-toolbar {
-    padding: 8px;
-    gap: 6px;
-    background: #0f172a;
-    border-bottom: 1px solid rgba(148, 163, 184, 0.2);
-  }
-  #page-edge .edge-address {
-    border-radius: 12px;
-    background: #1e293b;
-    border: 1px solid rgba(148, 163, 184, 0.25);
-    color: #f1f5f9;
-    padding: 10px 12px;
-  }
-  #page-edge .edge-status {
-    background: #0f172a;
-    border-top: 1px solid rgba(148, 163, 184, 0.2);
-    color: #94a3b8;
-    padding: 6px 10px;
-    padding-bottom: max(6px, env(safe-area-inset-bottom, 0px));
-  }
   #page-edge .edge-frame {
     min-height: calc(100dvh - 180px);
   }
 }
 
 
-/* ========== Mobile Edge — full-screen browser ========== */
+/* ========== Mobile Edge — desktop-style light chrome ========== */
 @media (max-width: 899px) {
   #page-edge {
     display: flex;
     flex-direction: column;
     height: 100%;
     min-height: 0;
-    background: #0b1220;
+    background: #ece9d8;
   }
   #page-edge[hidden] {
     display: none !important;
   }
   #page-edge .page-header {
     flex-shrink: 0;
-    background: #0b1220;
-    color: #e2e8f0;
-    border-bottom: 1px solid rgba(148, 163, 184, 0.2);
+    background: #ece9d8;
+    color: #1a1a1a;
+    border-bottom: 1px solid #aca899;
   }
   #page-edge .page-header h2 {
-    color: #f1f5f9;
+    color: #1a1a1a;
   }
   #page-edge .back-btn {
-    color: #7dd3fc;
+    color: #1e4a8c;
   }
   #page-edge .page-body-full,
   #page-edge #content-edge {
@@ -9851,7 +9831,7 @@ body:not(.light) .edge-proxy {
     display: flex !important;
     flex-direction: column;
     overflow: hidden;
-    background: #0b1220;
+    background: #ffffff;
   }
   #page-edge .edge-app {
     display: flex;
@@ -9860,62 +9840,71 @@ body:not(.light) .edge-proxy {
     height: 100%;
     min-height: 0;
     width: 100%;
-    background: #0b1220;
-    color: #e2e8f0;
+    background: #ffffff;
+    color: #111;
+    font-family: Tahoma, "Segoe UI", sans-serif;
   }
   #page-edge .edge-toolbar {
     flex-shrink: 0;
     flex-wrap: wrap;
-    gap: 6px;
-    padding: 8px 10px;
-    background: #0f172a;
-    border-bottom: 1px solid rgba(148, 163, 184, 0.22);
+    gap: 4px;
+    padding: 6px 8px;
+    background: #ece9d8;
+    border-bottom: 1px solid #888;
   }
   #page-edge .edge-nav {
-    min-width: 42px;
-    min-height: 42px;
-    border-radius: 12px;
-    border: 1px solid rgba(148, 163, 184, 0.25);
-    background: #1e293b;
-    color: #e2e8f0;
-    font-size: 14px;
+    min-width: 40px;
+    min-height: 36px;
+    border-radius: 3px;
+    border: 1px solid #888;
+    background: linear-gradient(to bottom, #fff, #e8e8e8);
+    color: #111;
+    font-size: 13px;
+    font-family: Tahoma, sans-serif;
+  }
+  #page-edge .edge-nav:active {
+    background: #e8f0ff;
+    border-color: #316ac5;
   }
   #page-edge .edge-address {
     flex: 1 1 100%;
     order: -1;
     width: 100%;
-    min-height: 44px;
-    border-radius: 14px;
-    border: 1px solid rgba(148, 163, 184, 0.28);
-    background: #1e293b;
-    color: #f8fafc;
-    padding: 10px 14px;
+    min-height: 36px;
+    border-radius: 2px;
+    border: 1px solid #7f9db9;
+    background: #ffffff;
+    color: #111;
+    padding: 6px 10px;
     font-size: 16px;
+    font-family: Consolas, "Courier New", monospace;
   }
   #page-edge .edge-proxy {
-    min-height: 36px;
-    border-radius: 10px;
-    background: #1e293b;
-    color: #e2e8f0;
-    border: 1px solid rgba(148, 163, 184, 0.25);
+    min-height: 32px;
+    border-radius: 2px;
+    background: #fff;
+    color: #111;
+    border: 1px solid #888;
+    font-family: Tahoma, sans-serif;
   }
   #page-edge .edge-bookmarks {
     flex-shrink: 0;
     overflow-x: auto;
     white-space: nowrap;
-    padding: 6px 8px;
-    background: #0f172a;
-    border-bottom: 1px solid rgba(148, 163, 184, 0.15);
+    padding: 4px 8px;
+    background: #f0eee1;
+    border-bottom: 1px solid #c0c0c0;
   }
   #page-edge .edge-bm {
     display: inline-block;
-    margin-right: 6px;
-    padding: 6px 10px;
-    border-radius: 999px;
-    border: 1px solid rgba(148, 163, 184, 0.25);
-    background: #1e293b;
-    color: #e2e8f0;
-    font-size: 12px;
+    margin-right: 4px;
+    padding: 4px 8px;
+    border-radius: 2px;
+    border: 1px solid #aca899;
+    background: linear-gradient(to bottom, #fff, #ece9d8);
+    color: #111;
+    font-size: 11px;
+    font-family: Tahoma, sans-serif;
   }
   #page-edge .edge-body {
     flex: 1 1 auto !important;
@@ -9923,7 +9912,7 @@ body:not(.light) .edge-proxy {
     height: auto !important;
     padding: 0 !important;
     overflow: hidden !important;
-    background: #0b1220 !important;
+    background: #ffffff !important;
   }
   #page-edge .edge-browse,
   #page-edge .edge-external {
@@ -9932,6 +9921,10 @@ body:not(.light) .edge-proxy {
     height: 100%;
     display: flex;
     flex-direction: column;
+    background: #ffffff !important;
+  }
+  #page-edge .edge-browse::before {
+    background: #f3f3f3 !important;
   }
   #page-edge .edge-frame {
     flex: 1 1 auto !important;
@@ -9940,27 +9933,24 @@ body:not(.light) .edge-proxy {
     min-height: 0 !important;
     border: 0 !important;
     border-radius: 0 !important;
-    background: #fff !important;
+    background: #ffffff !important;
   }
   #page-edge .edge-status {
     flex-shrink: 0;
-    background: #0f172a;
-    color: #94a3b8;
-    border-top: 1px solid rgba(148, 163, 184, 0.2);
-    padding: 6px 10px;
-    padding-bottom: max(8px, env(safe-area-inset-bottom, 0px));
+    background: #ece9d8;
+    color: #333;
+    border-top: 1px solid #aaa;
+    padding: 4px 8px;
+    padding-bottom: max(6px, env(safe-area-inset-bottom, 0px));
     font-size: 11px;
+    font-family: Tahoma, sans-serif;
   }
   #page-edge .edge-frame-note {
     flex-shrink: 0;
-  }
-  /* Home / dock Edge icon */
-  .app-img.edge {
-    background: linear-gradient(145deg, #0ea5e9, #2563eb 50%, #1d4ed8) !important;
-    border-radius: 16px;
+    background: #f5f5f0;
+    color: #444;
   }
 }
-
 
 /* ========== Mobile UI icon polish 20260817 ========== */
 @media (max-width: 899px) {
