@@ -424,28 +424,11 @@
 
           body.innerHTML =
             `<div class="edge-external edge-browse">
-              <div class="edge-ext-bar">
-                <span class="edge-ext-label">Web</span>
-                <code class="edge-ext-code"></code>
-                <a class="proj-btn edge-open-ext" href="#" rel="noopener">Open in system browser ↗</a>
-                <a class="proj-btn" href="#" data-nav="menelik://home">Home</a>
-              </div>
               <iframe class="edge-frame" title="Microsoft Edge" referrerpolicy="no-referrer"
                 sandbox="allow-downloads allow-forms allow-modals allow-pointer-lock allow-popups allow-presentation allow-same-origin allow-scripts"
                 allow="fullscreen"></iframe>
-              <div class="edge-frame-note muted">Loading inside Edge… If a site blocks embedding, try Proxy mode or “Open in system browser”.</div>
+              <div class="edge-frame-note muted" hidden></div>
             </div>`;
-          const codeEl = body.querySelector(".edge-ext-code");
-          if (codeEl) codeEl.textContent = url;
-          const openBtn = body.querySelector(".edge-open-ext");
-          if (openBtn) {
-            openBtn.setAttribute("href", url);
-            openBtn.addEventListener("click", (e) => {
-              e.preventDefault();
-              window.open(url, "_blank", "noopener,noreferrer");
-              status.textContent = "Opened in system browser";
-            });
-          }
           const frame = body.querySelector(".edge-frame");
           const note = body.querySelector(".edge-frame-note");
           if (frame) {

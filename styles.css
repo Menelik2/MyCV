@@ -9744,3 +9744,5 @@ body:not(.light) .edge-proxy {
     min-height: 40px;
   }
 }
+
+.edge-ext-bar { display: none !important; }
