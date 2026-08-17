@@ -2928,14 +2928,18 @@ function buildSudoku() {
   function isValid(b, i, val) {
     const [r, c] = rc(i);
     for (let k = 0; k < 9; k++) {
-      if (b[idx(r, k)] === val) return false;
-      if (b[idx(k, c)] === val) return false;
+      const rowI = idx(r, k);
+      const colI = idx(k, c);
+      if (rowI !== i && b[rowI] === val) return false;
+      if (colI !== i && b[colI] === val) return false;
     }
     const br = Math.floor(r / 3) * 3;
     const bc = Math.floor(c / 3) * 3;
     for (let dr = 0; dr < 3; dr++)
-      for (let dc = 0; dc < 3; dc++)
-        if (b[idx(br + dr, bc + dc)] === val) return false;
+      for (let dc = 0; dc < 3; dc++) {
+        const j = idx(br + dr, bc + dc);
+        if (j !== i && b[j] === val) return false;
+      }
     return true;
   }
 
@@ -3283,14 +3287,19 @@ function buildSudoku() {
     const grid = b || board;
     const [r, c] = rc(i);
     for (let k = 0; k < 9; k++) {
-      if (grid[idx(r, k)] === val) return false;
-      if (grid[idx(k, c)] === val) return false;
+      const rowI = idx(r, k);
+      const colI = idx(k, c);
+      // Skip the target cell so replacing a digit works correctly
+      if (rowI !== i && grid[rowI] === val) return false;
+      if (colI !== i && grid[colI] === val) return false;
     }
     const br = Math.floor(r / 3) * 3;
     const bc = Math.floor(c / 3) * 3;
     for (let dr = 0; dr < 3; dr++)
-      for (let dc = 0; dc < 3; dc++)
-        if (grid[idx(br + dr, bc + dc)] === val) return false;
+      for (let dc = 0; dc < 3; dc++) {
+        const j = idx(br + dr, bc + dc);
+        if (j !== i && grid[j] === val) return false;
+      }
     return true;
   }
 
@@ -7837,54 +7846,45 @@ function buildChatApp() {
 }
 
 function getAppBody(id) {
-  if (id === "notepad") return buildNotepad();
-  if (id === "paint") return buildPaint();
-  if (id === "vector") return buildVectorGraphics();
-  if (id === "terminal") return buildTerminal();
-  if (id === "vscode") return buildVSCode();
-  if (id === "minesweeper") return buildMinesweeper();
-  if (id === "sudoku") return buildSudoku();
-  if (id === "snake") return buildSnake();
-  if (id === "tetris") return buildTetris();
-  if (id === "chat") return buildChatApp();
-  if (id === "control") return buildControlPanel();
-  if (id === "recycle") return buildRecycleBin();
-  if (id === "registry") return buildRegistry();
-  if (id === "device") return buildDeviceInspector();
-  if (id === "voice") return buildVoiceCall();
-  // Extra apps from features-extra.js (IE, Media Player, Help, Solitaire, …)
-  if (window.extraAppBuilders && typeof window.extraAppBuilders[id] === "function") {
-    try {
-      const node = window.extraAppBuilders[id]();
-      if (node) return node;
-      throw new Error("App builder returned empty content");
-    } catch (err) {
-      console.warn("[Menelik OS] extra app failed:", id, err);
-      const fallback = document.createElement("div");
-      fallback.className = "app-error-panel";
-      fallback.setAttribute("role", "alert");
-      fallback.innerHTML =
-        "<h3 style=\"margin:0 0 8px\">Could not open this program</h3>" +
-        "<p>" + String(err && err.message ? err.message : err).replace(/</g, "&lt;") + "</p>" +
-        "<p class=\"muted\">Try hard-refresh (Ctrl+Shift+R), then open it again from the Start menu.</p>" +
-        "<p><button type=\"button\" class=\"proj-btn app-error-retry\">Try again</button></p>";
-      fallback.querySelector(".app-error-retry")?.addEventListener("click", () => {
-        try {
-          if (typeof closeWindow === "function") closeWindow(id);
-        } catch (_) {}
-        setTimeout(() => {
-          try {
-            if (typeof openWindow === "function") openWindow(id);
-          } catch (e2) {
-            console.warn(e2);
-          }
-        }, 80);
-      });
-      return fallback;
-    }
+  try {
+    if (id === "notepad") return buildNotepad();
+    if (id === "paint") return buildPaint();
+    if (id === "vector") return buildVectorGraphics();
+    if (id === "terminal") return buildTerminal();
+    if (id === "vscode") return buildVSCode();
+    if (id === "minesweeper") return buildMinesweeper();
+    if (id === "sudoku") return buildSudoku();
+    if (id === "snake") return buildSnake();
+    if (id === "tetris") return buildTetris();
+    if (id === "chat") return buildChatApp();
+    if (id === "control") return buildControlPanel();
+    if (id === "recycle") return buildRecycleBin();
+    if (id === "registry") return buildRegistry();
+    if (id === "device") return buildDeviceInspector();
+    if (id === "voice") return buildVoiceCall();
+    if (id === "ie" && typeof buildIE === "function") return buildIE();
+    if (id === "mediaplayer" && typeof buildMediaPlayer === "function") return buildMediaPlayer();
+    if (id === "solitaire" && typeof buildSolitaire === "function") return buildSolitaire();
+    if (id === "blog" && typeof buildBlog === "function") return buildBlog();
+    if (id === "help" && typeof buildHelp === "function") return buildHelp();
+    if (id === "testimonials" && typeof buildTestimonials === "function") return buildTestimonials();
+    if (id === "github" && typeof buildGitHub === "function") return buildGitHub();
+    if (id === "downloadpack" && typeof buildDownloadPack === "function") return buildDownloadPack();
+  } catch (err) {
+    console.error("[getAppBody]", id, err);
+    const fail = document.createElement("div");
+    fail.className = "app-missing";
+    fail.style.padding = "16px";
+    fail.textContent = "Could not open " + id + ": " + (err && err.message ? err.message : err);
+    return fail;
   }
-  return null;
+  const empty = document.createElement("div");
+  empty.className = "app-missing";
+  empty.style.padding = "16px";
+  empty.textContent = "App unavailable: " + id;
+  return empty;
 }
+
 
 /* ========== Advanced Window Management (Aero Snap + triple + linked split) ========== */
 const SNAP_THRESHOLD = 18;
@@ -10322,8 +10322,9 @@ function mobileGoBack() {
 document.getElementById("mobile")?.addEventListener("click", (e) => {
   const btn = e.target.closest(".app-icon[data-page]");
   if (!btn || !btn.dataset.page) return;
-  // avoid double-handling if something else needs the click
+  // Folder grids live inside pages; one delegated handler is enough
   e.preventDefault();
+  e.stopPropagation();
   showPage(btn.dataset.page);
 });
 
