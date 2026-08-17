@@ -45,11 +45,11 @@ const CSP_FRAME_ADMIN =
 /** Full policy — report only (will not block; used to tune later) */
 const CSP_SITE =
   "default-src 'self'; " +
-  "script-src 'self' 'unsafe-eval'; " +
-  "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; " +
-  "font-src 'self' https://fonts.gstatic.com data:; " +
+  "script-src 'self' 'unsafe-eval' 'unsafe-inline' https://cdn.livechatinc.com https://*.livechatinc.com https://*.livechat.com; " +
+  "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.livechatinc.com https://*.livechatinc.com; " +
+  "font-src 'self' https://fonts.gstatic.com data: https://cdn.livechatinc.com; " +
   "img-src 'self' data: blob: https:; " +
-  "connect-src 'self' https://formspree.io https://jsonplaceholder.typicode.com https://api.github.com https://dog.ceo https://*.dog.ceo https://httpbin.org; " +
+  "connect-src 'self' https://formspree.io https://jsonplaceholder.typicode.com https://api.github.com https://dog.ceo https://*.dog.ceo https://httpbin.org https://cdn.livechatinc.com https://*.livechatinc.com https://*.livechat.com wss://*.livechatinc.com; " +
   "form-action 'self' https://formspree.io mailto:; " +
   "frame-src 'self' https: blob: data:; " +
   "worker-src 'self' blob:; " +
