@@ -10634,3 +10634,23 @@ body:not(.light) .edge-proxy {
 @media (min-width: 900px) {
   .mario-pad { display: none; }
 }
+
+.mario-mute {
+  margin-left: auto;
+  border: 1px solid rgba(255,255,255,0.35);
+  background: rgba(255,255,255,0.1);
+  color: #fff;
+  border-radius: 6px;
+  padding: 2px 8px;
+  font-size: 12px;
+  cursor: pointer;
+}
+.mario-mute.off { opacity: 0.5; }
+.mario-pad { touch-action: none; }
+.mario-dir, .mario-jump { touch-action: none; user-select: none; }
+@media (max-width: 899px) {
+  .mario-hud { font-size: 10px; gap: 4px 8px; }
+  .mario-stage { min-height: 180px; }
+  .mario-dir { width: 48px; height: 44px; }
+  .mario-jump { width: 58px; height: 52px; }
+}
