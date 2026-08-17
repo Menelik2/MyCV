@@ -162,12 +162,7 @@
         if (/^[\w.-]+\.[a-z]{2,}/i.test(url)) url = "https://" + url;
         else if (!url.startsWith("menelik://")) url = "https://" + url;
       }
-      // External sites: always open in the real browser so the page actually loads
-      if (/^https?:\/\//i.test(url)) {
-        try {
-          window.open(url, "_blank", "noopener,noreferrer");
-        } catch (_) {}
-      }
+      // Stay inside Microsoft Edge (in-app iframe) — do not force system browser
       window.__edgePendingUrl = url;
       document.dispatchEvent(
         new CustomEvent("menelik-edge-navigate", { detail: { url: url } })
@@ -179,8 +174,9 @@
       }
     } catch (err) {
       console.warn("[Edge] openInEdge", err);
+      // Last resort only if Edge cannot open
       try {
-        window.open(url, "_blank", "noopener,noreferrer");
+        if (typeof openWindow === "function") openWindow("edge");
       } catch (_) {}
     }
   };
@@ -432,7 +428,7 @@
               <iframe class="edge-frame" title="Microsoft Edge" referrerpolicy="no-referrer"
                 sandbox="allow-downloads allow-forms allow-modals allow-pointer-lock allow-popups allow-presentation allow-same-origin allow-scripts"
                 allow="fullscreen"></iframe>
-              <div class="edge-frame-note muted">Loading… Use proxy mode or system browser if content is blocked.</div>
+              <div class="edge-frame-note muted">Loading inside Edge… If a site blocks embedding, try Proxy mode or “Open in system browser”.</div>
             </div>`;
           const codeEl = body.querySelector(".edge-ext-code");
           if (codeEl) codeEl.textContent = url;

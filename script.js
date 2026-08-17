@@ -135,7 +135,7 @@ const CONTENT = {
     iconClass: `projects-icon`,
     html: `
 <h2>Featured Projects</h2>
-      <p class="proj-intro">Visual previews below — open a live demo or explore highlights. Live links open in Microsoft Edge.</p>
+      <p class="proj-intro">Visual previews below — open a live demo or explore highlights. Live links open inside Microsoft Edge on this desktop.</p>
 
       <div class="project-card" data-project="yeni-movie">
         <div class="proj-header">
