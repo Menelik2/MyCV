@@ -6013,57 +6013,95 @@ body:not(.light) .edge-address { background:#111; color:#eee; border-color:#555;
 .edge-body { flex:1; overflow:auto; padding:12px 14px; min-height:0; background:#fff; }
 .edge-status { padding:3px 8px; background:#ece9d8; border-top:1px solid #aaa; font-size:11px; }
 .edge-links { margin:8px 0 12px 18px; line-height:1.85; }
-.edge-frame { width:100%; height:220px; border:1px solid #ccc; margin-top:10px; background:#fafafa; }
-.edge-external .proj-btn { margin-right:6px; margin-top:6px; }
+/* Edge iframe — full-bleed browser surface */
+.edge-frame {
+  display: block;
+  width: 100%;
+  height: 100%;
+  min-height: 280px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: #ffffff;
+  box-shadow: none;
+  -webkit-overflow-scrolling: touch;
+  overflow: auto;
+}
+.edge-external .proj-btn { margin-right: 6px; margin-top: 6px; }
+
 /* Full in-app browser when opening project / external links */
-.edge-body:has(.edge-browse) { padding: 0; display: flex; flex-direction: column; overflow: hidden; }
-.edge-browse {
+.edge-body:has(.edge-browse) {
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: #0f172a;
+}
+.edge-browse,
+.edge-external.edge-browse {
   display: flex;
   flex-direction: column;
   flex: 1;
   min-height: 0;
   height: 100%;
+  position: relative;
+  background: #0f172a;
 }
-.edge-ext-bar {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 6px 8px;
-  padding: 6px 10px;
-  background: #ece9d8;
-  border-bottom: 1px solid #aaa;
-  font-size: 11px;
-}
-.edge-ext-label {
-  font-weight: 700;
-  color: #1e3a5f;
-}
-.edge-ext-code {
-  flex: 1;
-  min-width: 100px;
-  font-size: 11px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
+.edge-ext-bar { display: none !important; }
+
 .edge-browse .edge-frame {
-  flex: 1;
-  min-height: 280px;
-  height: auto;
+  flex: 1 1 auto;
+  width: 100%;
+  min-height: 0;
+  height: 100%;
   margin: 0;
-  border: none;
-  border-bottom: 1px solid #ccc;
+  border: 0;
   background: #fff;
+  /* soft inset so the page surface feels embedded */
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
 }
+
 .edge-frame-note {
-  padding: 4px 10px 6px;
+  display: none;
+  padding: 8px 12px;
   font-size: 11px;
-  background: #f5f5f0;
+  line-height: 1.4;
+  background: rgba(15, 23, 42, 0.92);
+  color: #cbd5e1;
+  border-top: 1px solid rgba(148, 163, 184, 0.25);
 }
-body:not(.light) .edge-ext-bar { background: #2a2a32; border-color: #444; color: #e2e8f0; }
-body:not(.light) .edge-ext-label { color: #93c5fd; }
-body:not(.light) .edge-frame-note { background: #1a1a20; color: #94a3b8; }
-body:not(.light) .edge-browse .edge-frame { background: #111; border-color: #333; }
+.edge-frame-note:not([hidden]) {
+  display: block;
+}
+.edge-frame-note a {
+  color: #7dd3fc;
+}
+
+body:not(.light) .edge-frame-note {
+  background: rgba(15, 23, 42, 0.95);
+  color: #94a3b8;
+}
+body:not(.light) .edge-browse .edge-frame {
+  background: #0b0f19;
+}
+
+/* Loading pulse behind iframe while content arrives */
+.edge-browse::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse at 50% 30%, rgba(14, 165, 233, 0.12), transparent 55%),
+    #0f172a;
+}
+.edge-browse .edge-frame,
+.edge-browse .edge-frame-note {
+  position: relative;
+  z-index: 1;
+}
 
 .edge-home .muted, .edge-page .muted { color:#666; font-size:12px; }
 body:not(.light) .edge-toolbar, body:not(.light) .edge-status { background:#2a2a32; border-color:#444; color:#e2e8f0; }
@@ -9726,23 +9764,54 @@ body:not(.light) .edge-proxy {
 }
 #page-edge .edge-frame {
   width: 100%;
+  flex: 1 1 auto;
   height: 100%;
-  min-height: 50vh;
+  min-height: 0;
   border: 0;
+  border-radius: 0;
   background: #fff;
+  box-shadow: none;
 }
 #page-edge .edge-external,
 #page-edge .edge-browse {
   display: flex;
   flex-direction: column;
+  flex: 1;
   height: 100%;
   min-height: 0;
+  background: #0f172a;
+}
+#page-edge .edge-body {
+  padding: 0;
+  background: #0f172a;
 }
 @media (max-width: 899px) {
   #page-edge .edge-nav {
     min-width: 40px;
     min-height: 40px;
+    border-radius: 10px;
+  }
+  #page-edge .edge-toolbar {
+    padding: 8px;
+    gap: 6px;
+    background: #0f172a;
+    border-bottom: 1px solid rgba(148, 163, 184, 0.2);
+  }
+  #page-edge .edge-address {
+    border-radius: 12px;
+    background: #1e293b;
+    border: 1px solid rgba(148, 163, 184, 0.25);
+    color: #f1f5f9;
+    padding: 10px 12px;
+  }
+  #page-edge .edge-status {
+    background: #0f172a;
+    border-top: 1px solid rgba(148, 163, 184, 0.2);
+    color: #94a3b8;
+    padding: 6px 10px;
+    padding-bottom: max(6px, env(safe-area-inset-bottom, 0px));
+  }
+  #page-edge .edge-frame {
+    min-height: calc(100dvh - 180px);
   }
 }
-
-.edge-ext-bar { display: none !important; }
