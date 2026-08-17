@@ -10671,6 +10671,20 @@ function showPage(pageId, opts) {
     body.innerHTML = "";
     body.appendChild(getAppBody(pageId));
     body.dataset.loaded = "1";
+    // Mobile Edge: force layout reflow so iframe gets a real height
+    if (pageId === "edge") {
+      const page = document.getElementById("page-edge");
+      if (page) page.classList.add("edge-mobile-active");
+      requestAnimationFrame(() => {
+        try {
+          const frame = body.querySelector(".edge-frame");
+          if (frame) {
+            frame.style.height = "100%";
+            frame.style.width = "100%";
+          }
+        } catch (_) {}
+      });
+    }
   } else if (!body.dataset.loaded) {
     body.dataset.loaded = "1";
     body.innerHTML = mobileContent(pageId);

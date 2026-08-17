@@ -444,6 +444,16 @@
               }
             });
             frame.src = frameSrc;
+            // Mobile compatibility: ensure iframe fills Edge body
+            try {
+              if (window.innerWidth < 900) {
+                frame.style.position = "absolute";
+                frame.style.inset = "0";
+                frame.style.width = "100%";
+                frame.style.height = "100%";
+                frame.setAttribute("scrolling", "yes");
+              }
+            } catch (_) {}
             setTimeout(() => {
               if (!loaded && note) {
                 note.innerHTML =
