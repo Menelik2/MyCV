@@ -180,8 +180,6 @@ Prefer **variables** for colors:
 | Paint | `.paint-app` / `.paint-pro` | Toolbar, canvas, status |
 | Terminal | `.terminal-app` | Black background, green prompt |
 | VS Code | `.vscode-app` / `.vscode-pro` | Activity bar, editor, status bar |
-| Minesweeper | `.minesweeper-app` | Classic gray beveled cells |
-| Solitaire | `.sol-app` | Green felt, `.sol-card` |
 | IE | `.ie-app` | Toolbar + address bar |
 | Media Player | `.wmp-app` | Dark player chrome |
 | Control Panel | `.control-app` | Form rows / sections |
@@ -189,7 +187,7 @@ Prefer **variables** for colors:
 | Blog / My Computer | `.blog-app` | Sidebar + main |
 | Vector | `.vector-app` | Canvas + side list |
 
-Icons for desktop/Start use classes like `.about-icon`, `.ie-icon`, `.solitaire-icon` (gradient tile + `::after` SVG mask).
+Icons for desktop/Start use classes like `.about-icon`, `.ie-icon` (gradient tile + `::after` SVG mask).
 
 ---
 
@@ -265,7 +263,7 @@ body:not(.light) .my-widget { /* only if you need extra contrast */ }
 | Windows / snap | `Advanced Window Management`, `snap-` |
 | Taskbar / Start | `taskbar`, `start-menu` |
 | Mobile | `MOBILE (iPhone` |
-| Apps | `Notepad`, `Paint`, `Terminal`, `VS Code`, `Minesweeper`, `Solitaire` |
+| Apps | `Notepad`, `Paint`, `Terminal`, `VS Code`, `Sudoku` |
 | Resume / print | `Professional Resume`, `@media print` |
 | Gadgets / HC | `Desktop widgets`, `high-contrast` |
 | Project motion | `Project SVG preview animations` |
