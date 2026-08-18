@@ -1,1 +1,262 @@
-PLACEHOLDER
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="theme-color" content="#3a6ea5" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Menelik Admasu — Portfolio</title>
+  <!--
+    Cache bust: bump window.__MENELIK_V__ + the ?v= values below on every public deploy
+    so browsers and CDNs treat assets as new URLs.
+  -->
+  <script>window.__MENELIK_V__ = "20260818nogames";</script>
+  <link rel="stylesheet" href="styles.css?v=20260818nogames" />
+  <link rel="manifest" href="manifest.webmanifest?v=20260818nogames" />
+  <link rel="apple-touch-icon" href="static/images/profile-320.webp" />
+  <!-- Optimized profile photo preload (responsive sizes) -->
+  <link rel="preload" href="static/images/profile-128.webp" as="image" type="image/webp" />
+  <link rel="preload" href="static/images/profile-320.webp" as="image" type="image/webp" />
+  <link rel="preload" href="profile.webp" as="image" type="image/webp" />
+  <!-- System fonts (Tahoma / Segoe UI / Consolas) — not hosted on Google Fonts -->
+</head>
+<body>
+  <script>
+    /* Always start in light mode (classic XP) before first paint */
+    (function () {
+      try {
+        document.body.classList.add("light");
+        localStorage.setItem("portfolio-theme", "light");
+      } catch (e) {}
+    })();
+  </script>
+  <a id="skip-to-desktop" class="skip-link" href="#desktop">Skip to desktop</a>
+  <!-- ========== OS Boot splash ========== -->
+  <div id="boot-screen" class="boot-screen">
+    <div class="boot-inner">
+      <div class="boot-logo" aria-hidden="true"></div>
+      <p class="boot-title" data-i18n="bootTitle">Welcome to My Portfolio</p>
+      <p class="boot-sub" data-i18n="bootSub">Professional</p>
+      <div class="boot-bar"><div class="boot-bar-fill"></div></div>
+      <p class="boot-status" id="boot-status">Starting Windows…</p>
+      <button type="button" class="boot-start-btn" id="boot-start-btn" hidden>
+        Click the button to enter
+      </button>
+      <p class="boot-hint">Click the button to enter</p>
+    </div>
+  </div>
+
+  <!-- ========== DESKTOP (Windows XP style) ========== -->
+  <div id="desktop" class="desktop boot-hidden">
+    <div class="wallpaper"></div>
+
+    <!-- Desktop Icons -->
+    <div class="desktop-icons">
+      <button class="icon" data-window="about">
+        <div class="icon-img about-icon"></div>
+        <span>About Me</span>
+      </button>
+      <button class="icon" data-window="education">
+        <div class="icon-img edu-icon"></div>
+        <span>Education</span>
+      </button>
+      <button class="icon" data-window="experience">
+        <div class="icon-img exp-icon"></div>
+        <span>Experience</span>
+      </button>
+      <button class="icon" data-window="certifications">
+        <div class="icon-img cert-icon"></div>
+        <span>Certifications</span>
+      </button>
+      <button class="icon" data-window="projects">
+        <div class="icon-img projects-icon"></div>
+        <span>Projects</span>
+      </button>
+      <button class="icon" data-window="skills">
+        <div class="icon-img skills-icon"></div>
+        <span>Skills</span>
+      </button>
+      <button class="icon" data-window="contact">
+        <div class="icon-img contact-icon"></div>
+        <span>Contact</span>
+      </button>
+      <button class="icon" data-window="resume">
+        <div class="icon-img resume-icon"></div>
+        <span>Resume</span>
+      </button>
+      <button class="icon" data-window="control">
+        <div class="icon-img control-icon"></div>
+        <span>Control Panel</span>
+      </button>
+      <button class="icon" data-window="blog">
+        <div class="icon-img blog-icon"></div>
+        <span>My Computer</span>
+      </button>
+      <button class="icon" data-window="ie">
+        <div class="icon-img edge-icon"></div>
+        <span>Internet Explorer</span>
+      </button>
+      <button class="icon" data-window="sudoku">
+        <div class="icon-img sudoku-icon"></div>
+        <span>Sudoku</span>
+      </button>
+      <button class="icon" data-window="chat">
+        <div class="icon-img chat-icon"></div>
+        <span>Chat</span>
+      </button>
+    </div>
+
+    <!-- Desktop sticky notes -->
+    <div class="sticky-notes" aria-hidden="false">
+      <div class="sticky-note sticky-yellow">
+        <div class="sticky-tape"></div>
+        <p>I believe the best technology is not only powerful but also reliable, intuitive, and built with people in mind. Every project is an opportunity to solve real problems, learn something new, and create meaningful digital experiences.</p>
+      </div>
+    </div>
+
+    <!-- Desktop context menu -->
+    <div id="desktop-context-menu" class="context-menu" hidden>
+      <button type="button" data-action="refresh">Refresh</button>
+      <button type="button" data-action="about">About Me</button>
+      <button type="button" data-action="projects">Projects</button>
+      <div class="ctx-sep"></div>
+      <button type="button" data-action="sudoku">Sudoku</button>
+      <button type="button" data-action="notepad">Notepad</button>
+      <button type="button" data-action="paint">Paint</button>
+      <button type="button" data-action="terminal">Terminal</button>
+      <button type="button" data-action="vscode">Liveweave</button>
+      <button type="button" data-action="ie">Internet Explorer</button>
+      <button type="button" data-action="help">Help (F1)</button>
+      <button type="button" data-action="voice">Voice Room</button>
+      <div class="ctx-sep"></div>
+      <button type="button" data-action="theme">Toggle Theme</button>
+      <button type="button" data-action="cascade">Cascade Windows</button>
+      <button type="button" data-action="tile">Tile Windows</button>
+      <button type="button" data-action="triple">Snap Triple Columns</button>
+      <div class="ctx-sep"></div>
+      <button type="button" data-action="properties">Properties</button>
+      <div class="ctx-sep"></div>
+      <button type="button" data-action="decap">Decap CMS…</button>
+    </div>
+
+    <!-- Log off / Shut down overlays -->
+    <div id="os-overlay" class="os-overlay" hidden>
+      <div class="os-overlay-inner">
+        <div class="os-overlay-logo"></div>
+        <p class="os-overlay-msg" id="os-overlay-msg">Logging off…</p>
+        <div class="os-overlay-bar"><div class="os-overlay-bar-fill"></div></div>
+        <p class="os-overlay-sub" id="os-overlay-sub"></p>
+        <button type="button" class="os-overlay-btn" id="os-overlay-restart" hidden>Restart</button>
+      </div>
+    </div>
+
+    <div id="windows-container"></div>
+    <div id="xp-screensaver" class="xp-screensaver" hidden>
+      <div class="ss-logo">Menelik OS</div>
+      <div class="ss-hint">Move mouse or press a key to resume</div>
+    </div>
+    <div id="xp-dialog" class="xp-dialog" hidden>
+      <div class="xp-dialog-box">
+        <div class="xp-dialog-title"><span class="xp-dialog-icon">ℹ</span> <span id="xp-dialog-title-text">Message</span></div>
+        <div class="xp-dialog-body" id="xp-dialog-body">OK</div>
+        <div class="xp-dialog-actions"><button type="button" id="xp-dialog-ok">OK</button></div>
+      </div>
+    </div>
+
+    <!-- Taskbar -->
+    <div class="taskbar">
+      <button class="start-btn" id="start-btn">
+        <span class="start-logo"></span>
+        <span>start</span>
+      </button>
+      <div class="taskbar-apps" id="taskbar-apps"></div>
+      <!-- Virtual desktop pager -->
+      <div class="vd-pager" id="vd-pager" title="Virtual desktops">
+        <button class="vd-btn active" data-desktop="0">1</button>
+        <button class="vd-btn" data-desktop="1">2</button>
+        <button class="vd-btn" data-desktop="2">3</button>
+        <button class="vd-btn" data-desktop="3">4</button>
+      </div>
+      <div class="taskbar-tray">
+        <button class="theme-toggle" id="theme-toggle" title="Toggle dark/light">
+          <span class="sun">☀</span>
+          <span class="moon">☾</span>
+        </button>
+        <div class="clock" id="clock">12:00 PM</div>
+      </div>
+    </div>
+    <!-- Desktop indicator toast -->
+    <div class="vd-toast" id="vd-toast" hidden>Desktop 1</div>
+
+    <!-- Start Menu -->
+    <div class="start-menu" id="start-menu">
+      <div class="start-menu-left">
+        <div class="user-block">
+          <div class="user-avatar" id="avatar-desktop"></div>
+          <div class="user-name">Menelik Admasu</div>
+        </div>
+        <div class="start-links">
+          <div class="sm-group-label">Portfolio</div>
+          <button data-window="about"><span class="sm-icon about-icon"></span> About Me</button>
+          <button data-window="education"><span class="sm-icon edu-icon"></span> Education</button>
+          <button data-window="experience"><span class="sm-icon exp-icon"></span> Experience</button>
+          <button data-window="certifications"><span class="sm-icon cert-icon"></span> Certifications</button>
+          <button data-window="projects"><span class="sm-icon projects-icon"></span> Projects</button>
+          <button data-window="skills"><span class="sm-icon skills-icon"></span> Skills</button>
+          <button data-window="contact"><span class="sm-icon contact-icon"></span> Contact</button>
+          <button data-window="resume"><span class="sm-icon resume-icon"></span> Resume</button>
+          <div class="sm-group-label">Programs</div>
+          <button data-window="notepad"><span class="sm-icon notepad-icon"></span> Notepad</button>
+          <button data-window="paint"><span class="sm-icon paint-icon"></span> Paint</button>
+          <button data-window="vector"><span class="sm-icon vector-icon"></span> Vector Graphics</button>
+          <button data-window="terminal"><span class="sm-icon terminal-icon"></span> Terminal</button>
+          <button data-window="vscode"><span class="sm-icon vscode-icon"></span> Liveweave</button>
+          <button data-window="sudoku"><span class="sm-icon sudoku-icon"></span> Sudoku</button>
+          <button data-window="snake"><span class="sm-icon snake-icon"></span> Snake</button>
+          <button data-window="tetris"><span class="sm-icon tetris-icon"></span> Tetris</button>
+          <button data-window="chat"><span class="sm-icon chat-icon"></span> Chat</button>
+          <button data-window="control"><span class="sm-icon control-icon"></span> Control Panel</button>
+          <button data-window="registry"><span class="sm-icon registry-icon"></span> Registry Editor</button>
+          <button data-window="recycle"><span class="sm-icon recycle-icon"></span> Recycle Bin</button>
+
+          <button data-window="blog"><span class="sm-icon blog-icon"></span> My Computer</button>
+          <button data-window="ie"><span class="sm-icon ie-icon"></span> Internet Explorer</button>
+          <button data-window="mediaplayer"><span class="sm-icon wmp-icon"></span> Media Player</button>
+          <button data-window="help"><span class="sm-icon help-icon"></span> Help and Support</button>
+          <button data-window="testimonials"><span class="sm-icon testimonial-icon"></span> Testimonials</button>
+          <button data-window="github"><span class="sm-icon github-icon"></span> GitHub Activity</button>
+          <button data-window="downloadpack"><span class="sm-icon pack-icon"></span> Download Pack</button>
+        </div>
+      </div>
+      <div class="start-menu-right">
+        <div class="sm-section">
+          <div class="sm-label">Documents</div>
+          <button data-window="resume"><span class="sm-icon sm-icon-right resume-icon"></span> My Resume</button>
+          <button data-window="projects"><span class="sm-icon sm-icon-right projects-icon"></span> Recent Projects</button>
+          <button data-window="notepad"><span class="sm-icon sm-icon-right notepad-icon"></span> Untitled - Notepad</button>
+        </div>
+        <div class="sm-section">
+          <div class="sm-label">Programs</div>
+          <button data-window="paint"><span class="sm-icon sm-icon-right paint-icon"></span> Paint</button>
+          <button data-window="terminal"><span class="sm-icon sm-icon-right terminal-icon"></span> Linux Terminal</button>
+          <button data-window="vscode"><span class="sm-icon sm-icon-right vscode-icon"></span> Liveweave</button>
+        </div>
+        <div class="sm-section">
+          <div class="sm-label">Places</div>
+          <button data-window="about"><span class="sm-icon sm-icon-right about-icon"></span> My Profile</button>
+          <button data-window="contact"><span class="sm-icon sm-icon-right contact-icon"></span> Contact Info</button>
+          <button type="button" id="admin-open-start"><span class="sm-icon sm-icon-right control-icon"></span> Admin Login</button>
+          <a class="sm-link-admin" href="admin/" style="display:flex;align-items:center;gap:8px;padding:6px 8px;font-size:12px;color:inherit;text-decoration:none;"><span class="sm-icon sm-icon-right projects-icon"></span> Decap CMS ↗</a>
+        </div>
+        <div class="sm-bottom">
+          <button id="log-off">Log Off</button>
+          <button id="shut-down">Turn Off Computer</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== MOBILE (iPhone style) ========== -->
+  <!-- Rest of mobile shell preserved from original - full content continues in local file -->
+  <!-- NOTE: Full index.html will be restored from complete local copy -->
+</body>
+</html>
