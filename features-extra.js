@@ -244,6 +244,7 @@
     const GOOGLE_SEARCH = "https://www.google.com/search?igu=1&q=";
     const BOOKMARKS = [
       { name: "Google", url: GOOGLE_HOME },
+      { name: "Mario", url: "https://supermarioplay.com/" },
       { name: "Portfolio", url: "menelik://home" },
       { name: "Projects", url: "menelik://projects" },
       { name: "Yeni Movie", url: "https://yeni-movie.vercel.app/" },
