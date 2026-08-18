@@ -207,7 +207,7 @@
       '<div class="chats-suggestions"></div>' +
       '<div class="chats-composer">' +
       '  <button type="button" class="chats-attach" title="Quick actions" aria-label="Quick actions">+</button>' +
-      '  <textarea class="chats-input" rows="1" placeholder="Message Menelik OS… / መልእክት ይጻፉ…" enterkeyhint="send"></textarea>' +
+      '  <textarea class="chats-input" rows="1" placeholder="Message… / መልእክት ይጻፉ…" enterkeyhint="send"></textarea>' +
       '  <button type="button" class="chats-send" aria-label="Send">Send</button>' +
       "</div>" +
       '<div class="chats-quick" hidden>' +
@@ -308,7 +308,7 @@
       if (!history.length) {
         addBubble(
           "assistant",
-          "Hi — I'm the **Menelik OS** assistant.\n\nጤና ይስጥልኝ! ስለ **ምኒልክ** ወይም ፕሮጀክቶቹ ይጠይቁኝ።",
+          "Hi — I am the **Menelik OS** assistant.\n\nጤና ይስጥልኝ! ስለ **ምኒልክ** ወይም ፕሮጀክቶቹ ይጠይቁኝ።",
           { ts: Date.now() }
         );
         return;

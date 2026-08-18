@@ -73,7 +73,7 @@
       '<canvas class="mario-canvas" aria-label="Mario game"></canvas>' +
       '<div class="mario-overlay" data-overlay>' +
       '<div class="mario-overlay-title">SUPER MARIO</div>' +
-      '<div class="mario-overlay-sub">← → move · Space jump · Shift run</div>' +
+      '<div class="mario-overlay-sub">Arrow keys or WASD to move · Space to jump · Shift to run</div>' +
       '<button type="button" class="mario-btn" data-start>Start Game</button>' +
       "</div></div>" +
       '<div class="mario-pad">' +
