@@ -10548,19 +10548,26 @@ body:not(.light) .edge-proxy {
 .mario-hud b { color: #fbbf24; }
 .mario-stage {
   position: relative;
-  flex: 1;
+  flex: 1 1 auto;
   min-height: 0;
+  width: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #000;
+  background: #0a0a12;
   border-radius: 6px;
   overflow: hidden;
 }
 .mario-canvas {
   display: block;
   max-width: 100%;
+  max-height: 100%;
+  width: auto;
+  height: auto;
+  object-fit: contain;
   image-rendering: pixelated;
+  image-rendering: crisp-edges;
+  flex-shrink: 0;
 }
 .mario-overlay {
   position: absolute;
@@ -10653,4 +10660,30 @@ body:not(.light) .edge-proxy {
   .mario-stage { min-height: 180px; }
   .mario-dir { width: 48px; height: 44px; }
   .mario-jump { width: 58px; height: 52px; }
+}
+
+#page-mario .page-body-full,
+.win[data-app="mario"] .window-body {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  height: 100%;
+}
+#page-mario .mario-app,
+.win[data-app="mario"] .mario-app {
+  flex: 1;
+  min-height: 0;
+  height: 100%;
+}
+#page-mario .mario-stage {
+  flex: 1 1 auto;
+  min-height: 160px;
+}
+@media (max-width: 899px) {
+  #page-mario .mario-stage {
+    min-height: 0;
+    flex: 1 1 auto;
+  }
+  .mario-hud { flex-shrink: 0; }
+  .mario-pad { flex-shrink: 0; }
 }

@@ -564,18 +564,32 @@
       ctx.fillRect(x + 13, y + 26, 7, 4);
     }
 
+    // Full level height must always be visible (no vertical crop)
+    const VIEW_H = mapH; // 14 * 32 = 448 — ground + sky
+    const VIEW_W_MIN = 320;
+
     function resizeCanvas() {
       const stage = root.querySelector(".mario-stage");
-      const cssW = Math.min(640, Math.max(280, (stage && stage.clientWidth) || 480));
-      const cssH = Math.min(400, Math.max(200, cssW * 0.62));
+      const stageW = Math.max(1, (stage && stage.clientWidth) || 480);
+      const stageH = Math.max(1, (stage && stage.clientHeight) || 320);
+      // Internal view: full map height; width from stage aspect (min width for playability)
+      let viewW = Math.round(VIEW_H * (stageW / stageH));
+      if (viewW < VIEW_W_MIN) viewW = VIEW_W_MIN;
+      if (viewW > 900) viewW = 900;
+      logicalW = viewW;
+      logicalH = VIEW_H;
+
       const dpr = Math.min(window.devicePixelRatio || 1, 2);
-      canvas.style.width = cssW + "px";
-      canvas.style.height = cssH + "px";
-      canvas.width = Math.floor(cssW * dpr);
-      canvas.height = Math.floor(cssH * dpr);
+      canvas.width = Math.floor(logicalW * dpr);
+      canvas.height = Math.floor(logicalH * dpr);
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      logicalW = cssW;
-      logicalH = cssH;
+
+      // Contain-fit into stage (letterbox OK; never crop top/bottom)
+      const scale = Math.min(stageW / logicalW, stageH / logicalH);
+      const dispW = Math.floor(logicalW * scale);
+      const dispH = Math.floor(logicalH * scale);
+      canvas.style.width = dispW + "px";
+      canvas.style.height = dispH + "px";
     }
 
     function draw() {
