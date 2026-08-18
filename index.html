@@ -255,8 +255,312 @@
     </div>
   </div>
 
-  <!-- ========== MOBILE (iPhone style) ========== -->
-  <!-- Rest of mobile shell preserved from original - full content continues in local file -->
-  <!-- NOTE: Full index.html will be restored from complete local copy -->
+  <!-- ========== MOBILE (iPhone Pro Max style) ========== -->
+  <div id="mobile" class="mobile boot-hidden">
+    <div class="android-frame">
+      <div class="android-screen">
+        <div class="status-bar android-status-bar">
+          <span class="time" id="mobile-time">9:41</span>
+          <div class="status-icons">
+            <span class="signal" aria-hidden="true">▮▮▮</span>
+            <span class="wifi" aria-hidden="true">WLAN</span>
+            <span class="battery" aria-hidden="true">100%</span>
+          </div>
+        </div>
+
+        <div class="mobile-content" id="mobile-content">
+          <div class="home-screen" id="home-screen">
+            <div class="mobile-header">
+              <div class="mobile-avatar" id="avatar-mobile"></div>
+              <h1>Menelik Admasu</h1>
+              <p class="subtitle">Computer Administrator</p>
+              <p class="years">Technical Trainer · 10+ years in IT operations</p>
+            </div>
+
+            <div class="app-grid">
+              <button class="app-icon" data-page="about">
+                <div class="app-img about"></div>
+                <span>About</span>
+              </button>
+              <button class="app-icon" data-page="education">
+                <div class="app-img edu"></div>
+                <span>Education</span>
+              </button>
+              <button class="app-icon" data-page="experience">
+                <div class="app-img experience"></div>
+                <span>Experience</span>
+              </button>
+              <button class="app-icon" data-page="certifications">
+                <div class="app-img certifications"></div>
+                <span>Certifications</span>
+              </button>
+              <button class="app-icon" data-page="projects">
+                <div class="app-img projects"></div>
+                <span>Projects</span>
+              </button>
+              <button class="app-icon" data-page="skills">
+                <div class="app-img skills"></div>
+                <span>Skills</span>
+              </button>
+              <button class="app-icon" data-page="contact">
+                <div class="app-img contact"></div>
+                <span>Contact</span>
+              </button>
+              <button class="app-icon" data-page="resume">
+                <div class="app-img resume"></div>
+                <span>Resume</span>
+              </button>
+              <button class="app-icon" data-page="apps">
+                <div class="app-img apps-folder"></div>
+                <span>Apps</span>
+              </button>
+              <button class="app-icon" data-page="games">
+                <div class="app-img games-folder"></div>
+                <span>Games</span>
+              </button>
+              <button class="app-icon" data-page="edge">
+                <div class="app-img edge"></div>
+                <span>Edge</span>
+              </button>
+              <button class="app-icon" data-page="chat">
+                <div class="app-img chat"></div>
+                <span>Chat</span>
+              </button>
+              <button class="app-icon" data-page="control">
+                <div class="app-img control"></div>
+                <span>Settings</span>
+              </button>
+              <button class="app-icon" data-page="device">
+                <div class="app-img device"></div>
+                <span>Device</span>
+              </button>
+
+
+            </div>
+
+            <div class="dock">
+              <button class="app-icon" data-page="about"><div class="app-img about"></div></button>
+              <button class="app-icon" data-page="projects"><div class="app-img projects"></div></button>
+              <button class="app-icon" data-page="edge" title="Edge"><div class="app-img edge"></div></button>
+              <button class="app-icon" data-page="apps"><div class="app-img apps-folder"></div></button>
+              <button class="theme-toggle-mobile" id="theme-toggle-mobile">
+                <span class="sun">☀</span>
+                <span class="moon">☾</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="app-page" id="page-about" hidden>
+            <div class="page-header"><button class="back-btn">‹ Back</button><h2>About Me</h2></div>
+            <div class="page-body" id="content-about"></div>
+          </div>
+          <div class="app-page" id="page-education" hidden>
+            <div class="page-header"><button class="back-btn">‹ Back</button><h2>Education</h2></div>
+            <div class="page-body" id="content-education"></div>
+          </div>
+          <div class="app-page" id="page-experience" hidden>
+            <div class="page-header"><button class="back-btn">‹ Back</button><h2>Experience</h2></div>
+            <div class="page-body" id="content-experience"></div>
+          </div>
+          <div class="app-page" id="page-certifications" hidden>
+            <div class="page-header"><button class="back-btn">‹ Back</button><h2>Certifications</h2></div>
+            <div class="page-body" id="content-certifications"></div>
+          </div>
+          <div class="app-page" id="page-projects" hidden>
+            <div class="page-header"><button class="back-btn">‹ Back</button><h2>Projects</h2></div>
+            <div class="page-body" id="content-projects"></div>
+          </div>
+          <div class="app-page" id="page-skills" hidden>
+            <div class="page-header"><button class="back-btn">‹ Back</button><h2>Skills</h2></div>
+            <div class="page-body" id="content-skills"></div>
+          </div>
+          <div class="app-page" id="page-contact" hidden>
+            <div class="page-header"><button class="back-btn">‹ Back</button><h2>Contact</h2></div>
+            <div class="page-body" id="content-contact"></div>
+          </div>
+          <div class="app-page" id="page-resume" hidden>
+            <div class="page-header"><button class="back-btn">‹ Back</button><h2>Resume</h2></div>
+            <div class="page-body" id="content-resume"></div>
+          </div>
+          
+          
+          <div class="app-page" id="page-games" hidden>
+            <div class="page-header"><button class="back-btn">‹ Back</button><h2>Games</h2></div>
+            <div class="page-body page-body-apps">
+              <p class="apps-folder-lead">Play on the go</p>
+              <div class="apps-folder-grid games-folder-grid">
+                <button class="app-icon" data-page="sudoku">
+                  <div class="app-img sudoku"></div>
+                  <span>Sudoku</span>
+                </button>
+                <button class="app-icon" data-page="tetris">
+                  <div class="app-img tetris"></div>
+                  <span>Tetris</span>
+                </button>
+                <button class="app-icon" data-page="snake">
+                  <div class="app-img snake"></div>
+                  <span>Snake</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="app-page" id="page-apps" hidden>
+            <div class="page-header"><button class="back-btn">‹ Back</button><h2>Apps</h2></div>
+            <div class="page-body page-body-apps">
+              <p class="apps-folder-lead">Tools & utilities</p>
+              <div class="apps-folder-grid">
+                <button class="app-icon" data-page="notepad">
+                  <div class="app-img notepad"></div>
+                  <span>Notepad</span>
+                </button>
+                <button class="app-icon" data-page="paint">
+                  <div class="app-img paint"></div>
+                  <span>Paint</span>
+                </button>
+                <button class="app-icon" data-page="terminal">
+                  <div class="app-img terminal"></div>
+                  <span>Terminal</span>
+                </button>
+                <button class="app-icon" data-page="voice">
+                  <div class="app-img voice"></div>
+                  <span>Voice Room</span>
+                </button>
+              </div>
+            </div>
+          </div>
+          <div class="app-page" id="page-notepad" hidden>
+            <div class="page-header"><button class="back-btn">‹ Back</button><h2>Notepad</h2></div>
+            <div class="page-body page-body-full" id="content-notepad"></div>
+          </div>
+          <div class="app-page" id="page-paint" hidden>
+            <div class="page-header"><button class="back-btn">‹ Back</button><h2>Paint</h2></div>
+            <div class="page-body page-body-full" id="content-paint"></div>
+          </div>
+          <div class="app-page" id="page-terminal" hidden>
+            <div class="page-header"><button class="back-btn">‹ Back</button><h2>Terminal</h2></div>
+            <div class="page-body page-body-full" id="content-terminal"></div>
+          </div>
+          <!-- Mobile-only game (not on XP desktop) -->
+          <div class="app-page" id="page-tetris" hidden>
+            <div class="page-header"><button class="back-btn">‹ Back</button><h2>Tetris</h2></div>
+            <div class="page-body page-body-full" id="content-tetris"></div>
+          </div>
+          <div class="app-page" id="page-sudoku" hidden>
+            <div class="page-header"><button class="back-btn">‹ Back</button><h2>Sudoku</h2></div>
+            <div class="page-body page-body-full" id="content-sudoku"></div>
+          </div>
+          <div class="app-page" id="page-snake" hidden>
+            <div class="page-header"><button class="back-btn">‹ Back</button><h2>Snake</h2></div>
+            <div class="page-body page-body-full" id="content-snake"></div>
+          </div>
+          <div class="app-page" id="page-chat" hidden>
+            <div class="page-header"><button class="back-btn">‹ Back</button><h2>Chats</h2></div>
+            <div class="page-body page-body-full" id="content-chat"></div>
+          </div>
+          <div class="app-page" id="page-edge" hidden>
+            <div class="page-header"><button class="back-btn">‹ Back</button><h2>Microsoft Edge</h2></div>
+            <div class="page-body page-body-full" id="content-edge"></div>
+          </div>
+          <div class="app-page" id="page-control" hidden>
+            <div class="page-header"><button class="back-btn">‹ Back</button><h2>Settings</h2></div>
+            <div class="page-body page-body-full" id="content-control"></div>
+          </div>
+          <div class="app-page" id="page-device" hidden>
+            <div class="page-header"><button class="back-btn">‹ Back</button><h2>Device</h2></div>
+            <div class="page-body page-body-full" id="content-device"></div>
+          </div>
+          <div class="app-page" id="page-voice" hidden>
+            <div class="page-header"><button class="back-btn">‹ Back</button><h2>Voice Room</h2></div>
+            <div class="page-body page-body-full" id="content-voice"></div>
+          </div>
+        </div>
+
+        <div class="android-nav" aria-hidden="true">
+          <span class="android-nav-btn android-nav-back">◁</span>
+          <span class="android-nav-btn android-nav-home">○</span>
+          <span class="android-nav-btn android-nav-recents">▢</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <template id="window-template">
+    <div class="window" data-id="">
+      <div class="title-bar">
+        <div class="title-bar-text">
+          <span class="win-icon"></span>
+          <span class="win-title">Window</span>
+        </div>
+        <div class="title-bar-controls">
+          <button class="btn-min" aria-label="Minimize">_</button>
+          <button class="btn-max" aria-label="Maximize">□</button>
+          <button class="btn-close" aria-label="Close">×</button>
+        </div>
+      </div>
+      <div class="window-body"></div>
+    </div>
+  </template>
+
+  <!-- ========== Admin CMS (client-side, WordPress-style editor) ========== -->
+  <div id="admin-overlay" class="admin-overlay" hidden>
+    <div class="admin-panel" role="dialog" aria-labelledby="admin-title">
+      <div class="admin-header">
+        <h2 id="admin-title">Portfolio Admin</h2>
+        <button type="button" class="admin-close" id="admin-close" title="Close">×</button>
+      </div>
+
+      <!-- Login -->
+      <div class="admin-login" id="admin-login">
+        <p class="admin-hint">Sign in to edit portfolio content. Use Save to files for permanent project updates.</p>
+        <label class="admin-label">Password
+          <input type="password" id="admin-password" autocomplete="current-password" placeholder="Enter admin password" />
+        </label>
+        <p class="admin-error" id="admin-error" hidden>Wrong password. Try again.</p>
+        <button type="button" class="admin-btn primary" id="admin-login-btn">Log in</button>
+        <p class="admin-foot">Password is verified with PBKDF2 (310k iterations). Change it after first login from the editor panel.</p>
+      </div>
+
+      <!-- Editor -->
+      <div class="admin-editor" id="admin-editor" hidden>
+        <div class="admin-toolbar">
+          <select id="admin-section" title="Section to edit"></select>
+          <button type="button" class="admin-btn primary" id="admin-save" title="Save in this browser">Save</button>
+          <button type="button" class="admin-btn primary" id="admin-save-files" title="Download content/*.json for permanent deploy">Save to files</button>
+          <button type="button" class="admin-btn" id="admin-export">Export all</button>
+          <button type="button" class="admin-btn" id="admin-reset">Reset all</button>
+          <button type="button" class="admin-btn danger" id="admin-logout">Log out</button>
+        </div>
+        <p class="admin-status" id="admin-status"></p>
+        <label class="admin-label">Window title
+          <input type="text" id="admin-field-title" />
+        </label>
+        <label class="admin-label">Content (HTML allowed)
+          <textarea id="admin-field-html" rows="16" spellcheck="true"></textarea>
+        </label>
+        <details class="admin-help" open>
+          <summary>Permanent file updates</summary>
+          <ul>
+            <li><strong>Save</strong> — stores edits in this browser only (localStorage).</li>
+            <li><strong>Save to files</strong> — downloads <code>content/<section>.json</code> for the current section (and all sections). Replace files in your project, then commit & deploy.</li>
+            <li><strong>Export all</strong> — one combined JSON backup of every section.</li>
+            <li>Production CMS: open <code>/admin/</code> (Decap + GitHub) to edit the live repo without downloading.</li>
+            <li>Open this panel: <code>#admin</code> or Start → Admin. Change the password after first login.</li>
+          </ul>
+        </details>
+        <div class="admin-password-change">
+          <label class="admin-label">New password (optional)
+            <input type="password" id="admin-new-password" placeholder="Min. 8 characters" minlength="8" autocomplete="new-password" />
+          </label>
+          <button type="button" class="admin-btn" id="admin-change-pass">Update password</button>
+          <p class="admin-pass-hint" style="font-size:11px;margin:6px 0 0;opacity:.85">Password is saved in this browser. Click Update to also download a <code>admin-password-record.txt</code> snippet you can paste into <code>script.js</code> for a permanent deploy default.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js?v=20260818nogames"></script>
+  <script src="features-extra.js?v=20260818nogames"></script>
+  <script src="chat-widget.js?v=20260818nogames"></script>
 </body>
 </html>
