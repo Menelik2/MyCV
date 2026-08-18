@@ -78,7 +78,7 @@
       problem: "Standard portfolios feel generic and forgettable.",
       approach: "Interactive OS metaphor (XP desktop + iPhone shell) with real apps.",
       stack: "Vanilla JS, CSS, Decap CMS, Vercel Edge",
-      outcome: "Memorable personal site with games, tools, and CMS-backed content.",
+      outcome: "Memorable personal site with tools, apps, and CMS-backed content.",
     },
   };
 
@@ -760,251 +760,6 @@
     return wrap;
   }
 
-  /* ========== Solitaire (simplified Klondike draw) ========== */
-  /* ========== Solitaire (simplified Klondike draw) ========== */
-  function buildSolitaire() {
-    const suits = [
-      { s: "♠", red: false },
-      { s: "♥", red: true },
-      { s: "♦", red: true },
-      { s: "♣", red: false },
-    ];
-    const ranks = ["A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K"];
-    let stock = [];
-    let waste = [];
-    let foundations = [[], [], [], []];
-    let tableau = [[], [], [], [], [], [], []];
-    let moves = 0;
-
-    function shuffle(arr) {
-      for (let i = arr.length - 1; i > 0; i--) {
-        const j = (Math.random() * (i + 1)) | 0;
-        const t = arr[i];
-        arr[i] = arr[j];
-        arr[j] = t;
-      }
-      return arr;
-    }
-
-    function newGame() {
-      const deck = [];
-      suits.forEach((su) =>
-        ranks.forEach((r, i) =>
-          deck.push({ rank: r, val: i + 1, suit: su.s, red: su.red, face: false })
-        )
-      );
-      shuffle(deck);
-      stock = deck;
-      waste = [];
-      foundations = [[], [], [], []];
-      tableau = [[], [], [], [], [], [], []];
-      moves = 0;
-      for (let c = 0; c < 7; c++) {
-        for (let r = 0; r <= c; r++) {
-          const card = stock.pop();
-          card.face = r === c;
-          tableau[c].push(card);
-        }
-      }
-      setMsg("Click stock to draw · build A→K by suit · alternate colors in columns");
-    }
-
-    const wrap = el(`<div class="sol-app">
-      <div class="sol-toolbar">
-        <button type="button" class="sol-new">New game</button>
-        <span class="sol-moves">Moves: 0</span>
-        <span class="sol-msg">Loading…</span>
-      </div>
-      <div class="sol-top">
-        <div class="sol-stock" title="Stock — click to draw"></div>
-        <div class="sol-waste" title="Waste"></div>
-        <div class="sol-foundations"></div>
-      </div>
-      <div class="sol-tableau"></div>
-    </div>`);
-
-    function setMsg(t) {
-      const m = wrap.querySelector(".sol-msg");
-      if (m) m.textContent = t;
-      const mv = wrap.querySelector(".sol-moves");
-      if (mv) mv.textContent = "Moves: " + moves;
-    }
-
-    function cardHtml(c, idx, extra) {
-      const cls = "sol-card " + (c.face ? (c.red ? "red" : "black") : "back") + (extra ? " " + extra : "");
-      const label = c.face ? c.rank + c.suit : "";
-      return `<button type="button" class="${cls}" data-i="${idx}" aria-label="${c.face ? c.rank + " " + c.suit : "face down"}">${label}</button>`;
-    }
-
-    function canOnFoundation(card, pile) {
-      if (!pile.length) return card.val === 1;
-      const top = pile[pile.length - 1];
-      return top.suit === card.suit && card.val === top.val + 1;
-    }
-
-    function canOnTableau(card, dest) {
-      if (!dest.length) return card.val === 13;
-      const top = dest[dest.length - 1];
-      return top.face && top.red !== card.red && card.val === top.val - 1;
-    }
-
-    function tryMoveToFoundation(card, fromWaste, colIdx) {
-      for (let i = 0; i < 4; i++) {
-        if (canOnFoundation(card, foundations[i])) {
-          foundations[i].push(card);
-          if (fromWaste) waste.pop();
-          else {
-            tableau[colIdx].pop();
-            const col = tableau[colIdx];
-            if (col.length && !col[col.length - 1].face) col[col.length - 1].face = true;
-          }
-          moves++;
-          return true;
-        }
-      }
-      return false;
-    }
-
-    function checkWin() {
-      if (foundations.every((p) => p.length === 13)) {
-        setMsg("You win! Press New game to play again.");
-        try {
-          showDialog("Solitaire", "Congratulations — you cleared all foundations!");
-        } catch (_) {}
-      }
-    }
-
-    function render() {
-      try {
-        const stockEl = wrap.querySelector(".sol-stock");
-        stockEl.innerHTML = stock.length
-          ? `<button type="button" class="sol-card back sol-stock-btn" aria-label="Draw from stock"></button><span class="sol-count">${stock.length}</span>`
-          : `<button type="button" class="sol-slot sol-stock-btn" aria-label="Recycle waste">↻</button>`;
-
-        const wasteEl = wrap.querySelector(".sol-waste");
-        const topW = waste[waste.length - 1];
-        wasteEl.innerHTML = topW ? cardHtml(topW, 0, "sol-waste-card") : `<div class="sol-slot"></div>`;
-
-        const fEl = wrap.querySelector(".sol-foundations");
-        fEl.innerHTML = foundations
-          .map((pile, i) => {
-            const t = pile[pile.length - 1];
-            return `<div class="sol-found" data-f="${i}">${
-              t ? cardHtml(t, 0) : '<div class="sol-slot">A</div>'
-            }</div>`;
-          })
-          .join("");
-
-        const tabEl = wrap.querySelector(".sol-tableau");
-        tabEl.innerHTML = tableau
-          .map((col, ci) => {
-            const cards = col
-              .map((c, idx) => cardHtml(c, idx))
-              .join("");
-            return `<div class="sol-col" data-c="${ci}">${cards || '<div class="sol-slot sol-empty-col"></div>'}</div>`;
-          })
-          .join("");
-
-        // Stock click: draw or recycle
-        wrap.querySelector(".sol-stock-btn")?.addEventListener("click", () => {
-          if (stock.length) {
-            const c = stock.pop();
-            c.face = true;
-            waste.push(c);
-            moves++;
-            setMsg("Drawn " + c.rank + c.suit);
-          } else if (waste.length) {
-            while (waste.length) {
-              const c = waste.pop();
-              c.face = false;
-              stock.push(c);
-            }
-            moves++;
-            setMsg("Waste recycled to stock");
-          } else {
-            setMsg("Stock and waste are empty");
-          }
-          render();
-        });
-
-        // Waste → foundation or tableau
-        wrap.querySelector(".sol-waste-card")?.addEventListener("click", () => {
-          const card = waste[waste.length - 1];
-          if (!card) return;
-          if (tryMoveToFoundation(card, true, -1)) {
-            setMsg("Moved to foundation");
-            render();
-            checkWin();
-            return;
-          }
-          for (let t = 0; t < 7; t++) {
-            if (canOnTableau(card, tableau[t])) {
-              tableau[t].push(waste.pop());
-              moves++;
-              setMsg("Moved to column " + (t + 1));
-              render();
-              return;
-            }
-          }
-          setMsg("No valid move for " + card.rank + card.suit);
-        });
-
-        // Tableau cards
-        wrap.querySelectorAll(".sol-col").forEach((colEl) => {
-          const ci = +colEl.dataset.c;
-          colEl.querySelectorAll(".sol-card").forEach((cardEl) => {
-            cardEl.addEventListener("click", () => {
-              const idx = +cardEl.dataset.i;
-              const col = tableau[ci];
-              const c = col[idx];
-              if (!c || !c.face) return;
-
-              // Single top card → foundation
-              if (idx === col.length - 1) {
-                if (tryMoveToFoundation(c, false, ci)) {
-                  setMsg("Moved to foundation");
-                  render();
-                  checkWin();
-                  return;
-                }
-              }
-
-              // Move face-up run to another column
-              const stack = col.slice(idx);
-              if (!stack.every((x) => x.face)) return;
-              for (let t = 0; t < 7; t++) {
-                if (t === ci) continue;
-                if (canOnTableau(stack[0], tableau[t])) {
-                  tableau[t] = tableau[t].concat(stack);
-                  tableau[ci] = col.slice(0, idx);
-                  if (tableau[ci].length && !tableau[ci][tableau[ci].length - 1].face) {
-                    tableau[ci][tableau[ci].length - 1].face = true;
-                  }
-                  moves++;
-                  setMsg("Moved stack to column " + (t + 1));
-                  render();
-                  return;
-                }
-              }
-              setMsg("No move for that card");
-            });
-          });
-        });
-      } catch (err) {
-        console.error("[Solitaire] render", err);
-        setMsg("Error — click New game");
-      }
-    }
-
-    wrap.querySelector(".sol-new").addEventListener("click", () => {
-      newGame();
-      render();
-    });
-    newGame();
-    render();
-    return wrap;
-  }
-
   /* ========== Blog / My Computer ========== */
   /* ========== Blog / My Computer ========== */
   function buildBlog() {
@@ -1185,7 +940,6 @@
         { id: "contact", label: "Contact", icon: "✉" },
         { id: "terminal", label: "Terminal", icon: "⬛" },
         { id: "paint", label: "Paint", icon: "🎨" },
-        { id: "minesweeper", label: "Minesweeper", icon: "💣" },
         { id: "help", label: "Help", icon: "❓" },
       ];
       setStatus(apps.length + " programs");
@@ -1380,7 +1134,7 @@ END:VCARD`;
           <li><strong>Microsoft Edge</strong> — browse About, Projects, Resume, and links.</li>
           <li><strong>Windows Media Player</strong> — play short built-in themes (Play / Stop).</li>
           <li><strong>Notepad, Paint, Terminal, VS Code</strong> — small tools inside the OS.</li>
-          <li><strong>Minesweeper / Solitaire</strong> — classic games.</li>
+          <li><strong>Sudoku, Snake, Tetris</strong> — classic games.</li>
           <li><strong>Control Panel</strong> — wallpaper, sounds, icon size.</li>
           <li><strong>Recycle Bin</strong> — restore a window you closed.</li>
         </ul>
@@ -2024,7 +1778,6 @@ END:VCARD`;
       edge: withAppErrorBoundary("Microsoft Edge", buildEdge),
       ie: withAppErrorBoundary("Microsoft Edge", buildEdge),
       mediaplayer: withAppErrorBoundary("Windows Media Player", buildMediaPlayer),
-      solitaire: withAppErrorBoundary("Solitaire", buildSolitaire),
       blog: withAppErrorBoundary("My Computer", buildBlog),
       help: withAppErrorBoundary("Help and Support", buildHelp),
       testimonials: withAppErrorBoundary("Testimonials", buildTestimonials),
@@ -2046,7 +1799,6 @@ END:VCARD`;
     Object.assign(appsRef, {
       ie: { title: "Microsoft Edge", iconClass: "ie-icon", interactive: true },
       mediaplayer: { title: "Windows Media Player", iconClass: "wmp-icon", interactive: true },
-      solitaire: { title: "Solitaire", iconClass: "solitaire-icon", interactive: true },
       blog: { title: "My Computer", iconClass: "blog-icon", interactive: true },
       help: { title: "Help and Support", iconClass: "help-icon", interactive: true },
       testimonials: { title: "Testimonials", iconClass: "testimonial-icon", interactive: true },
