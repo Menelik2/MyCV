@@ -12,7 +12,6 @@ All of these ship in `features-extra.js`, `manifest.webmanifest`, and `sw.js`.
 ## XP authenticity
 6. **Internet Explorer** — Address bar browses `menelik://` sections and external demos.
 7. **Windows Media Player** — Synthetic XP-style startup / theme tones (Web Audio).
-8. **Solitaire** — Playable Klondike-style game.
 9. **Easter egg dialogs** — Double-click empty Recycle Bin.
 10. **Startup sound** — Synthesized chime on boot (`playXpStartupSound` in `script.js`).
 11. **Desktop gadgets** — Clock, language toggle, high-contrast toggle.
