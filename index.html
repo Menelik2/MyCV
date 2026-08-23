@@ -9,9 +9,9 @@
     Cache bust: bump window.__MENELIK_V__ + the ?v= values below on every public deploy
     so browsers and CDNs treat assets as new URLs.
   -->
-  <script>window.__MENELIK_V__ = "20260823navcalibri3";</script>
-  <link rel="stylesheet" href="styles.css?v=20260823navcalibri3" />
-  <link rel="manifest" href="manifest.webmanifest?v=20260823navcalibri3" />
+  <script>window.__MENELIK_V__ = "20260823fullscreen1";</script>
+  <link rel="stylesheet" href="styles.css?v=20260823fullscreen1" />
+  <link rel="manifest" href="manifest.webmanifest?v=20260823fullscreen1" />
   <link rel="apple-touch-icon" href="static/images/profile-320.webp" />
   <!-- Optimized profile photo preload (responsive sizes) -->
   <link rel="preload" href="static/images/profile-128.webp" as="image" type="image/webp" />
@@ -39,9 +39,9 @@
       <div class="boot-bar"><div class="boot-bar-fill"></div></div>
       <p class="boot-status" id="boot-status">Starting Windows…</p>
       <button type="button" class="boot-start-btn" id="boot-start-btn" hidden>
-        Click the button to enter
+        Enter Full Screen
       </button>
-      <p class="boot-hint">Click the button to enter</p>
+      <p class="boot-hint">Click to enter full screen</p>
     </div>
   </div>
 
@@ -181,6 +181,7 @@
           <span class="sun">☀</span>
           <span class="moon">☾</span>
         </button>
+        <button type="button" class="fs-toggle" id="fs-toggle" title="Full screen (F11)" aria-label="Full screen">⛶</button>
         <div class="clock" id="clock">12:00 PM</div>
       </div>
     </div>
@@ -559,8 +560,99 @@
     </div>
   </div>
 
-  <script src="script.js?v=20260823navcalibri3"></script>
-  <script src="features-extra.js?v=20260823navcalibri3"></script>
-  <script src="chat-widget.js?v=20260823navcalibri3"></script>
+  <script src="script.js?v=20260823fullscreen1"></script>
+  <script src="features-extra.js?v=20260823fullscreen1"></script>
+  <script src="chat-widget.js?v=20260823fullscreen1"></script>
+
+  <script>
+  /* Fullscreen enter fix — request FS on boot click in the same user gesture */
+  (function () {
+    function applyCssFS(on) {
+      document.documentElement.classList.toggle("os-fullscreen", !!on);
+      document.body.classList.toggle("os-fullscreen", !!on);
+    }
+    function isNativeFS() {
+      return !!(document.fullscreenElement || document.webkitFullscreenElement ||
+        document.mozFullScreenElement || document.msFullscreenElement);
+    }
+    function requestFS() {
+      applyCssFS(true);
+      var el = document.documentElement;
+      var req = el.requestFullscreen || el.webkitRequestFullscreen ||
+        el.webkitRequestFullScreen || el.mozRequestFullScreen || el.msRequestFullscreen;
+      if (typeof req !== "function") return Promise.resolve(false);
+      try {
+        var p;
+        try { p = req.call(el, { navigationUI: "hide" }); }
+        catch (e1) { p = req.call(el); }
+        if (p && typeof p.then === "function") {
+          return p.then(function () { return true; }).catch(function () { return false; });
+        }
+        return Promise.resolve(isNativeFS());
+      } catch (e) {
+        return Promise.resolve(false);
+      }
+    }
+    function exitFS() {
+      applyCssFS(false);
+      var exit = document.exitFullscreen || document.webkitExitFullscreen ||
+        document.webkitCancelFullScreen || document.mozCancelFullScreen || document.msExitFullscreen;
+      if (typeof exit === "function") {
+        try {
+          var p = exit.call(document);
+          if (p && p.catch) p.catch(function () {});
+        } catch (e) {}
+      }
+    }
+    function toggleFS() {
+      if (isNativeFS()) exitFS();
+      else requestFS();
+    }
+    // Capture-phase handler so FS runs in the same user gesture as the boot click
+    document.addEventListener("click", function (e) {
+      var btn = e.target && e.target.closest && e.target.closest("#boot-start-btn");
+      if (!btn || btn.hidden) return;
+      requestFS();
+    }, true);
+    document.addEventListener("keydown", function (e) {
+      if (e.key !== "Enter" && e.key !== " ") return;
+      var boot = document.getElementById("boot-screen");
+      if (!boot || boot.classList.contains("boot-done")) return;
+      var btn = document.getElementById("boot-start-btn");
+      if (!btn || btn.hidden) return;
+      requestFS();
+    }, true);
+    // Taskbar / tray toggle
+    document.addEventListener("click", function (e) {
+      var t = e.target && e.target.closest && e.target.closest("#fs-toggle");
+      if (!t) return;
+      e.preventDefault();
+      e.stopPropagation();
+      toggleFS();
+    }, true);
+    // F11
+    document.addEventListener("keydown", function (e) {
+      if (e.key === "F11") {
+        e.preventDefault();
+        toggleFS();
+      }
+    });
+    // Keep CSS class synced
+    ["fullscreenchange", "webkitfullscreenchange", "mozfullscreenchange", "MSFullscreenChange"].forEach(function (ev) {
+      document.addEventListener(ev, function () {
+        if (isNativeFS()) applyCssFS(true);
+        var t = document.getElementById("fs-toggle");
+        if (t) t.setAttribute("aria-pressed", isNativeFS() ? "true" : "false");
+      });
+    });
+    // Style the tray button
+    var style = document.createElement("style");
+    style.textContent = ".fs-toggle{background:transparent;border:none;color:inherit;font-size:14px;line-height:1;padding:2px 6px;cursor:pointer;opacity:.9;border-radius:3px}.fs-toggle:hover{background:rgba(255,255,255,.12)}.fs-toggle[aria-pressed=true]{opacity:1}";
+    document.head.appendChild(style);
+    window.__menelikRequestFS = requestFS;
+    window.__menelikExitFS = exitFS;
+    window.__menelikToggleFS = toggleFS;
+  })();
+  </script>
 </body>
 </html>
