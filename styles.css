@@ -1,2 +1,99 @@
 /* Restore full styles from last good commit (f0064f7) — site was broken by placeholder overwrite */
 @import url("https://cdn.jsdelivr.net/gh/Menelik2/MyCV@f0064f782e75188d326f9a9e64648ed407926447/styles.css");
+
+/* ========== Overrides (loaded after base) ========== */
+
+/* Resume on-screen text + print/PDF preview: Calibri (Carlito/Segoe/Arial fallbacks) */
+.resume-doc,
+.resume-doc *,
+#content-resume .resume-doc,
+.window[data-id="resume"] .resume-doc,
+#page-resume .resume-doc {
+  font-family: Calibri, Carlito, "Segoe UI", "DejaVu Sans", Arial, sans-serif !important;
+}
+.resume-doc {
+  font-size: 12.5px;
+  line-height: 1.45;
+}
+.resume-name,
+.resume-section h2,
+.resume-item h3 {
+  font-family: Calibri, Carlito, "Segoe UI", Arial, sans-serif !important;
+}
+
+/* Android phone footer navigation bar (Back / Home / Recents) — force visible on mobile */
+@media (max-width: 899px) {
+  .android-frame {
+    display: flex !important;
+    flex-direction: column !important;
+    height: 100% !important;
+    min-height: 100dvh !important;
+  }
+  .android-screen {
+    display: flex !important;
+    flex-direction: column !important;
+    flex: 1 1 auto !important;
+    min-height: 0 !important;
+  }
+  .mobile-content {
+    flex: 1 1 auto !important;
+    min-height: 0 !important;
+  }
+  .android-nav {
+    display: flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    flex-shrink: 0 !important;
+    align-items: center !important;
+    justify-content: space-evenly !important;
+    height: 52px !important;
+    min-height: 52px !important;
+    padding-bottom: max(8px, env(safe-area-inset-bottom, 0px)) !important;
+    background: #000 !important;
+    color: #e8eaed !important;
+    z-index: 50 !important;
+    position: relative !important;
+    pointer-events: auto !important;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+  }
+  body.light .android-nav {
+    background: #e8eaed !important;
+    color: #202124 !important;
+    border-top-color: rgba(0, 0, 0, 0.08);
+  }
+  .android-nav-btn {
+    appearance: none;
+    -webkit-appearance: none;
+    border: none;
+    background: transparent;
+    color: inherit;
+    font-size: 20px !important;
+    opacity: 0.95 !important;
+    width: 56px !important;
+    height: 44px !important;
+    min-width: 48px;
+    min-height: 44px;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    border-radius: 22px !important;
+    cursor: pointer;
+    pointer-events: auto !important;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+  }
+  .android-nav-btn:active,
+  .android-nav-btn:hover {
+    background: rgba(255, 255, 255, 0.12);
+  }
+  body.light .android-nav-btn:active,
+  body.light .android-nav-btn:hover {
+    background: rgba(0, 0, 0, 0.08);
+  }
+}
+
+@media (min-width: 900px) {
+  .android-nav {
+    display: none !important;
+  }
+}
