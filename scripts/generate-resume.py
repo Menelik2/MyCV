@@ -90,17 +90,17 @@ RESUME = {
             "title": "Bachelor of Science in Computer Science",
             "meta": "Bahir Dar University · 2022 – 2026 · Completed",
             "detail": (
-                "Coursework: Data Structures &amp; Algorithms, OOP, Database Systems, Web Development, "
+                "Coursework: Data Structures & Algorithms, OOP, Database Systems, Web Development, "
                 "Software Engineering, Computer Networks, Operating Systems"
             ),
         },
         {
-            "title": "Computer Hardware &amp; Networking Technology",
+            "title": "Computer Hardware & Networking Technology",
             "meta": "Bahir Dar Poly Technical College · 2002 – 2004 · GPA 3.45 · Completed",
             "detail": None,
         },
         {
-            "title": "Computer Hardware &amp; Networking Service",
+            "title": "Computer Hardware & Networking Service",
             "meta": "Debre Markos Poly College · 2007 · Completed",
             "detail": None,
         },
@@ -117,15 +117,15 @@ RESUME = {
             "responsive design, APIs, deployment"
         ),
         (
-            "<b>IT &amp; training:</b> Computer administration, hardware &amp; networking, "
+            "<b>IT & training:</b> Computer administration, hardware & networking, "
             "system administration, technical training"
         ),
         "<b>Other:</b> Web site design, video editing, Cybersecurity, communication, continuous learning",
     ],
     "projects": [
         ("Yeni Pro CV", "procv.is-cool.dev", "Privacy-first ATS-friendly resume builder"),
-        ("Yeni Movie", "yeni-movie.vercel.app", "Movies &amp; TV discovery with trailers and ratings"),
-        ("Yeni Typing Learning", "fidel.is-local.dev", "Typing tutor (WPM &amp; accuracy)"),
+        ("Yeni Movie", "yeni-movie.vercel.app", "Movies & TV discovery with trailers and ratings"),
+        ("Yeni Typing Learning", "fidel.is-local.dev", "Typing tutor (WPM & accuracy)"),
         ("Yeni Exam", "yeniexams.vercel.app", "Exit exam practice generator"),
         ("Windows XP Portfolio", "menelik.webhop.me", "Interactive OS-style portfolio"),
     ],
@@ -138,44 +138,56 @@ RESUME = {
 
 
 def _register_fonts():
-    """Prefer monospace (DejaVu Sans Mono) for a clean terminal-style resume."""
+    """Prefer normal proportional sans-serif for a clean professional resume."""
     candidates = [
+        # DejaVu Sans (common on Linux)
         (
-            Path("/usr/share/fonts/truetype/dejavu/DejaVuSansMono.ttf"),
-            Path("/usr/share/fonts/truetype/dejavu/DejaVuSansMono-Bold.ttf"),
+            Path("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf"),
+            Path("/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf"),
         ),
         (
-            Path("/usr/share/fonts/SlidesCarnival/google/JetBrains Mono/static/JetBrainsMono-Regular.ttf"),
-            Path("/usr/share/fonts/SlidesCarnival/google/JetBrains Mono/static/JetBrainsMono-Bold.ttf"),
+            Path("/usr/share/fonts/truetype/ttf-dejavu/DejaVuSans.ttf"),
+            Path("/usr/share/fonts/truetype/ttf-dejavu/DejaVuSans-Bold.ttf"),
         ),
+        # Liberation Sans (Arial metric-compatible)
         (
-            Path("/usr/share/fonts/SlidesCarnival/google/Roboto Mono/static/RobotoMono-Regular.ttf"),
-            Path("/usr/share/fonts/SlidesCarnival/google/Roboto Mono/static/RobotoMono-Bold.ttf"),
+            Path("/usr/share/fonts/truetype/liberation/LiberationSans-Regular.ttf"),
+            Path("/usr/share/fonts/truetype/liberation/LiberationSans-Bold.ttf"),
+        ),
+        # FreeSans
+        (
+            Path("/usr/share/fonts/truetype/freefont/FreeSans.ttf"),
+            Path("/usr/share/fonts/truetype/freefont/FreeSansBold.ttf"),
+        ),
+        # Noto Sans
+        (
+            Path("/usr/share/fonts/truetype/noto/NotoSans-Regular.ttf"),
+            Path("/usr/share/fonts/truetype/noto/NotoSans-Bold.ttf"),
         ),
     ]
     for regular, bold in candidates:
         if regular.exists():
-            pdfmetrics.registerFont(TTFont("ResumeMono", str(regular)))
+            pdfmetrics.registerFont(TTFont("ResumeSans", str(regular)))
             bold_path = bold if bold.exists() else regular
-            pdfmetrics.registerFont(TTFont("ResumeMono-Bold", str(bold_path)))
+            pdfmetrics.registerFont(TTFont("ResumeSans-Bold", str(bold_path)))
             # So <b>…</b> in Paragraph markup switches to the bold face
             pdfmetrics.registerFontFamily(
-                "ResumeMono",
-                normal="ResumeMono",
-                bold="ResumeMono-Bold",
-                italic="ResumeMono",
-                boldItalic="ResumeMono-Bold",
+                "ResumeSans",
+                normal="ResumeSans",
+                bold="ResumeSans-Bold",
+                italic="ResumeSans",
+                boldItalic="ResumeSans-Bold",
             )
-            return "ResumeMono", "ResumeMono-Bold"
-    # Built-in Courier is monospace but limited Unicode
+            return "ResumeSans", "ResumeSans-Bold"
+    # Built-in Helvetica is proportional sans-serif (limited Unicode)
     pdfmetrics.registerFontFamily(
-        "Courier",
-        normal="Courier",
-        bold="Courier-Bold",
-        italic="Courier-Oblique",
-        boldItalic="Courier-BoldOblique",
+        "Helvetica",
+        normal="Helvetica",
+        bold="Helvetica-Bold",
+        italic="Helvetica-Oblique",
+        boldItalic="Helvetica-BoldOblique",
     )
-    return "Courier", "Courier-Bold"
+    return "Helvetica", "Helvetica-Bold"
 
 
 def build_styles(density: float = 1.0):
@@ -313,7 +325,7 @@ def build_story(styles, data: dict, density: float = 1.0):
         story.append(job_block(styles, job))
     if data.get("experience_note"):
         story.append(Spacer(1, 0.4 * mm * d))
-        # Explicit bold face (font family + <b>) so it always renders heavy on mono
+        # Explicit bold face (font family + <b>) so it always renders heavy
         note = data["experience_note"]
         style = styles["RNoteBold"] if "RNoteBold" in styles.byName else styles["RBody"]
         story.append(Paragraph(f"<b>{note}</b>", style))
@@ -323,7 +335,7 @@ def build_story(styles, data: dict, density: float = 1.0):
     for edu in data["education"]:
         story.append(edu_block(styles, edu))
 
-    story.append(Paragraph("Certificates &amp; Awards", styles["RH2"]))
+    story.append(Paragraph("Certificates & Awards", styles["RH2"]))
     story.append(section_rule(d))
     for c in data["certs"]:
         story.append(Paragraph(f"• {c}", styles["RBullet"]))
