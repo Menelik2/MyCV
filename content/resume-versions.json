@@ -1,9 +1,19 @@
 {
-  "current": "1.0.0",
-  "updated": "2026-08-15",
+  "current": "1.0.1",
+  "updated": "2026-08-23",
   "slug": "Menelik-Admasu-Resume",
   "pdf": "/resume.pdf",
   "versions": [
+    {
+      "version": "1.0.1",
+      "date": "2026-08-23",
+      "label": "Calibri/Carlito font resume",
+      "changes": [
+        "Use Calibri-compatible Carlito font for PDF body text"
+      ],
+      "file": "/static/resume-versions/Menelik-Admasu-Resume-v1.0.1.pdf",
+      "downloadName": "Menelik-Admasu-Resume-v1.0.1.pdf"
+    },
     {
       "version": "1.0.0",
       "date": "2026-08-15",
