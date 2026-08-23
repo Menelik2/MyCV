@@ -9,15 +9,15 @@
     Cache bust: bump window.__MENELIK_V__ + the ?v= values below on every public deploy
     so browsers and CDNs treat assets as new URLs.
   -->
-  <script>window.__MENELIK_V__ = "20260818nogames";</script>
-  <link rel="stylesheet" href="styles.css?v=20260818nogames" />
-  <link rel="manifest" href="manifest.webmanifest?v=20260818nogames" />
+  <script>window.__MENELIK_V__ = "20260823androidnav";</script>
+  <link rel="stylesheet" href="styles.css?v=20260823androidnav" />
+  <link rel="manifest" href="manifest.webmanifest?v=20260823androidnav" />
   <link rel="apple-touch-icon" href="static/images/profile-320.webp" />
   <!-- Optimized profile photo preload (responsive sizes) -->
   <link rel="preload" href="static/images/profile-128.webp" as="image" type="image/webp" />
   <link rel="preload" href="static/images/profile-320.webp" as="image" type="image/webp" />
   <link rel="preload" href="profile.webp" as="image" type="image/webp" />
-  <!-- System fonts (Tahoma / Segoe UI / Consolas) — not hosted on Google Fonts -->
+  <!-- System fonts (Tahoma / Segoe UI / Calibri / Consolas) -->
 </head>
 <body>
   <script>
@@ -255,7 +255,7 @@
     </div>
   </div>
 
-  <!-- ========== MOBILE (iPhone Pro Max style) ========== -->
+  <!-- ========== MOBILE (Android phone shell) ========== -->
   <div id="mobile" class="mobile boot-hidden">
     <div class="android-frame">
       <div class="android-screen">
@@ -476,11 +476,11 @@
           </div>
         </div>
 
-        <div class="android-nav" aria-hidden="true">
-          <span class="android-nav-btn android-nav-back">◁</span>
-          <span class="android-nav-btn android-nav-home">○</span>
-          <span class="android-nav-btn android-nav-recents">▢</span>
-        </div>
+        <nav class="android-nav" aria-label="Phone navigation">
+          <button type="button" class="android-nav-btn android-nav-back" aria-label="Back">◁</button>
+          <button type="button" class="android-nav-btn android-nav-home" aria-label="Home">○</button>
+          <button type="button" class="android-nav-btn android-nav-recents" aria-label="Recents">▢</button>
+        </nav>
       </div>
     </div>
   </div>
@@ -559,8 +559,8 @@
     </div>
   </div>
 
-  <script src="script.js?v=20260818nogames"></script>
-  <script src="features-extra.js?v=20260818nogames"></script>
-  <script src="chat-widget.js?v=20260818nogames"></script>
+  <script src="script.js?v=20260823androidnav"></script>
+  <script src="features-extra.js?v=20260823androidnav"></script>
+  <script src="chat-widget.js?v=20260823androidnav"></script>
 </body>
 </html>
