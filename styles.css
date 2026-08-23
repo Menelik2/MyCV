@@ -321,12 +321,24 @@ html.os-fullscreen body::-webkit-scrollbar {
   }
 }
 
+/* Tiny phones: 5-column app grid */
 @media (max-width: 360px) {
   .app-grid {
-    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
+    gap: 8px 4px !important;
+  }
+  .app-icon {
+    min-height: 56px !important;
+    padding: 2px !important;
+  }
+  .app-icon .app-img {
+    width: 40px !important;
+    height: 40px !important;
+    border-radius: 10px !important;
   }
   .app-icon span {
-    font-size: 10px !important;
+    font-size: 9px !important;
+    line-height: 1.15 !important;
   }
 }
 
