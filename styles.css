@@ -3,6 +3,59 @@
 
 /* ========== Overrides ========== */
 
+/* True full-bleed OS mode (native Fullscreen API + CSS fallback) */
+html.os-fullscreen,
+html.os-fullscreen body {
+  width: 100% !important;
+  height: 100% !important;
+  min-height: 100% !important;
+  min-height: 100dvh !important;
+  max-height: 100% !important;
+  max-height: 100dvh !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+  background: #000 !important;
+  position: fixed !important;
+  inset: 0 !important;
+  overscroll-behavior: none !important;
+  -webkit-overflow-scrolling: auto !important;
+}
+html.os-fullscreen .desktop,
+html.os-fullscreen .mobile {
+  width: 100vw !important;
+  width: 100dvw !important;
+  height: 100vh !important;
+  height: 100dvh !important;
+  max-width: none !important;
+  max-height: none !important;
+  position: fixed !important;
+  inset: 0 !important;
+  margin: 0 !important;
+  overflow: hidden !important;
+}
+html.os-fullscreen .taskbar {
+  position: fixed !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  z-index: 10050 !important;
+}
+html.os-fullscreen .android-frame,
+html.os-fullscreen .android-screen {
+  width: 100% !important;
+  height: 100% !important;
+  min-height: 100% !important;
+  min-height: 100dvh !important;
+}
+/* Hide browser scrollbars in immersive mode */
+html.os-fullscreen::-webkit-scrollbar,
+html.os-fullscreen body::-webkit-scrollbar {
+  width: 0 !important;
+  height: 0 !important;
+  display: none !important;
+}
+
 /* Resume on-screen + print: Calibri */
 .resume-doc,
 .resume-doc *,
@@ -113,7 +166,6 @@
   body.light .android-nav-btn:hover {
     background: rgba(0, 0, 0, 0.1) !important;
   }
-  /* Keep page content above the nav bar */
   .app-page {
     padding-bottom: 0 !important;
   }
@@ -122,4 +174,11 @@
   .android-nav, nav.android-nav {
     display: none !important;
   }
+}
+
+/* Boot enter button — clearer full-screen CTA */
+.boot-start-btn {
+  font-size: 14px !important;
+  padding: 12px 28px !important;
+  letter-spacing: 0.3px !important;
 }
