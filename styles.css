@@ -3,52 +3,83 @@
 
 /* ========== Overrides ========== */
 
-/* True full-bleed OS mode (native Fullscreen API + CSS fallback) */
+/* ---- Root / viewport compatibility ---- */
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  height: 100%;
+}
+body {
+  min-height: 100%;
+  min-height: 100dvh;
+  overscroll-behavior-y: none;
+}
+
+/* True full-bleed OS mode (native Fullscreen API + CSS fallback) — desktop-first */
 html.os-fullscreen,
 html.os-fullscreen body {
   width: 100% !important;
   height: 100% !important;
   min-height: 100% !important;
   min-height: 100dvh !important;
-  max-height: 100% !important;
-  max-height: 100dvh !important;
   margin: 0 !important;
   padding: 0 !important;
   overflow: hidden !important;
   background: #000 !important;
-  position: fixed !important;
-  inset: 0 !important;
   overscroll-behavior: none !important;
-  -webkit-overflow-scrolling: auto !important;
 }
-html.os-fullscreen .desktop,
-html.os-fullscreen .mobile {
-  width: 100vw !important;
-  width: 100dvw !important;
-  height: 100vh !important;
-  height: 100dvh !important;
-  max-width: none !important;
-  max-height: none !important;
-  position: fixed !important;
-  inset: 0 !important;
-  margin: 0 !important;
-  overflow: hidden !important;
+@media (min-width: 900px) {
+  html.os-fullscreen,
+  html.os-fullscreen body {
+    position: fixed !important;
+    inset: 0 !important;
+    max-height: 100dvh !important;
+  }
+  html.os-fullscreen .desktop {
+    width: 100vw !important;
+    height: 100vh !important;
+    height: 100dvh !important;
+    max-width: none !important;
+    position: fixed !important;
+    inset: 0 !important;
+    margin: 0 !important;
+    overflow: hidden !important;
+  }
+  html.os-fullscreen .taskbar {
+    position: fixed !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    z-index: 10050 !important;
+  }
 }
-html.os-fullscreen .taskbar {
-  position: fixed !important;
-  left: 0 !important;
-  right: 0 !important;
-  bottom: 0 !important;
-  z-index: 10050 !important;
+/* Mobile fullscreen: fill viewport without breaking inner scroll */
+@media (max-width: 899px) {
+  html.os-fullscreen,
+  html.os-fullscreen body {
+    position: relative !important;
+    height: 100% !important;
+    height: 100dvh !important;
+    overflow: hidden !important;
+  }
+  html.os-fullscreen .mobile {
+    width: 100% !important;
+    height: 100% !important;
+    height: 100dvh !important;
+    max-width: none !important;
+    position: fixed !important;
+    inset: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+  html.os-fullscreen .android-frame,
+  html.os-fullscreen .android-screen {
+    width: 100% !important;
+    height: 100% !important;
+    min-height: 100% !important;
+    min-height: 100dvh !important;
+  }
 }
-html.os-fullscreen .android-frame,
-html.os-fullscreen .android-screen {
-  width: 100% !important;
-  height: 100% !important;
-  min-height: 100% !important;
-  min-height: 100dvh !important;
-}
-/* Hide browser scrollbars in immersive mode */
 html.os-fullscreen::-webkit-scrollbar,
 html.os-fullscreen body::-webkit-scrollbar {
   width: 0 !important;
@@ -82,17 +113,52 @@ html.os-fullscreen body::-webkit-scrollbar {
   }
 }
 
-/* Android footer nav (Back ◁ / Home ○ / Recents ▢) — force on phone */
+/* ========== MOBILE COMPATIBILITY (phones & small tablets) ========== */
 @media (max-width: 899px) {
-  #mobile, .mobile {
+  html, body {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background: #0b0f14;
+  }
+  #desktop.desktop {
+    display: none !important;
+  }
+  #mobile.mobile,
+  .mobile {
     display: flex !important;
+    visibility: visible !important;
+    align-items: stretch !important;
+    justify-content: stretch !important;
+    width: 100% !important;
+    width: 100dvw !important;
+    height: 100% !important;
+    height: 100dvh !important;
+    min-height: 100dvh !important;
+    max-width: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    padding-top: env(safe-area-inset-top, 0px) !important;
+    padding-left: env(safe-area-inset-left, 0px) !important;
+    padding-right: env(safe-area-inset-right, 0px) !important;
+    box-sizing: border-box !important;
+    background: #0b0f14 !important;
+    overflow: hidden !important;
   }
   .android-frame {
     display: flex !important;
     flex-direction: column !important;
-    height: 100% !important;
-    min-height: 100dvh !important;
     width: 100% !important;
+    max-width: 100% !important;
+    height: 100% !important;
+    min-height: 0 !important;
+    flex: 1 1 auto !important;
+    background: #000 !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    overflow: hidden !important;
   }
   .android-screen {
     display: flex !important;
@@ -100,11 +166,75 @@ html.os-fullscreen body::-webkit-scrollbar {
     flex: 1 1 auto !important;
     min-height: 0 !important;
     height: 100% !important;
+    width: 100% !important;
+    overflow: hidden !important;
   }
   .mobile-content {
     flex: 1 1 auto !important;
     min-height: 0 !important;
     overflow: hidden !important;
+    position: relative !important;
+    display: flex !important;
+    flex-direction: column !important;
+  }
+  .home-screen {
+    flex: 1 1 auto !important;
+    min-height: 0 !important;
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    overscroll-behavior: contain !important;
+    padding-bottom: 12px !important;
+  }
+  .app-page {
+    position: absolute !important;
+    inset: 0 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    min-height: 0 !important;
+    overflow: hidden !important;
+  }
+  .app-page[hidden] {
+    display: none !important;
+  }
+  .page-header {
+    flex-shrink: 0 !important;
+    padding-top: max(8px, env(safe-area-inset-top, 0px)) !important;
+  }
+  .page-body,
+  .page-body-full {
+    flex: 1 1 auto !important;
+    min-height: 0 !important;
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    overscroll-behavior: contain !important;
+    padding-bottom: max(24px, env(safe-area-inset-bottom, 0px)) !important;
+  }
+  .app-icon,
+  .back-btn,
+  .android-nav-btn,
+  .theme-toggle-mobile {
+    touch-action: manipulation !important;
+    -webkit-tap-highlight-color: transparent !important;
+  }
+  .app-icon {
+    min-height: 64px !important;
+  }
+  .app-icon span {
+    font-size: 11px !important;
+    line-height: 1.2 !important;
+    word-break: break-word !important;
+    text-align: center !important;
+  }
+  input,
+  select,
+  textarea {
+    font-size: 16px !important;
+  }
+  .app-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+    gap: 12px 8px !important;
   }
   nav.android-nav,
   .android-nav {
@@ -116,7 +246,6 @@ html.os-fullscreen body::-webkit-scrollbar {
     justify-content: space-evenly !important;
     height: 52px !important;
     min-height: 52px !important;
-    max-height: 64px !important;
     width: 100% !important;
     margin: 0 !important;
     padding: 0 8px !important;
@@ -155,30 +284,78 @@ html.os-fullscreen body::-webkit-scrollbar {
     border-radius: 24px !important;
     cursor: pointer !important;
     pointer-events: auto !important;
-    -webkit-tap-highlight-color: transparent !important;
-    touch-action: manipulation !important;
   }
-  .android-nav-btn:active,
-  .android-nav-btn:hover {
+  .android-nav-btn:active {
     background: rgba(255, 255, 255, 0.14) !important;
   }
-  body.light .android-nav-btn:active,
-  body.light .android-nav-btn:hover {
+  body.light .android-nav-btn:active {
     background: rgba(0, 0, 0, 0.1) !important;
   }
-  .app-page {
-    padding-bottom: 0 !important;
+  .iphone-notch,
+  .dynamic-island,
+  .iphone-frame,
+  .home-indicator {
+    display: none !important;
+  }
+  @media (orientation: landscape) and (max-height: 500px) {
+    .android-status-bar {
+      height: 22px !important;
+      padding-top: 2px !important;
+      font-size: 11px !important;
+    }
+    nav.android-nav,
+    .android-nav {
+      height: 40px !important;
+      min-height: 40px !important;
+      padding-bottom: max(4px, env(safe-area-inset-bottom, 0px)) !important;
+    }
+    .mobile-header {
+      padding: 6px 8px 8px !important;
+    }
+    .mobile-header h1 {
+      font-size: 18px !important;
+    }
+    .app-grid {
+      gap: 8px 6px !important;
+    }
   }
 }
+
+@media (max-width: 360px) {
+  .app-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  }
+  .app-icon span {
+    font-size: 10px !important;
+  }
+}
+
 @media (min-width: 900px) {
   .android-nav, nav.android-nav {
     display: none !important;
   }
+  #mobile.mobile,
+  .mobile {
+    display: none !important;
+  }
 }
 
-/* Boot enter button — clearer full-screen CTA */
 .boot-start-btn {
   font-size: 14px !important;
   padding: 12px 28px !important;
   letter-spacing: 0.3px !important;
+  min-height: 44px !important;
+  touch-action: manipulation !important;
+}
+@media (max-width: 899px) {
+  .boot-screen {
+    padding: env(safe-area-inset-top, 0px) env(safe-area-inset-right, 0px)
+      env(safe-area-inset-bottom, 0px) env(safe-area-inset-left, 0px) !important;
+  }
+  .boot-title {
+    font-size: 18px !important;
+  }
+  .boot-inner {
+    max-width: 92vw !important;
+  }
 }
