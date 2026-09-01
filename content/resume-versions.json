@@ -1,9 +1,19 @@
 {
-  "current": "1.0.1",
-  "updated": "2026-08-23",
+  "current": "1.0.2",
+  "updated": "2026-09-01",
   "slug": "Menelik-Admasu-Resume",
   "pdf": "/resume.pdf",
   "versions": [
+    {
+      "version": "1.0.2",
+      "date": "2026-09-01",
+      "label": "Body font size 11pt",
+      "changes": [
+        "Increase body and related font sizes to ~11pt"
+      ],
+      "file": "/static/resume-versions/Menelik-Admasu-Resume-v1.0.2.pdf",
+      "downloadName": "Menelik-Admasu-Resume-v1.0.2.pdf"
+    },
     {
       "version": "1.0.1",
       "date": "2026-08-23",
