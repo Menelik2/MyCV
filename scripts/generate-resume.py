@@ -210,24 +210,25 @@ def build_styles(density: float = 1.0):
     def sp(mm_val: float) -> float:
         return mm_val * d * mm
 
+    # Body text base size set to 11pt (user request)
     specs = {
         "RName": dict(fontName=font_bold, fontSize=fs(18), textColor=DARK, spaceAfter=sp(1.2), leading=fs(22)),
-        "RTag": dict(fontName=font, fontSize=fs(9.5), textColor=ACCENT, spaceAfter=sp(0.9), leading=fs(12)),
-        "RContact": dict(fontName=font, fontSize=fs(9), textColor=MUTED, spaceAfter=sp(1.8), leading=fs(12.5)),
+        "RTag": dict(fontName=font, fontSize=fs(10.5), textColor=ACCENT, spaceAfter=sp(0.9), leading=fs(13)),
+        "RContact": dict(fontName=font, fontSize=fs(10), textColor=MUTED, spaceAfter=sp(1.8), leading=fs(13.5)),
         "RH2": dict(
             fontName=font_bold,
-            fontSize=fs(11),
+            fontSize=fs(12),
             textColor=ACCENT,
             spaceBefore=sp(2.6),
             spaceAfter=sp(1.0),
-            leading=fs(13),
+            leading=fs(14),
         ),
-        "RBody": dict(fontName=font, fontSize=fs(9), textColor=DARK, leading=fs(11.5), spaceAfter=sp(0.9)),
-        "RJob": dict(fontName=font_bold, fontSize=fs(9.5), textColor=DARK, leading=fs(12), spaceBefore=sp(1.0)),
-        "RMeta": dict(fontName=font, fontSize=fs(8.5), textColor=MUTED, leading=fs(10.5), spaceAfter=sp(0.5)),
-        "RBullet": dict(fontName=font, fontSize=fs(8.5), textColor=DARK, leading=fs(11), leftIndent=8, spaceAfter=sp(0.35)),
-        "RIconRow": dict(fontName=font, fontSize=fs(9), textColor=MUTED, leading=fs(12.5), spaceAfter=sp(0.3)),
-        "RNoteBold": dict(fontName=font_bold, fontSize=fs(9), textColor=DARK, leading=fs(11.5), spaceAfter=sp(0.9)),
+        "RBody": dict(fontName=font, fontSize=fs(11), textColor=DARK, leading=fs(14), spaceAfter=sp(0.9)),
+        "RJob": dict(fontName=font_bold, fontSize=fs(11), textColor=DARK, leading=fs(13.5), spaceBefore=sp(1.0)),
+        "RMeta": dict(fontName=font, fontSize=fs(9.5), textColor=MUTED, leading=fs(12), spaceAfter=sp(0.5)),
+        "RBullet": dict(fontName=font, fontSize=fs(10.5), textColor=DARK, leading=fs(13.5), leftIndent=8, spaceAfter=sp(0.35)),
+        "RIconRow": dict(fontName=font, fontSize=fs(10), textColor=MUTED, leading=fs(13.5), spaceAfter=sp(0.3)),
+        "RNoteBold": dict(fontName=font_bold, fontSize=fs(10.5), textColor=DARK, leading=fs(13.5), spaceAfter=sp(0.9)),
     }
     for name, kw in specs.items():
         if name in base.byName:
