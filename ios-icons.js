@@ -1,182 +1,218 @@
-/* ios-icons.js — compact real iPhone home-screen icons */
+/* ios-icons.js — authentic iOS system-style home icons */
 (function () {
   "use strict";
 
-  var SIZE = 48; // iPhone-like visual size on web
-  var RADIUS = 10.7; // ~22.37% of 48 (Apple continuous corner approx)
+  var SIZE = 52;
+  var R = 11.6;
 
-  function svgUrl(s) {
+  function u(s) {
     return 'url("data:image/svg+xml,' + encodeURIComponent(s) + '")';
   }
 
-  function iosIcon(id, glyph, c1, c2) {
+  function base(id, body, stops) {
+    var g = stops
+      .map(function (s) {
+        return '<stop offset="' + s[0] + '" stop-color="' + s[1] + '"/>';
+      })
+      .join("");
     return (
-      '<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48">' +
+      '<svg xmlns="http://www.w3.org/2000/svg" width="52" height="52" viewBox="0 0 52 52">' +
       "<defs>" +
-      '<linearGradient id="b' +
+      '<linearGradient id="bg' +
       id +
       '" x1="0" y1="0" x2="0" y2="1">' +
-      '<stop offset="0%" stop-color="' +
-      c1 +
-      '"/>' +
-      '<stop offset="100%" stop-color="' +
-      c2 +
-      '"/>' +
+      g +
       "</linearGradient>" +
-      '<linearGradient id="g' +
+      '<linearGradient id="sh' +
       id +
       '" x1="0" y1="0" x2="0" y2="1">' +
-      '<stop offset="0%" stop-color="#fff" stop-opacity=".28"/>' +
-      '<stop offset="40%" stop-color="#fff" stop-opacity=".04"/>' +
-      '<stop offset="100%" stop-color="#000" stop-opacity="0"/>' +
+      '<stop offset="0%" stop-color="#fff" stop-opacity=".32"/>' +
+      '<stop offset="45%" stop-color="#fff" stop-opacity=".05"/>' +
+      '<stop offset="100%" stop-color="#000" stop-opacity=".06"/>' +
       "</linearGradient>" +
       "</defs>" +
-      '<rect width="48" height="48" rx="' +
-      RADIUS +
+      '<rect width="52" height="52" rx="' +
+      R +
       '" ry="' +
-      RADIUS +
-      '" fill="url(#b' +
+      R +
+      '" fill="url(#bg' +
       id +
       ')"/>' +
-      '<rect width="48" height="22" rx="' +
-      RADIUS +
+      '<rect width="52" height="52" rx="' +
+      R +
       '" ry="' +
-      RADIUS +
-      '" fill="url(#g' +
+      R +
+      '" fill="url(#sh' +
       id +
       ')"/>' +
-      glyph +
+      body +
       "</svg>"
     );
   }
 
-  /* Compact SF-style glyphs centered in 48px */
   var ICONS = {
-    about: iosIcon(
-      "1",
-      '<circle cx="24" cy="17" r="6.5" fill="#fff"/><path fill="#fff" d="M10 38c0-7.5 6.3-11 14-11s14 3.5 14 11v2H10v-2z"/>',
-      "#64d2ff",
-      "#007aff"
+    about: base(
+      "ab",
+      '<circle cx="26" cy="18.5" r="8" fill="#fff"/>' +
+        '<path fill="#fff" d="M8 44c0-9.4 8-14.5 18-14.5S44 34.6 44 44v2H8v-2z"/>',
+      [["0%", "#5ac8fa"], ["100%", "#007aff"]]
     ),
-    edu: iosIcon(
-      "2",
-      '<path fill="#fff" d="M24 10L8 18l16 8 13-6.5V28h3V18L24 10zM12 24.5V32c0 3 12 6 12 6s12-3 12-6v-7.5L24 30 12 24.5z"/>',
-      "#30d158",
-      "#248a3d"
+    edu: base(
+      "ed",
+      '<path fill="#fff" d="M9 14h15v24H12a3 3 0 01-3-3V14z" opacity=".95"/>' +
+        '<path fill="#fff" d="M28 14h15v21a3 3 0 01-3 3H28V14z"/>' +
+        '<path fill="#30d158" d="M24 14h4v24h-4z" opacity=".9"/>',
+      [["0%", "#64d2ff"], ["100%", "#0a84ff"]]
     ),
-    experience: iosIcon(
-      "3",
-      '<path fill="#fff" d="M17 14h14a2 2 0 012 2v2h5a2 2 0 012 2v16a2 2 0 01-2 2H10a2 2 0 01-2-2V20a2 2 0 012-2h5v-2a2 2 0 012-2zm2 4h10v-2H19v2z"/>',
-      "#5ac8fa",
-      "#0a84ff"
+    experience: base(
+      "ex",
+      '<rect x="11" y="18" width="30" height="24" rx="3" fill="#fff"/>' +
+        '<rect x="17" y="12" width="18" height="8" rx="2" fill="#fff"/>' +
+        '<rect x="15" y="26" width="22" height="2.5" rx="1" fill="#32ade6"/>' +
+        '<rect x="15" y="32" width="14" height="2.5" rx="1" fill="#32ade6"/>',
+      [["0%", "#64d2ff"], ["100%", "#0071e3"]]
     ),
-    certifications: iosIcon(
-      "4",
-      '<path fill="#1c1c1e" d="M24 9l3.2 8.2H36l-6.6 5 2.5 8.3L24 25.8l-7.9 4.7 2.5-8.3L12 17.2h8.8z"/>',
-      "#ffd60a",
-      "#ff9f0a"
+    certifications: base(
+      "ce",
+      '<path fill="#1c1c1e" d="M26 10l3.8 9.5H40l-8 6.2 3 9.8L26 29.5 17 35.5l3-9.8-8-6.2h10.2z"/>',
+      [["0%", "#ffd60a"], ["100%", "#ff9f0a"]]
     ),
-    projects: iosIcon(
-      "5",
-      '<rect x="10" y="12" width="16" height="22" rx="2" fill="#fff"/><rect x="20" y="18" width="18" height="18" rx="2" fill="#fff" opacity=".9"/>',
-      "#ff9f0a",
-      "#c93400"
+    projects: base(
+      "pr",
+      '<rect x="12" y="14" width="20" height="26" rx="2.5" fill="#fff" opacity=".85"/>' +
+        '<rect x="18" y="12" width="22" height="28" rx="2.5" fill="#fff"/>' +
+        '<circle cx="25" cy="22" r="4" fill="#ff9f0a"/>' +
+        '<path fill="#ff9f0a" d="M18 34l6-8 4 5 3-3 7 6H18z" opacity=".9"/>',
+      [["0%", "#ff9f0a"], ["100%", "#ff453a"]]
     ),
-    skills: iosIcon(
-      "6",
-      '<path fill="#fff" d="M24 8l3.8 11.2H40L29.9 26l3.7 11.3L24 30.4 14.4 37.3 18.1 26 8 19.2h12.2z"/>',
-      "#bf5af2",
-      "#8944ab"
+    skills: base(
+      "sk",
+      '<path fill="#fff" d="M26 9l4.2 12.2H43L32.6 28.7l4 12.3L26 33.5 15.4 41l4-12.3L9 21.2h12.8z"/>',
+      [["0%", "#d4a0ff"], ["100%", "#bf5af2"]]
     ),
-    contact: iosIcon(
-      "7",
-      '<rect x="9" y="14" width="30" height="20" rx="3" fill="#fff"/><path fill="#ff3b30" d="M9 17l15 10 15-10v-3L24 24 9 14z"/>',
-      "#ff453a",
-      "#d70015"
+    contact: base(
+      "co",
+      '<rect x="8" y="14" width="36" height="24" rx="3" fill="#fff"/>' +
+        '<path fill="#ff3b30" d="M8 16.5L26 29 44 16.5V14L26 26.5 8 14z"/>',
+      [["0%", "#ff6961"], ["100%", "#d70015"]]
     ),
-    resume: iosIcon(
-      "8",
-      '<rect x="13" y="8" width="22" height="32" rx="2" fill="#fff"/><rect x="16" y="13" width="16" height="2" fill="#007aff"/><rect x="16" y="18" width="16" height="1.6" fill="#aeaeb2"/><rect x="16" y="22" width="12" height="1.6" fill="#aeaeb2"/><rect x="16" y="26" width="14" height="1.6" fill="#aeaeb2"/>',
-      "#64d2ff",
-      "#0071e3"
+    resume: base(
+      "re",
+      '<rect x="13" y="8" width="26" height="36" rx="2.5" fill="#fff"/>' +
+        '<rect x="17" y="14" width="18" height="2.2" rx="1" fill="#007aff"/>' +
+        '<rect x="17" y="20" width="18" height="1.8" rx=".8" fill="#c7c7cc"/>' +
+        '<rect x="17" y="25" width="14" height="1.8" rx=".8" fill="#c7c7cc"/>' +
+        '<rect x="17" y="30" width="16" height="1.8" rx=".8" fill="#c7c7cc"/>' +
+        '<rect x="17" y="35" width="10" height="1.8" rx=".8" fill="#c7c7cc"/>',
+      [["0%", "#64d2ff"], ["100%", "#007aff"]]
     ),
-    "apps-folder": iosIcon(
-      "9",
-      '<rect x="10" y="10" width="11" height="11" rx="2.5" fill="#fff"/><rect x="27" y="10" width="11" height="11" rx="2.5" fill="#fff" opacity=".9"/><rect x="10" y="27" width="11" height="11" rx="2.5" fill="#fff" opacity=".9"/><rect x="27" y="27" width="11" height="11" rx="2.5" fill="#fff" opacity=".75"/>',
-      "#8e8e93",
-      "#636366"
+    "apps-folder": base(
+      "af",
+      '<rect x="9" y="9" width="14" height="14" rx="3.2" fill="#5ac8fa"/>' +
+        '<rect x="29" y="9" width="14" height="14" rx="3.2" fill="#30d158"/>' +
+        '<rect x="9" y="29" width="14" height="14" rx="3.2" fill="#ff9f0a"/>' +
+        '<rect x="29" y="29" width="14" height="14" rx="3.2" fill="#ff453a"/>',
+      [["0%", "#b0b0b5"], ["100%", "#6c6c70"]]
     ),
-    "games-folder": iosIcon(
-      "a",
-      '<rect x="11" y="18" width="26" height="16" rx="5" fill="#fff"/><circle cx="18" cy="26" r="3" fill="#ff2d55"/><circle cx="30" cy="26" r="3" fill="#007aff"/>',
-      "#ff2d55",
-      "#d70040"
+    "games-folder": base(
+      "gf",
+      '<circle cx="20" cy="22" r="8" fill="#fff"/>' +
+        '<circle cx="34" cy="30" r="7" fill="#fff" opacity=".92"/>' +
+        '<path fill="#ff2d55" d="M17 20h6v4h-6z"/><path fill="#ff2d55" d="M20 17h4v6h-4z"/>' +
+        '<circle cx="32" cy="28" r="2" fill="#007aff"/><circle cx="36" cy="32" r="2" fill="#ffd60a"/>',
+      [["0%", "#ff6482"], ["100%", "#d70040"]]
     ),
-    edge: iosIcon(
-      "b",
-      '<circle cx="24" cy="24" r="12" fill="none" stroke="#fff" stroke-width="2.4"/><ellipse cx="24" cy="24" rx="12" ry="4.5" fill="none" stroke="#fff" stroke-width="1.6"/><text x="24" y="28.5" text-anchor="middle" font-size="13" font-weight="700" fill="#fff" font-family="-apple-system,system-ui,sans-serif">e</text>',
-      "#0a84ff",
-      "#0040dd"
+    edge: base(
+      "eg",
+      '<circle cx="26" cy="26" r="16" fill="#fff"/>' +
+        '<circle cx="26" cy="26" r="13.5" fill="none" stroke="#64d2ff" stroke-width="1"/>' +
+        '<path fill="#ff3b30" d="M26 12l3.5 18.5L26 28l-3.5 2.5z"/>' +
+        '<path fill="#007aff" d="M26 40l-3.5-18.5L26 24l3.5-2.5z"/>' +
+        '<circle cx="26" cy="26" r="2.2" fill="#1c1c1e"/>',
+      [["0%", "#5ac8fa"], ["100%", "#0071e3"]]
     ),
-    chat: iosIcon(
-      "c",
-      '<path fill="#fff" d="M10 12h22a5 5 0 015 5v11a5 5 0 01-5 5H24l-8 6v-6h-6a5 5 0 01-5-5V17a5 5 0 015-5z"/>',
-      "#30d158",
-      "#248a3d"
+    chat: base(
+      "ch",
+      '<path fill="#fff" d="M9 13h26a6 6 0 016 6v12a6 6 0 01-6 6H24l-9 7v-7H9a6 6 0 01-6-6V19a6 6 0 016-6z"/>',
+      [["0%", "#34c759"], ["100%", "#248a3d"]]
     ),
-    control: iosIcon(
-      "d",
-      '<circle cx="24" cy="24" r="7.5" fill="none" stroke="#fff" stroke-width="2.8"/><circle cx="24" cy="24" r="3" fill="#fff"/><rect x="22.5" y="8" width="3" height="6" rx="1" fill="#fff"/><rect x="22.5" y="34" width="3" height="6" rx="1" fill="#fff"/><rect x="8" y="22.5" width="6" height="3" rx="1" fill="#fff"/><rect x="34" y="22.5" width="6" height="3" rx="1" fill="#fff"/>',
-      "#8e8e93",
-      "#48484a"
+    control: base(
+      "ct",
+      '<g fill="#fff"><circle cx="26" cy="26" r="6.5"/><circle cx="26" cy="26" r="11" fill="none" stroke="#fff" stroke-width="5"/></g>' +
+        '<circle cx="26" cy="26" r="4" fill="#8e8e93"/>' +
+        '<g fill="#fff">' +
+        '<rect x="24.2" y="6" width="3.6" height="7" rx="1"/>' +
+        '<rect x="24.2" y="39" width="3.6" height="7" rx="1"/>' +
+        '<rect x="6" y="24.2" width="7" height="3.6" rx="1"/>' +
+        '<rect x="39" y="24.2" width="7" height="3.6" rx="1"/>' +
+        "</g>",
+      [["0%", "#c7c7cc"], ["100%", "#636366"]]
     ),
-    device: iosIcon(
-      "e",
-      '<rect x="15" y="7" width="18" height="34" rx="3" fill="#fff"/><rect x="17.5" y="10" width="13" height="25" fill="#1c1c1e"/><circle cx="24" cy="38" r="1.5" fill="#8e8e93"/>',
-      "#aeaeb2",
-      "#636366"
+    device: base(
+      "dv",
+      '<rect x="16" y="6" width="20" height="40" rx="4" fill="#fff"/>' +
+        '<rect x="18" y="10" width="16" height="28" rx="1" fill="#1c1c1e"/>' +
+        '<circle cx="26" cy="42" r="2" fill="#c7c7cc"/>' +
+        '<rect x="22" y="8" width="8" height="1.5" rx=".75" fill="#c7c7cc"/>',
+      [["0%", "#d1d1d6"], ["100%", "#8e8e93"]]
     ),
-    notepad: iosIcon(
-      "f",
-      '<rect x="12" y="7" width="24" height="34" rx="2" fill="#fff"/><rect x="15" y="12" width="18" height="2" fill="#ff9f0a"/><rect x="15" y="17" width="18" height="1.5" fill="#c7c7cc"/><rect x="15" y="21" width="14" height="1.5" fill="#c7c7cc"/><rect x="15" y="25" width="16" height="1.5" fill="#c7c7cc"/>',
-      "#ffd60a",
-      "#ff9f0a"
+    notepad: base(
+      "np",
+      '<rect x="11" y="7" width="30" height="38" rx="2.5" fill="#fff"/>' +
+        '<rect x="11" y="7" width="30" height="8" rx="2.5" fill="#ffd60a"/>' +
+        '<rect x="11" y="13" width="30" height="2" fill="#ffd60a"/>' +
+        '<rect x="15" y="20" width="22" height="1.6" fill="#c7c7cc"/>' +
+        '<rect x="15" y="25" width="22" height="1.6" fill="#c7c7cc"/>' +
+        '<rect x="15" y="30" width="18" height="1.6" fill="#c7c7cc"/>' +
+        '<rect x="15" y="35" width="20" height="1.6" fill="#c7c7cc"/>',
+      [["0%", "#ffe566"], ["100%", "#ff9f0a"]]
     ),
-    paint: iosIcon(
-      "g",
-      '<rect x="12" y="11" width="24" height="20" rx="2" fill="#fff"/><rect x="14" y="13" width="8" height="8" fill="#ff3b30"/><rect x="24" y="13" width="8" height="8" fill="#34c759"/><rect x="14" y="23" width="8" height="8" fill="#007aff"/><rect x="24" y="23" width="8" height="8" fill="#ffd60a"/>',
-      "#ff9f0a",
-      "#ff453a"
+    paint: base(
+      "pt",
+      '<circle cx="20" cy="20" r="8" fill="#ff3b30"/>' +
+        '<circle cx="32" cy="20" r="8" fill="#ffd60a"/>' +
+        '<circle cx="20" cy="32" r="8" fill="#007aff"/>' +
+        '<circle cx="32" cy="32" r="8" fill="#30d158"/>',
+      [["0%", "#fff"], ["100%", "#e5e5ea"]]
     ),
-    terminal: iosIcon(
-      "h",
-      '<rect x="7" y="11" width="34" height="26" rx="3" fill="#1c1c1e"/><text x="12" y="28" font-family="ui-monospace,Menlo,monospace" font-size="11" fill="#30d158">>_</text>',
-      "#3a3a3c",
-      "#1c1c1e"
+    terminal: base(
+      "tm",
+      '<rect x="7" y="11" width="38" height="30" rx="4" fill="#1c1c1e"/>' +
+        '<path fill="none" stroke="#30d158" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" d="M13 22l6 5-6 5"/>' +
+        '<rect x="22" y="30" width="12" height="2.2" rx="1" fill="#30d158"/>',
+      [["0%", "#3a3a3c"], ["100%", "#1c1c1e"]]
     ),
-    voice: iosIcon(
-      "i",
-      '<rect x="21" y="10" width="6" height="16" rx="3" fill="#fff"/><path fill="#fff" d="M15 24a9 9 0 0018 0h-2.5a6.5 6.5 0 01-13 0z"/><rect x="22.5" y="33" width="3" height="5" fill="#fff"/><rect x="16" y="37" width="16" height="2.5" rx="1" fill="#fff"/>',
-      "#ff2d55",
-      "#d70040"
+    voice: base(
+      "vo",
+      '<rect x="22" y="10" width="8" height="18" rx="4" fill="#fff"/>' +
+        '<path fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" d="M16 26a10 10 0 0020 0"/>' +
+        '<path stroke="#fff" stroke-width="2.5" stroke-linecap="round" d="M26 36v6"/>' +
+        '<path stroke="#fff" stroke-width="2.5" stroke-linecap="round" d="M20 42h12"/>',
+      [["0%", "#ff6482"], ["100%", "#d70040"]]
     ),
-    sudoku: iosIcon(
-      "j",
-      '<rect x="10" y="10" width="28" height="28" rx="2" fill="#fff"/><path stroke="#5856d6" stroke-width="1.2" fill="none" d="M19.3 10v28M28.7 10v28M10 19.3h28M10 28.7h28"/><path stroke="#1c1c1e" stroke-width="2" fill="none" d="M10 10h28v28H10z"/>',
-      "#5e5ce6",
-      "#3634a3"
+    sudoku: base(
+      "su",
+      '<rect x="10" y="10" width="32" height="32" rx="3" fill="#fff"/>' +
+        '<path stroke="#5856d6" stroke-width="1.2" d="M20.7 10v32M31.3 10v32M10 20.7h32M10 31.3h32"/>' +
+        '<path stroke="#1c1c1e" stroke-width="2.2" fill="none" d="M10 10h32v32H10z"/>',
+      [["0%", "#7d7aff"], ["100%", "#3634a3"]]
     ),
-    tetris: iosIcon(
-      "k",
-      '<g fill="#fff"><rect x="18" y="8" width="10" height="10" rx="1"/><rect x="8" y="18" width="10" height="10" rx="1"/><rect x="18" y="18" width="10" height="10" rx="1"/><rect x="28" y="18" width="10" height="10" rx="1"/><rect x="18" y="28" width="10" height="10" rx="1"/></g>',
-      "#ff2d55",
-      "#bf1d3f"
+    tetris: base(
+      "te",
+      '<g fill="#fff">' +
+        '<rect x="20" y="8" width="11" height="11" rx="1.5"/>' +
+        '<rect x="9" y="19" width="11" height="11" rx="1.5"/>' +
+        '<rect x="20" y="19" width="11" height="11" rx="1.5"/>' +
+        '<rect x="31" y="19" width="11" height="11" rx="1.5"/>' +
+        '<rect x="20" y="30" width="11" height="11" rx="1.5"/>' +
+        "</g>",
+      [["0%", "#ff6482"], ["100%", "#bf1d3f"]]
     ),
-    snake: iosIcon(
-      "l",
-      '<path fill="#fff" d="M12 30c0-9 8-14 14-14s11 4 11 9-5 8-10 8h-6v5h-5v-5h-3c-1.5 0-1.5-1.5-1.5-3z"/><circle cx="31" cy="23" r="2" fill="#1c1c1e"/>',
-      "#30d158",
-      "#1b7a36"
+    snake: base(
+      "sn",
+      '<path fill="#fff" d="M12 32c0-10 9-15 16-15s12 5 12 10-5 9-11 9h-7v5h-5v-5h-3c-1.5 0-2-1.5-2-4z"/>' +
+        '<circle cx="33" cy="24" r="2.2" fill="#1c1c1e"/>',
+      [["0%", "#30d158"], ["100%", "#1b7a36"]]
     )
   };
 
@@ -184,10 +220,6 @@
     var cls = (el.className && el.className.toString()) || "";
     var keys = Object.keys(ICONS);
     for (var i = 0; i < keys.length; i++) {
-      // word boundary-ish match so "about" does not hit inside other names
-      if (new RegExp("(^|\\s)" + keys[i].replace("-", "\\-") + "(\\s|$)").test(cls)) {
-        return keys[i];
-      }
       if (cls.indexOf(keys[i]) !== -1) return keys[i];
     }
     return null;
@@ -198,17 +230,18 @@
     var key = classKey(el);
     if (!key) return;
     el.style.backgroundColor = "transparent";
-    el.style.backgroundImage = svgUrl(ICONS[key]);
-    el.style.backgroundSize = "100% 100%";
+    el.style.backgroundImage = u(ICONS[key]);
+    el.style.backgroundSize = "cover";
     el.style.backgroundRepeat = "no-repeat";
     el.style.backgroundPosition = "center";
     el.style.width = SIZE + "px";
     el.style.height = SIZE + "px";
     el.style.minWidth = SIZE + "px";
     el.style.minHeight = SIZE + "px";
-    el.style.borderRadius = RADIUS + "px";
-    el.style.boxShadow = "0 1px 2px rgba(0,0,0,.22)";
-    el.dataset.iosIcon = "2";
+    el.style.borderRadius = R + "px";
+    el.style.boxShadow = "0 1px 3px rgba(0,0,0,.25)";
+    el.style.overflow = "hidden";
+    el.dataset.iosIcon = "3";
   }
 
   function paintAll() {
@@ -225,48 +258,38 @@
     s.id = "ios-icons-css";
     s.textContent =
       "@media (max-width:899px){" +
-      /* tighter iPhone home grid */
       "#mobile .app-grid,.mobile .app-grid{" +
       "display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;" +
-      "gap:14px 8px!important;padding:8px 18px 12px!important;justify-items:center!important}" +
+      "gap:16px 6px!important;padding:10px 20px 14px!important;justify-items:center!important}" +
       "#mobile .app-icon,.mobile .app-icon{" +
       "display:flex!important;flex-direction:column!important;align-items:center!important;" +
-      "justify-content:flex-start!important;gap:5px!important;" +
-      "width:100%!important;max-width:72px!important;min-height:0!important;" +
-      "padding:0!important;background:none!important;border:none!important;" +
-      "font-family:-apple-system,BlinkMacSystemFont,\"SF Pro Text\",\"Helvetica Neue\",sans-serif!important;" +
-      "font-size:10px!important;font-weight:400!important;letter-spacing:-0.08px!important;" +
-      "color:rgba(255,255,255,.92)!important;text-shadow:0 0.5px 1px rgba(0,0,0,.35)!important;" +
+      "gap:5px!important;width:100%!important;max-width:76px!important;min-height:0!important;" +
+      "padding:0!important;background:transparent!important;border:0!important;" +
+      "font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','Helvetica Neue',sans-serif!important;" +
+      "font-size:10px!important;font-weight:400!important;letter-spacing:-0.1px!important;" +
+      "color:#fff!important;text-shadow:0 1px 2px rgba(0,0,0,.4)!important;" +
       "-webkit-tap-highlight-color:transparent!important}" +
-      "body.light #mobile .app-icon,body.light .mobile .app-icon{" +
-      "color:#1c1c1e!important;text-shadow:none!important}" +
-      "#mobile .app-icon span,.mobile .app-icon span{" +
-      "font-size:10px!important;line-height:1.15!important;max-width:100%!important;" +
-      "overflow:hidden!important;text-overflow:ellipsis!important;white-space:nowrap!important}" +
-      "#mobile .app-img,.mobile .app-img{" +
-      "width:48px!important;height:48px!important;min-width:48px!important;min-height:48px!important;" +
-      "border-radius:10.7px!important;margin:0!important;" +
-      "background-size:100% 100%!important;background-repeat:no-repeat!important;" +
-      "box-shadow:0 1px 2px rgba(0,0,0,.22)!important}" +
-      /* dock — smaller icons, more glass */
+      "body.light #mobile .app-icon{color:#1c1c1e!important;text-shadow:none!important}" +
+      "#mobile .app-icon span{font-size:10px!important;line-height:1.15!important;" +
+      "max-width:100%!important;overflow:hidden!important;text-overflow:ellipsis!important;white-space:nowrap!important}" +
+      "#mobile .app-img,.mobile .app-img,#mobile .app-icon .app-img{" +
+      "width:52px!important;height:52px!important;min-width:52px!important;min-height:52px!important;" +
+      "border-radius:11.6px!important;margin:0!important;" +
+      "background-size:cover!important;background-repeat:no-repeat!important;" +
+      "box-shadow:0 1px 3px rgba(0,0,0,.25)!important}" +
       "#mobile .dock,.mobile .dock{" +
       "display:flex!important;justify-content:space-evenly!important;align-items:center!important;" +
-      "gap:0!important;padding:10px 16px!important;margin:6px 10px 8px!important;" +
-      "background:rgba(255,255,255,.2)!important;backdrop-filter:blur(30px) saturate(180%)!important;" +
-      "-webkit-backdrop-filter:blur(30px) saturate(180%)!important;border-radius:22px!important;" +
-      "border:0.5px solid rgba(255,255,255,.28)!important}" +
-      "body.light #mobile .dock,body.light .mobile .dock{background:rgba(255,255,255,.55)!important}" +
-      "#mobile .dock .app-icon,.mobile .dock .app-icon{max-width:56px!important;gap:0!important}" +
-      "#mobile .dock .app-img,.mobile .dock .app-img{" +
-      "width:46px!important;height:46px!important;min-width:46px!important;min-height:46px!important;" +
-      "border-radius:10.3px!important}" +
-      "#mobile .dock .app-icon span,.mobile .dock .app-icon span{display:none!important}" +
-      "#mobile .apps-folder-grid,.mobile .apps-folder-grid," +
-      "#mobile .games-folder-grid,.mobile .games-folder-grid{" +
+      "padding:11px 18px!important;margin:8px 12px 10px!important;" +
+      "background:rgba(255,255,255,.22)!important;" +
+      "backdrop-filter:blur(40px) saturate(180%)!important;" +
+      "-webkit-backdrop-filter:blur(40px) saturate(180%)!important;" +
+      "border-radius:24px!important;border:.5px solid rgba(255,255,255,.3)!important}" +
+      "body.light #mobile .dock{background:rgba(255,255,255,.6)!important}" +
+      "#mobile .dock .app-img{width:50px!important;height:50px!important;min-width:50px!important;min-height:50px!important;border-radius:11.2px!important}" +
+      "#mobile .dock .app-icon span{display:none!important}" +
+      "#mobile .apps-folder-grid,#mobile .games-folder-grid{" +
       "display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;" +
-      "gap:14px 8px!important;justify-items:center!important;padding:8px!important}" +
-      /* kill oversized rules from other CSS */
-      "#mobile .app-icon .app-img{width:48px!important;height:48px!important}" +
+      "gap:16px 6px!important;justify-items:center!important;padding:12px!important}" +
       "}";
     document.head.appendChild(s);
   }
@@ -276,15 +299,12 @@
     paintAll();
   }
 
-  if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", run);
-  } else {
-    run();
-  }
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", run);
+  else run();
   document.addEventListener("menelik-boot-done", run);
   setTimeout(run, 300);
-  setTimeout(run, 900);
-  setTimeout(run, 2000);
+  setTimeout(run, 1000);
+  setTimeout(run, 2200);
 
   if (typeof MutationObserver === "function") {
     new MutationObserver(function () {
