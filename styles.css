@@ -468,3 +468,125 @@ html.os-fullscreen body::-webkit-scrollbar {
     max-width: 92vw !important;
   }
 }
+
+/* ========== DESKTOP VIEW FIX (shell + windows) ========== */
+/* Ensure XP desktop is the active shell at ≥900px; mobile never leaks on desktop */
+@media (min-width: 900px) {
+  #desktop.desktop,
+  .desktop {
+    display: block !important;
+    visibility: visible !important;
+    position: relative !important;
+    width: 100% !important;
+    width: 100vw !important;
+    height: 100% !important;
+    height: 100vh !important;
+    height: 100dvh !important;
+    height: var(--app-height, 100dvh) !important;
+    min-height: var(--app-height, 100dvh) !important;
+    max-height: none !important;
+    max-width: none !important;
+    overflow: hidden !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    box-sizing: border-box !important;
+  }
+
+  #desktop.desktop.boot-hidden,
+  .desktop.boot-hidden {
+    visibility: hidden !important;
+  }
+
+  #mobile.mobile,
+  .mobile {
+    display: none !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+  }
+
+  #desktop .wallpaper,
+  .desktop > .wallpaper {
+    position: absolute !important;
+    inset: 0 !important;
+    z-index: 0 !important;
+  }
+
+  #windows-container {
+    position: absolute !important;
+    inset: 0 0 36px 0 !important;
+    pointer-events: none !important;
+    z-index: 50 !important;
+    overflow: hidden !important;
+  }
+
+  .window {
+    pointer-events: auto !important;
+    max-width: min(96vw, 1100px) !important;
+    max-height: min(calc(var(--app-height, 100dvh) - 48px), 900px) !important;
+  }
+
+  .window.on-other-desktop {
+    display: none !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+  }
+
+  .window[data-minimized="1"] {
+    display: none !important;
+  }
+
+  .taskbar {
+    position: absolute !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    height: 36px !important;
+    z-index: 200 !important;
+  }
+
+  .start-menu {
+    position: absolute !important;
+    bottom: 36px !important;
+    left: 0 !important;
+    z-index: 250 !important;
+    max-height: calc(var(--app-height, 100dvh) - 48px) !important;
+  }
+
+  .desktop-icons {
+    position: relative !important;
+    z-index: 10 !important;
+    pointer-events: auto !important;
+  }
+
+  .sticky-notes {
+    z-index: 15 !important;
+  }
+
+  html.os-fullscreen #desktop.desktop,
+  html.os-fullscreen .desktop {
+    position: fixed !important;
+    inset: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    height: var(--app-height, 100dvh) !important;
+  }
+
+  html.os-fullscreen .taskbar {
+    position: fixed !important;
+    z-index: 10050 !important;
+  }
+
+  html.os-fullscreen #windows-container {
+    position: fixed !important;
+    inset: 0 0 36px 0 !important;
+  }
+}
+
+/* Desktop-only: avoid mobile gesture chrome */
+@media (min-width: 900px) {
+  .android-nav,
+  nav.android-nav,
+  .android-gesture-hint {
+    display: none !important;
+  }
+}
