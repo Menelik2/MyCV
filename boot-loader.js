@@ -4,7 +4,7 @@
 
   var GOOD =
     "https://cdn.jsdelivr.net/gh/Menelik2/MyCV@0b2fcde6dc32469dd2563cdf9f6bfbf58747f63b/index.html";
-  var V = "20261015fix1";
+  var V = "20261015icons1";
 
   function ensureLink(href) {
     var base = href.split("?")[0];
@@ -37,6 +37,7 @@
     ensureLink("xp-wallpaper.css?v=" + V);
     ensureScript("desk-view-patch.js?v=" + V);
     ensureScript("xp-wallpaper.js?v=" + V);
+    ensureScript("xp-icons.js?v=" + V);
     try {
       if (!localStorage.getItem("portfolio-wallpaper")) {
         localStorage.setItem("portfolio-wallpaper", "default");
@@ -60,7 +61,6 @@
     html = html.split("20260823phonefs1").join(V);
     html = html.replace(/styles\.css\?v=[^"]+/g, "styles.css?v=" + V);
 
-    // Inject CSS link if missing (string-safe, no script tags here)
     if (html.indexOf("xp-wallpaper.css") === -1) {
       html = html.replace(
         /(<link[^>]*styles\.css[^>]*>)/,
@@ -72,7 +72,6 @@
     document.write(html);
     document.close();
 
-    // Scripts injected after write via DOM APIs (never written as </script> in source)
     setTimeout(injectAfterLoad, 0);
     setTimeout(injectAfterLoad, 250);
     setTimeout(injectAfterLoad, 700);
