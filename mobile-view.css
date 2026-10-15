@@ -1,0 +1,239 @@
+/* ========== Mobile shell reliability ========== */
+@media (max-width: 899px) {
+  html, body {
+    height: 100% !important;
+    height: var(--app-height, 100dvh) !important;
+    overflow: hidden !important;
+    overscroll-behavior: none !important;
+    -webkit-text-size-adjust: 100% !important;
+  }
+
+  #desktop.desktop,
+  .desktop {
+    display: none !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+  }
+
+  #mobile.mobile,
+  .mobile {
+    display: flex !important;
+    flex-direction: column !important;
+    visibility: visible !important;
+    position: fixed !important;
+    inset: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    height: var(--app-height, 100dvh) !important;
+    max-width: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    padding-left: env(safe-area-inset-left, 0px) !important;
+    padding-right: env(safe-area-inset-right, 0px) !important;
+    box-sizing: border-box !important;
+    overflow: hidden !important;
+    z-index: 20 !important;
+    background: #0b0f14 !important;
+  }
+
+  .android-frame,
+  .android-screen {
+    display: flex !important;
+    flex-direction: column !important;
+    flex: 1 1 auto !important;
+    min-height: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    max-height: 100% !important;
+    overflow: hidden !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    border: none !important;
+  }
+
+  .android-status-bar,
+  .status-bar.android-status-bar {
+    flex-shrink: 0 !important;
+    min-height: 28px !important;
+    padding-top: max(4px, env(safe-area-inset-top, 0px)) !important;
+    padding-left: 12px !important;
+    padding-right: 12px !important;
+    box-sizing: border-box !important;
+    z-index: 5 !important;
+  }
+
+  #mobile-content,
+  .mobile-content {
+    flex: 1 1 auto !important;
+    min-height: 0 !important;
+    overflow: hidden !important;
+    display: flex !important;
+    flex-direction: column !important;
+    position: relative !important;
+  }
+
+  #home-screen,
+  .home-screen {
+    flex: 1 1 auto !important;
+    min-height: 0 !important;
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    overscroll-behavior: contain !important;
+    padding-bottom: 8px !important;
+  }
+
+  .app-grid {
+    display: grid !important;
+    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+    gap: 12px 8px !important;
+    padding: 8px 12px 16px !important;
+  }
+
+  .app-icon {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    min-height: 72px !important;
+    background: transparent !important;
+    border: none !important;
+    color: #fff !important;
+    cursor: pointer !important;
+    -webkit-tap-highlight-color: transparent !important;
+    touch-action: manipulation !important;
+  }
+
+  .app-icon:active {
+    opacity: 0.75 !important;
+    transform: scale(0.96) !important;
+  }
+
+  .app-icon .app-img {
+    width: 52px !important;
+    height: 52px !important;
+    border-radius: 14px !important;
+    margin-bottom: 4px !important;
+    background-size: cover !important;
+    background-position: center !important;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.35) !important;
+  }
+
+  .app-icon span {
+    font-size: 11px !important;
+    line-height: 1.2 !important;
+    text-align: center !important;
+    max-width: 100% !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
+  }
+
+  #mobile .app-page {
+    position: absolute !important;
+    inset: 0 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    background: #f0f0f0 !important;
+    z-index: 3 !important;
+    overflow: hidden !important;
+  }
+  #mobile .app-page[hidden] {
+    display: none !important;
+  }
+
+  #mobile .page-header,
+  #mobile .app-page .page-header {
+    flex-shrink: 0 !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    padding: 10px 12px !important;
+    padding-top: max(10px, env(safe-area-inset-top, 0px)) !important;
+    background: #1a73e8 !important;
+    color: #fff !important;
+  }
+
+  #mobile .back-btn {
+    min-width: 44px !important;
+    min-height: 44px !important;
+    border: none !important;
+    background: transparent !important;
+    color: #fff !important;
+    font-size: 20px !important;
+    cursor: pointer !important;
+    -webkit-tap-highlight-color: transparent !important;
+  }
+
+  #mobile .page-body,
+  #mobile [id^="content-"] {
+    flex: 1 1 auto !important;
+    min-height: 0 !important;
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    overscroll-behavior: contain !important;
+    padding: 12px !important;
+    background: #fff !important;
+    color: #222 !important;
+  }
+
+  nav.android-nav,
+  .android-nav {
+    display: flex !important;
+    flex-shrink: 0 !important;
+    align-items: center !important;
+    justify-content: space-around !important;
+    min-height: calc(48px + env(safe-area-inset-bottom, 0px)) !important;
+    padding-top: 4px !important;
+    padding-bottom: max(8px, env(safe-area-inset-bottom, 0px)) !important;
+    background: #121212 !important;
+    color: #eee !important;
+    z-index: 10 !important;
+    border-top: 1px solid rgba(255,255,255,0.08) !important;
+  }
+
+  body.light nav.android-nav,
+  body.light .android-nav {
+    background: #f5f5f5 !important;
+    color: #222 !important;
+    border-top-color: rgba(0,0,0,0.08) !important;
+  }
+
+  .android-nav-btn,
+  button.android-nav-btn {
+    appearance: none !important;
+    border: none !important;
+    background: transparent !important;
+    color: inherit !important;
+    font-size: 22px !important;
+    width: 64px !important;
+    height: 44px !important;
+    min-width: 48px !important;
+    min-height: 44px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    border-radius: 24px !important;
+    cursor: pointer !important;
+    -webkit-tap-highlight-color: transparent !important;
+    touch-action: manipulation !important;
+  }
+  .android-nav-btn:active {
+    background: rgba(255,255,255,0.12) !important;
+  }
+
+  .taskbar,
+  .start-menu,
+  #desktop-context-menu,
+  .desktop-icons {
+    display: none !important;
+  }
+}
+
+@media (min-width: 900px) {
+  #mobile.mobile,
+  .mobile,
+  nav.android-nav,
+  .android-nav {
+    display: none !important;
+  }
+}
