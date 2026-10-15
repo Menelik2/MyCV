@@ -1,0 +1,8 @@
+/* Pro Windows XP desktop icons */
+#desktop .desktop-icons .icon,.desktop-icons .icon{width:76px!important;padding:6px 4px 4px!important;border-radius:2px!important}
+#desktop .desktop-icons .icon:hover,#desktop .desktop-icons .icon:focus,.desktop-icons .icon:hover,.desktop-icons .icon:focus{background:rgba(10,36,106,.42)!important;outline:1px dotted rgba(255,255,255,.85)!important}
+#desktop .desktop-icons .icon span,.desktop-icons .icon span{color:#fff!important;text-shadow:1px 1px 0 #000,0 1px 2px rgba(0,0,0,.6)!important;font:11px/1.15 Tahoma,"MS Sans Serif",sans-serif!important;max-width:72px!important}
+.icon-img,.sm-icon{background:transparent!important;box-shadow:none!important;border-radius:0!important;position:relative;overflow:visible!important}
+.icon-img{width:48px!important;height:48px!important;margin-bottom:2px!important}
+.icon-img::after,.sm-icon::after{content:""!important;display:block!important;width:100%!important;height:100%!important;background-size:contain!important;background-repeat:no-repeat!important;background-position:center!important;opacity:1!important;filter:drop-shadow(0 1px 1.5px rgba(0,0,0,.45))}
+.sm-icon{width:24px!important;height:24px!important;flex-shrink:0!important}
