@@ -2,71 +2,45 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="theme-color" content="#3a6ea5" />
-  <meta name="mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <title>Menelik Admasu — Portfolio</title>
-  <script>window.__MENELIK_V__ = "20261015deskfix1";</script>
-  <link rel="stylesheet" href="styles.css?v=20261015deskfix1" />
-  <link rel="manifest" href="manifest.webmanifest?v=20261015deskfix1" />
-  <link rel="apple-touch-icon" href="static/images/profile-320.webp" />
-  <link rel="preload" href="static/images/profile-128.webp" as="image" type="image/webp" />
-  <link rel="preload" href="static/images/profile-320.webp" as="image" type="image/webp" />
-  <link rel="preload" href="profile.webp" as="image" type="image/webp" />
   <script>
-  (function(){function s(){var h=(window.visualViewport&&window.visualViewport.height)||window.innerHeight;if(!h||h<100)h=window.innerHeight;document.documentElement.style.setProperty("--app-height",h+"px");}s();window.addEventListener("resize",s,{passive:true});if(window.visualViewport)window.visualViewport.addEventListener("resize",s,{passive:true});})();
+  (function () {
+    var GOOD = "https://raw.githubusercontent.com/Menelik2/MyCV/0b2fcde6dc32469dd2563cdf9f6bfbf58747f63b/index.html";
+    var V = "20261015deskfix1";
+    function injectPatch() {
+      if (document.querySelector('script[src*="desk-view-patch"]')) return;
+      var s = document.createElement("script");
+      s.src = "desk-view-patch.js?v=" + V;
+      document.body.appendChild(s);
+    }
+    function apply(html) {
+      html = html.replace(/20260823phonefs1/g, V);
+      // Ensure styles use new cache key
+      html = html.replace(/styles\.css\?v=[^"]+/g, "styles.css?v=" + V);
+      document.open();
+      document.write(html);
+      document.close();
+      // Patch after scripts in written doc have a chance to parse
+      setTimeout(injectPatch, 50);
+      setTimeout(injectPatch, 400);
+    }
+    fetch(GOOD, { cache: "no-store" })
+      .then(function (r) {
+        if (!r.ok) throw new Error("HTTP " + r.status);
+        return r.text();
+      })
+      .then(apply)
+      .catch(function (err) {
+        document.body.innerHTML =
+          "<pre style='padding:24px;font:14px/1.4 system-ui'>Failed to load portfolio shell.\n" +
+          String(err) +
+          "\n\nOpen <a href='" + GOOD + "'>last good index</a> or hard-refresh.</pre>";
+      });
+  })();
   </script>
 </head>
 <body>
-  <script>
-    (function () {
-      try {
-        document.body.classList.add("light");
-        localStorage.setItem("portfolio-theme", "light");
-      } catch (e) {}
-    })();
-  </script>
-  <a id="skip-to-desktop" class="skip-link" href="#desktop">Skip to desktop</a>
-  <div id="boot-screen" class="boot-screen">
-    <div class="boot-inner">
-      <div class="boot-logo" aria-hidden="true"></div>
-      <p class="boot-title" data-i18n="bootTitle">Welcome to My Portfolio</p>
-      <p class="boot-sub" data-i18n="bootSub">Professional</p>
-      <div class="boot-bar"><div class="boot-bar-fill"></div></div>
-      <p class="boot-status" id="boot-status">Starting Windows…</p>
-      <button type="button" class="boot-start-btn" id="boot-start-btn" hidden>
-        Enter Full Screen
-      </button>
-      <p class="boot-hint">Click to enter full screen</p>
-    </div>
-  </div>
-
-  <div id="desktop" class="desktop boot-hidden">
-    <div class="wallpaper"></div>
-    <div class="desktop-icons">
-      <button class="icon" data-window="about"><div class="icon-img about-icon"></div><span>About Me</span></button>
-      <button class="icon" data-window="education"><div class="icon-img edu-icon"></div><span>Education</span></button>
-      <button class="icon" data-window="experience"><div class="icon-img exp-icon"></div><span>Experience</span></button>
-      <button class="icon" data-window="certifications"><div class="icon-img cert-icon"></div><span>Certifications</span></button>
-      <button class="icon" data-window="projects"><div class="icon-img projects-icon"></div><span>Projects</span></button>
-      <button class="icon" data-window="skills"><div class="icon-img skills-icon"></div><span>Skills</span></button>
-      <button class="icon" data-window="contact"><div class="icon-img contact-icon"></div><span>Contact</span></button>
-      <button class="icon" data-window="resume"><div class="icon-img resume-icon"></div><span>Resume</span></button>
-      <button class="icon" data-window="control"><div class="icon-img control-icon"></div><span>Control Panel</span></button>
-      <button class="icon" data-window="blog"><div class="icon-img blog-icon"></div><span>My Computer</span></button>
-      <button class="icon" data-window="ie"><div class="icon-img edge-icon"></div><span>Internet Explorer</span></button>
-      <button class="icon" data-window="sudoku"><div class="icon-img sudoku-icon"></div><span>Sudoku</span></button>
-      <button class="icon" data-window="chat"><div class="icon-img chat-icon"></div><span>Chat</span></button>
-    </div>
-    <div class="sticky-notes" aria-hidden="false">
-      <div class="sticky-note sticky-yellow">
-        <div class="sticky-tape"></div>
-        <p>I believe the best technology is not only powerful but also reliable, intuitive, and built with people in mind. Every project is an opportunity to solve real problems, learn something new, and create meaningful digital experiences.</p>
-      </div>
-    </div>
-    <!-- RESTORED_MARKER: full file continues via multi-part if needed -->
-  </div>
+  <p style="font:14px system-ui;padding:24px;color:#555">Loading Menelik OS…</p>
 </body>
 </html>
