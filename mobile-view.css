@@ -84,25 +84,25 @@
     padding: 4px 8px 8px !important;
   }
 
-  /* Profile header — readable on any wallpaper */
+  /* Profile header — larger avatar */
   #mobile .mobile-header,
   .mobile-header {
     text-align: center !important;
-    padding: 12px 8px 10px !important;
+    padding: 16px 8px 14px !important;
   }
   #mobile .mobile-avatar,
   .mobile-avatar {
-    width: 64px !important;
-    height: 64px !important;
-    margin: 0 auto 8px !important;
+    width: 96px !important;
+    height: 96px !important;
+    margin: 0 auto 12px !important;
   }
   #mobile .mobile-avatar::after,
   .mobile-avatar::after {
-    font-size: 22px !important;
+    font-size: 32px !important;
   }
   #mobile .mobile-header h1,
   .mobile-header h1 {
-    font-size: 18px !important;
+    font-size: 20px !important;
     font-weight: 700 !important;
     color: #fff !important;
     text-shadow: 0 1px 3px rgba(0,0,0,.75), 0 0 8px rgba(0,0,0,.4) !important;
@@ -153,7 +153,6 @@
     transform: scale(0.95) !important;
   }
 
-  /* Smaller icons */
   .app-icon .app-img,
   .app-img {
     width: 44px !important;
@@ -168,7 +167,6 @@
     box-shadow: 0 1px 4px rgba(0,0,0,0.3) !important;
   }
 
-  /* Readable labels on light OR dark backgrounds */
   .app-icon,
   .app-icon span {
     color: #ffffff !important;
