@@ -4,7 +4,7 @@
 
   var GOOD =
     "https://cdn.jsdelivr.net/gh/Menelik2/MyCV@0b2fcde6dc32469dd2563cdf9f6bfbf58747f63b/index.html";
-  var V = "20261015folder1";
+  var V = "20261015solid1";
 
   function ensureLink(href) {
     var base = href.split("?")[0];
