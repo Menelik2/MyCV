@@ -2,12 +2,12 @@
 (function () {
   "use strict";
 
-  // Free Unsplash photos (Unsplash License) — Bliss-like hills, classic scenes
+  // Default: user-chosen XP Bliss-style photo
+  var USER_BLISS = "https://wallpapercave.com/wp/wp9324707.jpg";
+
   var PHOTO = {
-    default:
-      "https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=1920&q=80",
-    bliss:
-      "https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=1920&q=80",
+    default: USER_BLISS,
+    bliss: USER_BLISS,
     azure:
       "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?auto=format&fit=crop&w=1920&q=80",
     luna:
@@ -21,8 +21,8 @@
   };
 
   var XP_LABELS = {
-    default: "Bliss (real photo)",
-    bliss: "Bliss (real photo)",
+    default: "Bliss (your photo)",
+    bliss: "Bliss (your photo)",
     azure: "Mountain lake",
     luna: "Sunlit peaks",
     follow: "Foggy hills",
@@ -69,10 +69,7 @@
     if (desk) desk.dataset.wallpaper = key;
 
     var url = resolveUrl(key);
-    var bg =
-      'url("' +
-      url +
-      '") center center / cover no-repeat fixed';
+    var bg = 'url("' + url + '") center center / cover no-repeat';
 
     document.querySelectorAll("#desktop .wallpaper, .desktop > .wallpaper").forEach(function (el) {
       el.style.background = bg;
@@ -90,9 +87,9 @@
       }
     });
 
-    // Preload next paint
     try {
       var img = new Image();
+      img.referrerPolicy = "no-referrer";
       img.src = url;
     } catch (_) {}
 
@@ -118,6 +115,7 @@
 
   function install() {
     window.applyWallpaper = applyXpWallpaper;
+    // Prefer user's Bliss photo as default
     var w = "default";
     try {
       w = localStorage.getItem("portfolio-wallpaper") || "default";
@@ -139,8 +137,8 @@
     typeof MutationObserver === "function"
       ? new MutationObserver(function () {
           var picker = document.querySelector(".wall-picker");
-          if (!picker || picker.dataset.xpWalls === "2") return;
-          picker.dataset.xpWalls = "2";
+          if (!picker || picker.dataset.xpWalls === "3") return;
+          picker.dataset.xpWalls = "3";
           var keys = ["default", "azure", "luna", "follow", "desert", "crystal"];
           picker.innerHTML = keys
             .map(function (k) {
@@ -176,8 +174,10 @@
             var input = wrap.querySelector(".cp-wall-url");
             var btn = wrap.querySelector(".cp-wall-url-apply");
             try {
-              input.value = localStorage.getItem("portfolio-wallpaper-url") || "";
-            } catch (_) {}
+              input.value = localStorage.getItem("portfolio-wallpaper-url") || USER_BLISS;
+            } catch (_) {
+              input.value = USER_BLISS;
+            }
             function applyCustom() {
               var u = (input.value || "").trim();
               if (!/^https?:\/\//i.test(u)) {
@@ -198,17 +198,18 @@
 
           var sel = document.querySelector(".cp-wall");
           if (sel) {
-            sel.innerHTML = keys
-              .map(function (k) {
-                return (
-                  '<option value="' +
-                  k +
-                  '">' +
-                  (XP_LABELS[k] || k) +
-                  "</option>"
-                );
-              })
-              .join("") + '<option value="custom">Custom photo</option>';
+            sel.innerHTML =
+              keys
+                .map(function (k) {
+                  return (
+                    '<option value="' +
+                    k +
+                    '">' +
+                    (XP_LABELS[k] || k) +
+                    "</option>"
+                  );
+                })
+                .join("") + '<option value="custom">Custom photo</option>';
             sel.addEventListener("change", function () {
               applyXpWallpaper(sel.value);
             });
