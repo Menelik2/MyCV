@@ -60,6 +60,8 @@
     padding-right: 12px !important;
     box-sizing: border-box !important;
     z-index: 5 !important;
+    color: #fff !important;
+    text-shadow: 0 1px 2px rgba(0,0,0,.55) !important;
   }
 
   #mobile-content,
@@ -79,14 +81,53 @@
     overflow-y: auto !important;
     -webkit-overflow-scrolling: touch !important;
     overscroll-behavior: contain !important;
-    padding-bottom: 8px !important;
+    padding: 4px 8px 8px !important;
+  }
+
+  /* Profile header — readable on any wallpaper */
+  #mobile .mobile-header,
+  .mobile-header {
+    text-align: center !important;
+    padding: 12px 8px 10px !important;
+  }
+  #mobile .mobile-avatar,
+  .mobile-avatar {
+    width: 64px !important;
+    height: 64px !important;
+    margin: 0 auto 8px !important;
+  }
+  #mobile .mobile-avatar::after,
+  .mobile-avatar::after {
+    font-size: 22px !important;
+  }
+  #mobile .mobile-header h1,
+  .mobile-header h1 {
+    font-size: 18px !important;
+    font-weight: 700 !important;
+    color: #fff !important;
+    text-shadow: 0 1px 3px rgba(0,0,0,.75), 0 0 8px rgba(0,0,0,.4) !important;
+    margin: 0 0 2px !important;
+  }
+  #mobile .mobile-header .subtitle,
+  .mobile-header .subtitle {
+    font-size: 12px !important;
+    color: #fff !important;
+    opacity: 0.95 !important;
+    text-shadow: 0 1px 3px rgba(0,0,0,.75) !important;
+  }
+  #mobile .mobile-header .years,
+  .mobile-header .years {
+    font-size: 11px !important;
+    color: #fff !important;
+    text-shadow: 0 1px 3px rgba(0,0,0,.75) !important;
   }
 
   .app-grid {
     display: grid !important;
     grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
-    gap: 16px 10px !important;
-    padding: 8px 12px 16px !important;
+    gap: 12px 6px !important;
+    padding: 4px 6px 12px !important;
+    justify-items: center !important;
   }
 
   .app-icon {
@@ -94,43 +135,80 @@
     flex-direction: column !important;
     align-items: center !important;
     justify-content: flex-start !important;
-    gap: 6px !important;
+    gap: 4px !important;
+    width: 100% !important;
+    max-width: 72px !important;
     min-height: 0 !important;
+    padding: 0 !important;
     background: transparent !important;
     border: none !important;
-    color: #fff !important;
     cursor: pointer !important;
     -webkit-tap-highlight-color: transparent !important;
     touch-action: manipulation !important;
     font-family: -apple-system, "Segoe UI", sans-serif !important;
-    font-size: 12px !important;
   }
 
   .app-icon:active {
-    opacity: 0.75 !important;
-    transform: scale(0.96) !important;
+    opacity: 0.8 !important;
+    transform: scale(0.95) !important;
   }
 
+  /* Smaller icons */
   .app-icon .app-img,
   .app-img {
-    width: 60px !important;
-    height: 60px !important;
-    border-radius: 14px !important;
-    margin-bottom: 0 !important;
-    background-size: 50% !important;
+    width: 44px !important;
+    height: 44px !important;
+    min-width: 44px !important;
+    min-height: 44px !important;
+    border-radius: 11px !important;
+    margin: 0 !important;
+    background-size: 52% !important;
     background-repeat: no-repeat !important;
     background-position: center !important;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.25) !important;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.3) !important;
   }
 
+  /* Readable labels on light OR dark backgrounds */
+  .app-icon,
   .app-icon span {
-    font-size: 12px !important;
-    line-height: 1.2 !important;
+    color: #ffffff !important;
+    font-size: 10px !important;
+    font-weight: 600 !important;
+    line-height: 1.15 !important;
     text-align: center !important;
     max-width: 100% !important;
     overflow: hidden !important;
     text-overflow: ellipsis !important;
     white-space: nowrap !important;
+    text-shadow:
+      0 0 2px rgba(0,0,0,.9),
+      0 1px 2px rgba(0,0,0,.9),
+      0 1px 4px rgba(0,0,0,.7) !important;
+  }
+
+  body.light .app-icon,
+  body.light .app-icon span {
+    color: #111111 !important;
+    text-shadow:
+      0 0 2px rgba(255,255,255,.95),
+      0 1px 2px rgba(255,255,255,.9),
+      0 0 6px rgba(255,255,255,.6) !important;
+  }
+
+  body.light #mobile .mobile-header h1,
+  body.light .mobile-header h1,
+  body.light #mobile .mobile-header .subtitle,
+  body.light .mobile-header .subtitle,
+  body.light #mobile .mobile-header .years,
+  body.light .mobile-header .years {
+    color: #111 !important;
+    text-shadow: 0 1px 2px rgba(255,255,255,.9) !important;
+  }
+
+  #mobile .dock .app-img,
+  .dock .app-img {
+    width: 44px !important;
+    height: 44px !important;
   }
 
   #mobile .app-page {
@@ -146,7 +224,6 @@
     display: none !important;
   }
 
-  /* Compact white header (not big blue bar) */
   #mobile .page-header,
   #mobile .app-page .page-header {
     flex-shrink: 0 !important;
@@ -171,6 +248,7 @@
     flex: 1 !important;
     text-align: center !important;
     margin-right: 36px !important;
+    text-shadow: none !important;
   }
 
   #mobile .back-btn {
@@ -184,6 +262,7 @@
     font-size: 16px !important;
     font-weight: 400 !important;
     cursor: pointer !important;
+    text-shadow: none !important;
     -webkit-tap-highlight-color: transparent !important;
   }
 
