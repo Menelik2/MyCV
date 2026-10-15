@@ -4,7 +4,7 @@
 
   var GOOD =
     "https://cdn.jsdelivr.net/gh/Menelik2/MyCV@0b2fcde6dc32469dd2563cdf9f6bfbf58747f63b/index.html";
-  var V = "20261015mobile1";
+  var V = "20261015admin1";
 
   function ensureLink(href) {
     var base = href.split("?")[0];
@@ -40,6 +40,7 @@
     ensureScript("xp-wallpaper.js?v=" + V);
     ensureScript("xp-icons.js?v=" + V);
     ensureScript("mobile-view-patch.js?v=" + V);
+    ensureScript("admin-fix.js?v=" + V);
     try {
       if (!localStorage.getItem("portfolio-wallpaper")) {
         localStorage.setItem("portfolio-wallpaper", "default");
