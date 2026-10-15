@@ -4,24 +4,71 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <meta name="theme-color" content="#3a6ea5" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
   <title>Menelik Admasu — Portfolio</title>
   <script>
   (function () {
-    var v = "20261015deskfix2";
-    Promise.all([
-      fetch("shell-a.txt?v=" + v, { cache: "no-store" }).then(function (r) { if (!r.ok) throw new Error("a " + r.status); return r.text(); }),
-      fetch("shell-b.txt?v=" + v, { cache: "no-store" }).then(function (r) { if (!r.ok) throw new Error("b " + r.status); return r.text(); })
-    ]).then(function (parts) {
+    var GOOD = "https://cdn.jsdelivr.net/gh/Menelik2/MyCV@0b2fcde6dc32469dd2563cdf9f6bfbf58747f63b/index.html";
+    var V = "20261015deskfix2";
+
+    function injectAfterLoad() {
+      if (!document.querySelector('script[src*="desk-view-patch"]')) {
+        var s = document.createElement("script");
+        s.src = "desk-view-patch.js?v=" + V;
+        s.async = false;
+        (document.body || document.documentElement).appendChild(s);
+      }
+      var links = document.querySelectorAll('link[rel="stylesheet"]');
+      for (var i = 0; i < links.length; i++) {
+        var href = links[i].getAttribute("href") || "";
+        if (href.indexOf("styles.css") !== -1) {
+          links[i].setAttribute("href", "styles.css?v=" + V);
+        }
+      }
+    }
+
+    function apply(html) {
+      html = html.split("20260823phonefs1").join(V);
+      html = html.replace(/styles\.css\?v=[^"]+/g, "styles.css?v=" + V);
+      if (html.indexOf("desk-view-patch.js") === -1) {
+        html = html.replace(
+          /(<script src="script\.js\?v=[^"]+"><\/script>)/,
+          "$1\n  <script src=\"desk-view-patch.js?v=" + V + "\"></script>"
+        );
+      }
       document.open();
-      document.write(parts[0] + parts[1]);
+      document.write(html);
       document.close();
-    }).catch(function (err) {
-      document.body.innerHTML = "<pre style=\"padding:24px;font:14px system-ui\">Load failed: " + String(err) + "</pre>";
-    });
+      setTimeout(injectAfterLoad, 0);
+      setTimeout(injectAfterLoad, 300);
+    }
+
+    function fail(err) {
+      document.documentElement.innerHTML =
+        "<body style=\"font:14px system-ui;padding:24px;background:#1a1a2e;color:#eee\">" +
+        "<h1>Menelik OS</h1>" +
+        "<p>Could not load the portfolio shell.</p>" +
+        "<pre style=\"color:#f88\">" + String(err) + "</pre>" +
+        "<p><a style=\"color:#7af\" href=\"" + GOOD + "\">Open last good shell directly</a></p>" +
+        "</body>";
+    }
+
+    fetch(GOOD, { cache: "no-store", mode: "cors" })
+      .then(function (r) {
+        if (!r.ok) throw new Error("HTTP " + r.status + " fetching shell");
+        return r.text();
+      })
+      .then(apply)
+      .catch(fail);
   })();
   </script>
+  <style>
+    html, body { margin: 0; background: #0b0f14; color: #aaa; font: 14px/1.4 system-ui, sans-serif; }
+    .boot { display: flex; align-items: center; justify-content: center; min-height: 100vh; }
+  </style>
 </head>
 <body>
-  <p style="font:14px system-ui;padding:24px;color:#555">Loading Menelik OS…</p>
+  <div class="boot">Loading Menelik OS…</div>
 </body>
 </html>
