@@ -1,59 +1,55 @@
-/* storage-app.js — Storage icon + disk report (delete only after user says yes) */
+/* storage-app.js — real storage scanner (File System Access API)
+   Pick a folder → top files, old downloads, duplicate photos, installers.
+   Delete only after explicit confirm. */
 (function () {
   "use strict";
 
   var PAGE_ID = "page-storage";
   var CONTENT_ID = "content-storage";
+  var OLD_DAYS = 30;
+  var MAX_FILES = 8000;
+  var PHOTO_RE = /\.(jpe?g|png|gif|webp|heic|heif|bmp|tiff?)$/i;
+  var INSTALLER_RE = /\.(exe|msi|dmg|pkg|msix|appx|deb|rpm)$/i;
+  var SETUP_RE = /(setup|installer|install)[^\\/]*\.(exe|msi|dmg|pkg)$/i;
 
-  /* Demo scan data (portfolio shell cannot read the visitor's real disk) */
-  var SCAN = {
-    scannedAt: new Date().toISOString().slice(0, 16).replace("T", " "),
-    freeGb: 18.4,
-    totalGb: 256,
-    top20: [
-      { path: "C:\\Users\\Public\\Videos\\Travel-2024.mp4", size: "12.4 GB", cat: "video" },
-      { path: "C:\\Users\\You\\AppData\\Local\\Steam\\steamapps\\common\\…", size: "28.1 GB", cat: "folder" },
-      { path: "C:\\Users\\You\\Documents\\Projects\\node_modules", size: "9.8 GB", cat: "folder" },
-      { path: "C:\\Users\\You\\Downloads\\ubuntu-24.04-desktop.iso", size: "5.6 GB", cat: "iso" },
-      { path: "C:\\Users\\You\\Pictures\\Camera Roll", size: "4.2 GB", cat: "folder" },
-      { path: "C:\\Program Files\\Adobe\\Adobe Photoshop 2024", size: "3.9 GB", cat: "folder" },
-      { path: "C:\\Users\\You\\AppData\\Local\\Docker\\wsl", size: "3.5 GB", cat: "folder" },
-      { path: "C:\\Users\\You\\Downloads\\Windows.iso", size: "3.1 GB", cat: "iso" },
-      { path: "C:\\Users\\You\\Videos\\Screen recordings", size: "2.8 GB", cat: "folder" },
-      { path: "C:\\Users\\You\\.gradle\\caches", size: "2.4 GB", cat: "folder" },
-      { path: "C:\\Users\\You\\AppData\\Local\\Temp", size: "2.1 GB", cat: "folder" },
-      { path: "C:\\Users\\You\\Downloads\\setup-office.exe", size: "1.9 GB", cat: "installer" },
-      { path: "C:\\Users\\You\\Pictures\\iPhone Backup", size: "1.7 GB", cat: "folder" },
-      { path: "C:\\Users\\You\\Music\\Library", size: "1.5 GB", cat: "folder" },
-      { path: "C:\\Users\\You\\Downloads\\chrome.dmg", size: "1.2 GB", cat: "installer" },
-      { path: "C:\\Users\\You\\Documents\\Archive.zip", size: "980 MB", cat: "archive" },
-      { path: "C:\\Users\\You\\AppData\\Roaming\\Slack", size: "860 MB", cat: "folder" },
-      { path: "C:\\Users\\You\\Downloads\\dataset.csv", size: "720 MB", cat: "file" },
-      { path: "C:\\Users\\You\\.cache\\pip", size: "640 MB", cat: "folder" },
-      { path: "C:\\Users\\You\\Downloads\\vscode-setup.exe", size: "120 MB", cat: "installer" },
-    ],
-    oldDownloads: [
-      { path: "Downloads\\ubuntu-24.04-desktop.iso", size: "5.6 GB", age: "94 days" },
-      { path: "Downloads\\Windows.iso", size: "3.1 GB", age: "61 days" },
-      { path: "Downloads\\setup-office.exe", size: "1.9 GB", age: "48 days" },
-      { path: "Downloads\\chrome.dmg", size: "1.2 GB", age: "37 days" },
-      { path: "Downloads\\dataset.csv", size: "720 MB", age: "29 days" },
-      { path: "Downloads\\vscode-setup.exe", size: "120 MB", age: "22 days" },
-      { path: "Downloads\\invoice-old.pdf", size: "2.1 MB", age: "120 days" },
-    ],
-    duplicatePhotos: [
-      { path: "Pictures\\IMG_2041.jpg ≈ Camera Roll\\IMG_2041.jpg", size: "4.8 MB ×2", note: "same hash" },
-      { path: "Pictures\\vacation\\DSC_0199.JPG ≈ iPhone\\DSC_0199.JPG", size: "6.2 MB ×2", note: "same hash" },
-      { path: "Desktop\\screenshot.png ≈ Downloads\\screenshot.png", size: "1.1 MB ×2", note: "same hash" },
-      { path: "Pictures\\portrait-edit.jpg ≈ portrait-edit (1).jpg", size: "3.4 MB ×2", note: "same hash" },
-    ],
-    usedInstallers: [
-      { path: "Downloads\\setup-office.exe", size: "1.9 GB", note: "Office already installed" },
-      { path: "Downloads\\chrome.dmg", size: "1.2 GB", note: "Chrome already installed" },
-      { path: "Downloads\\vscode-setup.exe", size: "120 MB", note: "VS Code already installed" },
-      { path: "Downloads\\node-v20.msi", size: "28 MB", note: "Node already installed" },
-    ],
+  var state = {
+    rootName: "",
+    files: [],
+    handles: {},
+    scanning: false,
   };
+
+  function fmt(bytes) {
+    if (bytes == null || isNaN(bytes)) return "—";
+    var u = ["B", "KB", "MB", "GB", "TB"];
+    var i = 0;
+    var n = Number(bytes);
+    while (n >= 1024 && i < u.length - 1) {
+      n /= 1024;
+      i++;
+    }
+    return (i === 0 ? n : n.toFixed(n >= 10 ? 1 : 2)) + " " + u[i];
+  }
+
+  function daysAgo(ms) {
+    if (!ms) return "—";
+    var d = Math.floor((Date.now() - ms) / 86400000);
+    if (d <= 0) return "today";
+    if (d === 1) return "1 day";
+    return d + " days";
+  }
+
+  function esc(s) {
+    return String(s == null ? "" : s)
+      .replace(/&/g, "&")
+      .replace(/</g, "<")
+      .replace(/>/g, ">")
+      .replace(/"/g, """);
+  }
+
+  function supportsFs() {
+    return typeof window.showDirectoryPicker === "function";
+  }
 
   function iconSvg() {
     return (
@@ -73,14 +69,9 @@
     var s = document.createElement("style");
     s.id = id;
     s.textContent =
-      ".app-img.storage{" +
-      "background-color:#0ea5e9!important;" +
-      "background-image:" +
+      ".app-img.storage{background-color:#0ea5e9!important;background-image:" +
       iconSvg() +
-      "!important;" +
-      "background-size:54%!important;" +
-      "background-repeat:no-repeat!important;" +
-      "background-position:center!important}" +
+      "!important;background-size:54%!important;background-repeat:no-repeat!important;background-position:center!important}" +
       ".storage-report{font:13px/1.45 system-ui,-apple-system,sans-serif;color:#1c1c1e}" +
       ".storage-report h3{margin:18px 0 8px;font-size:14px;font-weight:700}" +
       ".storage-report .sum{background:#f0f9ff;border:1px solid #bae6fd;border-radius:10px;padding:12px 14px;margin-bottom:8px}" +
@@ -91,135 +82,420 @@
       ".storage-report .sz{white-space:nowrap;font-weight:600;color:#0f172a}" +
       ".storage-report .path{word-break:break-all}" +
       ".storage-report .bar{height:8px;background:#e2e8f0;border-radius:99px;overflow:hidden;margin-top:8px}" +
-      ".storage-report .bar>i{display:block;height:100%;background:linear-gradient(90deg,#38bdf8,#0284c7);width:" +
-      Math.min(100, ((SCAN.totalGb - SCAN.freeGb) / SCAN.totalGb) * 100).toFixed(1) +
-      "%}" +
-      ".storage-actions{position:sticky;bottom:0;background:#fff;padding:12px 0 4px;display:flex;gap:8px;flex-wrap:wrap;border-top:1px solid #e5e7eb;margin-top:16px}" +
+      ".storage-report .bar>i{display:block;height:100%;background:linear-gradient(90deg,#38bdf8,#0284c7)}" +
+      ".storage-actions{position:sticky;bottom:0;background:#fff;padding:12px 0 4px;display:flex;gap:8px;flex-wrap:wrap;border-top:1px solid #e5e7eb;margin-top:16px;z-index:2}" +
       ".storage-actions button{appearance:none;border:0;border-radius:10px;padding:10px 14px;font-weight:600;font-size:13px;cursor:pointer}" +
       ".storage-actions .primary{background:#0ea5e9;color:#fff}" +
       ".storage-actions .danger{background:#fee2e2;color:#b91c1c}" +
       ".storage-actions .danger[disabled]{opacity:.45;cursor:not-allowed}" +
       ".storage-actions .ghost{background:#f1f5f9;color:#334155}" +
+      ".storage-progress{font-size:12px;color:#0369a1;margin:8px 0}" +
       "#mobile .app-img.storage{width:48px!important;height:48px!important;border-radius:12px!important}";
     document.head.appendChild(s);
   }
 
-  function rows(list, withAge) {
+  async function estimateBrowser() {
+    try {
+      if (navigator.storage && navigator.storage.estimate) {
+        var e = await navigator.storage.estimate();
+        return { usage: e.usage || 0, quota: e.quota || 0 };
+      }
+    } catch (err) {}
+    return { usage: 0, quota: 0 };
+  }
+
+  async function walkDir(dirHandle, prefix, out, onProgress) {
+    if (out.length >= MAX_FILES) return;
+    var entries = [];
+    try {
+      for await (var entry of dirHandle.values()) entries.push(entry);
+    } catch (err) {
+      return;
+    }
+    for (var i = 0; i < entries.length; i++) {
+      if (out.length >= MAX_FILES) return;
+      var handle = entries[i];
+      var path = prefix ? prefix + "/" + handle.name : handle.name;
+      try {
+        if (handle.kind === "file") {
+          var file = await handle.getFile();
+          var item = {
+            path: path,
+            name: handle.name,
+            size: file.size,
+            lastModified: file.lastModified,
+            type: file.type || "",
+          };
+          out.push(item);
+          state.handles[path] = handle;
+          if (onProgress && out.length % 40 === 0) onProgress(out.length, path);
+        } else if (handle.kind === "directory") {
+          /* skip heavy / system-ish dirs */
+          var n = handle.name.toLowerCase();
+          if (
+            n === "node_modules" ||
+            n === ".git" ||
+            n === "$recycle.bin" ||
+            n === "system volume information" ||
+            n === "windows" ||
+            n === "proc" ||
+            n === "dev"
+          ) {
+            continue;
+          }
+          await walkDir(handle, path, out, onProgress);
+        }
+      } catch (e2) {
+        /* permission / locked file */
+      }
+    }
+  }
+
+  function analyze(files) {
+    var sorted = files.slice().sort(function (a, b) {
+      return b.size - a.size;
+    });
+    var top20 = sorted.slice(0, 20).map(function (f) {
+      return { path: f.path, size: fmt(f.size), bytes: f.size, key: f.path };
+    });
+
+    var cutoff = Date.now() - OLD_DAYS * 86400000;
+    var oldDownloads = files
+      .filter(function (f) {
+        return (
+          /download/i.test(f.path) &&
+          f.lastModified &&
+          f.lastModified < cutoff &&
+          f.size > 50 * 1024
+        );
+      })
+      .sort(function (a, b) {
+        return a.lastModified - b.lastModified;
+      })
+      .slice(0, 30)
+      .map(function (f) {
+        return {
+          path: f.path,
+          size: fmt(f.size),
+          age: daysAgo(f.lastModified),
+          key: f.path,
+        };
+      });
+
+    /* duplicate photos: same name + same size */
+    var photoMap = {};
+    files.forEach(function (f) {
+      if (!PHOTO_RE.test(f.name)) return;
+      var k = f.name.toLowerCase() + "::" + f.size;
+      if (!photoMap[k]) photoMap[k] = [];
+      photoMap[k].push(f);
+    });
+    var duplicatePhotos = [];
+    Object.keys(photoMap).forEach(function (k) {
+      var g = photoMap[k];
+      if (g.length < 2) return;
+      duplicatePhotos.push({
+        path: g.map(function (x) {
+          return x.path;
+        }).join(" ≈ "),
+        size: fmt(g[0].size) + " ×" + g.length,
+        note: "same name + size",
+        key: g[0].path,
+        keys: g.map(function (x) {
+          return x.path;
+        }),
+      });
+    });
+    duplicatePhotos = duplicatePhotos.slice(0, 40);
+
+    var usedInstallers = files
+      .filter(function (f) {
+        return INSTALLER_RE.test(f.name) || SETUP_RE.test(f.name);
+      })
+      .sort(function (a, b) {
+        return b.size - a.size;
+      })
+      .slice(0, 30)
+      .map(function (f) {
+        return {
+          path: f.path,
+          size: fmt(f.size),
+          note: /download/i.test(f.path) ? "in Downloads" : "installer package",
+          key: f.path,
+        };
+      });
+
+    var totalBytes = files.reduce(function (s, f) {
+      return s + (f.size || 0);
+    }, 0);
+
+    return {
+      top20: top20,
+      oldDownloads: oldDownloads,
+      duplicatePhotos: duplicatePhotos,
+      usedInstallers: usedInstallers,
+      totalBytes: totalBytes,
+      fileCount: files.length,
+    };
+  }
+
+  function rowsHtml(list, withAge) {
+    if (!list || !list.length) {
+      return (
+        '<tr><td colspan="' +
+        (withAge ? 4 : 3) +
+        '" class="note">None found in this folder.</td></tr>'
+      );
+    }
     return list
-      .map(function (item, i) {
+      .map(function (item) {
+        var keys = item.keys || [item.key || item.path];
         return (
           "<tr>" +
-          "<td><input type=\"checkbox\" data-i=\"" +
-          i +
-          "\" data-path=\"" +
-          String(item.path).replace(/\"/g, """) +
+          "<td><input type=\"checkbox\" data-keys=\"" +
+          esc(JSON.stringify(keys)) +
           "\"/></td>" +
-          "<td class=\"path\">" +
-          item.path +
-          (item.note ? "<div class=\"note\" style=\"margin:2px 0 0\">" + item.note + "</div>" : "") +
+          '<td class="path">' +
+          esc(item.path) +
+          (item.note
+            ? '<div class="note" style="margin:2px 0 0">' + esc(item.note) + "</div>"
+            : "") +
           "</td>" +
-          "<td class=\"sz\">" +
-          item.size +
+          '<td class="sz">' +
+          esc(item.size) +
           "</td>" +
-          (withAge ? "<td>" + (item.age || "") + "</td>" : "") +
+          (withAge ? "<td>" + esc(item.age || "") + "</td>" : "") +
           "</tr>"
-      )
+        );
+      })
       .join("");
   }
 
-  function renderReport(root) {
-    var used = (SCAN.totalGb - SCAN.freeGb).toFixed(1);
-    root.innerHTML =
+  function renderShell(root, opts) {
+    opts = opts || {};
+    var browser = opts.browser || { usage: 0, quota: 0 };
+    var report = opts.report;
+    var pct =
+      browser.quota > 0
+        ? Math.min(100, (browser.usage / browser.quota) * 100).toFixed(1)
+        : 0;
+
+    var body =
       '<div class="storage-report">' +
       '<div class="sum">' +
-      "<strong>Storage scan</strong> · " +
-      SCAN.scannedAt +
-      "<br/>Used <strong>" +
-      used +
-      " GB</strong> of " +
-      SCAN.totalGb +
-      " GB · Free " +
-      SCAN.freeGb +
-      " GB" +
-      '<div class="bar"><i></i></div>' +
+      "<strong>Real storage tools</strong><br/>" +
+      "This site origin: <strong>" +
+      fmt(browser.usage) +
+      "</strong> used" +
+      (browser.quota ? " of " + fmt(browser.quota) + " quota" : "") +
+      '<div class="bar"><i style="width:' +
+      pct +
+      '%"></i></div>' +
       "</div>" +
-      '<p class="note">Demo report for the portfolio shell. Nothing is deleted until you confirm.</p>' +
-      "<h3>Top 20 largest files & folders</h3>" +
-      "<table><thead><tr><th></th><th>Path</th><th>Size</th></tr></thead><tbody>" +
-      rows(SCAN.top20, false) +
-      "</tbody></table>" +
-      "<h3>Old downloads</h3>" +
-      "<table><thead><tr><th></th><th>Path</th><th>Size</th><th>Age</th></tr></thead><tbody>" +
-      rows(SCAN.oldDownloads, true) +
-      "</tbody></table>" +
-      "<h3>Duplicate photos</h3>" +
-      "<table><thead><tr><th></th><th>Match</th><th>Size</th></tr></thead><tbody>" +
-      rows(SCAN.duplicatePhotos, false) +
-      "</tbody></table>" +
-      "<h3>Installers already used</h3>" +
-      "<table><thead><tr><th></th><th>Path</th><th>Size</th></tr></thead><tbody>" +
-      rows(SCAN.usedInstallers, false) +
-      "</tbody></table>" +
-      '<div class="storage-actions">' +
-      '<button type="button" class="primary" id="storage-select-all">Select all listed</button>' +
-      '<button type="button" class="ghost" id="storage-clear">Clear selection</button>' +
-      '<button type="button" class="danger" id="storage-delete" disabled>Delete selected…</button>' +
+      '<p class="note">Browsers cannot scan your whole PC without permission. Choose a folder (e.g. Downloads, Pictures, or your user folder) to run a <strong>real</strong> scan.</p>' +
+      '<div class="storage-actions" style="position:static;border:0;padding:0 0 12px;margin:0">' +
+      '<button type="button" class="primary" id="storage-pick">' +
+      (supportsFs() ? "Choose folder to scan" : "Folder scan not supported") +
+      "</button>" +
+      (report
+        ? '<button type="button" class="ghost" id="storage-rescan">Scan again</button>'
+        : "") +
       "</div>" +
-      '<p class="note" id="storage-status">Delete is locked until you say yes.</p>' +
-      "</div>";
+      '<div class="storage-progress" id="storage-progress"></div>';
+
+    if (!supportsFs()) {
+      body +=
+        '<p class="note">Your browser does not support the File System Access API. Use <strong>Chrome</strong> or <strong>Edge</strong> on desktop for real folder scanning.</p>';
+    }
+
+    if (report) {
+      body +=
+        '<div class="sum">' +
+        "Folder: <strong>" +
+        esc(state.rootName) +
+        "</strong><br/>" +
+        report.fileCount +
+        " files · " +
+        fmt(report.totalBytes) +
+        " total (scanned)" +
+        "</div>" +
+        "<h3>Top 20 largest files</h3>" +
+        "<table><thead><tr><th></th><th>Path</th><th>Size</th></tr></thead><tbody>" +
+        rowsHtml(report.top20, false) +
+        "</tbody></table>" +
+        "<h3>Old downloads (" +
+        OLD_DAYS +
+        "+ days, under *Download*)</h3>" +
+        "<table><thead><tr><th></th><th>Path</th><th>Size</th><th>Age</th></tr></thead><tbody>" +
+        rowsHtml(report.oldDownloads, true) +
+        "</tbody></table>" +
+        "<h3>Duplicate photos (same name + size)</h3>" +
+        "<table><thead><tr><th></th><th>Match</th><th>Size</th></tr></thead><tbody>" +
+        rowsHtml(report.duplicatePhotos, false) +
+        "</tbody></table>" +
+        "<h3>Installers (.exe / .msi / .dmg / setup*)</h3>" +
+        "<table><thead><tr><th></th><th>Path</th><th>Size</th></tr></thead><tbody>" +
+        rowsHtml(report.usedInstallers, false) +
+        "</tbody></table>" +
+        '<div class="storage-actions">' +
+        '<button type="button" class="primary" id="storage-select-all">Select all listed</button>' +
+        '<button type="button" class="ghost" id="storage-clear">Clear</button>' +
+        '<button type="button" class="danger" id="storage-delete" disabled>Delete selected…</button>' +
+        "</div>" +
+        '<p class="note" id="storage-status">Nothing is deleted until you confirm.</p>';
+    }
+
+    body += "</div>";
+    root.innerHTML = body;
+    wireUi(root, report);
+  }
+
+  function wireUi(root, report) {
+    var pick = root.querySelector("#storage-pick");
+    var rescan = root.querySelector("#storage-rescan");
+    var progress = root.querySelector("#storage-progress");
+
+    async function startPick() {
+      if (!supportsFs()) {
+        if (progress)
+          progress.textContent =
+            "Not supported here. Open this site in Chrome or Edge on a computer.";
+        return;
+      }
+      if (state.scanning) return;
+      try {
+        var dir = await window.showDirectoryPicker({
+          mode: "readwrite",
+          id: "menelik-storage-scan",
+        });
+        state.rootName = dir.name;
+        state.files = [];
+        state.handles = {};
+        state.scanning = true;
+        if (progress) progress.textContent = "Scanning “" + dir.name + "”…";
+        await walkDir(dir, dir.name, state.files, function (n, path) {
+          if (progress)
+            progress.textContent =
+              "Scanned " + n + " files… " + path.slice(0, 60);
+        });
+        state.scanning = false;
+        var report2 = analyze(state.files);
+        var browser = await estimateBrowser();
+        if (progress) progress.textContent = "Done.";
+        renderShell(root, { browser: browser, report: report2 });
+      } catch (err) {
+        state.scanning = false;
+        if (err && err.name === "AbortError") {
+          if (progress) progress.textContent = "Folder pick cancelled.";
+          return;
+        }
+        if (progress)
+          progress.textContent =
+            "Could not scan: " + (err && err.message ? err.message : String(err));
+      }
+    }
+
+    if (pick) pick.onclick = startPick;
+    if (rescan) rescan.onclick = startPick;
+
+    if (!report) return;
 
     var delBtn = root.querySelector("#storage-delete");
     var status = root.querySelector("#storage-status");
+    var selectAll = root.querySelector("#storage-select-all");
+    var clear = root.querySelector("#storage-clear");
 
-    root.querySelector("#storage-select-all").onclick = function () {
-      root.querySelectorAll('input[type="checkbox"]').forEach(function (c) {
-        c.checked = true;
-      });
-    };
-    root.querySelector("#storage-clear").onclick = function () {
-      root.querySelectorAll('input[type="checkbox"]').forEach(function (c) {
-        c.checked = false;
-      });
-    };
+    if (selectAll)
+      selectAll.onclick = function () {
+        root.querySelectorAll('input[type="checkbox"]').forEach(function (c) {
+          c.checked = true;
+        });
+        root.dispatchEvent(new Event("change", { bubbles: true }));
+      };
+    if (clear)
+      clear.onclick = function () {
+        root.querySelectorAll('input[type="checkbox"]').forEach(function (c) {
+          c.checked = false;
+        });
+        root.dispatchEvent(new Event("change", { bubbles: true }));
+      };
 
-    delBtn.onclick = function () {
-      var selected = [];
-      root.querySelectorAll('input[type="checkbox"]:checked').forEach(function (c) {
-        selected.push(c.getAttribute("data-path"));
-      });
-      if (!selected.length) {
-        status.textContent = "Select at least one item first.";
-        return;
-      }
-      var ok = window.confirm(
-        "Delete " +
-          selected.length +
-          " item(s)?\n\nThis is a demo — nothing on your real disk will be removed.\n\nSay OK only if you want to simulate delete."
-      );
-      if (!ok) {
-        status.textContent = "Cancelled. Nothing was deleted.";
-        return;
-      }
-      status.textContent =
-        "Confirmed: simulated cleanup of " + selected.length + " item(s). Real files were not touched.";
-      delBtn.disabled = true;
-    };
-
-    /* Enable danger button only after any selection (still requires confirm) */
     root.addEventListener("change", function (e) {
-      if (e.target && e.target.matches('input[type="checkbox"]')) {
-        var n = root.querySelectorAll('input[type="checkbox"]:checked').length;
-        delBtn.disabled = n === 0;
+      if (!e.target || !e.target.matches('input[type="checkbox"]')) return;
+      var n = root.querySelectorAll('input[type="checkbox"]:checked').length;
+      if (delBtn) delBtn.disabled = n === 0;
+      if (status)
         status.textContent =
           n === 0
-            ? "Delete is locked until you select items and say yes."
+            ? "Nothing is deleted until you confirm."
             : n + " selected — delete still needs your confirmation.";
-      }
     });
+
+    if (delBtn)
+      delBtn.onclick = async function () {
+        var keys = [];
+        root.querySelectorAll('input[type="checkbox"]:checked').forEach(function (c) {
+          try {
+            var arr = JSON.parse(c.getAttribute("data-keys") || "[]");
+            arr.forEach(function (k) {
+              if (keys.indexOf(k) === -1) keys.push(k);
+            });
+          } catch (e3) {}
+        });
+        if (!keys.length) {
+          if (status) status.textContent = "Select at least one item.";
+          return;
+        }
+        var ok = window.confirm(
+          "Permanently delete " +
+            keys.length +
+            " file(s) from your disk?\n\nThis cannot be undone.\n\nPress OK only if you are sure."
+        );
+        if (!ok) {
+          if (status) status.textContent = "Cancelled. Nothing was deleted.";
+          return;
+        }
+        var removed = 0;
+        var failed = 0;
+        for (var i = 0; i < keys.length; i++) {
+          var h = state.handles[keys[i]];
+          if (!h) {
+            failed++;
+            continue;
+          }
+          try {
+            if (typeof h.remove === "function") {
+              await h.remove();
+              removed++;
+              delete state.handles[keys[i]];
+              state.files = state.files.filter(function (f) {
+                return f.path !== keys[i];
+              });
+            } else {
+              failed++;
+            }
+          } catch (e4) {
+            failed++;
+          }
+        }
+        if (status)
+          status.textContent =
+            "Deleted " + removed + " file(s)" + (failed ? ", " + failed + " failed" : "") + ".";
+        var report2 = analyze(state.files);
+        var browser = await estimateBrowser();
+        renderShell(root, { browser: browser, report: report2 });
+      };
+  }
+
+  async function renderHome(root) {
+    var browser = await estimateBrowser();
+    renderShell(root, { browser: browser, report: null });
   }
 
   function ensurePage() {
-    var mobile = document.getElementById("mobile-content") || document.querySelector("#mobile .mobile-content");
+    var mobile =
+      document.getElementById("mobile-content") ||
+      document.querySelector("#mobile .mobile-content");
     if (!mobile) return null;
     var page = document.getElementById(PAGE_ID);
     if (!page) {
@@ -247,11 +523,6 @@
         });
       }
     }
-    var content = document.getElementById(CONTENT_ID);
-    if (content && !content.dataset.ready) {
-      renderReport(content);
-      content.dataset.ready = "1";
-    }
     return page;
   }
 
@@ -265,13 +536,14 @@
     if (home) home.style.display = "none";
     page.hidden = false;
     var content = document.getElementById(CONTENT_ID);
-    if (content) renderReport(content);
+    if (content) renderHome(content);
   }
 
   function injectHomeIcon() {
-    var grid = document.querySelector("#home-screen .app-grid") || document.querySelector(".app-grid");
-    if (!grid) return;
-    if (grid.querySelector('[data-page="storage"]')) return;
+    var grid =
+      document.querySelector("#home-screen .app-grid") ||
+      document.querySelector(".app-grid");
+    if (!grid || grid.querySelector('[data-page="storage"]')) return;
     var btn = document.createElement("button");
     btn.className = "app-icon";
     btn.setAttribute("data-page", "storage");
@@ -282,13 +554,9 @@
       e.stopPropagation();
       openStorage();
     });
-    /* Prefer after Device if present */
     var device = grid.querySelector('[data-page="device"]');
-    if (device && device.parentNode === grid) {
-      grid.insertBefore(btn, device.nextSibling);
-    } else {
-      grid.appendChild(btn);
-    }
+    if (device && device.parentNode === grid) grid.insertBefore(btn, device.nextSibling);
+    else grid.appendChild(btn);
   }
 
   function injectAppsFolder() {
