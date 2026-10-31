@@ -1,9 +1,29 @@
-/* desk-clock-modern.js — modern desktop clock UI (readable time + clean layout) */
+/* desk-clock-modern.js — modern desktop clock with Geez (Ethiopic) numerals */
 (function () {
   "use strict";
 
   function isDesktop() {
     return window.innerWidth >= 900;
+  }
+
+  /* Ethiopic digits ፩–፱; 0 has no traditional form → Latin 0 */
+  var GEEZ = {
+    "0": "0",
+    "1": "፩",
+    "2": "፪",
+    "3": "፫",
+    "4": "፬",
+    "5": "፭",
+    "6": "፮",
+    "7": "፯",
+    "8": "፰",
+    "9": "፱",
+  };
+
+  function toGeezDigits(str) {
+    return String(str).replace(/[0-9]/g, function (d) {
+      return GEEZ[d] != null ? GEEZ[d] : d;
+    });
   }
 
   var ETH_MONTHS_AM = [
@@ -20,21 +40,6 @@
     "ሐምሌ",
     "ነሐሴ",
     "ጳጉሜን",
-  ];
-  var ETH_MONTHS_EN = [
-    "Meskerem",
-    "Tikimt",
-    "Hidar",
-    "Tahsas",
-    "Tir",
-    "Yekatit",
-    "Megabit",
-    "Miazia",
-    "Ginbot",
-    "Sene",
-    "Hamle",
-    "Nehasse",
-    "Pagumen",
   ];
 
   function gregorianToJDN(year, month, day) {
@@ -69,9 +74,27 @@
       year: year,
       month: month,
       day: day,
-      monthNameEn: ETH_MONTHS_EN[month - 1] || "",
       monthNameAm: ETH_MONTHS_AM[month - 1] || "",
     };
+  }
+
+  function ensureEthiopicFont() {
+    if (document.getElementById("noto-ethiopic-font")) return;
+    var pre = document.createElement("link");
+    pre.rel = "preconnect";
+    pre.href = "https://fonts.googleapis.com";
+    document.head.appendChild(pre);
+    var pre2 = document.createElement("link");
+    pre2.rel = "preconnect";
+    pre2.href = "https://fonts.gstatic.com";
+    pre2.crossOrigin = "anonymous";
+    document.head.appendChild(pre2);
+    var link = document.createElement("link");
+    link.id = "noto-ethiopic-font";
+    link.rel = "stylesheet";
+    link.href =
+      "https://fonts.googleapis.com/css2?family=Noto+Sans+Ethiopic:wght@400;500;600;700&display=swap";
+    document.head.appendChild(link);
   }
 
   function injectCss() {
@@ -82,15 +105,13 @@
     s.id = id;
     s.textContent =
       "@media (min-width:900px){" +
-      "#desktop-widgets.desktop-widgets," +
-      ".desktop-widgets{" +
+      "#desktop-widgets.desktop-widgets,.desktop-widgets{" +
       "position:absolute!important;top:24px!important;right:28px!important;" +
       "z-index:40!important;pointer-events:none!important}" +
-      "#eth-clock-gadget.clock-gadget," +
-      "#eth-clock-gadget.gadget.clock-gadget," +
+      "#eth-clock-gadget.clock-gadget,#eth-clock-gadget.gadget.clock-gadget," +
       ".clock-gadget#eth-clock-gadget{" +
       "pointer-events:auto!important;" +
-      "width:min(280px,32vw)!important;" +
+      "width:min(300px,34vw)!important;" +
       "padding:22px 22px 16px!important;" +
       "border-radius:22px!important;" +
       "background:rgba(15,23,42,.55)!important;" +
@@ -99,68 +120,47 @@
       "border:1px solid rgba(255,255,255,.14)!important;" +
       "box-shadow:0 18px 50px rgba(0,0,0,.35),inset 0 1px 0 rgba(255,255,255,.12)!important;" +
       "color:#f8fafc!important;" +
-      "font-family:ui-sans-serif,system-ui,-apple-system,\"Segoe UI\",sans-serif!important;" +
+      "font-family:\"Noto Sans Ethiopic\",\"Noto Sans\",ui-sans-serif,system-ui,sans-serif!important;" +
       "text-align:center!important;" +
       "user-select:none!important}" +
-      "#eth-clock-gadget .gadget-time," +
-      "#gadget-time{" +
-      "font-size:42px!important;" +
+      "#eth-clock-gadget .gadget-time,#gadget-time{" +
+      "font-family:\"Noto Sans Ethiopic\",\"Noto Sans\",sans-serif!important;" +
+      "font-size:40px!important;" +
       "font-weight:600!important;" +
-      "letter-spacing:0.04em!important;" +
-      "line-height:1.05!important;" +
-      "font-variant-numeric:tabular-nums!important;" +
-      "font-feature-settings:\"tnum\" 1!important;" +
+      "letter-spacing:0.06em!important;" +
+      "line-height:1.1!important;" +
       "color:#fff!important;" +
       "text-shadow:0 2px 12px rgba(0,0,0,.35)!important;" +
       "margin:0!important}" +
-      "#eth-clock-gadget .gadget-ms," +
-      "#gadget-ms{" +
-      "font-size:13px!important;" +
-      "font-weight:500!important;" +
-      "letter-spacing:0.12em!important;" +
-      "color:rgba(226,232,240,.72)!important;" +
-      "margin:4px 0 12px!important;" +
-      "font-variant-numeric:tabular-nums!important}" +
-      "#eth-clock-gadget .gadget-date," +
-      "#gadget-date{" +
+      "#eth-clock-gadget .gadget-ms,#gadget-ms{" +
+      "font-family:\"Noto Sans Ethiopic\",\"Noto Sans\",sans-serif!important;" +
       "font-size:14px!important;" +
+      "font-weight:500!important;" +
+      "letter-spacing:0.14em!important;" +
+      "color:rgba(226,232,240,.75)!important;" +
+      "margin:4px 0 12px!important}" +
+      "#eth-clock-gadget .gadget-date,#gadget-date{" +
+      "font-family:\"Noto Sans Ethiopic\",\"Noto Sans\",sans-serif!important;" +
+      "font-size:15px!important;" +
       "font-weight:600!important;" +
       "color:#e2e8f0!important;" +
       "margin:0 0 4px!important;" +
-      "line-height:1.35!important}" +
-      "#eth-clock-gadget .gadget-eth," +
-      "#gadget-eth{" +
+      "line-height:1.4!important}" +
+      "#eth-clock-gadget .gadget-eth,#gadget-eth{" +
       "font-size:12px!important;" +
       "font-weight:500!important;" +
       "color:rgba(148,163,184,.95)!important;" +
-      "margin:0 0 14px!important}" +
-      "#eth-clock-gadget .gadget-hc," +
-      "#hc-toggle.gadget-hc," +
-      "#hc-toggle{" +
-      "display:inline-flex!important;" +
-      "align-items:center!important;" +
-      "justify-content:center!important;" +
-      "gap:6px!important;" +
-      "min-width:72px!important;" +
-      "height:34px!important;" +
-      "padding:0 14px!important;" +
-      "border:0!important;" +
-      "border-radius:999px!important;" +
-      "background:rgba(255,255,255,.12)!important;" +
-      "color:#f1f5f9!important;" +
-      "font-size:12px!important;" +
-      "font-weight:600!important;" +
-      "letter-spacing:0.02em!important;" +
-      "cursor:pointer!important;" +
-      "transition:background .15s ease,transform .12s ease!important}" +
+      "margin:0 0 14px!important;" +
+      "font-family:ui-sans-serif,system-ui,sans-serif!important}" +
+      "#eth-clock-gadget .gadget-hc,#hc-toggle.gadget-hc,#hc-toggle{" +
+      "display:inline-flex!important;align-items:center!important;justify-content:center!important;" +
+      "min-width:72px!important;height:34px!important;padding:0 14px!important;" +
+      "border:0!important;border-radius:999px!important;" +
+      "background:rgba(255,255,255,.12)!important;color:#f1f5f9!important;" +
+      "font-size:12px!important;font-weight:600!important;cursor:pointer!important;" +
+      "font-family:ui-sans-serif,system-ui,sans-serif!important}" +
       "#hc-toggle:hover{background:rgba(255,255,255,.2)!important}" +
-      "#hc-toggle:active{transform:scale(.97)!important}" +
-      "body.high-contrast #eth-clock-gadget{" +
-      "background:#000!important;" +
-      "border-color:#fff!important;" +
-      "color:#fff!important;" +
-      "backdrop-filter:none!important}" +
-      "body.high-contrast #gadget-time{color:#fff!important;text-shadow:none!important}" +
+      "body.high-contrast #eth-clock-gadget{background:#000!important;border-color:#fff!important;backdrop-filter:none!important}" +
       "body.high-contrast #hc-toggle{background:#fff!important;color:#000!important}" +
       "}" +
       "@media (max-width:899px){#desktop-widgets,.desktop-widgets{display:none!important}}";
@@ -181,24 +181,23 @@
     var d = document.getElementById("gadget-date");
     var e = document.getElementById("gadget-eth");
 
-    /* Latin numerals — always readable */
-    if (t) {
-      t.textContent =
-        pad(n.getHours()) + ":" + pad(n.getMinutes()) + ":" + pad(n.getSeconds());
-    }
-    if (msEl) {
-      msEl.textContent = "." + pad(n.getMilliseconds(), 3);
-    }
+    var h = pad(n.getHours());
+    var m = pad(n.getMinutes());
+    var sec = pad(n.getSeconds());
+    var ms = pad(n.getMilliseconds(), 3);
+
+    /* Geez numerals for time */
+    if (t) t.textContent = toGeezDigits(h + ":" + m + ":" + sec);
+    if (msEl) msEl.textContent = toGeezDigits("." + ms);
 
     var eth = toEthiopianDate(n);
     if (d) {
       d.textContent =
         eth.monthNameAm +
         " " +
-        eth.day +
+        toGeezDigits(String(eth.day)) +
         " · " +
-        eth.year +
-        " E.C.";
+        toGeezDigits(String(eth.year));
     }
     if (e) {
       e.textContent = n.toLocaleDateString("en-GB", {
@@ -216,7 +215,6 @@
       function syncHcLabel() {
         var on = document.body.classList.contains("high-contrast");
         hc.textContent = on ? "Contrast · On" : "Contrast";
-        hc.title = on ? "High contrast on" : "High contrast off";
       }
       syncHcLabel();
       hc.addEventListener("click", function () {
@@ -229,10 +227,12 @@
     var root = document.getElementById("eth-clock-gadget");
     if (!root) return;
     root.classList.add("clock-modern");
+    root.setAttribute("lang", "am");
   }
 
   function boot() {
     if (!isDesktop()) return;
+    ensureEthiopicFont();
     injectCss();
     enhanceStructure();
     tick();
@@ -246,4 +246,6 @@
   setTimeout(boot, 1200);
   setTimeout(boot, 2500);
   setInterval(tick, 50);
+
+  window.toGeezDigits = toGeezDigits;
 })();
