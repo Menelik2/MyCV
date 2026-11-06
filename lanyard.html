@@ -212,13 +212,11 @@
       ctx.fillStyle = '#e8e4dc';
       ctx.fillRect(0, 0, 600, 900);
 
-      // subtle grid
       ctx.strokeStyle = 'rgba(15,23,42,0.06)';
       ctx.lineWidth = 1;
       for (let x = 0; x < 600; x += 24) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, 900); ctx.stroke(); }
       for (let y = 0; y < 900; y += 24) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(600, y); ctx.stroke(); }
 
-      // JUNIOR badge
       ctx.fillStyle = '#0f172a';
       roundRect(ctx, 40, 48, 120, 36, 6);
       ctx.fill();
@@ -226,7 +224,6 @@
       ctx.font = 'bold 18px sans-serif';
       ctx.fillText('JUNIOR', 58, 72);
 
-      // School chip
       ctx.fillStyle = '#1e3a5f';
       roundRect(ctx, 380, 42, 180, 48, 8);
       ctx.fill();
@@ -236,12 +233,10 @@
       ctx.font = '12px sans-serif';
       ctx.fillText('UNIVERSITY', 410, 78);
 
-      // DEVELOPER title
       ctx.fillStyle = '#0f172a';
       ctx.font = '900 72px sans-serif';
       ctx.fillText('DEVELOPER', 36, 150);
 
-      // Photo frame
       const fx = 90, fy = 180, fw = 320, fh = 420;
       const grad = ctx.createLinearGradient(fx, fy, fx + fw, fy + fh);
       grad.addColorStop(0, '#0b3a5c');
@@ -268,7 +263,6 @@
         ctx.beginPath(); ctx.ellipse(250, 480, 110, 90, 0, Math.PI, 0); ctx.fill();
       }
 
-      // Vertical side text
       ctx.save();
       ctx.translate(540, 680);
       ctx.rotate(-Math.PI / 2);
@@ -277,7 +271,6 @@
       ctx.fillText('SOFTWARE ENGINEER', 0, 0);
       ctx.restore();
 
-      // Name banner
       ctx.fillStyle = '#fff';
       ctx.fillRect(70, 620, 360, 50);
       ctx.strokeStyle = '#0f172a';
@@ -287,7 +280,6 @@
       ctx.font = 'bold 22px sans-serif';
       ctx.fillText(NAME, 88, 653);
 
-      // Footer
       ctx.fillStyle = '#0f172a';
       ctx.fillRect(0, 760, 600, 140);
       ctx.fillStyle = '#fff';
@@ -327,16 +319,24 @@
       ctx.font = '18px sans-serif';
       ctx.fillText('— GITHUB · PORTFOLIO —', 300, 232);
 
-      // QR-like panel (pattern + site URL text)
+      // Real scannable QR → portfolio
       ctx.fillStyle = '#e8e4dc';
       ctx.fillRect(140, 270, 320, 320);
-      ctx.fillStyle = '#0f172a';
-      const cell = 16;
-      for (let r = 0; r < 16; r++) {
-        for (let col = 0; col < 16; col++) {
-          const isCorner = (r < 4 && col < 4) || (r < 4 && col > 11) || (r > 11 && col < 4);
-          if (isCorner || ((r * 7 + col * 13 + r * col) % 3 === 0)) {
-            ctx.fillRect(160 + col * cell, 290 + r * cell, cell - 2, cell - 2);
+      const qrUrl =
+        'https://api.qrserver.com/v1/create-qr-code/?size=400x400&margin=8&ecc=M&color=0f172a&bgcolor=e8e4dc&data=' +
+        encodeURIComponent(SITE_URL);
+      const qrImg = await loadImage(qrUrl);
+      if (qrImg) {
+        ctx.drawImage(qrImg, 155, 285, 290, 290);
+      } else {
+        ctx.fillStyle = '#0f172a';
+        const cell = 16;
+        for (let r = 0; r < 16; r++) {
+          for (let col = 0; col < 16; col++) {
+            const isCorner = (r < 4 && col < 4) || (r < 4 && col > 11) || (r > 11 && col < 4);
+            if (isCorner || ((r * 7 + col * 13 + r * col) % 3 === 0)) {
+              ctx.fillRect(160 + col * cell, 290 + r * cell, cell - 2, cell - 2);
+            }
           }
         }
       }
