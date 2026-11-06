@@ -68,7 +68,6 @@
     <p>Full-Stack Developer · Bahir Dar</p>
   </div>
 
-  <script src="badge-front-data.js"></script>
   <script type="importmap">
   {
     "imports": {
@@ -84,8 +83,9 @@
 
     const NAME = 'MENELIK ADMASU';
     const ROLE = 'Full-Stack Developer';
+    /* Custom designed front badge (your uploaded art) */
+    const BADGE_FRONT_URL = 'https://i.imgur.com/YvUfaeD.jpeg';
     const PHOTO_URL = 'profile.jpg';
-    const BADGE_FRONT_DATA_URL = window.BADGE_FRONT_DATA_URL || '';
     const SITE_URL = location.origin || 'https://menelikcv.vercel.app';
 
     const scene = new THREE.Scene();
@@ -128,8 +128,8 @@
     }
 
     async function createFrontTexture(photo) {
-      // Prefer the designed badge artwork (full front face)
-      const art = await loadImage(BADGE_FRONT_DATA_URL);
+      // Use your designed badge image as the full front face
+      const art = await loadImage(BADGE_FRONT_URL);
       if (art) {
         const c = document.createElement('canvas');
         c.width = 600; c.height = 900;
@@ -148,7 +148,7 @@
         return tex;
       }
 
-      // Fallback procedural
+      // Fallback if image fails to load
       const c = document.createElement('canvas');
       c.width = 600; c.height = 900;
       const ctx = c.getContext('2d');
